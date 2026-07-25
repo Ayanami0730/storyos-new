@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { buildContextPacket, countWords } from "./packet.ts";
 import { PacketBuildError } from "./types.ts";
 import type { ContextItem, PacketRequest } from "./types.ts";
+import { captureError } from "../testing/capture.ts";
 
 function item(
   id: string,
@@ -16,20 +17,6 @@ function item(
     source: `index/story/${id}`,
     content: Array.from({ length: words }, (_, i) => `w${i}`).join(" "),
   };
-}
-
-/** Run `fn`, assert it threw the expected type, and return the error. */
-function captureError<T extends Error>(
-  fn: () => unknown,
-  type: new (...args: never[]) => T,
-): T {
-  try {
-    fn();
-  } catch (error) {
-    assert.ok(error instanceof type, `expected ${type.name}, got ${String(error)}`);
-    return error;
-  }
-  throw new assert.AssertionError({ message: `expected ${type.name} to be thrown` });
 }
 
 function request(over: Partial<PacketRequest> = {}): PacketRequest {
