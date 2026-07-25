@@ -46,10 +46,28 @@ Table 1's Fact half. Three things follow, all of them good:
 Do not state a single SOTA. Three separate claims, each on the arena that can
 carry it:
 
-- **Length**, on LongBench-Write: frontier models cannot reach the requested
-  length and harnesses can. Measured, not asserted — at a 20,000-word request
-  `raw-gpt-5.5` produced 5,324 words and `raw-gemini-3.1-pro-preview` 4,870,
-  both scoring $S_l = 0$, while every harness scored 75–100.
+- **Length**: frontier models cannot reach novel length and harnesses can.
+  Measured twice, at two scales, and the gap widens with the target.
+
+  At a **20,000-word** LongBench-Write request: `raw-gpt-5.5` produced 5,324
+  words and `raw-gemini-3.1-pro-preview` 4,870, both scoring $S_l = 0$, while
+  every harness scored 75–100.
+
+  At a **40,000-word** target on our own bench (budget probe,
+  `experiments/novelbench-run/`, one task, all systems):
+
+  | System | words | share of target |
+  |---|---:|---:|
+  | `bare-long-context` | 40,090 | **100%** |
+  | `agentwrite` | 34,294 | 86% |
+  | `raw-gpt-5.5` | 11,071 | **28%** |
+  | `raw-gpt-5.6-sol` | 7,980 | **20%** |
+  | `raw-gemini-3.1-pro-preview` | 4,494 | **11%** |
+
+  This is the cleanest number the project has. It is also the reason every
+  consistency comparison must report actual words beside target words: a
+  frontier model "scoring well" at a 40k target is scoring on 4.5k words of
+  prose, where there is almost no opportunity to contradict itself.
 - **Quality**, on Table 1's Quality half: at novel length we are not worse than
   the harnesses that can also get there.
 - **Fact**, on Table 1's Fact half: this is where the gate is supposed to pay
