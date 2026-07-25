@@ -20,6 +20,7 @@ import { DEFAULT_THRESHOLDS, summaryPrompt } from "../agents/compaction.ts";
 import { PERSONAS, withBackbone } from "../agents/personas.ts";
 import { type AgentLike, ResidentAgents } from "../agents/residents.ts";
 import { CanonicalIndex } from "../index/commit.ts";
+import { MAX_COMPLETION_TOKENS, TASK_TOKEN_BUDGET, TokenBudget } from "../runtime/budget.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import { SceneToolBus } from "../runtime/collaborators.ts";
 import { type ModelId, installGateway } from "../runtime/gateway.ts";
@@ -87,19 +88,22 @@ const storyState: { canon: { entity: string }[]; promises: string[]; scenes: str
   scenes: [],
 };
 
+const budget = new TokenBudget(TASK_TOKEN_BUDGET);
+
 const residents = new ResidentAgents({
   agentsRoot: path.join(import.meta.dirname, "../../agents"),
   personas,
+  budget,
   compaction: {
     thresholds: DEFAULT_THRESHOLDS,
-    // The summariser runs on the cheap backbone: it is writing navigation, not
-    // prose, and paying the flagship rate to compress a transcript is the kind
-    // of cost that only shows up at scene forty.
-    summarise: async (input) => {
-      const { text } = await residents.invoke("orchestrator", summaryPrompt(input), {
+    // Each agent compresses its own transcript with its own model. Routing this
+    // through the orchestrator would hand it the writer's session and ask it to
+    // judge writing work it did not do.
+    summarise: async (role, input) => {
+      const { text } = await residents.invoke(role, summaryPrompt(input), {
         txid: "tx-compaction",
         caller: "orchestrator",
-        selfCall: true,
+        selfCall: role === "orchestrator",
       });
       return text;
     },
@@ -124,6 +128,8 @@ const residents = new ResidentAgents({
         systemPrompt,
         model: gateway.model(persona.model as ModelId),
         thinkingLevel: "off",
+        // The same per-call output ceiling the baselines run under.
+        maxTokens: MAX_COMPLETION_TOKENS,
         tools,
       },
     });
@@ -266,6 +272,9 @@ const summary = {
   promises_unpaid: result ? result.revision.coverage.contractsOpen : 0,
   revision_tasks: result?.revision.tasks.length ?? 0,
   tokens: ledger.reduce((n, e) => n + e.usage.total, 0),
+  token_budget: TASK_TOKEN_BUDGET,
+  budget_spent: budget.spent,
+  max_completion_tokens: MAX_COMPLETION_TOKENS,
   calls: ledger.length,
   roll_up: residents.rollUp(),
   compactions: residents.compactions(),

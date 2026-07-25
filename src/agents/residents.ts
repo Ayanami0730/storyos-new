@@ -29,6 +29,7 @@ import {
   levelFor,
 } from "./compaction.ts";
 import type { AgentRole } from "../transaction/types.ts";
+import { type TokenBudget } from "../runtime/budget.ts";
 import { type ModelId, installGateway } from "../runtime/gateway.ts";
 import { type PersonaSpec, personaFor, systemPromptFor, toolNamesFor } from "./personas.ts";
 
@@ -56,6 +57,10 @@ export interface PiMessage {
   readonly usage?: Record<string, number>;
   readonly model?: string;
   readonly stopReason?: string;
+  /** On a toolResult message these are top-level, not inside a content block. */
+  readonly toolCallId?: string;
+  readonly toolName?: string;
+  readonly isError?: boolean;
 }
 
 /** Minimal surface we need from a pi Agent; keeps the seam testable. */
@@ -85,7 +90,15 @@ export interface CompactionRecord {
 
 export interface CompactionConfig {
   readonly thresholds: CompactionThresholds;
-  readonly summarise: Summariser;
+  /**
+   * Summarise with the agent's **own** model, over its own transcript.
+   *
+   * An earlier version routed this through the orchestrator, which is wrong
+   * twice: the orchestrator would have to be handed the writer's transcript,
+   * and the summary of a writer's session is a judgement about writing that the
+   * writer is better placed to make. Each role compresses its own memory.
+   */
+  readonly summarise: (role: AgentRole, input: StorySummaryInput) => Promise<string> | string;
   /** Re-read per compaction: canon moves, and a stale digest misleads. */
   readonly context: () => Omit<StorySummaryInput, "folded">;
 }
@@ -93,25 +106,29 @@ export interface CompactionConfig {
 /**
  * Map a pi message onto what the policy needs.
  *
- * Tool results are the ones worth identifying precisely, because they are the
- * only thing level 1 may evict — everything else is either pinned or folded.
+ * Verified against a real transcript (`smoke/message-shape.ts`), not inferred
+ * from the type declarations — the first version of this function looked for
+ * `toolCallId` inside a content block, where it is not. A tool result carries
+ * `role: "toolResult"` with `toolCallId` and `toolName` at the **top level**;
+ * only the assistant's `toolCall` block is nested, and its key is `id`.
+ *
+ * Getting that wrong is quiet in exactly the wrong way: eviction still happens,
+ * but the pointer it leaves says `unknown (?)`, and being able to look again is
+ * the entire reason eviction is safe.
  */
 function toCompactable(m: PiMessage): CompactableMessage {
   const blocks = Array.isArray(m.content) ? (m.content as Record<string, unknown>[]) : [];
   const text = blocks
     .map((b) => (typeof b.text === "string" ? b.text : JSON.stringify(b)))
     .join("\n");
-  const isToolResult = m.role === "toolResult" || blocks.some((b) => b.type === "toolResult");
-  const toolCall = blocks.find((b) => b.type === "toolCall") as
-    | { toolCallId?: string; name?: string }
-    | undefined;
+  const isToolResult = m.role === "toolResult";
   return {
     role: m.role,
     kind: isToolResult ? "toolResult" : m.role === "user" ? "user" : "assistant",
     tokens: estimateTokens(text),
     text,
-    ...(toolCall?.toolCallId ? { toolCallId: toolCall.toolCallId } : {}),
-    ...(toolCall?.name ? { toolName: toolCall.name } : {}),
+    ...(m.toolCallId ? { toolCallId: m.toolCallId } : {}),
+    ...(m.toolName ? { toolName: m.toolName } : {}),
     ...(isToolResult ? { digest: text.slice(0, 80).replace(/\s+/g, " ") } : {}),
   };
 }
@@ -136,6 +153,7 @@ export class ResidentAgents {
   readonly #personas: readonly PersonaSpec[];
   readonly #now: () => number;
   readonly #compaction: CompactionConfig | null;
+  readonly #budget: TokenBudget | null;
   readonly #compactions: CompactionRecord[] = [];
   /** Message count already accounted for, per role, so usage is not double-counted. */
   readonly #accounted = new Map<AgentRole, number>();
@@ -147,12 +165,18 @@ export class ResidentAgents {
     readonly now?: () => number;
     /** Omit to disable compaction entirely, which is right for short runs. */
     readonly compaction?: CompactionConfig;
+    /**
+     * The per-task ceiling every system shares. Omitting it is only right for
+     * unit tests; an experiment run without it is not comparable.
+     */
+    readonly budget?: TokenBudget;
   }) {
     this.#agentsRoot = options.agentsRoot;
     this.#factory = options.factory;
     this.#personas = options.personas ?? [];
     this.#now = options.now ?? (() => Date.now());
     this.#compaction = options.compaction ?? null;
+    this.#budget = options.budget ?? null;
   }
 
   #persona(role: AgentRole): PersonaSpec {
@@ -227,6 +251,9 @@ export class ResidentAgents {
     const fresh = agent.state.messages.slice(before);
     const entry = this.#account(role, context.txid, fresh, durationMs);
     const text = textOf(fresh);
+    // Charge before compacting: the tokens were spent either way, and a run
+    // that hides its spend behind a compaction step is not comparable.
+    this.#budget?.charge(entry.usage.total);
     await this.#maybeCompact(role, agent, entry);
     return { text, ledger: entry };
   }
@@ -261,7 +288,7 @@ export class ResidentAgents {
         ? compactLevel1(compactable, this.#compaction.thresholds)
         : await compactLevel2(
             compactLevel1(compactable, this.#compaction.thresholds).messages,
-            this.#compaction.summarise,
+            (input) => this.#compaction!.summarise(role, input),
             this.#compaction.context(),
             this.#compaction.thresholds,
           );
@@ -271,7 +298,7 @@ export class ResidentAgents {
     if (level === "block") {
       result = await compactLevel2(
         compactLevel1(compactable, this.#compaction.thresholds).messages,
-        this.#compaction.summarise,
+        (input) => this.#compaction!.summarise(role, input),
         this.#compaction.context(),
         this.#compaction.thresholds,
       );

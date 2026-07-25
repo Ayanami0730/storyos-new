@@ -202,8 +202,8 @@ describe("compaction", () => {
           keepRecentToolResults: 1,
           keepRecentMessages: 2,
         },
-        summarise: (input) => {
-          summaries.push(input.canonDigest);
+        summarise: (role, input) => {
+          summaries.push(`${role}:${input.canonDigest}`);
           return "SUMMARY OF EARLIER WORK";
         },
         context: () => ({
@@ -246,7 +246,9 @@ describe("compaction", () => {
     assert.ok(record.summarised > 0);
     // The summariser is handed a freshly read canon digest, not a cached one:
     // canon moves while the agent works, and a stale digest misleads.
-    assert.deepEqual(summaries.at(-1), "3 facts");
+    // The role is passed through so each agent compresses its own memory with
+    // its own model, rather than one agent summarising another's session.
+    assert.deepEqual(summaries.at(-1), "writer:3 facts");
   });
 
   it("uses the size the provider reported rather than estimating it", async () => {
