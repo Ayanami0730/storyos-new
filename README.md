@@ -68,7 +68,7 @@ gpt-5.5 都是 404），所以必须注册 `api: "openai-completions"` 的自定
 YS_KEY="$(cat ~/.config/ys/key)" node smoke/gateway-tool-loop.mjs
 ```
 
-注意 sgp-dev 当前 Node 是 v20.19.2，需先升到 22+。
+sgp-dev 上 Node 22.20.0 已装在 `~/bin/node22`（用 `export PATH="$HOME/bin/node22/bin:$PATH"` 激活，系统的 v20 未改动），冒烟已实测通过，不需要代理。
 
 ---
 

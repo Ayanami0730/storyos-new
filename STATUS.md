@@ -100,10 +100,14 @@ real data. Depends on Gate A only for the choice of harness.
   and shows a `memory` cluster that does not exist. Fix the code or fix the
   claim.
 
-**Environment blockers before any v3 code runs here:** Node is v20.19.2 and pi
-requires ≥22.19.0. Disk is at 100% with 16G free — better than the 2.4G recorded
-in `HANDOFF.md` (codex reclaimed caches) but still a hard gate; the remote
-history already contains one round invalidated by a mid-run disk-full abort.
+**Environment: both blockers cleared 2026-07-25.** Node 22.20.0 is installed at
+`~/bin/node22` (activate with `export PATH="$HOME/bin/node22/bin:$PATH"`; the
+system v20 was left untouched), and the pi foundation smoke test passes on
+sgp-dev with no proxy — `verdict: PASS: gateway + native function calling + pi
+agent loop all work`, with a genuine multi-turn tool loop in `message_roles`.
+Disk is at 100% with 16G free, which is workable but still a hard gate: the v2
+history contains a round invalidated by a mid-run disk-full abort, so preflight
+≥3G and abort below 1G.
 
 ## 3. Retired 2026-07-25: the sgp-dev codex session
 

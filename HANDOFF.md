@@ -49,8 +49,12 @@ Good:
 
 Blockers to clear before running anything:
 
-1. **Node is v20.19.2; pi requires `>=22.19.0`.** Install Node 22+ (nvm, conda,
-   or an official tarball) and verify `node -v` before `npm install`.
+1. ~~Node is v20.19.2~~ — **cleared 2026-07-25.** Node 22.20.0 is installed at
+   `~/bin/node22` (official tarball; the system `/usr/bin/node` is still v20 and
+   was left alone). Activate per shell with
+   `export PATH="$HOME/bin/node22/bin:$PATH"`, or add that line to your shell rc.
+   `npm install` and `smoke/gateway-tool-loop.mjs` both pass on sgp-dev with it,
+   **without any proxy** — see "verified on sgp-dev" below.
 2. **Disk is at 100%: 2.0T total, 16G free** (was 2.4G; codex reclaimed caches on
    2026-07-25). The home directory only accounts for ~85G (`popia_dmx` 23G,
    `raw_pools` 12G, `miniconda3` 12G, `vibe-engine-server` 11G), so the rest of
@@ -114,9 +118,20 @@ These were decided with the human and should not be silently revisited.
 1. `node -v` must be ≥ 22.19.0. It is v20.19.2 on sgp-dev today; install 22+ first.
 2. Free disk. Root is at 100% with 2.4G free; `docker system prune` reclaims ~6G,
    but the real consumer is outside this project's home directory.
-3. `npm install && node smoke/gateway-tool-loop.mjs` — from sgp-dev you do **not**
-   need the proxy dispatcher (the gateway answers directly in ~0.019s), but
-   leaving it installed is harmless since it no-ops without proxy env vars.
+3. ~~`npm install && node smoke/gateway-tool-loop.mjs`~~ — **verified on sgp-dev
+   2026-07-25 14:45**, no proxy needed. Reproduce with:
+
+   ```bash
+   export PATH="$HOME/bin/node22/bin:$PATH"
+   npm install
+   YS_KEY="$(cat ~/.config/ys/key)" node smoke/gateway-tool-loop.mjs
+   ```
+
+   It returns `verdict: PASS: gateway + native function calling + pi agent loop
+   all work`, with `message_roles` showing a real multi-turn loop
+   (`user → assistant → toolResult → assistant → toolResult → assistant`). So the
+   platform gate for Phase 1 is closed: pi drives our gateway with native
+   function calling from sgp-dev directly.
 4. Read `docs/05-open-threads.md` and start at item 1. Items 1 and 2 gate the rest.
 
 Full open-thread list with priorities, per-adapter fix table, the motivation
