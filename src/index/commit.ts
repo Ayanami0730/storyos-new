@@ -34,6 +34,17 @@ export interface CommitRequest {
   readonly prose: FileWrite;
   readonly stateDelta: readonly FileWrite[];
   readonly actor: AgentRole;
+  /**
+   * Partitions backfilled from this scene — characters, relations, timeline,
+   * rhythm, promises.
+   *
+   * In the same transaction as the prose on purpose. Committing prose first and
+   * folding it into the index afterwards is the arrangement that produces an
+   * index disagreeing with the manuscript, and it fails in the direction that is
+   * hardest to notice: the prose is right, so nothing looks broken until a later
+   * scene is built on a partition that never got updated.
+   */
+  readonly derived?: readonly FileWrite[];
 }
 
 export interface CommitResult {
@@ -139,7 +150,7 @@ export class CanonicalIndex {
       );
     }
 
-    const files = [request.prose, ...request.stateDelta];
+    const files = [request.prose, ...request.stateDelta, ...(request.derived ?? [])];
     for (const f of files) assertInsideRoot(this.#root, f.relPath);
 
     const at = this.#now().toISOString();
