@@ -10,9 +10,9 @@ in the separate `storyos` repo (`git@github.com:Ayanami0730/storyos.git`).
 ## Why v3 exists
 
 v2 shipped and produced the first measured number for our own system:
-**CED 4.69** on ConStory tuning-20 (14/19 tasks completed, 130,557 words,
+**CED 4.672** on ConStory tuning-20 (14/19 tasks completed, 130,557 words,
 gpt-5-mini backbone). Under the same backbone, `bare-long-context` scores
-**4.10** — the simplest possible baseline beats us. Full table and the root
+**4.069** — the simplest possible baseline beats us. Full table and the root
 cause are in `docs/03-v2-postmortem.md`; the short version is that v2's
 validation gate protects *declared typed state* while CED measures *prose*, and
 the audit extractor is hard-capped at 5 claims / 3 knowledge uses per scene, so
@@ -48,16 +48,18 @@ Blockers to clear before running anything:
 
 1. **Node is v20.19.2; pi requires `>=22.19.0`.** Install Node 22+ (nvm, conda,
    or an official tarball) and verify `node -v` before `npm install`.
-2. **Disk is at 100%: 2.0T total, 2.4G free.** The home directory only accounts
-   for ~85G (`popia_dmx` 23G, `raw_pools` 12G, `miniconda3` 12G,
-   `vibe-engine-server` 11G), so the rest of the root filesystem is full for
-   reasons outside this project. `docker system prune` reclaims ~6G (3.08G build
-   cache + 2.9G unused images). Experiments emit GB-scale run artifacts and will
-   die immediately at 2.4G free — treat this as a hard gate, not a warning. The
-   remote v2 history already contains a commit recording a disk-full abort.
-3. sgp-dev is shared with a running codex session (`storyos-v2`) plus two
-   tuning workers. Check `tmux ls` and `ps aux | grep python` before launching
-   anything that competes for the gateway.
+2. **Disk is at 100%: 2.0T total, 16G free** (was 2.4G; codex reclaimed caches on
+   2026-07-25). The home directory only accounts for ~85G (`popia_dmx` 23G,
+   `raw_pools` 12G, `miniconda3` 12G, `vibe-engine-server` 11G), so the rest of
+   the root filesystem is full for reasons outside this project. Experiments emit
+   GB-scale run artifacts — treat free space as a hard gate, not a warning. The
+   remote v2 history already contains a round invalidated by a mid-run disk-full
+   abort; its response (preflight ≥3G, abort below 1G) is worth keeping.
+3. ~~sgp-dev is shared with a running codex session~~ — **retired 2026-07-25**.
+   The `storyos-v2` codex session, its watchdog and the tuning workers were
+   stopped; see `STATUS.md` §3 for why and what was salvaged. Only
+   `storyos-viewer` (port 30133) still runs. Still check `tmux ls` before
+   launching anything that competes for the gateway.
 
 ### Why an agent on sgp-dev should own execution
 

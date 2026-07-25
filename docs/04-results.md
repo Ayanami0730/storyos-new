@@ -30,7 +30,7 @@ implementations (`../../research/2026-07/25-baseline-context-flow-audit.md` §
 - **DOME**: our writer omits `last_chapter_story`, which the official DHO writer
   prompt includes (`storyos/src/baselines/dome.py:681-716`).
 
-Consequence: the 5.06 / 6.15 / 6.61 harness scores are inflated (i.e. made worse)
+Consequence: the 4.857 / 6.240 / 6.632 harness scores are inflated (i.e. made worse)
 by our own implementation choices, so **"harnesses lose to bare long-context"
 is not established** and this table must not be published in its current form.
 Required before any claim rests on it: restore faithfulness, re-run the affected
@@ -44,15 +44,23 @@ words. Source: `storyos/experiments/reproduction-subsubset/checker/*.summary.jso
 
 | System | Class | CED ↓ | mean words | completed |
 |---|---|---:|---:|---:|
-| raw-gpt-5.6-sol | frontier zero-shot | 1.20 | 10,321 | 20/20 |
-| raw-gpt-5.5 | frontier zero-shot | 1.20 | 12,201 | 20/20 |
-| raw-gemini-3.1-pro-preview | frontier zero-shot | 3.96 | 10,480 | 20/20 |
-| bare-long-context | controlled zero-shot | 4.10 | 11,060 | 20/20 |
-| **storyos-index (v2)** | **ours** | **4.69** | 9,326 | **14/19** |
-| storywriter-style | harness | 5.06 | 14,824 | 20/20 |
-| agentwrite | harness | 6.15 | 15,065 | 20/20 |
-| agents-room-style | harness | 6.61 | 14,098 | 20/20 |
+| raw-gpt-5.6-sol | frontier zero-shot | 1.211 | 10,321 | 20/20 |
+| raw-gpt-5.5 | frontier zero-shot | 1.229 | 12,201 | 20/20 |
+| raw-gemini-3.1-pro-preview | frontier zero-shot | 3.960 | 10,480 | 20/20 |
+| bare-long-context | controlled zero-shot | 4.069 | 11,060 | 20/20 |
+| **storyos-index (v2)** | **ours** | **4.672** | 9,326 | **14/19** |
+| storywriter-style | harness | 4.857 | 14,824 | 20/20 |
+| agentwrite | harness | 6.240 | 15,065 | 20/20 |
+| agents-room-style | harness | 6.632 | 14,098 | 20/20 |
 | dome | harness | not scored | 10,504 | 4/20 |
+
+Corrected 2026-07-25 against the authoritative
+`experiments/reproduction-subsubset/summary.md` and `checker/*.summary.json`,
+now in git. The earlier table carried mid-run partial values read off an
+incomplete scoring pass; **three were materially wrong**, not just rounded:
+storyos-index 4.69 → 4.672, storywriter-style 5.06 → **4.857**, agentwrite
+6.15 → **6.240**. The ranking order is unchanged, but the StoryOS-to-storywriter
+gap is less than half what the old numbers implied (0.185, not 0.37).
 
 v2 category breakdown: `timeline_plot_logic` 1.92, `factual_detail` 1.38,
 `narrative_style` 0.92, `characterization` 0.23, `world_building_setting` 0.23.

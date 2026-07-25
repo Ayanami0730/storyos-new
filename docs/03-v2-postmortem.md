@@ -10,14 +10,14 @@ ConStory tuning-20, gpt-5-mini backbone, gpt-5.5 checker, CED lower is better:
 
 | System | CED ↓ | words | completed |
 |---|---:|---:|---:|
-| raw-gpt-5.6-sol | 1.20 | 10,321 | 20/20 |
-| raw-gpt-5.5 | 1.20 | 12,201 | 20/20 |
-| raw-gemini-3.1-pro | 3.96 | 10,480 | 20/20 |
-| **bare-long-context** | **4.10** | 11,060 | 20/20 |
-| **storyos-index (v2)** | **4.69** | 9,326 | **14/19** |
-| storywriter-style | 5.06 | 14,824 | 20/20 |
-| agentwrite | 6.15 | 15,065 | 20/20 |
-| agents-room-style | 6.61 | 14,098 | 20/20 |
+| raw-gpt-5.6-sol | 1.211 | 10,321 | 20/20 |
+| raw-gpt-5.5 | 1.229 | 12,201 | 20/20 |
+| raw-gemini-3.1-pro | 3.960 | 10,480 | 20/20 |
+| **bare-long-context** | **4.069** | 11,060 | 20/20 |
+| **storyos-index (v2)** | **4.672** | 9,326 | **14/19** |
+| storywriter-style | 4.857 | 14,824 | 20/20 |
+| agentwrite | 6.240 | 15,065 | 20/20 |
+| agents-room-style | 6.632 | 14,098 | 20/20 |
 | dome | not scored | 10,504 | 4/20 |
 
 v2's own category breakdown: `timeline_plot_logic` 1.92, `factual_detail` 1.38,
@@ -26,7 +26,7 @@ type: Continuation 6.17 worst, Expansion 3.59 best. Per-task CED ranges from 0.0
 to 8.79, so variance is large and n=14 is small.
 
 Two caveats that must travel with these numbers: the raw frontier models are a
-different backbone, so 1.20 is not a controlled comparison; and v2's five failed
+different backbone, so 1.211 is not a controlled comparison; and v2's five failed
 tasks are excluded from its mean, which biases it optimistically if the failures
 were the harder items.
 

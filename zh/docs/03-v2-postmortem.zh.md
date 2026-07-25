@@ -13,14 +13,14 @@ ConStory tuning-20，backbone 为 gpt-5-mini，checker 为 gpt-5.5，CED
 
 | 系统 | CED ↓ | 词数 | 完成数 |
 |---|---:|---:|---:|
-| raw-gpt-5.6-sol | 1.20 | 10,321 | 20/20 |
-| raw-gpt-5.5 | 1.20 | 12,201 | 20/20 |
-| raw-gemini-3.1-pro | 3.96 | 10,480 | 20/20 |
-| **bare-long-context** | **4.10** | 11,060 | 20/20 |
-| **storyos-index (v2)** | **4.69** | 9,326 | **14/19** |
-| storywriter-style | 5.06 | 14,824 | 20/20 |
-| agentwrite | 6.15 | 15,065 | 20/20 |
-| agents-room-style | 6.61 | 14,098 | 20/20 |
+| raw-gpt-5.6-sol | 1.211 | 10,321 | 20/20 |
+| raw-gpt-5.5 | 1.229 | 12,201 | 20/20 |
+| raw-gemini-3.1-pro | 3.960 | 10,480 | 20/20 |
+| **bare-long-context** | **4.069** | 11,060 | 20/20 |
+| **storyos-index (v2)** | **4.672** | 9,326 | **14/19** |
+| storywriter-style | 4.857 | 14,824 | 20/20 |
+| agentwrite | 6.240 | 15,065 | 20/20 |
+| agents-room-style | 6.632 | 14,098 | 20/20 |
 | dome | 未评分 | 10,504 | 4/20 |
 
 v2 自身的类别分解结果：`timeline_plot_logic` 1.92、`factual_detail` 1.38、
@@ -29,7 +29,7 @@ v2 自身的类别分解结果：`timeline_plot_logic` 1.92、`factual_detail` 1
 各任务 CED 范围为 0.00 到 8.79，因此方差很大，而且 n=14 很小。
 
 这些数字必须始终附带两项 caveat：raw frontier model 使用不同的 backbone，
-因此 1.20 不是 controlled comparison；v2 的 5 个失败任务未计入 mean，
+因此 1.211 不是 controlled comparison；v2 的 5 个失败任务未计入 mean，
 如果这些失败项更难，这会使结果产生对 v2 有利的偏差。
 
 同一批 19 个任务中的 gate process evidence：**154 份 scene draft 被
