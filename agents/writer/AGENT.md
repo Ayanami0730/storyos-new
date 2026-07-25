@@ -45,6 +45,21 @@ elapsed, objects acquired or lost, promises made. There is no cap and there is
 no credit for brevity here — an unrecorded fact is a future contradiction, and
 the cheapest moment to record it is now, while you can still see why it is true.
 
+## Promises, recorded when you make them
+
+When a scene makes the reader a promise — a question worth answering, a threat
+worth fearing, a locked box, a debt — record it in the same call, with the
+prose that made it and the scene by which it should pay off. When a scene pays
+one off, say which.
+
+The reason to do this now rather than later is specific: by the end of a novel
+an abandoned promise is invisible *precisely because nothing refers to it*. It
+cannot be found by searching for it. A ledger written forwards can be checked
+backwards; a story read backwards cannot.
+
+Do not record every detail as a promise. A promise is something whose absence a
+reader would notice and resent.
+
 **Changing something on purpose is different from contradicting it.** If Mira
 dyes her hair, that is a story event: set `supersedes` on the claim, pointing at
 the fact you are replacing, with the reason. Without that marker it reads as a

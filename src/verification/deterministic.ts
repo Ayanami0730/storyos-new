@@ -47,11 +47,35 @@ export interface ProposedClaim {
   readonly supersedes?: { readonly factId: string; readonly reason: string };
 }
 
+/**
+ * A promise the scene makes to the reader, recorded when it is made.
+ *
+ * Recording at introduction rather than reconstructing later is the whole
+ * trick: by the end of a novel an abandoned promise is invisible precisely
+ * because nothing refers to it, so nothing can be found by searching. A ledger
+ * written forwards can be checked backwards.
+ */
+export interface DeclaredPromise {
+  readonly id: string;
+  readonly promise: string;
+  /** Verbatim prose that made it. */
+  readonly quote: string;
+  /** Scene by which the reader will feel cheated; null means before the end. */
+  readonly dueByScene: string | null;
+}
+
+export interface DeclaredPayoff {
+  readonly contractId: string;
+  readonly quote: string;
+}
+
 export interface SceneDelta {
   readonly sceneId: string;
   readonly claims: readonly ProposedClaim[];
   /** Entity ids the scene says are present. */
   readonly presentEntities: readonly string[];
+  readonly promises?: readonly DeclaredPromise[];
+  readonly paysOff?: readonly DeclaredPayoff[];
 }
 
 export interface DeterministicInput {

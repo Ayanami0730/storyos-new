@@ -26,6 +26,8 @@ class FakeAgent implements AgentLike {
   readonly systemPrompt: string;
   readonly toolNames: readonly string[];
   readonly model: string;
+  /** What the provider claims it received; drives the compaction thresholds. */
+  reportedInput = 100;
 
   constructor(systemPrompt: string, toolNames: readonly string[], model: string) {
     this.systemPrompt = systemPrompt;
@@ -48,7 +50,13 @@ class FakeAgent implements AgentLike {
           { type: "toolCall", name: "run_command" },
           { type: "text", text: `did: ${input}` },
         ],
-        usage: { input: 100, output: 40, cacheRead: 10, reasoning: 5, totalTokens: 155 },
+        usage: {
+          input: this.reportedInput,
+          output: 40,
+          cacheRead: 10,
+          reasoning: 5,
+          totalTokens: 155,
+        },
         model: this.model,
         stopReason: "endTurn",
       },
@@ -171,6 +179,89 @@ describe("delegation tools", () => {
     const { registry } = residents();
     const writer = delegationTools(registry).find((t) => t.name === "call_writer")!;
     assert.equal(await writer.run({ txid: "tx-1", task: "draft" }), "did: draft");
+  });
+});
+
+describe("compaction", () => {
+  /** An agent whose reported input size we control, to drive the thresholds. */
+  function withCompaction(inputTokens: number) {
+    const summaries: string[] = [];
+    let clock = 1_000;
+    const built: FakeAgent[] = [];
+    const registry = new ResidentAgents({
+      agentsRoot: AGENTS_ROOT,
+      personas: PERSONAS,
+      now: () => (clock += 250),
+      compaction: {
+        thresholds: {
+          contextWindow: 1_000,
+          maxOutput: 200,
+          level1Fraction: 0.7,
+          level2Reserve: 130,
+          blockReserve: 30,
+          keepRecentToolResults: 1,
+          keepRecentMessages: 2,
+        },
+        summarise: (input) => {
+          summaries.push(input.canonDigest);
+          return "SUMMARY OF EARLIER WORK";
+        },
+        context: () => ({
+          canonDigest: "3 facts",
+          openPromises: ["the box"],
+          recentSceneIds: ["s-001"],
+        }),
+      },
+      factory: (persona, systemPrompt, toolNames) => {
+        const agent = new FakeAgent(systemPrompt, toolNames, persona.model);
+        agent.reportedInput = inputTokens;
+        built.push(agent);
+        return agent;
+      },
+    });
+    return { registry, built, summaries };
+  }
+
+  it("does nothing while there is room", async () => {
+    const { registry } = withCompaction(100);
+    await registry.invoke("writer", "draft", ctx);
+    assert.deepEqual(registry.compactions(), []);
+  });
+
+  it("fires level 1 once the reported context crosses the fraction", async () => {
+    // Effective budget is 1000 - 200 = 800; level 1 at 560.
+    const { registry } = withCompaction(600);
+    await registry.invoke("writer", "draft", ctx);
+    const [record] = registry.compactions();
+    assert.equal(record!.level, "level1");
+    assert.equal(record!.inputTokens, 600);
+  });
+
+  it("escalates to level 2 near the ceiling and writes a summary", async () => {
+    const { registry, summaries } = withCompaction(700);
+    await registry.invoke("writer", "draft one", ctx);
+    await registry.invoke("writer", "draft two", ctx);
+    const record = registry.compactions().at(-1)!;
+    assert.equal(record.level, "level2");
+    assert.ok(record.summarised > 0);
+    // The summariser is handed a freshly read canon digest, not a cached one:
+    // canon moves while the agent works, and a stale digest misleads.
+    assert.deepEqual(summaries.at(-1), "3 facts");
+  });
+
+  it("uses the size the provider reported rather than estimating it", async () => {
+    const { registry } = withCompaction(600);
+    await registry.invoke("writer", "draft", ctx);
+    // The fake's messages are tiny; only the reported input can have triggered
+    // this, which is the point — a policy that estimates fires late on a long
+    // transcript and never on a short one full of huge tool payloads.
+    assert.equal(registry.compactions().length, 1);
+  });
+
+  it("stays off entirely when no policy is configured", async () => {
+    const { registry } = residents();
+    await registry.invoke("writer", "draft", ctx);
+    assert.deepEqual(registry.compactions(), []);
   });
 });
 

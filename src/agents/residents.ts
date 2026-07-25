@@ -16,6 +16,18 @@
 
 import { Agent } from "@earendil-works/pi-agent-core";
 
+import {
+  type CompactableMessage,
+  type CompactionLevel,
+  type CompactionThresholds,
+  type Summariser,
+  type StorySummaryInput,
+  DEFAULT_THRESHOLDS,
+  compactLevel1,
+  compactLevel2,
+  estimateTokens,
+  levelFor,
+} from "./compaction.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import { type ModelId, installGateway } from "../runtime/gateway.ts";
 import { type PersonaSpec, personaFor, systemPromptFor, toolNamesFor } from "./personas.ts";
@@ -38,17 +50,19 @@ export interface LedgerEntry {
   readonly stopReason?: string;
 }
 
+export interface PiMessage {
+  readonly role: string;
+  readonly content: unknown;
+  readonly usage?: Record<string, number>;
+  readonly model?: string;
+  readonly stopReason?: string;
+}
+
 /** Minimal surface we need from a pi Agent; keeps the seam testable. */
 export interface AgentLike {
   prompt(input: string): Promise<unknown>;
   readonly state: {
-    readonly messages: readonly {
-      readonly role: string;
-      readonly content: unknown;
-      readonly usage?: Record<string, number>;
-      readonly model?: string;
-      readonly stopReason?: string;
-    }[];
+    messages: PiMessage[];
   };
 }
 
@@ -57,6 +71,60 @@ export type AgentFactory = (
   systemPrompt: string,
   toolNames: readonly string[],
 ) => AgentLike;
+
+export interface CompactionRecord {
+  readonly role: AgentRole;
+  readonly level: CompactionLevel;
+  readonly at: string;
+  readonly inputTokens: number;
+  readonly evicted: number;
+  readonly summarised: number;
+  readonly tokensBefore: number;
+  readonly tokensAfter: number;
+}
+
+export interface CompactionConfig {
+  readonly thresholds: CompactionThresholds;
+  readonly summarise: Summariser;
+  /** Re-read per compaction: canon moves, and a stale digest misleads. */
+  readonly context: () => Omit<StorySummaryInput, "folded">;
+}
+
+/**
+ * Map a pi message onto what the policy needs.
+ *
+ * Tool results are the ones worth identifying precisely, because they are the
+ * only thing level 1 may evict — everything else is either pinned or folded.
+ */
+function toCompactable(m: PiMessage): CompactableMessage {
+  const blocks = Array.isArray(m.content) ? (m.content as Record<string, unknown>[]) : [];
+  const text = blocks
+    .map((b) => (typeof b.text === "string" ? b.text : JSON.stringify(b)))
+    .join("\n");
+  const isToolResult = m.role === "toolResult" || blocks.some((b) => b.type === "toolResult");
+  const toolCall = blocks.find((b) => b.type === "toolCall") as
+    | { toolCallId?: string; name?: string }
+    | undefined;
+  return {
+    role: m.role,
+    kind: isToolResult ? "toolResult" : m.role === "user" ? "user" : "assistant",
+    tokens: estimateTokens(text),
+    text,
+    ...(toolCall?.toolCallId ? { toolCallId: toolCall.toolCallId } : {}),
+    ...(toolCall?.name ? { toolName: toolCall.name } : {}),
+    ...(isToolResult ? { digest: text.slice(0, 80).replace(/\s+/g, " ") } : {}),
+  };
+}
+
+/** Put a compacted body back into the pi message it came from. */
+function rewrite(original: PiMessage | undefined, m: CompactableMessage): PiMessage {
+  if (!original) return { role: m.role, content: [{ type: "text", text: m.text }] };
+  const blocks = Array.isArray(original.content) ? original.content : [];
+  const unchanged =
+    blocks.map((b) => (b as { text?: string }).text ?? "").join("\n") === m.text;
+  if (unchanged) return original;
+  return { ...original, content: [{ type: "text", text: m.text }] };
+}
 
 export class DelegationError extends Error {}
 
@@ -67,6 +135,8 @@ export class ResidentAgents {
   readonly #agentsRoot: string;
   readonly #personas: readonly PersonaSpec[];
   readonly #now: () => number;
+  readonly #compaction: CompactionConfig | null;
+  readonly #compactions: CompactionRecord[] = [];
   /** Message count already accounted for, per role, so usage is not double-counted. */
   readonly #accounted = new Map<AgentRole, number>();
 
@@ -75,11 +145,14 @@ export class ResidentAgents {
     readonly factory: AgentFactory;
     readonly personas?: readonly PersonaSpec[];
     readonly now?: () => number;
+    /** Omit to disable compaction entirely, which is right for short runs. */
+    readonly compaction?: CompactionConfig;
   }) {
     this.#agentsRoot = options.agentsRoot;
     this.#factory = options.factory;
     this.#personas = options.personas ?? [];
     this.#now = options.now ?? (() => Date.now());
+    this.#compaction = options.compaction ?? null;
   }
 
   #persona(role: AgentRole): PersonaSpec {
@@ -118,7 +191,17 @@ export class ResidentAgents {
   async invoke(
     role: AgentRole,
     task: string,
-    context: { readonly txid: string; readonly caller: AgentRole },
+    context: {
+      readonly txid: string;
+      readonly caller: AgentRole;
+      /**
+       * The orchestrator thinking, not delegating — planning the story, deciding
+       * what to do with a rejected scene. Distinguished from delegation because
+       * "the orchestrator cannot delegate to itself" is a real guard against an
+       * unbounded call graph, and its own reasoning must not be caught by it.
+       */
+      readonly selfCall?: boolean;
+    },
   ): Promise<{ readonly text: string; readonly ledger: LedgerEntry }> {
     if (context.caller !== "orchestrator") {
       throw new DelegationError(
@@ -126,8 +209,10 @@ export class ResidentAgents {
           `specialists never call specialists`,
       );
     }
-    if (role === "orchestrator") {
-      throw new DelegationError("the orchestrator cannot delegate to itself");
+    if (role === "orchestrator" && !context.selfCall) {
+      throw new DelegationError(
+        "the orchestrator cannot delegate to itself; pass selfCall for its own reasoning",
+      );
     }
     if (!task.trim()) {
       throw new DelegationError(`empty task sent to ${role}`);
@@ -141,7 +226,78 @@ export class ResidentAgents {
 
     const fresh = agent.state.messages.slice(before);
     const entry = this.#account(role, context.txid, fresh, durationMs);
-    return { text: textOf(fresh), ledger: entry };
+    const text = textOf(fresh);
+    await this.#maybeCompact(role, agent, entry);
+    return { text, ledger: entry };
+  }
+
+  /**
+   * Compact after a turn, using the context size the provider just reported.
+   *
+   * `usage.input` is what the model actually received, so there is no reason to
+   * estimate it — and estimating is where compaction policies usually go wrong,
+   * firing late on a long transcript and never at all on a short one full of
+   * huge tool payloads.
+   *
+   * Compaction runs *after* a turn rather than before the next one so a scene
+   * never pauses on it, and so the ledger entry for the turn that crossed the
+   * threshold records the size that triggered it.
+   */
+  async #maybeCompact(
+    role: AgentRole,
+    agent: AgentLike,
+    entry: LedgerEntry,
+  ): Promise<void> {
+    if (!this.#compaction) return;
+    const used = entry.usage.input;
+    const level = levelFor(used, this.#compaction.thresholds);
+    if (level === "none") return;
+
+    const before = agent.state.messages;
+    const compactable = before.map((m) => toCompactable(m));
+
+    let result =
+      level === "level1"
+        ? compactLevel1(compactable, this.#compaction.thresholds)
+        : await compactLevel2(
+            compactLevel1(compactable, this.#compaction.thresholds).messages,
+            this.#compaction.summarise,
+            this.#compaction.context(),
+            this.#compaction.thresholds,
+          );
+
+    // Level 2 subsumes level 1: at that pressure, evicting payloads first means
+    // the summary is written over pointers instead of over megabytes of grep.
+    if (level === "block") {
+      result = await compactLevel2(
+        compactLevel1(compactable, this.#compaction.thresholds).messages,
+        this.#compaction.summarise,
+        this.#compaction.context(),
+        this.#compaction.thresholds,
+      );
+    }
+
+    agent.state.messages = result.messages.map((m, i) =>
+      m.kind === "summary"
+        ? ({ role: "user", content: [{ type: "text", text: m.text }] } as PiMessage)
+        : rewrite(before[i], m),
+    );
+
+    this.#compactions.push({
+      role,
+      level,
+      at: new Date(this.#now()).toISOString(),
+      inputTokens: used,
+      evicted: result.evicted.length,
+      summarised: result.summarised,
+      tokensBefore: result.tokensBefore,
+      tokensAfter: result.tokensAfter,
+    });
+  }
+
+  /** Every compaction, so a run can show what its agents stopped remembering. */
+  compactions(): readonly CompactionRecord[] {
+    return [...this.#compactions];
   }
 
   #account(

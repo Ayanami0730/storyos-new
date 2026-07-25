@@ -1,0 +1,486 @@
+/**
+ * From a premise to a finished manuscript.
+ *
+ * The scene loop can complete one scene. This is the layer that decides which
+ * scenes there are, feeds each one the context the index has accumulated so
+ * far, and assembles what comes back.
+ *
+ * The part that carries the paper's claim is `contextFor`. Every scene is
+ * written against material *derived from committed state*, not against a
+ * growing transcript — that is the difference between this and a harness that
+ * hands the next call a summary of the last one. Whether it is worth its cost
+ * is exactly what the experiments measure, so the code has to make it true
+ * rather than approximately true.
+ */
+
+import { Type } from "typebox";
+
+import type { ContextItem } from "../context/types.ts";
+import type { CanonicalIndex } from "../index/commit.ts";
+import type { AgentRole } from "../transaction/types.ts";
+import type { CanonFact } from "../verification/deterministic.ts";
+import type { ResidentAgents } from "../agents/residents.ts";
+import { type SceneToolBus, residentCollaborators } from "./collaborators.ts";
+import { type RevisionPlan, planRevisions } from "./revision.ts";
+import type { SceneDelta } from "../verification/deterministic.ts";
+import { type SceneOutcome, runScene } from "./scene-loop.ts";
+
+export interface SceneCard {
+  readonly id: string;
+  readonly intent: string;
+  readonly presentEntities: readonly string[];
+  readonly targetWords: number;
+}
+
+export interface StoryPlan {
+  readonly logline: string;
+  readonly entities: readonly { readonly id: string; readonly sketch: string }[];
+  readonly worldRules: readonly string[];
+  readonly scenes: readonly SceneCard[];
+}
+
+export interface StoryResult {
+  readonly manuscript: string;
+  readonly words: number;
+  readonly plan: StoryPlan;
+  readonly scenes: readonly { readonly card: SceneCard; readonly outcome: SceneOutcome }[];
+  readonly canon: readonly CanonFact[];
+  /** Scenes that never committed, with why. Reported, never hidden. */
+  readonly failures: readonly { readonly sceneId: string; readonly reason: string }[];
+  /** What the whole-story pass found. Suggestions, never gate decisions. */
+  readonly revision: RevisionPlan;
+}
+
+function toolText(text: string) {
+  return { content: [{ type: "text", text }] };
+}
+
+/**
+ * Ask the orchestrator for a plan.
+ *
+ * Scene count is derived from the target rather than left to the model: a model
+ * asked for "a plan for 40,000 words" reliably proposes a dozen scenes and then
+ * has to write 3,000 words each, which is where single-call length limits bite.
+ */
+export function sceneCountFor(targetWords: number, wordsPerScene = 1_200): number {
+  return Math.max(4, Math.round(targetWords / wordsPerScene));
+}
+
+export function planTool(sink: { plan?: StoryPlan }, sceneCount: number): unknown {
+  return {
+    label: "Submit plan",
+    name: "submit_plan",
+    description: "Submit the story plan. Call once.",
+    parameters: Type.Object({
+      logline: Type.String(),
+      entities: Type.Array(
+        Type.Object({
+          id: Type.String({ description: "Stable id, e.g. char-mira or loc-harbour" }),
+          sketch: Type.String({ description: "One or two sentences" }),
+        }),
+      ),
+      world_rules: Type.Array(Type.String()),
+      scenes: Type.Array(
+        Type.Object({
+          intent: Type.String({ description: "What this scene accomplishes" }),
+          present: Type.Array(Type.String({ description: "Entity ids present" })),
+        }),
+      ),
+    }),
+    execute: async (
+      _id: string,
+      args: {
+        logline: string;
+        entities: { id: string; sketch: string }[];
+        world_rules: string[];
+        scenes: { intent: string; present: string[] }[];
+      },
+    ) => {
+      const scenes = args.scenes ?? [];
+      if (scenes.length < Math.floor(sceneCount * 0.6)) {
+        return toolText(
+          `rejected: ${scenes.length} scenes is too few for the target. Propose about ` +
+            `${sceneCount}. Each scene is written by a separate call, so a short plan does ` +
+            `not shorten the work — it makes each scene carry more words than one call writes well.`,
+        );
+      }
+      const ids = new Set((args.entities ?? []).map((e) => e.id));
+      const unknown = scenes.flatMap((s) =>
+        (s.present ?? []).filter((p) => !ids.has(p)),
+      );
+      if (unknown.length > 0) {
+        return toolText(
+          `rejected: scenes reference entities that are not in your entity list: ` +
+            `${[...new Set(unknown)].join(", ")}. Add them or fix the ids.`,
+        );
+      }
+      sink.plan = {
+        logline: args.logline,
+        entities: args.entities ?? [],
+        worldRules: args.world_rules ?? [],
+        scenes: scenes.map((s, i) => ({
+          id: `s-${String(i + 1).padStart(3, "0")}`,
+          intent: s.intent,
+          presentEntities: s.present ?? [],
+          targetWords: 0,
+        })),
+      };
+      return toolText(`plan accepted: ${scenes.length} scenes.`);
+    },
+  };
+}
+
+/**
+ * Revise the remaining plan mid-story.
+ *
+ * Modelled on how a coding agent keeps a live todo list rather than a plan it
+ * wrote once: the outline is a working document, and the prose is the thing
+ * that teaches you what the outline should have said. Our writer prompt already
+ * invites deviation proposals; this is where one can be acted on.
+ *
+ * The hard boundary is committed scenes. They are on the page, later scenes
+ * were written against them, and "revising" one by editing the plan would make
+ * the plan disagree with the manuscript silently. Changing committed prose is
+ * the revision phase's job, through a real transaction.
+ */
+export function updatePlanTool(state: {
+  plan?: StoryPlan;
+  committed: ReadonlySet<string>;
+}): unknown {
+  return {
+    label: "Update plan",
+    name: "update_plan",
+    description:
+      "Revise the scenes that have not been written yet. Use when the prose has diverged " +
+      "from the outline, a thread needs more room, or a planned scene is no longer earning " +
+      "its place. Say why.",
+    parameters: Type.Object({
+      reason: Type.String({ description: "What the prose taught you that the plan got wrong" }),
+      scenes: Type.Array(
+        Type.Object({
+          id: Type.String({ description: "Existing scene id to replace, or 'new'" }),
+          intent: Type.String(),
+          present: Type.Array(Type.String()),
+        }),
+      ),
+    }),
+    execute: async (
+      _id: string,
+      args: { reason: string; scenes: { id: string; intent: string; present: string[] }[] },
+    ) => {
+      if (!state.plan) return toolText("rejected: there is no plan yet.");
+      if (!args.reason?.trim()) {
+        return toolText("rejected: reason is required — an unexplained plan change is a drift.");
+      }
+      const touched = (args.scenes ?? []).filter((s) => state.committed.has(s.id));
+      if (touched.length > 0) {
+        return toolText(
+          `rejected: ${touched.map((s) => s.id).join(", ")} are already written and later ` +
+            `scenes were built on them. To change committed prose, raise it in the revision ` +
+            `phase; editing the plan would leave the plan disagreeing with the manuscript.`,
+        );
+      }
+
+      const kept = state.plan.scenes.filter((s) => state.committed.has(s.id));
+      const perScene = state.plan.scenes[0]?.targetWords ?? 1200;
+      const replacements = (args.scenes ?? []).map((s, i) => ({
+        id: s.id === "new" ? `s-${String(kept.length + i + 1).padStart(3, "0")}` : s.id,
+        intent: s.intent,
+        presentEntities: s.present ?? [],
+        targetWords: perScene,
+      }));
+      state.plan = { ...state.plan, scenes: [...kept, ...replacements] };
+      return toolText(
+        `plan updated: ${kept.length} scene(s) already written kept, ` +
+          `${replacements.length} ahead.`,
+      );
+    },
+  };
+}
+
+export async function planStory(options: {
+  readonly residents: ResidentAgents;
+  readonly premise: string;
+  readonly targetWords: number;
+  readonly txid: string;
+  readonly sink: { plan?: StoryPlan };
+}): Promise<StoryPlan> {
+  const { residents, premise, targetWords, txid, sink } = options;
+  const sceneCount = sceneCountFor(targetWords);
+  const perScene = Math.round(targetWords / sceneCount);
+
+  await residents.invoke(
+    "orchestrator",
+    `Plan a story of about ${targetWords} words from this premise.\n\n${premise}\n\n` +
+      `Propose about ${sceneCount} scenes of roughly ${perScene} words each. Give every ` +
+      `character, location and significant object a stable id now — later scenes can only ` +
+      `refer to entities that exist. State the world rules the story must not break. ` +
+      `Then call submit_plan.`,
+    { txid, caller: "orchestrator", selfCall: true },
+  );
+
+  if (!sink.plan) throw new Error("the orchestrator produced no plan");
+  return {
+    ...sink.plan,
+    scenes: sink.plan.scenes.map((s) => ({ ...s, targetWords: perScene })),
+  };
+}
+
+/**
+ * The packet material for one scene, assembled from committed state.
+ *
+ * Priorities are what the builder enforces; what belongs in each is this
+ * function's judgement. The one that matters most is P1: a character's *current*
+ * facts, so the writer is never guessing at state the index already knows.
+ */
+export function contextFor(input: {
+  readonly card: SceneCard;
+  readonly plan: StoryPlan;
+  readonly canon: readonly CanonFact[];
+  readonly previousProse: string | null;
+  readonly earlierIntents: readonly string[];
+}): readonly ContextItem[] {
+  const { card, plan, canon, previousProse, earlierIntents } = input;
+  const items: ContextItem[] = [
+    {
+      id: "scene-card",
+      priority: "P0",
+      source: `index/story/structure/scenes/${card.id}.yaml`,
+      content:
+        `Scene ${card.id}. Intent: ${card.intent}\n` +
+        `Present: ${card.presentEntities.join(", ") || "none stated"}\n` +
+        `Target length: about ${card.targetWords} words.`,
+    },
+    {
+      id: "logline",
+      priority: "P0",
+      source: "index/story/logline.md",
+      content: plan.logline,
+    },
+  ];
+
+  if (plan.worldRules.length > 0) {
+    items.push({
+      id: "world-rules",
+      priority: "P0",
+      source: "index/story/bible/world-rules.yaml",
+      content: plan.worldRules.map((r) => `- ${r}`).join("\n"),
+    });
+  }
+
+  // P1 — who is here and what is currently true of them. Facts are grouped per
+  // entity because that is how a writer needs them, and only present entities
+  // are included: a packet that lists everyone is a packet the writer skims.
+  for (const entityId of card.presentEntities) {
+    const sketch = plan.entities.find((e) => e.id === entityId)?.sketch ?? "";
+    const facts = canon.filter((f) => f.entity === entityId);
+    items.push({
+      id: `entity-${entityId}`,
+      priority: "P1",
+      source: `index/story/bible/${entityId}.yaml`,
+      content:
+        `${entityId}: ${sketch}\n` +
+        (facts.length > 0
+          ? facts.map((f) => `  ${f.attribute}: ${f.value}  (from ${f.source})`).join("\n")
+          : "  no facts established yet"),
+    });
+  }
+
+  if (previousProse) {
+    items.push({
+      id: "previous-scene",
+      priority: "P2",
+      source: "manuscript (previous scene)",
+      content: previousProse,
+    });
+  }
+
+  if (earlierIntents.length > 0) {
+    // Navigation only. Summaries may point at the story; they may not be cited
+    // as fact — anything load-bearing is in the P1 facts with its source.
+    items.push({
+      id: "story-so-far",
+      priority: "P3",
+      source: "index/story/structure/beats.yaml",
+      content: earlierIntents.map((s, i) => `${i + 1}. ${s}`).join("\n"),
+    });
+  }
+
+  return items;
+}
+
+/** Facts the committed delta adds to canon, so the next scene sees them. */
+export function absorb(
+  canon: readonly CanonFact[],
+  sceneId: string,
+  delta: { readonly claims: readonly { entity: string; attribute: string; value: string }[] },
+): readonly CanonFact[] {
+  const next = [...canon];
+  for (const claim of delta.claims) {
+    const at = next.findIndex(
+      (f) => f.entity === claim.entity && f.attribute === claim.attribute,
+    );
+    const fact: CanonFact = {
+      id: `fact-${claim.entity}-${claim.attribute}`,
+      entity: claim.entity,
+      attribute: claim.attribute,
+      value: claim.value,
+      source: sceneId,
+    };
+    // A superseding claim replaces in place; a new one appends. Either way the
+    // source moves to the scene that established the current value, so a later
+    // contradiction points at the right place.
+    if (at >= 0) next[at] = fact;
+    else next.push(fact);
+  }
+  return next;
+}
+
+export async function writeStory(options: {
+  readonly residents: ResidentAgents;
+  readonly index: CanonicalIndex;
+  readonly premise: string;
+  readonly targetWords: number;
+  readonly maxRepairs: number;
+  readonly planSink: { plan?: StoryPlan };
+  /**
+   * Shared with whoever constructed the agents. It must be the same bus: the
+   * agents' tools were registered against it once, and a second bus here would
+   * mean the writer files its prose into a buffer nobody reads.
+   */
+  readonly bus: SceneToolBus;
+  readonly onScene?: (sceneId: string) => void;
+  /**
+   * Progress, because a forty-scene run that prints nothing for an hour is
+   * indistinguishable from a hung one, and the difference matters at 3am.
+   */
+  readonly log?: (line: string) => void;
+}): Promise<StoryResult> {
+  const { residents, index, premise, targetWords, maxRepairs, planSink } = options;
+
+  const say = options.log ?? (() => {});
+  say(`planning for ${targetWords} words`);
+  const plan = await planStory({
+    residents,
+    premise,
+    targetWords,
+    txid: "tx-plan",
+    sink: planSink,
+  });
+
+  const knownEntities = new Set(plan.entities.map((e) => e.id));
+  let canon: readonly CanonFact[] = [];
+  let previousProse: string | null = null;
+  const earlierIntents: string[] = [];
+  const scenes: { card: SceneCard; outcome: SceneOutcome }[] = [];
+  const failures: { sceneId: string; reason: string }[] = [];
+  const prose: string[] = [];
+  const committedScenes: string[] = [];
+  const committedDeltas: SceneDelta[] = [];
+  const proseByScene = new Map<string, string>();
+
+  say(
+    `plan: ${plan.scenes.length} scenes, ${plan.entities.length} entities, ` +
+      `${plan.worldRules.length} world rules`,
+  );
+
+  for (const card of plan.scenes) {
+    const txid = `tx-${card.id}`;
+    const sceneStarted = Date.now();
+    say(`${card.id} start — ${card.intent.slice(0, 70)}`);
+    const { collaborators } = residentCollaborators({
+      residents,
+      sceneId: card.id,
+      txid,
+      bus: options.bus,
+    });
+    options.onScene?.(card.id);
+
+    let outcome: SceneOutcome;
+    try {
+      outcome = await runScene(
+      {
+        txid,
+        sceneId: card.id,
+        packet: {
+          sceneId: card.id,
+          baseCommitId: await index.head(),
+          hardRequiredIds: ["scene-card", "logline"],
+          budgetWords: 60_000,
+        },
+        available: contextFor({ card, plan, canon, previousProse, earlierIntents }),
+        canon,
+        knownEntities,
+        maxRepairs,
+        prosePath: `manuscript/${card.id}.md`,
+      },
+      { index, collaborators },
+      );
+    } catch (error) {
+      // A collaborator that never produced an artefact is a scene failure, not
+      // a run failure. Recorded and moved past, exactly like a rejected scene:
+      // the failure rate is a result we want, and a harness that halts on the
+      // first misbehaving turn produces no result at all.
+      const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      say(`${card.id} FAILED — ${reason}`);
+      failures.push({ sceneId: card.id, reason });
+      earlierIntents.push(`${card.intent} [scene not completed]`);
+      continue;
+    }
+
+    scenes.push({ card, outcome });
+    say(
+      `${card.id} ${outcome.status} after ${outcome.attempts} attempt(s), ` +
+        `${Math.round((Date.now() - sceneStarted) / 1000)}s, ` +
+        `${outcome.findings.length} finding(s)`,
+    );
+
+    if (outcome.status === "COMMITTED") {
+      const text = await index.read(`manuscript/${card.id}.md`);
+      prose.push(text);
+      previousProse = text;
+      const delta = JSON.parse(
+        await index.read(`index/story/continuity/deltas/${card.id}.json`),
+      ) as SceneDelta;
+      canon = absorb(canon, card.id, delta);
+      committedScenes.push(card.id);
+      committedDeltas.push(delta);
+      proseByScene.set(card.id, text);
+      earlierIntents.push(card.intent);
+    } else {
+      // A failed scene does not stop the story. It is recorded, the narrative
+      // moves on, and the failure rate is a result — a harness that halts on
+      // the first hard scene reports nothing at all.
+      failures.push({
+        sceneId: card.id,
+        reason:
+          "reason" in outcome
+            ? outcome.reason
+            : (outcome as { status: string }).status,
+      });
+      earlierIntents.push(`${card.intent} [scene not completed]`);
+    }
+  }
+
+  // The revision phase. Everything above is scene-local; this is the only
+  // place the story is looked at as a whole, and it is the only place the
+  // negative inferences — an unpaid promise, an ability never used — can be
+  // judged at all.
+  say(`drafting done: ${committedScenes.length}/${plan.scenes.length} committed`);
+  const revision = planRevisions({
+    scenes: committedScenes,
+    deltas: committedDeltas,
+    proseByScene,
+  });
+
+  const manuscript = prose.join("\n\n");
+  return {
+    manuscript,
+    words: manuscript.split(/\s+/).filter(Boolean).length,
+    plan,
+    scenes,
+    canon,
+    failures,
+    revision,
+  };
+}

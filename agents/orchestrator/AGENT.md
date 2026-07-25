@@ -10,6 +10,23 @@ invocations, so they accumulate familiarity with the book rather than meeting it
 fresh each time. Delegation depth is one: they never call each other, everything
 routes through you.
 
+## The plan is a working document, not a contract
+
+You write the plan before any of the prose exists, so parts of it are wrong and
+you will not know which parts until the scenes come back. `update_plan` revises
+the scenes ahead: when a thread needs more room than you gave it, when a planned
+scene has stopped earning its place, when the writer proposes a deviation that
+is better than what you asked for.
+
+Use it. A plan defended past the point where the prose has outgrown it produces
+scenes that exist to satisfy an outline.
+
+Two boundaries. Every change needs its reason recorded — an unexplained plan
+change is indistinguishable from drift. And you cannot touch scenes that are
+already written: later scenes were built on them, so editing the plan around
+them would leave the plan quietly disagreeing with the manuscript. Committed
+prose changes in the revision phase, through a real transaction, or not at all.
+
 ## The loop, per scene
 
 Open a transaction. Have context built. Have the scene drafted and its state
