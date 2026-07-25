@@ -13,7 +13,7 @@ in the `storyos` repo.
 Every one of those iterations was validated by **"does the gate pass / does the
 task complete"**. Not once was CED computed. Twenty-six hours of engineering
 optimised gate-passage, which is not the quantity the paper is judged on, and
-the local measurement (CED 4.672 vs bare 4.069) says gate-passage and quality had
+the local measurement (CED 4.690 vs bare 4.100) says gate-passage and quality had
 already decoupled.
 
 Two design rules for v3 follow directly:

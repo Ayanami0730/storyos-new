@@ -14,9 +14,9 @@ task、输出完整结果。而**评估**这些结果所需的一切——数据
 ## 为什么要做 v3
 
 v2 已经交付，并给出了我们自己系统的第一个实测结果：在 ConStory
-tuning-20 上的 **CED 为 4.672**（完成 14/19 个任务，共 130,557 词，
+tuning-20 上的 **CED 为 4.690**（完成 14/19 个任务，共 130,557 词，
 backbone 为 gpt-5-mini）。使用相同 backbone 时，`bare-long-context`
-得到 **4.069**，也就是最简单的 baseline 胜过了我们。完整表格和根因见
+得到 **4.100**，也就是最简单的 baseline 胜过了我们。完整表格和根因见
 `docs/03-v2-postmortem.md`。简短地说，v2 的 validation gate 保护的是
 *已声明的 typed state*，而 CED 衡量的是*正文*；同时 audit extractor
 对每个 scene 最多只提取 5 条 claim 和 3 次 knowledge use，因此 gate

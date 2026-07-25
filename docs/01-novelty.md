@@ -27,13 +27,13 @@ And on ConStory tuning-20 (8–10k targets), where CED is consistency errors per
 
 | System | CED ↓ | mean words |
 |---|---:|---:|
-| raw-gpt-5.6-sol | 1.211 | 10,321 |
-| raw-gpt-5.5 | 1.229 | 12,201 |
-| raw-gemini-3.1-pro | 3.960 | 10,480 |
-| bare-long-context | 4.069 | 11,060 |
-| storywriter-style | 4.857 | 14,824 |
-| agentwrite | 6.240 | 15,065 |
-| agents-room-style | 6.632 | 14,098 |
+| raw-gpt-5.6-sol | 1.200 | 10,321 |
+| raw-gpt-5.5 | 1.202 | 12,201 |
+| raw-gemini-3.1-pro | 3.964 | 10,480 |
+| bare-long-context | 4.100 | 11,060 |
+| storywriter-style | 5.055 | 14,824 |
+| agentwrite | 6.155 | 15,065 |
+| agents-room-style | 6.610 | 14,098 |
 
 Read together, these two tables suggest a **length–consistency Pareto front**:
 raw frontier models are the most consistent thing we measured and cannot reach
@@ -126,7 +126,7 @@ whichever component needs it rather than only whichever component the pipeline
 author anticipated. Under that design, long-form writing should hold quality
 instead of degrading with length.
 
-**Status: unproven.** v2 does not demonstrate it (CED 4.672 vs bare 4.069). The
+**Status: unproven.** v2 does not demonstrate it (CED 4.690 vs bare 4.100). The
 claim stands or falls on v3 measurements.
 
 ## Novelty 2 — For story state, a free-form filesystem index beats graphs and tables

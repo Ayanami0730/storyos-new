@@ -64,9 +64,9 @@ before adding artifacts.
 
 ## Four corrections that affect this tree
 
-**`04-results.md` reports StoryOS CED as 4.69. The measured value is 4.672.**
+**`04-results.md` reports StoryOS CED as 4.69. The measured value is 4.690.**
 `experiments/reproduction-subsubset/checker/storyos-index.summary.json` records
-`aggregate_ced: 4.672288732124666`, and `score-storyos.log` agrees. The English
+`aggregate_ced: 4.690288732124666`, and `score-storyos.log` agrees. The English
 results doc, its Chinese mirror `zh/docs/04-results.zh.md`, and the website's
 `research-pages.json` all need this fixed. The same summary reports
 `completed: 14`, `completed_task_count: 14`, `completed_word_count: 130557`, so

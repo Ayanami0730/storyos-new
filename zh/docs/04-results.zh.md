@@ -15,7 +15,7 @@
 - **RecurrentGPT**：我们的 adapter 同时删掉了上一段和官方循环里的长期 top-k 检索。
 - **DOME**：我们的 writer 少传了官方 DHO writer prompt 里的 `last_chapter_story`（`storyos/src/baselines/dome.py:681-716`）。
 
-后果：harness 那三行 4.857 / 6.240 / 6.632 是被我们自己的实现选择拉高（变差）的，所以**"harness 输给 bare long-context"这个结论并不成立**，这张表在当前形态下不能发表。任何结论要靠它之前，必须先恢复忠实度、重跑受影响的系统、重打分、重新推导这张表。`bare-long-context`、三个 `raw-*` 和 `storyos-index` 那几行不受影响。
+后果：harness 那三行 5.055 / 6.155 / 6.610 是被我们自己的实现选择拉高（变差）的，所以**"harness 输给 bare long-context"这个结论并不成立**，这张表在当前形态下不能发表。任何结论要靠它之前，必须先恢复忠实度、重跑受影响的系统、重打分、重新推导这张表。`bare-long-context`、三个 `raw-*` 和 `storyos-index` 那几行不受影响。
 
 ## 1. ConStory tuning-20 —— 一致性（CED，越低越好）
 
@@ -23,21 +23,34 @@ CED = 检出的不同错误子类数 ÷（词数 / 10,000），每 10k 词取值
 
 | 系统 | 类别 | CED ↓ | 平均词数 | 完成数 |
 |---|---|---:|---:|---:|
-| raw-gpt-5.6-sol | frontier zero-shot | 1.211 | 10,321 | 20/20 |
-| raw-gpt-5.5 | frontier zero-shot | 1.229 | 12,201 | 20/20 |
-| raw-gemini-3.1-pro-preview | frontier zero-shot | 3.960 | 10,480 | 20/20 |
-| bare-long-context | 受控 zero-shot | 4.069 | 11,060 | 20/20 |
-| **storyos-index (v2)** | **我们** | **4.672** | 9,326 | **14/19** |
-| storywriter-style | harness | 4.857 | 14,824 | 20/20 |
-| agentwrite | harness | 6.240 | 15,065 | 20/20 |
-| agents-room-style | harness | 6.632 | 14,098 | 20/20 |
+| raw-gpt-5.6-sol | frontier zero-shot | 1.200 | 10,321 | 20/20 |
+| raw-gpt-5.5 | frontier zero-shot | 1.202 | 12,201 | 20/20 |
+| raw-gemini-3.1-pro-preview | frontier zero-shot | 3.964 | 10,480 | 20/20 |
+| bare-long-context | 受控 zero-shot | 4.100 | 11,060 | 20/20 |
+| **storyos-index (v2)** | **我们** | **4.690** | 9,326 | **14/19** |
+| storywriter-style | harness | 5.055 | 14,824 | 20/20 |
+| agentwrite | harness | 6.155 | 15,065 | 20/20 |
+| agents-room-style | harness | 6.610 | 14,098 | 20/20 |
 | dome | harness | 未打分 | 10,504 | 4/20 |
 
-2026-07-25 对照已进 git 的权威文件 `experiments/reproduction-subsubset/summary.md`
-与 `checker/*.summary.json` 修正。旧表里的数字取自一次尚未跑完的打分过程的中途读数，
-其中**三个是实质性错误而非四舍五入**：storyos-index 4.69 → 4.672、
-storywriter-style 5.06 → **4.857**、agentwrite 6.15 → **6.240**。排名顺序不变，
-但 StoryOS 与 storywriter 的差距不到旧数字暗示的一半（0.185，不是 0.37）。
+这张表用的是哪个平均，以及为什么重要。`checker/*.summary.json` 每个系统给出两个估计量，
+两者不可互换：
+
+- **`mean_ced`** —— 宏平均，即逐题 CED 的均值。**这才是 ConStory 的官方指标**：
+  $\overline{\mathrm{CED}}_m = \frac{1}{N}\sum_i \mathrm{CED}_{m,i}$，其中
+  $\mathrm{CED}_{m,i} = e_{m,i} / (w_{m,i}/10^4)$
+  （`storyos/survey/notes/constory-2603.05890.md:166`）。上表用的是它。
+- **`aggregate_ced`** —— 汇总微平均：总错误数除以总词数。它本身合法，但对 ConStory
+  而言是离开官方口径的，而且会隐式地给长故事更大权重。
+
+两者大体一致（|Δ| ≤ 0.03），但在逐题长度差异最大的地方分歧：storywriter-style 宏平均
+5.055 而微平均 4.857，agentwrite 6.155 对 6.240。**两种口径下排名完全相同**，所以这里
+没有任何结论依赖于口径选择——但 StoryOS 与 storywriter 的差距依赖它：宏平均 0.365、
+微平均 0.185。宏平均作主口径、微平均作稳健性检查，**绝不能在同一列里混用**。
+
+两条随表同行的打分限定：`agentwrite` 有 `skipped: 2`，所以它的宏平均是 18 题而非 20 题；
+`bare-long-context` 的 `completed: 0` 与 `completed_task_count: 20` 并存，是 summary
+写入侧的 schema 记法问题，不是真失败。
 
 v2 的分类分解：`timeline_plot_logic` 1.92、`factual_detail` 1.38、`narrative_style` 0.92、`characterization` 0.23、`world_building_setting` 0.23。按任务型分解：Continuation 6.17、Completion 4.58、Generation 3.88、Expansion 3.59。14 个任务、130,557 词，单题 CED 从 0.00（task 1004）到 8.79（task 0），方差很大且 n 很小。
 

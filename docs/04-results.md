@@ -30,7 +30,7 @@ implementations (`../../research/2026-07/25-baseline-context-flow-audit.md` §
 - **DOME**: our writer omits `last_chapter_story`, which the official DHO writer
   prompt includes (`storyos/src/baselines/dome.py:681-716`).
 
-Consequence: the 4.857 / 6.240 / 6.632 harness scores are inflated (i.e. made worse)
+Consequence: the 5.055 / 6.155 / 6.610 harness scores are inflated (i.e. made worse)
 by our own implementation choices, so **"harnesses lose to bare long-context"
 is not established** and this table must not be published in its current form.
 Required before any claim rests on it: restore faithfulness, re-run the affected
@@ -44,23 +44,37 @@ words. Source: `storyos/experiments/reproduction-subsubset/checker/*.summary.jso
 
 | System | Class | CED ↓ | mean words | completed |
 |---|---|---:|---:|---:|
-| raw-gpt-5.6-sol | frontier zero-shot | 1.211 | 10,321 | 20/20 |
-| raw-gpt-5.5 | frontier zero-shot | 1.229 | 12,201 | 20/20 |
-| raw-gemini-3.1-pro-preview | frontier zero-shot | 3.960 | 10,480 | 20/20 |
-| bare-long-context | controlled zero-shot | 4.069 | 11,060 | 20/20 |
-| **storyos-index (v2)** | **ours** | **4.672** | 9,326 | **14/19** |
-| storywriter-style | harness | 4.857 | 14,824 | 20/20 |
-| agentwrite | harness | 6.240 | 15,065 | 20/20 |
-| agents-room-style | harness | 6.632 | 14,098 | 20/20 |
+| raw-gpt-5.6-sol | frontier zero-shot | 1.200 | 10,321 | 20/20 |
+| raw-gpt-5.5 | frontier zero-shot | 1.202 | 12,201 | 20/20 |
+| raw-gemini-3.1-pro-preview | frontier zero-shot | 3.964 | 10,480 | 20/20 |
+| bare-long-context | controlled zero-shot | 4.100 | 11,060 | 20/20 |
+| **storyos-index (v2)** | **ours** | **4.690** | 9,326 | **14/19** |
+| storywriter-style | harness | 5.055 | 14,824 | 20/20 |
+| agentwrite | harness | 6.155 | 15,065 | 20/20 |
+| agents-room-style | harness | 6.610 | 14,098 | 20/20 |
 | dome | harness | not scored | 10,504 | 4/20 |
 
-Corrected 2026-07-25 against the authoritative
-`experiments/reproduction-subsubset/summary.md` and `checker/*.summary.json`,
-now in git. The earlier table carried mid-run partial values read off an
-incomplete scoring pass; **three were materially wrong**, not just rounded:
-storyos-index 4.69 → 4.672, storywriter-style 5.06 → **4.857**, agentwrite
-6.15 → **6.240**. The ranking order is unchanged, but the StoryOS-to-storywriter
-gap is less than half what the old numbers implied (0.185, not 0.37).
+Which average this is, and why it matters. `checker/*.summary.json` reports two
+estimators per system, and they are not interchangeable:
+
+- **`mean_ced`** — the macro average, mean over per-task CED. **This is ConStory's
+  official metric**: $\overline{\mathrm{CED}}_m = \frac{1}{N}\sum_i
+  \mathrm{CED}_{m,i}$ with $\mathrm{CED}_{m,i} = e_{m,i} / (w_{m,i}/10^4)$
+  (`storyos/survey/notes/constory-2603.05890.md:166`). The table above uses it.
+- **`aggregate_ced`** — pooled/micro: total errors over total words. Legitimate,
+  but off-metric for ConStory, and it silently weights long stories more.
+
+The two mostly agree (|Δ| ≤ 0.03) but diverge where per-task length varies most:
+storywriter-style is 5.055 macro vs 4.857 pooled, agentwrite 6.155 vs 6.240.
+**The ranking is identical under both**, so no conclusion here depends on the
+choice — but the StoryOS-to-storywriter gap does: 0.365 macro, 0.185 pooled.
+Report macro as primary and pooled as a robustness check; never mix them in one
+column.
+
+Two scoring caveats that travel with this table: `agentwrite` has `skipped: 2`,
+so its macro mean is over 18 tasks, not 20; and `bare-long-context` records
+`completed: 0` alongside `completed_task_count: 20`, which is a schema quirk in
+the summary writer rather than a real failure.
 
 v2 category breakdown: `timeline_plot_logic` 1.92, `factual_detail` 1.38,
 `narrative_style` 0.92, `characterization` 0.23, `world_building_setting` 0.23.

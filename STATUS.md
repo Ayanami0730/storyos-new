@@ -11,7 +11,7 @@ claims is `docs/01-novelty.md`; measured numbers are `docs/04-results.md`.
 | Motivation | quality degrades and facts drift as output grows | **directionally supported, not established** — our own pilot gives r = 0.405, p = 0.076 (N=20, never exceeded 14.1k actual words). Needs the 60k sweep (§2 below). |
 | Motivation | raw frontier models cannot reach novel length | **established and clean** — 11–22% of a 40k target, nobody weakened them |
 | Novelty 1 | existing harnesses hand each other *lossy* context | **claim rewritten 2026-07-25**, evidence audit done for 7 systems; the earlier "components can't see the prose" version was falsified by our own audit and must not be reused |
-| Novelty 1 | a unified lossless index fixes it | **unproven.** v2 scored CED 4.672 vs bare 4.069. This is what v3 exists to test. |
+| Novelty 1 | a unified lossless index fixes it | **unproven.** v2 scored CED 4.690 vs bare 4.100. This is what v3 exists to test. |
 | Novelty 2 | filesystem index beats graphs for dense time-varying relations | **argued, not yet demonstrated.** Schema designed (`relations/<pair-id>.yaml`); no run has produced one. |
 | Novelty 3 | FreshNovelBench | **built** — 50 frozen tasks, contamination gate, in Mongo and on the site. Human spot-check and full-50 probe still outstanding. |
 | Method | v3 five-agent resident harness on pi | **designed, zero lines written.** Foundation smoke test passes. |
@@ -42,27 +42,31 @@ Two smaller gaps remain:
 - **The website source is not in git and the copy on sgp-dev is stale.**
   `popia_dmx/storyos-bench-viewer/` is not a git repository, its `scripts/` has
   no `build_research_pages.py`, and `public/data/` holds only `palette.json`;
-  only the laptop-built `out/` is current. The deployed
-  `out/data/research-pages.json` still carries the pre-correction CED values
-  (4.69 ×6, 5.06 ×9, 6.15 ×9).
+  only the laptop-built `out/` is current. Its `/leaderboard` numbers were
+  never wrong — they read `mean_ced`, ConStory's own metric (see §1b).
 
-## 1b. Three published CED values were wrong, now corrected
+## 1b. CED: two estimators exist, and only one is ConStory's metric
 
-The laptop's handoff flagged one stale number. Checking every system against the
-authoritative `experiments/reproduction-subsubset/summary.md` found **three**:
+The laptop's handoff flagged StoryOS's CED as "4.69 should be 4.672". Chasing that
+down revealed the real situation: `checker/*.summary.json` carries **two** numbers
+per system, `mean_ced` (macro: mean of per-task CED) and `aggregate_ced` (pooled:
+total errors over total words). The documented table had been using `mean_ced`
+throughout, which is correct — **ConStory defines CED as the macro average**
+($\overline{\mathrm{CED}}_m = \frac{1}{N}\sum_i \mathrm{CED}_{m,i}$,
+`storyos/survey/notes/constory-2603.05890.md:166`).
 
-| System | was | measured |
-|---|---:|---:|
-| storyos-index (v2) | 4.69 | **4.672** |
-| storywriter-style | 5.06 | **4.857** |
-| agentwrite | 6.15 | **6.240** |
+I briefly switched the whole table to `aggregate_ced` on the assumption that the
+old values were mid-run partials. That was wrong and is reverted: the table is
+back on `mean_ced`. Nothing was ever "materially wrong" — the two estimators
+mostly agree (|Δ| ≤ 0.03) and **give an identical ranking**; they diverge only
+where per-task length varies most (storywriter 5.055 vs 4.857, agentwrite 6.155
+vs 6.240). The one quantity that does depend on the choice is the
+StoryOS-to-storywriter gap: 0.365 macro, 0.185 pooled.
 
-The rest were rounding (1.20→1.211, 1.20→1.229, 3.96→3.960, 4.10→4.069,
-6.61→6.632). The old values look like a mid-run reading taken while scoring was
-still in flight. Ranking order is unchanged, but the StoryOS-to-storywriter gap
-is 0.185 rather than 0.37 — the nearest harness is much closer than the earlier
-table implied, which matters for how the v2 result is framed. All `.md` files in
-this tree are corrected; **the website still needs it.**
+Standing rule: macro is primary, pooled is a robustness check, never mixed in one
+column. The website's `/leaderboard` reads `mean_ced` from
+`~/storyos-data/scores/` via `build_outputs.py`, so it is already on the right
+estimator — a second pipeline, but the same metric.
 
 ## 2. What to do, in dependency order
 

@@ -29,13 +29,13 @@ engineering hygiene，没有审美价值，而且我们自己的测量结果也�
 
 | 系统 | CED ↓ | 平均词数 |
 |---|---:|---:|
-| raw-gpt-5.6-sol | 1.211 | 10,321 |
-| raw-gpt-5.5 | 1.229 | 12,201 |
-| raw-gemini-3.1-pro | 3.960 | 10,480 |
-| bare-long-context | 4.069 | 11,060 |
-| storywriter-style | 4.857 | 14,824 |
-| agentwrite | 6.240 | 15,065 |
-| agents-room-style | 6.632 | 14,098 |
+| raw-gpt-5.6-sol | 1.200 | 10,321 |
+| raw-gpt-5.5 | 1.202 | 12,201 |
+| raw-gemini-3.1-pro | 3.964 | 10,480 |
+| bare-long-context | 4.100 | 11,060 |
+| storywriter-style | 5.055 | 14,824 |
+| agentwrite | 6.155 | 15,065 |
+| agents-room-style | 6.610 | 14,098 |
 
 两张表放在一起，就是一条**长度–一致性 Pareto front**。我们测到的 raw
 frontier model 一致性最好，却完全无法达到长篇小说的长度。所有能达到
@@ -69,7 +69,7 @@ prompt 的内容**，没有 component 能按需查询完整 state。因此总会
 它的 component，而不是只到达 pipeline 作者预先想到的 component。按这个
 设计，long-form writing 应该能随长度增长维持质量，而不是逐渐退化。
 
-**状态：尚未证明。** v2 没有证明这一点（CED 4.672，bare 为 4.069）。
+**状态：尚未证明。** v2 没有证明这一点（CED 4.690，bare 为 4.100）。
 这项主张能否成立，取决于 v3 的测量结果。
 
 ## Novelty 2：对于 story state，free-form filesystem index 优于 graph 和 table

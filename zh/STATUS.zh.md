@@ -11,7 +11,7 @@
 | Motivation | 输出越长，质量下降、事实漂移 | **方向上支持，未成立** —— 我们自己的 pilot 只有 r = 0.405, p = 0.076（N=20，实际词数从未超过 14.1k）。需要 60k 扫描实验（见下方第 2 节）。 |
 | Motivation | 裸前沿模型达不到 novel length | **已成立且干净** —— 40k 目标只做到 11–22%，没人削弱过它们 |
 | Novelty 1 | 现有 harness 相互传递的是**有损**上下文 | **2026-07-25 已重写主张**，7 个系统的证据审计完成；早先"组件看不到正文"的版本被我们自己的审计证伪，不得再用 |
-| Novelty 1 | 统一无损索引能解决它 | **未证明。** v2 CED 4.672 输给 bare 4.069。这正是 v3 要验证的。 |
+| Novelty 1 | 统一无损索引能解决它 | **未证明。** v2 CED 4.690 输给 bare 4.100。这正是 v3 要验证的。 |
 | Novelty 2 | 对稠密且随时序变化的关系，文件系统索引优于图 | **已论证，未演示。** schema 已设计（`relations/<pair-id>.yaml`）；还没有任何一次运行产出过。 |
 | Novelty 3 | FreshNovelBench | **已建成** —— 50 道冻结任务、污染门、已入 Mongo 并上站。人工抽检和全 50 本探针仍未完成。 |
 | Method | v3 五 agent 常驻 harness（基于 pi） | **设计完成，零行代码。** 基础冒烟测试通过。 |
@@ -39,24 +39,27 @@ submission, its figures and the scoring evidence from the laptop"，351 文件 /
 - **网站源码不在 git 里，而且 sgp-dev 上的副本是旧的。**
   `popia_dmx/storyos-bench-viewer/` 根本不是 git 仓库，它的 `scripts/` 里没有
   `build_research_pages.py`，`public/data/` 只有 `palette.json`；只有笔记本构建出来的
-  `out/` 是当前版本。已部署的 `out/data/research-pages.json` 里还是修正前的 CED
-  （4.69 ×6、5.06 ×9、6.15 ×9）。
+  `out/` 是当前版本。它的 `/leaderboard` 数字从来没错——读的是 `mean_ced`，
+  正是 ConStory 自己的指标（见 §1b）。
 
-## 1b. 三个已发布的 CED 值是错的，现已修正
+## 1b. CED 有两个估计量，只有一个是 ConStory 的指标
 
-笔记本的交接文档标出了一个过期数字。把每个系统都对照权威的
-`experiments/reproduction-subsubset/summary.md` 核过之后，发现是**三个**：
+笔记本的交接文档说 StoryOS 的 CED"4.69 应该是 4.672"。顺着查下去发现真实情况是：
+`checker/*.summary.json` 每个系统带**两个**数字——`mean_ced`（宏平均：逐题 CED 的均值）
+和 `aggregate_ced`（微平均：总错误数除以总词数）。文档里那张表一直用的是 `mean_ced`，
+而这是对的——**ConStory 对 CED 的定义就是宏平均**
+（$\overline{\mathrm{CED}}_m = \frac{1}{N}\sum_i \mathrm{CED}_{m,i}$，见
+`storyos/survey/notes/constory-2603.05890.md:166`）。
 
-| 系统 | 原值 | 实测 |
-|---|---:|---:|
-| storyos-index (v2) | 4.69 | **4.672** |
-| storywriter-style | 5.06 | **4.857** |
-| agentwrite | 6.15 | **6.240** |
+我曾经以为旧值是打分中途的读数，把整张表换成了 `aggregate_ced`。那是错的，已经改回
+`mean_ced`。从来没有任何数字"实质性错误"——两个估计量大体一致（|Δ| ≤ 0.03）而且
+**排名完全相同**，只在逐题长度差异最大处分歧（storywriter 5.055 对 4.857、
+agentwrite 6.155 对 6.240）。唯一真正依赖口径选择的量是 StoryOS 与 storywriter
+的差距：宏平均 0.365、微平均 0.185。
 
-其余的属于四舍五入（1.20→1.211、1.20→1.229、3.96→3.960、4.10→4.069、6.61→6.632）。
-旧值看起来是打分还没跑完时的中途读数。排名顺序不变，但 StoryOS 与 storywriter 的差距是
-0.185 而不是 0.37——最接近的 harness 比旧表暗示的近得多，这会影响 v2 结果的表述方式。
-本仓库全部 `.md` 已修正；**网站还需要改。**
+固定规则：宏平均作主口径，微平均作稳健性检查，**绝不在同一列里混用**。网站的
+`/leaderboard` 通过 `build_outputs.py` 从 `~/storyos-data/scores/` 读的正是
+`mean_ced`，所以它本来就在正确的口径上——是第二条管线，但指标相同。
 
 ## 2. 按依赖顺序该做什么
 

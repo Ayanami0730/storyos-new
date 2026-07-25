@@ -13,9 +13,9 @@ flow is one-way: run here, evaluate there.
 ## Why v3 exists
 
 v2 shipped and produced the first measured number for our own system:
-**CED 4.672** on ConStory tuning-20 (14/19 tasks completed, 130,557 words,
+**CED 4.690** on ConStory tuning-20 (14/19 tasks completed, 130,557 words,
 gpt-5-mini backbone). Under the same backbone, `bare-long-context` scores
-**4.069** — the simplest possible baseline beats us. Full table and the root
+**4.100** — the simplest possible baseline beats us. Full table and the root
 cause are in `docs/03-v2-postmortem.md`; the short version is that v2's
 validation gate protects *declared typed state* while CED measures *prose*, and
 the audit extractor is hard-capped at 5 claims / 3 knowledge uses per scene, so

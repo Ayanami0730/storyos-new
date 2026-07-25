@@ -21,8 +21,8 @@
 底座已经验证跑通：pi 的 agent loop 能驱动公司新加坡网关做原生多轮 function calling
 （`smoke/gateway-tool-loop.mjs` 实测通过）。Phase 1 的事务内核尚未实现。
 
-为什么有 v3：v2 跑出了我们系统第一个可报告的数字——ConStory tuning-20 上 CED **4.672**，
-而同 backbone 下最朴素的 `bare-long-context` 是 **4.069**。我们输给了最简单的 baseline。
+为什么有 v3：v2 跑出了我们系统第一个可报告的数字——ConStory tuning-20 上 CED **4.690**，
+而同 backbone 下最朴素的 `bare-long-context` 是 **4.100**。我们输给了最简单的 baseline。
 根因是 v2 的 gate 保护的是「声明的 typed state」，而 CED 度量的是「正文」，且 audit 抽取
 被硬性限制为每场 5 条 claims / 3 条 knowledge uses，所以门只检查了它本该保护内容的一个抽样。
 详见 `docs/03-v2-postmortem.md`。
@@ -95,7 +95,7 @@ native multi-turn function calling (`smoke/gateway-tool-loop.mjs` passes). The
 Phase 1 transaction kernel is not implemented yet.
 
 Why v3 exists: v2 produced the first reportable number for our own system —
-**CED 4.672** on ConStory tuning-20 — against **4.069** for the simplest possible
+**CED 4.690** on ConStory tuning-20 — against **4.100** for the simplest possible
 baseline, `bare-long-context`, under the same backbone. We lose to the simplest
 baseline. The root cause is that v2's gate protects *declared typed state* while
 CED measures *prose*, and audit extraction is hard-capped at 5 claims / 3
