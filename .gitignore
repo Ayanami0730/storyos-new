@@ -5,3 +5,4 @@ dist/
 workspace/
 runs/
 .env
+node_modules/
