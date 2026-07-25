@@ -2,7 +2,64 @@
 
 Decisions of record for how StoryOS is measured, with the evidence behind each.
 Anything contradicting this file needs an explicit decision, not silent drift.
-Snapshot 2026-07-25 16:35.
+Snapshot 2026-07-25 16:35, restructured 2026-07-25 18:55.
+
+## 0. The paper has two tables. Everything below serves one of them.
+
+**Decided 2026-07-25.** This supersedes the four-arena split in §6: ConStory is
+no longer an arena we compete in.
+
+**Table 1 — our own bench (FreshNovelBench, 40k–80k), two halves that are never
+combined into one score.**
+
+| Half | What it measures | How |
+|---|---|---|
+| **Quality** | the unverifiable half — plot, character, prose, emotional effect | LongStoryEval's hierarchical rubric and its aggregation architecture (§3) |
+| **Fact** | the verifiable half — internal consistency | ConStory's nineteen-subtype taxonomy and checker recipe, scored as **EID**, not CED (§1) |
+
+**Table 2 — LongBench-Write**, every system re-run by us under one frozen
+evaluator, reporting $S_l$, $S_q$ and per-bucket breakdown separately (§6).
+
+### What changed and why it is a simplification
+
+ConStory stops being a place we post a score and becomes the *method* behind
+Table 1's Fact half. Three things follow, all of them good:
+
+1. **CED disappears entirely.** Its length-dependent ceiling
+   ($\mathrm{CED}_{\max} = 190{,}000/w$, so 4.75 at 40k words) was only ever a
+   problem because we wanted comparability with their leaderboard. We are not on
+   their leaderboard. EID has no cap and is length-robust, and §1's evidence for
+   switching now costs us nothing at all.
+2. **The `o4-mini` blocker stops being a blocker.** §2 argued a same-set
+   `o4-mini` row was mandatory to anchor checker substitution against their
+   reported 0.884/0.550/0.678. That argument existed to defend *comparability
+   with their numbers*. Since we no longer claim comparability, what we owe is
+   validity on our own injected-error ground truth, which the running selection
+   experiment already provides. `o4-mini` returns 404 on our gateway; that is now
+   a footnote, not a gate.
+3. **Baseline runs re-target.** Systems are run on FreshNovelBench and
+   LongBench-Write. ConStory's 8–10k tasks remain useful only as a cheap
+   development harness and as the calibration set for the Fact checker.
+
+### The claim structure this supports
+
+Do not state a single SOTA. Three separate claims, each on the arena that can
+carry it:
+
+- **Length**, on LongBench-Write: frontier models cannot reach the requested
+  length and harnesses can. Measured, not asserted — at a 20,000-word request
+  `raw-gpt-5.5` produced 5,324 words and `raw-gemini-3.1-pro-preview` 4,870,
+  both scoring $S_l = 0$, while every harness scored 75–100.
+- **Quality**, on Table 1's Quality half: at novel length we are not worse than
+  the harnesses that can also get there.
+- **Fact**, on Table 1's Fact half: this is where the gate is supposed to pay
+  for itself, and where a null result is still publishable.
+
+A caution that must not be lost in the restructuring: on ConStory's 8–10k tasks
+`raw-gpt-5.6-sol` scores EID 1.666, the best number in the field, because a
+model writing 9k words in one call has little opportunity for cross-chapter
+contradiction. **Do not pick a fight on that terrain.** Our bench starts at 40k
+precisely because that is where the opportunity to contradict exists.
 
 ## 1. The primary consistency metric is EID, not CED
 
