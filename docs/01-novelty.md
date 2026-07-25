@@ -139,17 +139,58 @@ The human's original framing, which v2 lost:
 > relations — strangers, master and student, lovers, enemies, then lovers again,
 > then friends. A graph struggles to represent that; a free-form index can.
 
-Condensed for the paper: **relations between story entities are dense and
-change over time, so narrative state needs a representation where an entity pair
-can carry an ordered sequence of overlapping, revisable relations with
-provenance.** Rigid triples and fixed-schema tables flatten exactly the
-structure that matters. Related work has converged on graphs and typed tables
-(FactTrack, EvolvingWorld, NWM, MAGNET, and DOME's
-`<subject, action, object, chapter>` quadruples), which is where the
-counter-example bites: that quadruple cannot express "was her mentor during
-chapters 3–11, became her enemy in 12, and is her lover again by 20" without
-either losing the ordering or exploding into rows that no longer read as one
-relationship.
+### Corrected 2026-07-25: the first formulation is falsified by NWM
+
+We had written that a graph "can only record one relation between two people".
+**That is false for NWM** (`survey/notes/nwm-2607.05577.md`). Its typed records
+include a `Relationship state` with fields `character pair, relation type,
+polarity/status, validity`, and every temporal-KG edge stores `source chapter,
+evidence, validity interval, confidence` — facts still holding are open
+intervals, superseded facts are closed intervals, **and old edges are retained as
+history**. So "strangers → mentor → lovers → enemies → lovers again" is
+expressible: one edge per phase, each with its own interval, all kept. DOME's
+`<subject, action, object, chapter>` quadruple genuinely cannot do this; NWM can.
+
+Two further findings from the same paper that constrain what we may claim:
+
+- Their ablation shows **typed labels are not what wins**. Same store, same
+  reader, same 12k-character budget: query-conditioned retrieval scores 0.898
+  while serialising the whole typed store scores 0.358 (83% of misses are "the
+  fact is in the store but got positionally truncated"). The paper attributes the
+  win to narratological decomposition plus query-conditioned retrieval, *not* to
+  type labels, graph size, or the extractor.
+- Dumping all prior prose (~80k tokens) scores **0.852**, *below* the bounded 12k
+  packet's 0.898. So "give the agent more context" is not the mechanism; **"put
+  the right thing in front of it" is.** Any framing of novelty 1 that sounds like
+  "more context is better" is contradicted by this.
+
+### What survives, stated narrowly
+
+The claim is not about *sequence* — it is about **what each transition contains**.
+NWM stores one typed label per interval (`relation_type: mentor_student`). It has
+no place for *why* the transition happened or *how* it progressed: that the
+discipleship began by bowing to the wrong master, that affection went through
+tentative liking, then mutual dependence, then love. A typed label discards the
+causal texture; an `evidence span` can only *point back at* prose, which means
+recovering the texture requires re-reading the source — precisely what a memory
+system exists to avoid. And because **every NWM record is chapter-scoped**,
+within-chapter progression is flattened, while relationship change is usually
+exactly where sub-chapter ordering matters.
+
+So, for the paper: **narrative state must carry the dense, time-indexed,
+free-text texture of how each relation changed, not merely a typed label per
+interval, because continuing a story requires knowing how the characters got here
+and what is still unsettled — not only what they currently are.** A free-form
+file per entity pair, with ordered phases carrying prose and provenance to a
+scene span, holds this; a typed edge does not.
+
+**Status: this is an argument, not evidence.** It becomes testable the way NWM
+itself tested representation (176 multi-hop narratological QA items, Graph
+Retrieval 0.898 vs Graphiti 0.574): build probes that ask about *transition
+causes* and *within-chapter progression*, and compare a typed-graph store against
+a free-form index on the same questions. Cheap — no generation needed — and it
+attacks NWM on its own methodological ground. Until that runs, this claim must be
+labelled as a design argument.
 
 A filesystem index also buys three practical properties a database does not:
 agents query it with native `grep`/`read` and no bespoke API; humans can audit
