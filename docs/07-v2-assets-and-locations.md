@@ -55,7 +55,7 @@ These are gitignored and were copied to the matching paths under
 | `experiments/reproduction-subsubset/dome-checkpoints/` | 177 | 19,332,476 |
 | `experiments/novelbench-subset/outputs/` | 71 | 17,028,466 |
 | `experiments/judge_calibration/litbench-select/data/` | 1 | 9,135,377 |
-| `paper/figures/` superseded gpt-image-2 batches | 38 | 21,021,964 |
+| `paper/figures/` superseded gpt-image-2 batches | 39 | 21,021,964 |
 | `paper/figures/main_page*.png` | 3 | 1,937,495 |
 
 The sgp-dev root filesystem is at 100% with roughly 16G free. Check `df -h`
