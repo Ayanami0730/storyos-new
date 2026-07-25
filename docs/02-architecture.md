@@ -186,6 +186,22 @@ window is: scene card 2–4k, predecessor prose verbatim 4–10k, chapter/arc su
 2–6k, relevant canon/state/beliefs 10–20k, open promises and reveal limits 4–8k,
 style exemplars 4–8k, provenance overhead 2–4k.
 
+**`W` is a policy, not the model's window** (added 2026-07-25, `src/runtime/budget.ts`).
+The budget profile supplies both `W` and `maxOutput`, so compaction fires where
+we decide attention and spend stop being worth it rather than where the provider
+refuses the request. Under `generous` that is `W = 256k` and `maxOutput = 64k`
+against a real 400k window — the two are independent because 256k of prompt plus
+64k of output still fits.
+
+**What `E` is measured against matters more than where the thresholds sit.** The
+first implementation compared the thresholds with `usage.input` summed over a
+turn. A turn with ten tool calls is eleven model calls, so that sum is roughly
+eleven times the transcript: in `runs/v1` a writer turn reported 83,185 input
+tokens for a context that never exceeded about 15k. It also ignored `cacheRead`,
+which under prompt caching is most of the prompt. The trigger is now the last
+call's `input + cacheRead`, recorded per ledger entry as `contextTokens`.
+Summing remains correct for the bill and wrong for the question compaction asks.
+
 Packet assembly is priority-ordered, not top-k similarity: P0 hard constraints
 (scene card, world rules, reveal limits, base revision) → P1 present entities'
 state/beliefs → P2 direct dependencies (previous scene, triggered contracts) →
@@ -201,6 +217,31 @@ only "how this role works better" — verifier calibration against a known false
 positive, writer style feedback already approved. **Story state never goes in
 memory or skills**; it goes in the index. Each memory topic carries `source`,
 `last_verified_at`, `scope` and optional `expires_at` so stale lessons expire.
+
+Implemented 2026-07-25 in `src/agents/memory.ts`, with four decisions the design
+above left open:
+
+- **Memory is why a larger context ceiling is worth having.** Residency is the
+  point of the architecture and compaction is what makes residency affordable by
+  discarding the transcript. Without somewhere durable for the lessons, a bigger
+  window only postpones the loss: fluent at scene 30, summarised back into a
+  stranger at scene 31. The level-2 prompt therefore spends its first paragraph
+  telling the agent to persist durable lessons *before* the fold, because that
+  turn is the last one in which it can still see what it learnt.
+- **The story-state boundary is enforced, not requested.** A write mentioning a
+  known entity id or a scene id is rejected with the id named. Prompting alone
+  would fail in the direction that matters — memory quietly becoming a second
+  source of truth about the story, one that no verifier reads and nothing can
+  contradict.
+- **The index lives in the system prompt, refreshed in place** via
+  `ResidentAgents.refreshSystemPrompt`. Injected as a message it would sit at the
+  top of the transcript compaction is about to fold, so the one thing built to
+  survive compaction would be the thing compaction ate.
+- **Memory is run-scoped by default.** Shared across runs (`--memory-dir`) an
+  agent that has written ten stories should be better at the eleventh, which is
+  a real capability and a disqualifying one for a measured run: the result would
+  depend on history that is not in the inputs. Opt-in, and recorded in the run
+  summary as `memory.shared_across_runs`.
 
 Skills follow the SKILL.md spec: frontmatter `name` + `description` loaded at
 startup (~100 tokens), full body only on invocation, `references/` and `scripts/`

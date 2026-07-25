@@ -22,6 +22,13 @@ export const GATEWAY_BASE_URL = "https://ai-prod-sg.wenxiaobai.com/v1";
 export const PROVIDER_ID = "yuanshi-sg";
 
 /**
+ * Per HTTP request. Well above the slowest legitimate single call we have
+ * measured and well below the twenty-plus minutes a stalled socket will happily
+ * wait, which is the failure this exists for.
+ */
+export const REQUEST_TIMEOUT_MS = 300_000;
+
+/**
  * Models verified against the gateway on 2026-07-25 by direct probe, not from
  * documentation. `gpt-5.5-mini` and every `-high` / `-medium` suffixed name
  * return 503 `model_not_found`, and `o4-mini` returns 404 — do not add them
@@ -87,7 +94,14 @@ export function installGateway(): GatewayHandle {
   const models = createModels();
   models.setProvider(provider as never);
   setDefaultStreamFn((m, context, options) =>
-    (models as never as { stream: Function }).stream(m, context, options),
+    (models as never as { stream: Function }).stream(m, context, {
+      // Belt and braces with the turn watchdog in `ResidentAgents`. pi documents
+      // `timeoutMs` as honoured only by providers that support it, and whether
+      // this gateway's completions path does is unverified — so this is the
+      // cheap fast path, not the guarantee. The guarantee is the watchdog.
+      timeoutMs: REQUEST_TIMEOUT_MS,
+      ...(options as object),
+    }),
   );
 
   installed = {

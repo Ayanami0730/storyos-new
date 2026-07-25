@@ -21,45 +21,67 @@ const AGENTS_ROOT = path.join(
 /** A scripted agent that records what it was constructed with and asked. */
 class FakeAgent implements AgentLike {
   readonly prompts: string[] = [];
-  messages: AgentLike["state"]["messages"][number][] = [];
 
   readonly systemPrompt: string;
   readonly toolNames: readonly string[];
   readonly model: string;
   /** What the provider claims it received; drives the compaction thresholds. */
   reportedInput = 100;
+  /** Model calls this turn, as a tool loop produces. Each reports its own usage. */
+  callsPerTurn = 1;
 
   constructor(systemPrompt: string, toolNames: readonly string[], model: string) {
     this.systemPrompt = systemPrompt;
     this.toolNames = toolNames;
     this.model = model;
+    this.#state = { messages: [], systemPrompt };
   }
 
+  /**
+   * A single object, not a fresh one per read: a pi `Agent` exposes mutable
+   * state, and a fake whose getter returns a new literal would silently drop
+   * every assignment the system makes to it — including the compacted
+   * transcript, which is the thing most of these tests are about.
+   */
+  readonly #state: {
+    messages: AgentLike["state"]["messages"][number][];
+    systemPrompt: string;
+  };
+
   get state() {
-    return { messages: this.messages };
+    return this.#state;
+  }
+
+  get messages() {
+    return this.#state.messages;
+  }
+
+  set messages(value: AgentLike["state"]["messages"][number][]) {
+    this.#state.messages = value;
   }
 
   async prompt(input: string): Promise<void> {
     this.prompts.push(input);
+    const call = {
+      role: "assistant",
+      content: [
+        { type: "toolCall", name: "run_command" },
+        { type: "text", text: `did: ${input}` },
+      ],
+      usage: {
+        input: this.reportedInput,
+        output: 40,
+        cacheRead: 10,
+        reasoning: 5,
+        totalTokens: 155,
+      },
+      model: this.model,
+      stopReason: "endTurn",
+    };
     this.messages = [
       ...this.messages,
       { role: "user", content: input },
-      {
-        role: "assistant",
-        content: [
-          { type: "toolCall", name: "run_command" },
-          { type: "text", text: `did: ${input}` },
-        ],
-        usage: {
-          input: this.reportedInput,
-          output: 40,
-          cacheRead: 10,
-          reasoning: 5,
-          totalTokens: 155,
-        },
-        model: this.model,
-        stopReason: "endTurn",
-      },
+      ...Array.from({ length: this.callsPerTurn }, () => ({ ...call })),
     ];
   }
 }
@@ -182,6 +204,104 @@ describe("delegation tools", () => {
   });
 });
 
+describe("a turn that stops responding", () => {
+  /** An agent whose turn never settles until it is aborted. */
+  class HangingAgent extends FakeAgent {
+    aborted = false;
+    #release: (() => void) | null = null;
+
+    override async prompt(input: string): Promise<void> {
+      this.prompts.push(input);
+      await new Promise<void>((resolve) => {
+        this.#release = resolve;
+      });
+      await super.prompt(input);
+    }
+
+    abort(): void {
+      this.aborted = true;
+      this.#release?.();
+    }
+  }
+
+  function hanging(turnTimeoutMs: number) {
+    const built: HangingAgent[] = [];
+    const registry = new ResidentAgents({
+      agentsRoot: AGENTS_ROOT,
+      personas: PERSONAS,
+      turnTimeoutMs,
+      factory: (persona, systemPrompt, toolNames) => {
+        const agent = new HangingAgent(systemPrompt, toolNames, persona.model);
+        built.push(agent);
+        return agent;
+      },
+    });
+    return { registry, built };
+  }
+
+  it("aborts and reports rather than waiting indefinitely", async () => {
+    const { registry, built } = hanging(20);
+    await assert.rejects(() => registry.invoke("writer", "draft", ctx), /TurnTimeout|did not finish/);
+    assert.equal(built[0]!.aborted, true, "the turn must be aborted, not merely abandoned");
+  });
+
+  it("still leaves a ledger entry for what the stalled turn cost", async () => {
+    // A run that omits its expensive failures reports a cheaper system than
+    // the one we actually have.
+    const { registry } = hanging(20);
+    await registry.invoke("writer", "draft", ctx).catch(() => {});
+    const entry = registry.ledger().at(-1)!;
+    assert.equal(entry.role, "writer");
+    assert.equal(entry.stopReason, "timeout");
+  });
+});
+
+describe("the memory section of a resident's prompt", () => {
+  function withSuffix(suffix: () => string) {
+    const built: FakeAgent[] = [];
+    const registry = new ResidentAgents({
+      agentsRoot: AGENTS_ROOT,
+      personas: PERSONAS,
+      promptSuffix: suffix,
+      factory: (persona, systemPrompt, toolNames) => {
+        const agent = new FakeAgent(systemPrompt, toolNames, persona.model);
+        built.push(agent);
+        return agent;
+      },
+    });
+    return { registry, built };
+  }
+
+  it("composes the suffix into the prompt an agent is built with", async () => {
+    const { registry, built } = withSuffix(() => "## Your memory\n\n- [A](a.md) — hook");
+    await registry.invoke("writer", "draft", ctx);
+    assert.match(built[0]!.systemPrompt, /- \[A\]\(a\.md\) — hook/);
+    // The role's own contract is still there; the suffix is added, not swapped.
+    assert.match(built[0]!.systemPrompt, /write_staged_scene/);
+  });
+
+  it("puts a newly written memory into a session that is already running", async () => {
+    // An agent that writes a memory and cannot see it until the next process
+    // has no reason to write a second one. The index lives in the system
+    // prompt rather than in a message precisely so that compaction, which is
+    // about to fold the transcript, cannot eat it.
+    let index = "";
+    const { registry, built } = withSuffix(() => (index ? `remembered: ${index}` : "nothing yet"));
+    await registry.invoke("writer", "draft", ctx);
+    assert.match(built[0]!.state.systemPrompt!, /nothing yet/);
+
+    index = "- [A](a.md) — hook";
+    registry.refreshSystemPrompt("writer");
+    assert.match(built[0]!.state.systemPrompt!, /remembered: - \[A\]/);
+  });
+
+  it("is a no-op for a role that has not been invoked yet", () => {
+    const { registry, built } = withSuffix(() => "anything");
+    registry.refreshSystemPrompt("verifier");
+    assert.deepEqual(built, [], "refreshing must not be what brings an agent into being");
+  });
+});
+
 describe("compaction", () => {
   /** An agent whose reported input size we control, to drive the thresholds. */
   function withCompaction(inputTokens: number) {
@@ -234,7 +354,67 @@ describe("compaction", () => {
     await registry.invoke("writer", "draft", ctx);
     const [record] = registry.compactions();
     assert.equal(record!.level, "level1");
-    assert.equal(record!.inputTokens, 600);
+    // 600 fresh + 10 cached. A cached prompt token still occupies the window,
+    // and under prompt caching most of a resident's transcript arrives that
+    // way — a policy watching only the fresh half watches the small half.
+    assert.equal(record!.inputTokens, 610);
+  });
+
+  it("measures the last call of a turn, not the sum of the turn", async () => {
+    // A turn with tool calls is several model calls. Summing their inputs is
+    // right for the bill and wrong for "how big is the context now": in
+    // runs/v1 a writer turn reported 83,185 input tokens for a transcript that
+    // was never larger than about 15k, and compaction read that as pressure.
+    const { registry, built } = withCompaction(300);
+    await registry.invoke("writer", "draft", ctx);
+    const agent = built[0]!;
+    agent.callsPerTurn = 3;
+    await registry.invoke("writer", "draft again", ctx);
+
+    const entry = registry.ledger().at(-1)!;
+    assert.equal(entry.usage.input, 900, "the bill sees all three calls");
+    assert.equal(entry.contextTokens, 310, "the policy sees only the last one");
+    assert.deepEqual(registry.compactions(), [], "three small calls are not pressure");
+  });
+
+  it("does not recurse when summarising is itself a turn by the same agent", async () => {
+    // Summarising goes back through invoke, so without a re-entrancy guard the
+    // first level-2 compaction loops forever: summarise → invoke → still over
+    // threshold → summarise. It never fired before only because the trigger
+    // was never reached, which is how a latent infinite loop survives review.
+    let summarisations = 0;
+    const registry: ResidentAgents = new ResidentAgents({
+      agentsRoot: AGENTS_ROOT,
+      personas: PERSONAS,
+      compaction: {
+        thresholds: {
+          contextWindow: 1_000,
+          maxOutput: 200,
+          level1Fraction: 0.7,
+          level2Reserve: 130,
+          blockReserve: 30,
+          keepRecentToolResults: 1,
+          keepRecentMessages: 2,
+        },
+        summarise: async (role) => {
+          summarisations += 1;
+          if (summarisations > 5) throw new Error("compaction recursed");
+          const { text } = await registry.invoke(role, "summarise yourself", ctx);
+          return text;
+        },
+        context: () => ({ canonDigest: "3 facts", openPromises: [], recentSceneIds: [] }),
+      },
+      factory: (persona, systemPrompt, toolNames) => {
+        const agent = new FakeAgent(systemPrompt, toolNames, persona.model);
+        agent.reportedInput = 700;
+        return agent;
+      },
+    });
+
+    await registry.invoke("writer", "draft one", ctx);
+    await registry.invoke("writer", "draft two", ctx);
+    assert.equal(summarisations, 1);
+    assert.equal(registry.compactions().length, 2);
   });
 
   it("escalates to level 2 near the ceiling and writes a summary", async () => {

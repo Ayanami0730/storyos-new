@@ -36,6 +36,18 @@ export interface PersonaSpec {
 /** Available to every role. Uniform read reach is a design guarantee. */
 export const READ_TOOLS: readonly string[] = ["run_command", "read_relation_history"];
 
+/**
+ * Also available to every role.
+ *
+ * `remember` writes a file, but not a canonical one, so it does not breach the
+ * rule that only index-manager changes canonical state — and the boundary is
+ * enforced rather than trusted: a memory mentioning a story entity is rejected.
+ * Every role gets it for the same reason every role gets the read tools. The
+ * lesson a verifier learns about its own false positives is worth exactly as
+ * much as the one a writer learns about voice.
+ */
+export const MEMORY_TOOLS: readonly string[] = ["remember", "read_memory"];
+
 export const PERSONAS: readonly PersonaSpec[] = [
   {
     role: "orchestrator",
@@ -88,6 +100,7 @@ export function toolNamesFor(role: AgentRole): readonly string[] {
   const persona = personaFor(role);
   return [
     ...READ_TOOLS,
+    ...MEMORY_TOOLS,
     ...persona.writeTools,
     ...(persona.mayDelegate ? DELEGATION_TOOLS : []),
   ];

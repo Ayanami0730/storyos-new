@@ -235,6 +235,27 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
 }
 
 /**
+ * Attributes that name what an entity *did* rather than what is *true of* it.
+ *
+ * Canon holds standing properties, and the contradiction check works by asking
+ * whether a later scene gives the same property a different value. An event
+ * recorded as a property breaks that: in `runs/v2-generous` the writer filed
+ * `char-mira.action = "asked Elin to show her the ledger"` in one scene and
+ * `"climbed the lighthouse stairs"` in the next, and the checker correctly
+ * reported that a property had silently changed. Both statements were true and
+ * neither contradicted the other; the scene was rejected anyway.
+ *
+ * Rejecting the shape at the tool boundary costs the writer one turn. Letting
+ * it through costs a scene, and does so in a way that reads like a real
+ * continuity failure — the most expensive kind of false positive we can emit.
+ */
+const EVENT_SHAPED = /^(last_|current_|recent_)?(action|activity|event|deed|movement|behaviour|behavior|does|did|doing|says|said|goes|went)s?$/;
+
+export function isEventShapedAttribute(attribute: string): boolean {
+  return EVENT_SHAPED.test(attribute.trim().toLowerCase().replace(/[\s-]+/g, "_"));
+}
+
+/**
  * Map a contradicted attribute onto ConStory's subtype, so our findings and our
  * score share a vocabulary. Unmapped attributes fall back to the factual bucket
  * rather than inventing a subtype the scorer does not know.

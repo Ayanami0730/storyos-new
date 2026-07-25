@@ -112,6 +112,16 @@ These were decided with the human and should not be silently revisited.
    pointers; level 2 produces a structured summary and keeps a verbatim recent
    tail. Defaults derived from CC: `E = W - min(maxOutput, 20k)`, level 1 at
    `0.70·E`, level 2 at `E - 13k`, hard block at `E - 3k`.
+9. **Two budget profiles, never mixed in one table** (added 2026-07-25).
+   `parity` reproduces the baselines' allowance — 32,768 tokens per call and
+   3,000,000 per task — and is the only profile whose rows may sit beside a
+   baseline row. `generous` (64,000 per call, a 256k working context ceiling,
+   `max(8M, 400 × target words)` per task) exists because the first complete run
+   spent 213 tokens per output word, which puts 40,000 words at 8.5M and makes
+   every long run under `parity` die of arithmetic before it can tell us whether
+   the design works. Getting the behaviour right and cutting the cost are
+   separate problems. Every summary records the profile and whether it is
+   comparable; see `docs/08` §5b.
 
 ## What to do first, after pulling this on sgp-dev
 

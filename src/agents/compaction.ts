@@ -26,6 +26,8 @@
  * a hard block at `E - 3k`.
  */
 
+import { DEFAULT_PROFILE } from "../runtime/budget.ts";
+
 export interface CompactionThresholds {
   readonly contextWindow: number;
   readonly maxOutput: number;
@@ -41,15 +43,31 @@ export interface CompactionThresholds {
   readonly keepRecentMessages: number;
 }
 
-export const DEFAULT_THRESHOLDS: CompactionThresholds = {
-  contextWindow: 400_000,
-  maxOutput: 128_000,
-  level1Fraction: 0.7,
-  level2Reserve: 13_000,
-  blockReserve: 3_000,
-  keepRecentToolResults: 10,
-  keepRecentMessages: 12,
-};
+/**
+ * Thresholds for a budget profile.
+ *
+ * `contextWindow` here is the ceiling we **choose to spend**, not the one the
+ * model imposes. Under `generous` that is 256k against a real 400k window, so
+ * compaction fires on a policy about attention and cost rather than on the
+ * model refusing the request — and 256k of prompt plus 64k of output still fits
+ * the real window, which is why the two can be set independently.
+ */
+export function thresholdsFor(profile: {
+  readonly inputCeiling: number;
+  readonly maxCompletionTokens: number;
+}): CompactionThresholds {
+  return {
+    contextWindow: profile.inputCeiling,
+    maxOutput: profile.maxCompletionTokens,
+    level1Fraction: 0.7,
+    level2Reserve: 13_000,
+    blockReserve: 3_000,
+    keepRecentToolResults: 10,
+    keepRecentMessages: 12,
+  };
+}
+
+export const DEFAULT_THRESHOLDS: CompactionThresholds = thresholdsFor(DEFAULT_PROFILE);
 
 export function effectiveBudget(t: CompactionThresholds): number {
   return t.contextWindow - Math.min(t.maxOutput, 20_000);
@@ -84,6 +102,11 @@ export interface CompactableMessage {
    * two things the agent cannot re-derive from the index.
    */
   readonly pinned?: boolean;
+  /**
+   * Position in the transcript this was read from, so a survivor can be paired
+   * back with its original after a fold has changed every position after it.
+   */
+  readonly sourceIndex?: number;
 }
 
 export interface CompactionResult {
@@ -216,7 +239,16 @@ export async function compactLevel2(
  */
 export function summaryPrompt(input: StorySummaryInput): string {
   return [
-    "Summarise the conversation below so you can continue working without it.",
+    "Your conversation is about to be folded into a summary. This is the last turn in",
+    "which you can see it in full.",
+    "",
+    "First, if you learnt anything durable about **how to do your job on this project** —",
+    "a false positive you were talked out of, a convention, a phrasing that kept being",
+    "rejected — record it with `remember` now. A summary is navigation and will itself be",
+    "summarised again later; memory is the only thing here that survives indefinitely.",
+    "Nothing about the story itself: that belongs in the index.",
+    "",
+    "Then summarise the conversation below so you can continue working without it.",
     "",
     "Include: what you were asked to do and what you did; anything you learnt about",
     "how to do your role better here; which scenes you have worked on; any finding",

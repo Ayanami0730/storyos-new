@@ -17,7 +17,11 @@ import { Type } from "typebox";
 
 import type { AgentRole } from "../transaction/types.ts";
 import type { Finding } from "../transaction/types.ts";
-import type { ProposedClaim, SceneDelta } from "../verification/deterministic.ts";
+import {
+  type ProposedClaim,
+  type SceneDelta,
+  isEventShapedAttribute,
+} from "../verification/deterministic.ts";
 import { makeFinding } from "../verification/finding.ts";
 import { LITERARY_EXEMPTIONS, SUBTYPES, subtypesForTier } from "../verification/taxonomy.ts";
 import type { Draft, SceneCollaborators } from "./scene-loop.ts";
@@ -119,6 +123,16 @@ function writerTools(live: () => Capture, sceneId: () => string): unknown[] {
             );
           }
           if (!c.entity?.trim()) problems.push(`claims[${i}].entity is required`);
+          if (c.attribute && isEventShapedAttribute(c.attribute)) {
+            problems.push(
+              `claims[${i}].attribute "${c.attribute}" names what happened, not a property. ` +
+                `Canon holds what is true of an entity between scenes, and the continuity ` +
+                `check reads a changed property as a contradiction — so the next scene in ` +
+                `which this character does anything else would be rejected. Record what the ` +
+                `event left behind instead (knows_about_x, holds_object, location, injury), ` +
+                `or leave it out: the prose already says what happened.`,
+            );
+          }
           if (c.supersedes && !c.supersedes.reason?.trim()) {
             problems.push(
               `claims[${i}].supersedes.reason is required: a later reader cannot tell a ` +
@@ -303,7 +317,10 @@ export function residentCollaborators(options: {
             : `Your draft of ${sceneId} came back with findings. Repair the specific defects ` +
               `below — do not rewrite the scene wholesale, and read each finding's locus ` +
               `before you change anything.\n\n${repairBrief}\n\nThen call write_staged_scene ` +
-              `and propose_state_delta again.`;
+              `and propose_state_delta again.\n\nIf one of these findings is a mistake you ` +
+              `can see yourself making again on later scenes, record the lesson with ` +
+              `\`remember\` first — a repair round is where the durable lessons are, and it ` +
+              `is the one moment you can still see what you did wrong.`;
 
         await residents.invoke("writer", task, { txid, caller: "orchestrator" });
 

@@ -16,11 +16,13 @@ import path from "node:path";
 
 import { Agent } from "@earendil-works/pi-agent-core";
 
-import { DEFAULT_THRESHOLDS, summaryPrompt } from "../agents/compaction.ts";
+import { summaryPrompt, thresholdsFor } from "../agents/compaction.ts";
+import { AgentMemory, memorySection } from "../agents/memory.ts";
+import { memoryTools } from "../agents/memory-tools.ts";
 import { PERSONAS, withBackbone } from "../agents/personas.ts";
 import { type AgentLike, ResidentAgents } from "../agents/residents.ts";
 import { CanonicalIndex } from "../index/commit.ts";
-import { MAX_COMPLETION_TOKENS, TASK_TOKEN_BUDGET, TokenBudget } from "../runtime/budget.ts";
+import { TokenBudget, profileById, taskBudgetFor } from "../runtime/budget.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import { SceneToolBus } from "../runtime/collaborators.ts";
 import { type ModelId, installGateway } from "../runtime/gateway.ts";
@@ -38,6 +40,15 @@ interface Args {
   out: string;
   backbone: ModelId | null;
   maxRepairs: number;
+  /** `parity` to sit in a table with the baselines, `generous` to find out if it works. */
+  profile: string;
+  /**
+   * Where agent memory lives. Run-scoped by default, so a run is reproducible
+   * from its premise alone. Point several runs at one directory and they
+   * accumulate craft across stories — useful for iteration, and disqualifying
+   * for a measured run, which is why it has to be asked for and is recorded.
+   */
+  memoryDir: string | null;
 }
 
 async function parseArgs(argv: readonly string[]): Promise<Args> {
@@ -58,12 +69,18 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     out: get("--out") ?? `runs/story-${Date.now()}`,
     backbone: (get("--backbone") as ModelId | undefined) ?? null,
     maxRepairs: Number(get("--max-repairs") ?? 2),
+    profile: get("--profile") ?? "parity",
+    memoryDir: get("--memory-dir") ?? null,
   };
 }
 
 const args = await parseArgs(process.argv.slice(2));
 const outDir = path.resolve(args.out);
 await mkdir(outDir, { recursive: true });
+
+/** Progress on stderr, so a run that prints nothing for an hour is distinguishable from a hung one. */
+const say = (line: string) =>
+  console.error(`[${new Date().toISOString().slice(11, 19)}] ${line}`);
 
 const gateway = installGateway();
 const index = new CanonicalIndex(path.join(outDir, "project"));
@@ -88,14 +105,44 @@ const storyState: { canon: { entity: string }[]; promises: string[]; scenes: str
   scenes: [],
 };
 
-const budget = new TokenBudget(TASK_TOKEN_BUDGET);
+const profile = profileById(args.profile);
+const taskBudget = taskBudgetFor(profile, args.target);
+const budget = new TokenBudget(taskBudget);
+
+/**
+ * Memory lives under the run's project directory unless told otherwise, so two
+ * runs of the same premise start from the same blank slate. Sharing it across
+ * runs is a real capability — an agent that has written ten stories should be
+ * better at the eleventh — but it makes a result depend on history that is not
+ * in the inputs, so it is opt-in and it goes in the summary.
+ */
+const memoryRoot = args.memoryDir
+  ? path.resolve(args.memoryDir)
+  : path.join(outDir, "project", "agents");
+
+const memories = new Map<AgentRole, AgentMemory>(
+  PERSONAS.map((p) => [
+    p.role,
+    new AgentMemory({
+      root: memoryRoot,
+      role: p.role,
+      // Read fresh: the entity list grows as the story is planned and written,
+      // and the guard is only worth having if it knows about scene 30's cast.
+      knownEntities: () => (planState.plan?.entities ?? []).map((e) => e.id),
+    }),
+  ]),
+);
+/** Rendered indexes, refreshed on write; read synchronously when composing prompts. */
+const memoryIndex = new Map<AgentRole, string>();
+for (const [role, memory] of memories) memoryIndex.set(role, await memory.refreshIndex());
 
 const residents = new ResidentAgents({
   agentsRoot: path.join(import.meta.dirname, "../../agents"),
   personas,
   budget,
+  promptSuffix: (role) => memorySection(memoryIndex.get(role) ?? ""),
   compaction: {
-    thresholds: DEFAULT_THRESHOLDS,
+    thresholds: thresholdsFor(profile),
     // Each agent compresses its own transcript with its own model. Routing this
     // through the orchestrator would hand it the writer's session and ask it to
     // judge writing work it did not do.
@@ -107,6 +154,11 @@ const residents = new ResidentAgents({
       });
       return text;
     },
+    onCompaction: (record) =>
+      say(
+        `compaction ${record.level} on ${record.role} at ${record.inputTokens} context ` +
+          `tokens: ${record.evicted} payload(s) evicted, ${record.summarised} message(s) folded`,
+      ),
     context: () => ({
       canonDigest: `${storyState.canon.length} facts across ${
         new Set(storyState.canon.map((f) => f.entity)).size
@@ -116,11 +168,20 @@ const residents = new ResidentAgents({
     }),
   },
   factory: (persona, systemPrompt, toolNames) => {
+    const role = persona.role as AgentRole;
     const tools = [
-      ...bus.toolsFor(persona.role as AgentRole),
-      ...(persona.role === "orchestrator"
+      ...bus.toolsFor(role),
+      ...(role === "orchestrator"
         ? [planTool(planState, sceneCountFor(args.target)), updatePlanTool(planState)]
         : []),
+      ...memoryTools(memories.get(role)!, {
+        source: () => storyState.scenes.at(-1) ?? "planning",
+        knownEntities: () => (planState.plan?.entities ?? []).map((e) => e.id),
+        onChange: async () => {
+          memoryIndex.set(role, await memories.get(role)!.refreshIndex());
+          residents.refreshSystemPrompt(role);
+        },
+      }),
       readIndexTool(index),
     ].filter(Boolean);
     return new (Agent as unknown as new (init: unknown) => AgentLike)({
@@ -128,8 +189,7 @@ const residents = new ResidentAgents({
         systemPrompt,
         model: gateway.model(persona.model as ModelId),
         thinkingLevel: "off",
-        // The same per-call output ceiling the baselines run under.
-        maxTokens: MAX_COMPLETION_TOKENS,
+        maxTokens: profile.maxCompletionTokens,
         tools,
       },
     });
@@ -188,7 +248,7 @@ try {
     premise: args.premise,
     targetWords: args.target,
     maxRepairs: args.maxRepairs,
-    log: (line) => console.error(`[${new Date().toISOString().slice(11, 19)}] ${line}`),
+    log: say,
     planSink: planState,
     bus,
     onScene: (sceneId) => {
@@ -272,12 +332,49 @@ const summary = {
   promises_unpaid: result ? result.revision.coverage.contractsOpen : 0,
   revision_tasks: result?.revision.tasks.length ?? 0,
   tokens: ledger.reduce((n, e) => n + e.usage.total, 0),
-  token_budget: TASK_TOKEN_BUDGET,
-  budget_spent: budget.spent,
-  max_completion_tokens: MAX_COMPLETION_TOKENS,
   calls: ledger.length,
   roll_up: residents.rollUp(),
-  compactions: residents.compactions(),
+  /**
+   * The whole budget configuration, in the artefact rather than in a lab book.
+   * A `generous` row must never appear in a table beside a baseline row, and
+   * the only way to guarantee that months later is for the file itself to say
+   * so in words that survive being copied into a spreadsheet.
+   */
+  budget: {
+    profile: profile.id,
+    comparable_with_baselines: profile.comparableWithBaselines,
+    note: profile.comparableWithBaselines
+      ? "baseline-equivalent budget; this row may be compared with baseline rows"
+      : "NOT comparable with baseline rows — this run had a larger budget than the " +
+        "baselines were given. Use it to judge the architecture, never to claim a win.",
+    rationale: profile.rationale,
+    max_completion_tokens: profile.maxCompletionTokens,
+    input_ceiling: profile.inputCeiling,
+    task_token_budget: taskBudget,
+    spent: budget.spent,
+    utilisation: Number((budget.spent / taskBudget).toFixed(3)),
+    tokens_per_output_word: Number((budget.spent / Math.max(1, onDisk.words)).toFixed(1)),
+  },
+  context: {
+    thresholds: thresholdsFor(profile),
+    // The measured ceiling actually reached, so we can tell a run that needed
+    // the larger window from one that merely had it.
+    peak_context_tokens: ledger.reduce((n, e) => Math.max(n, e.contextTokens), 0),
+    peak_output_tokens: ledger.reduce((n, e) => Math.max(n, e.usage.output), 0),
+    compactions: residents.compactions(),
+  },
+  memory: {
+    root: memoryRoot,
+    shared_across_runs: args.memoryDir !== null,
+    topics: Object.fromEntries(
+      await Promise.all(
+        [...memories].map(
+          async ([role, memory]) =>
+            [role, (await memory.live()).map((m) => m.topic)] as const,
+        ),
+      ),
+    ),
+  },
 };
 
 await writeFile(

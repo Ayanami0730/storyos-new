@@ -235,6 +235,86 @@ per-model rates, so `estimated_usd` is empty by design rather than guessed):
   runs ≈ 15.3k tokens per book-run at 121K tokens per book: a 40k-word story
   (~53k tokens) is roughly 44% of that per run.
 
+## 5b. Two budget profiles, and the rule that keeps them apart
+
+**Decided 2026-07-25.** `src/runtime/budget.ts`.
+
+Two different questions were being asked of one set of constants, and they cannot
+share one.
+
+| | `parity` | `generous` |
+|---|---|---|
+| per-call output | 32,768 | 64,000 |
+| working context ceiling | 400k (the model window) | 256k |
+| per task | 3,000,000 | `max(8M, 1500 × target words)` |
+| may share a table with baseline rows | **yes** | **no** |
+
+`parity` is not ours to choose: 32,768 is LongBench-Write's official
+`evaluation/pred.py` `max_new_tokens` and `run_nbrun.py`'s `WRITER_TOKEN_CAP`,
+and 3,000,000 is its `TOKEN_BUDGET`. Every row that appears next to a baseline row
+must be produced under it. A harness that quietly took a larger allowance would be
+winning on budget rather than on architecture, and nothing in the results table
+would show it.
+
+`generous` exists because the first complete run (`runs/v1`, 4,681 words) spent
+997k tokens — **213 per output word**. At that rate 40,000 words is 8.5M, so under
+`parity` every run at our target length dies of exhaustion before it can tell us
+whether the design is sound. Getting the behaviour right and cutting the cost are
+separate problems, and the second one has its own levers (verifier rounds, packet
+size, cache-aware ordering) that we cannot even evaluate until the first is done.
+
+Two calibration points from `runs/v1` justify the specific numbers rather than
+rounding up for comfort:
+
+- **64k output, not 128k.** The writer never exceeded 4,852 output tokens. One
+  verifier call spent 23,599, of which 23,132 were reasoning — so the old 32,768
+  cap was already close to binding, on the verifier, and a cap that truncates a
+  verifier mid-reasoning yields a silent pass. The need is reasoning headroom,
+  not longer prose.
+- **256k context, and it is the right order of magnitude.** Peak context was
+  38.7k over four scenes (`runs/v2-generous`) and **161,021 over nineteen**
+  (`runs/v4-24k`) — against a level-1 threshold of 165,200. It came within 2.6%
+  of firing and never fired, which is the cleanest evidence available both that
+  the ceiling is neither wasted nor generous and that the corrected measurement
+  is sane: the old summed-`usage.input` trigger would have read roughly eleven
+  times that and compacted continuously. At 40k words compaction will fire, so
+  it stops being untested code on the path to our target length.
+
+### What the first `generous` runs actually cost
+
+`runs/v4-24k`, nineteen scenes, `gpt-5-mini` writer and `gemini-3.1-pro-preview`
+verifier: **11.64M tokens**, cut off by the ceiling at scene 18, 9 of 19 scenes
+committed, 9,573 words against a 24,000 target. That is **485 tokens per target
+word** and **1,216 per word delivered** — rejected scenes pay full price and
+contribute no words. The writer is 76% of the spend (8.8M over 38 calls) against
+the verifier's 2.8M over 23.
+
+Two consequences, both recorded rather than smoothed over:
+
+- `tokensPerTargetWord` was raised from 400 to **1,500** on this measurement. The
+  original 400 was double the four-scene rate and still wrong by 3×, because the
+  rate compounds: each scene carries more index than the last *and* each resident
+  carries more transcript.
+- At this rate a 40,000-word run is ~60M tokens and 80,000 is ~120M. That is the
+  honest price of the design as it stands, and it is why cost reduction is a real
+  work item rather than a rounding exercise — but it is a *second* work item. A
+  ceiling that truncates every long run at the same place cannot tell us which
+  of the design's costs were worth paying.
+
+**A negative result on the obvious way to spend the extra budget.** Raising the
+repair ceiling from 2 to 4 (`runs/v5-4k-r4` against `runs/v4-4k-postfix`, same
+premise) took repair rounds from 6 to 14 and spend from 1.96M to 5.38M, and
+committed **exactly the same 2 of 4 scenes**. It converted two scenes that would
+have been thrown away and lost two others that had previously survived. More
+rounds buy more rounds; the repair loop is not converging, and that — not the
+budget — is where the next iteration goes.
+
+**The rule.** Every run summary carries `budget.profile`,
+`budget.comparable_with_baselines` and a sentence saying in words that a
+`generous` row may not be compared with a baseline row. Any table mixing the two
+is wrong regardless of what its caption says. Ablations across our own variants
+are fine at either profile provided all arms share one.
+
 ## 6. Third-party benches: no standard exists, so split the burden of proof
 
 Full matrix and per-bench evaluation in `survey/bench-selection-analysis.md`

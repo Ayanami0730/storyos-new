@@ -14,11 +14,64 @@ claims is `docs/01-novelty.md`; measured numbers are `docs/04-results.md`.
 | Novelty 1 | a unified lossless index fixes it | **unproven.** v2 scored CED 4.690 vs bare 4.100. This is what v3 exists to test. |
 | Novelty 2 | filesystem index beats graphs for dense time-varying relations | **argued, not yet demonstrated.** Schema designed (`relations/<pair-id>.yaml`); no run has produced one. |
 | Novelty 3 | FreshNovelBench | **built** — 50 frozen tasks, contamination gate, in Mongo and on the site. Human spot-check and full-50 probe still outstanding. |
-| Method | v3 five-agent resident harness on pi | **designed, zero lines written.** Foundation smoke test passes. |
+| Method | v3 five-agent resident harness on pi | **running end to end.** Five resident agents, three-layer verification, atomic commit, scene transaction loop, revisable plan, two-tier compaction, agent memory. 226 tests. Writes complete stories; see §0b for what is measured and what is still broken. |
 | Results | ConStory tuning-20, 8 systems | **measured but 3 rows invalid** — adapter unfaithfulness, see `docs/04-results.md` §0 |
 | Results | FreshNovelBench subset-10 lengths | **measured**; CED scoring incomplete |
 | Experiments | all ablations | **none run** |
 | Writing | 8-page AAAI draft, 3 generated figures | **exists only on the local mac and is not in git** — see §1 |
+
+## 0b. Iteration log — 2026-07-25 evening, context budget and memory
+
+The instruction was to stop letting the token budget shape the design: raise the
+allowance, get the behaviour right, decide later what to cut. Two profiles now
+exist (`docs/08` §5b) and `generous` is 64k output, a 256k working context
+ceiling, and `max(8M, 400 × target words)` per task. What that bought was less
+than expected and more useful than expected.
+
+**The raised ceilings are not yet what binds.** Measured on the harbour premise:
+peak context 38.7k at four scenes and 65.8k at four scenes with repairs, against
+a level-1 threshold of 165k; peak output 21.5k against the new 64k cap. Budget
+utilisation on a 4k-word run is 24.6%. The larger allowance has so far bought
+one thing — removing the cap as a confound, so the real constraints become
+visible. They are the repair budget and the verifier's false-positive rate.
+
+**Three defects were found by raising the ceiling and then reading the runs.**
+Each was reproducible and each is fixed with a test:
+
+1. Compaction compared its thresholds against `usage.input` summed over a whole
+   turn, which is ~11× the transcript on a turn with ten tool calls, and ignored
+   `cacheRead`, which is most of the prompt under caching. It also recursed —
+   summarising is a turn by the same agent — and paired compacted messages back
+   to their originals by position after a fold had changed every position.
+   None of this had ever run, because the old trigger was never reached.
+2. World rules were handed to the writer as a bare P0 block. In three
+   consecutive runs the writer wrote them into the viewpoint character's head on
+   page one, destroying the discovery premise; the verifier correctly rejected
+   scene 1 each time and the writer could not repair it. With the rules framed
+   as "true, but not known", scene 1 committed first try with zero findings.
+3. The writer filed events (`action: climbed the stairs`) as canon attributes,
+   so the continuity checker saw a property change value and rejected a scene in
+   which nothing was wrong. Now refused at the tool boundary.
+
+A fourth is fixed but unproven: a 24k run hung for over twenty minutes on one
+established socket with no CPU, no output and no error. There is now a per-turn
+watchdog (`DEFAULT_TURN_TIMEOUT_MS`, 600s against a measured median of 45s and a
+maximum of 301s) that aborts, records the cost, and lets the story continue.
+
+**Memory works and is being used.** `remember` / `read_memory`, `MEMORY.md` as a
+regenerated index, topic files with `source` / `last_verified_at` / `expires_at`,
+and a code-enforced refusal to store anything mentioning a story entity. In a
+four-scene run the writer recorded two role-craft lessons unprompted by
+compaction — the trigger that worked was the nudge attached to repair rounds,
+which is where the lessons are. Memory is run-scoped unless `--memory-dir` says
+otherwise, and the summary records which.
+
+**Open, in priority order:** the repair budget looks like the binding constraint
+(a run at `--max-repairs 4` committed scenes at attempt 4 that a run at 2 would
+have thrown away); the verifier's remaining rejections are spatial and causal
+reasoning, which may be real defects the writer cannot repair or may need a
+different repair brief; promises are still declared and never paid; the revision
+phase still produces tasks nothing consumes.
 
 ## 1. Sync gaps — CLOSED 2026-07-25 14:00
 

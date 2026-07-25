@@ -260,11 +260,26 @@ export function contextFor(input: {
   ];
 
   if (plan.worldRules.length > 0) {
+    // The framing is the load-bearing part, not the list.
+    //
+    // Handed over as a bare block of P0 constraints, world rules get written
+    // into the viewpoint character's head — three consecutive runs had scene 1
+    // rejected for `knowledge_contradictions` because the writer gave Mira, on
+    // page one, the full account of the phenomenon the whole story is about her
+    // discovering. The verifier was right each time and the writer could not
+    // repair it, because nothing in the packet distinguished "true of the
+    // world" from "known to the people in it".
     items.push({
       id: "world-rules",
       priority: "P0",
       source: "index/story/bible/world-rules.yaml",
-      content: plan.worldRules.map((r) => `- ${r}`).join("\n"),
+      content:
+        `These govern what is TRUE. They do not say what anyone KNOWS.\n` +
+        `A character knows a rule only where canon says so; otherwise they may be ` +
+        `ignorant of it, wrong about it, or in the middle of working it out — and if ` +
+        `the story is about someone discovering one of these, writing it into their ` +
+        `thoughts early is how that story gets destroyed.\n\n` +
+        plan.worldRules.map((r) => `- ${r}`).join("\n"),
     });
   }
 
@@ -282,7 +297,7 @@ export function contextFor(input: {
         `${entityId}: ${sketch}\n` +
         (facts.length > 0
           ? facts.map((f) => `  ${f.attribute}: ${f.value}  (from ${f.source})`).join("\n")
-          : "  no facts established yet"),
+          : "  no facts established yet — including nothing about what they know"),
     });
   }
 

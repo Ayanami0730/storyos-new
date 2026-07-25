@@ -45,6 +45,15 @@ elapsed, objects acquired or lost, promises made. There is no cap and there is
 no credit for brevity here — an unrecorded fact is a future contradiction, and
 the cheapest moment to record it is now, while you can still see why it is true.
 
+**Claims are standing properties, not a record of what happened.** The prose
+already says what happened; the delta says what is now true between scenes. So
+`knows_about_the_shifts: true`, `holds: brass compass`, `location: lighthouse` —
+never `action: climbed the lighthouse stairs`. The difference is not stylistic:
+continuity is checked by asking whether a later scene gives the same property a
+different value, so an event filed as a property makes the next scene in which
+that character does anything else read as a contradiction. Ask what the event
+*left behind*, and record that.
+
 ## Promises, recorded when you make them
 
 When a scene makes the reader a promise — a question worth answering, a threat
