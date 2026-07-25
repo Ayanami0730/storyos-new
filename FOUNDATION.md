@@ -95,6 +95,50 @@ YS_KEY="$(security find-generic-password -s ai.metastone.yuanshi-api -a ayanami 
   node smoke/gateway-tool-loop.mjs
 ```
 
+## Gotcha 3 — the company sandbox endpoint takes an `api.` prefix and a private CA
+
+The company runs an **E2B-protocol-compatible sandbox service on Alibaba Cloud**
+(Function Compute base), code at `gitlab.metastoneai.com/alg/e2b_sandbox` (clone
+over SSH; HTTPS asks for credentials). It is not e2b.dev, so none of e2b.dev's
+tiers, credits or session caps apply.
+
+Two things must be right or it looks unreachable:
+
+1. **The endpoint is `api.agent-vpc.infra`, not `agent-vpc.infra`.** The E2B SDK
+   prepends `api.` to the configured `domain`. The bare domain has no A record, so
+   curling it returns nothing and looks like "private domain, not resolvable" —
+   which is how an earlier probe reached the wrong conclusion. With the prefix,
+   Alibaba's internal DNS resolves it to the ALB (`47.237.29.100` /
+   `47.236.122.64`).
+2. **The private CA is mandatory.** Without `--cacert e2b_sandbox/ca-fullchain.pem`
+   curl fails with "self signed certificate in certificate chain"; with it,
+   `https://api.agent-vpc.infra/health` returns 200 with TLS in ~14ms.
+
+Verified end to end from sgp-dev by the repo's own live test suite:
+
+```
+endpoint domain=agent-vpc.infra template=sandbox-with-oss
+[1/3] raw lifecycle   create 0.06s · files+commands OK · pause/resume preserved · kill OK
+[2/3] manager path    ensure_structure + /user_space read/write OK · redis mapping OK · acquire(reuse) OK
+[3/3] service layer   sandbox_list / sandbox_lookup OK
+LIVE E2B: ALL PASS
+```
+
+A sandbox is a 2-core / 2.8GB lifsea container running as user `user`, created in
+**0.06s**. Mount points are injected at creation time from `sandbox_type` via
+`csi-volume-config` metadata — `user→/user_space`, `story→/story`,
+`creator→/creator`, `agent→/agent_space` — so a bare `Sandbox.create()` with no
+metadata legitimately has no `/user_space`; go through the manager path instead.
+Redis at `10.3.5.220:6379` is reachable too.
+
+Note for us: there is already a `story` sandbox type with its own mount. And
+because creation is 60ms with OSS-backed persistence and pause/resume, this
+service is a better fit than e2b.dev for per-task sandboxes.
+
+Security note to pass upstream: that repo commits `E2B_API_KEY`, a production
+Redis URL with password, and MySQL credentials in plaintext in
+`e2b_sandbox/defaults.py`. They should move to env/secret storage and rotate.
+
 ## What pi gives us vs what we must build
 
 Out of the box: the tool loop, native function calling against a custom

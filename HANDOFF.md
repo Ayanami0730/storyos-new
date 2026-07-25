@@ -104,6 +104,19 @@ These were decided with the human and should not be silently revisited.
    tail. Defaults derived from CC: `E = W - min(maxOutput, 20k)`, level 1 at
    `0.70·E`, level 2 at `E - 13k`, hard block at `E - 3k`.
 
+## What to do first, after pulling this on sgp-dev
+
+1. `node -v` must be ≥ 22.19.0. It is v20.19.2 on sgp-dev today; install 22+ first.
+2. Free disk. Root is at 100% with 2.4G free; `docker system prune` reclaims ~6G,
+   but the real consumer is outside this project's home directory.
+3. `npm install && node smoke/gateway-tool-loop.mjs` — from sgp-dev you do **not**
+   need the proxy dispatcher (the gateway answers directly in ~0.019s), but
+   leaving it installed is harmless since it no-ops without proxy env vars.
+4. Read `docs/05-open-threads.md` and start at item 1. Items 1 and 2 gate the rest.
+
+Full open-thread list with priorities, per-adapter fix table, the motivation
+experiment design, and the remote-merge plan lives in `docs/05-open-threads.md`.
+
 ## Sandbox: what it is actually for
 
 The agents are not adversarial, so isolation is not about security. Its real
@@ -111,15 +124,23 @@ value is that **the gated write path becomes OS-enforced rather than
 prompt-enforced** — a much stronger claim than "we instructed the agent not to
 write". Implement `SandboxBackend` with three interchangeable backends:
 
-- `local` (default for development): confined working directory; canonical
-  index files carry read-only permissions and are only unlocked inside
-  index-manager's commit critical section.
-- `docker` (sgp-dev, and the production target): canonical index bind-mounted
-  read-only into every agent container except index-manager's; staging mounted
-  read-write per agent.
-- `e2b` (only if we ever need hundreds of concurrent tasks or untrusted code):
-  not required now. The bottleneck is gateway concurrency, not sandbox
-  isolation, and local directories keep debugging trivial.
+- `local` (development, unit tests): confined working directory; canonical index
+  files carry read-only permissions and are only unlocked inside index-manager's
+  commit critical section.
+- `company-e2b` (**the runtime target**, verified from sgp-dev): the company's
+  E2B-protocol-compatible service on Alibaba Cloud. Creation in **0.06s**,
+  pause/resume preserves the filesystem, OSS CSI volumes mount by `sandbox_type`
+  (a `story→/story` type already exists), Redis mapping works. Connection details
+  and the two mistakes that make it look unreachable — the `api.` prefix and the
+  private CA — are in `FOUNDATION.md` gotcha 3.
+- `docker` (fallback if the company service is unavailable): canonical index
+  bind-mounted read-only into every agent container except index-manager's.
+
+e2b.dev is **not** needed: no credits, no tier caps, no per-second billing to
+manage. Design constraint that holds for every backend: **the agent loop stays
+outside the sandbox.** Each `run_command` enters, runs for seconds, returns, so
+nothing long-lived depends on one sandbox session staying up and we never pay for
+a VM idling on gateway latency.
 
 ## Trace and cost accounting
 

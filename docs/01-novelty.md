@@ -61,23 +61,47 @@ state on demand". Three systems are direct counter-examples:
   `node.get_all_layer_plan()` (the global plan) and the dependency closure
   (`recursive/agent/agents/regular.py:98-114`).
 
-The defensible claim, which survives the audit, is narrower and sharper:
+But the counter-examples do **not** rescue those systems, because what they pass
+around is not the full context — it is context that has already been compressed
+so that it *can* be passed around. A shared scratchpad is bounded by design: to
+stay inside every agent's prompt it must be aggressively condensed, and the
+details lost in that condensation are exactly the ones consistency depends on.
+The same is true of a rolling `memory.md`, a 500-word summary, or a top-k
+retrieval result. Every one of these is a mechanism for *making context small
+enough to hand over*, and every hand-over is lossy.
 
-> Existing long-form writing systems either pass an untyped monolithic
-> scratchpad to every stage or expose only lossy, stage-specific views such as
-> rolling summaries, top-k memories and dependency-scoped outputs. None provides
-> a provenance-aware canonical narrative index that every specialist can query on
-> demand and update through a validated atomic commit path.
+So the claim, stated correctly:
 
-Two things follow. Seeing all the prose is not the same as having queryable
-state: none of these systems lets a component ask "what does this character know
-as of scene 12" or "which promises are still open" and get back typed records
-with source spans. And the word "root cause" is not supported — ablations show
-context flow is causally linked to quality (RecurrentGPT loses coherence without
-its memories; DOME's conflict rate rises from 0.56 to 4.52 without MEM;
-StoryWriter's summary window beats discarding history), but no system has run the
-controlled experiment that isolates canonical-state access. The paper must say
-**a shared structural bottleneck**, not *the* root cause.
+> Existing long-form writing systems fail in one of two ways: either a component
+> simply cannot obtain the context it needs, or — in order to keep context
+> passable between components — the system compresses at every step, so that
+> **every component receives lossy context**. Rolling summaries, shared
+> scratchpads, top-k memories and dependency-scoped views are all instances of
+> the same compromise. StoryOS removes the compromise: a unified filesystem
+> index with no capacity ceiling, from which every agent can retrieve **lossless**
+> context on demand, at the granularity its current task requires.
+
+> 中文表述：现有系统要么某些组件拿不到它需要的上下文，要么为了让上下文能在组件之间传递
+> 而在每一步都做压缩，于是所有组件收到的都是有损上下文。我们通过一个没有容量上限的统一
+> 文件索引，让所有组件都能按需取到无损上下文。
+
+Two corollaries. First, seeing all the prose is still not the same as having
+queryable state: none of these systems lets a component ask "what does this
+character know as of scene 12" or "which promises are still open" and get typed
+records back with source spans. Second, the word "root cause" is not supported by
+existing evidence — ablations show context flow is causally linked to quality
+(RecurrentGPT loses coherence without its memories; DOME's conflict rate rises
+from 0.56 to 4.52 without MEM; StoryWriter's summary window beats discarding
+history), but nobody has run the controlled experiment that isolates
+canonical-state access. Say **a shared structural bottleneck**, not *the* root
+cause — until our own ablation says otherwise.
+
+Why a filesystem is what makes "no capacity ceiling" real: prompt-resident state
+is bounded by the window, a database row set is bounded by whatever query the
+component was allowed to run, but a directory tree has no size limit and an agent
+with `grep`/`read` can descend to any depth on demand. The index can hold every
+scene's full prose, every relation phase, and every promise with provenance, and
+a component pays only for what it actually asks for.
 
 The concrete gaps that remain true across systems:
 

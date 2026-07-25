@@ -24,6 +24,7 @@
 | 架构设计（设计之准） | [docs/02-architecture.md](docs/02-architecture.md) | [zh/docs/02-architecture.zh.md](zh/docs/02-architecture.zh.md) |
 | v2 复盘 | [docs/03-v2-postmortem.md](docs/03-v2-postmortem.md) | [zh/docs/03-v2-postmortem.zh.md](zh/docs/03-v2-postmortem.zh.md) |
 | 全部实测结果 | [docs/04-results.md](docs/04-results.md) | [zh/docs/04-results.zh.md](zh/docs/04-results.zh.md) |
+| 未完成线条与优先级 | [docs/05-open-threads.md](docs/05-open-threads.md) | — |
 
 外部资料：设计调研全文在 `../../research/2026-07/25-storyos-v3-harness-design-research.md`
 （含 Claude Code 机制的文件行号引用、2026 多智能体范式对比、小说家工作制品清单、阈值与 20 条风险）。

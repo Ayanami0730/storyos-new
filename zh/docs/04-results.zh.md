@@ -6,6 +6,17 @@
 
 所有受控系统的 backbone 都是 `gpt-5-mini`；三行 `raw-*` 用的是前沿模型，因此**不是**受控对比。checker / judge 是 `gpt-5.5`，因为 `gpt-5-mini` 没通过预注册的校准门槛。
 
+## 0. 有效性警告 —— 下表中 harness 那几行还不是公平对比
+
+一次针对我们自己 baseline adapter 与官方实现的代码级审计（`../../research/2026-07/25-baseline-context-flow-audit.md` 的「我方 baseline adapters 的复现忠实度警报」一节）发现，三个 adapter **被不忠实地削弱了**，而且每一处都朝着对我们有利的方向：
+
+- **AgentWrite**：我们的 writer prompt 只带 premise、continuation setup 和当前 section brief（`storyos/src/baselines/implementations.py:393-405`），而官方实现每一步都把**此前累计的全文**传进去（`LongWriter@447539b:agentwrite/write.py:56-84`）。我们这版等于让它各段独立写。
+- **Agents' Room**：我们的 writer 只收到当前 brief 加一个"已完成章节标题"列表（`implementations.py:540-566`），而论文规定每个 agent 读**完整的当前共享 scratchpad**，包含 planning block 和已写正文。我们人为制造了整个对比里最严重的 context 断流。
+- **RecurrentGPT**：我们的 adapter 同时删掉了上一段和官方循环里的长期 top-k 检索。
+- **DOME**：我们的 writer 少传了官方 DHO writer prompt 里的 `last_chapter_story`（`storyos/src/baselines/dome.py:681-716`）。
+
+后果：harness 那三行 5.06 / 6.15 / 6.61 是被我们自己的实现选择拉高（变差）的，所以**"harness 输给 bare long-context"这个结论并不成立**，这张表在当前形态下不能发表。任何结论要靠它之前，必须先恢复忠实度、重跑受影响的系统、重打分、重新推导这张表。`bare-long-context`、三个 `raw-*` 和 `storyos-index` 那几行不受影响。
+
 ## 1. ConStory tuning-20 —— 一致性（CED，越低越好）
 
 CED = 检出的不同错误子类数 ÷（词数 / 10,000），每 10k 词取值范围 [0, 19]。来源：`storyos/experiments/reproduction-subsubset/checker/*.summary.json`。
