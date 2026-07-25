@@ -28,7 +28,12 @@
 import { buildContextPacket } from "../context/packet.ts";
 import type { ContextItem, ContextPacket, PacketRequest } from "../context/types.ts";
 import { PacketBuildError } from "../context/types.ts";
-import { type CommitResult, CanonicalIndex, CommitRefused } from "../index/commit.ts";
+import {
+  type CommitResult,
+  type FileWrite,
+  CanonicalIndex,
+  CommitRefused,
+} from "../index/commit.ts";
 import { SceneTransaction } from "../transaction/machine.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
 import {
@@ -51,6 +56,19 @@ export interface Draft {
  * the interesting failures here are ordering and budget, not token generation.
  */
 export interface SceneCollaborators {
+  /**
+   * Enrich the deterministic skeleton by searching the index.
+   *
+   * Optional so the loop's control flow can be tested without it, and so a run
+   * can be configured without a builder to measure what the builder is worth.
+   * Returns P2–P4 material only; the skeleton's hard constraints are not its to
+   * change.
+   */
+  build?(input: {
+    readonly sceneId: string;
+    readonly skeleton: ContextPacket;
+  }): Promise<readonly ContextItem[]>;
+
   /** Draft, or redraft in response to findings. */
   draft(input: {
     readonly packet: ContextPacket;
@@ -58,6 +76,22 @@ export interface SceneCollaborators {
     /** Empty on the first attempt. */
     readonly repairBrief: string;
   }): Promise<Draft>;
+
+  /**
+   * Fold an approved scene into every partition it touched, returning the files
+   * to write.
+   *
+   * Runs after approval and before the commit, so the prose and everything
+   * derived from it land in one transaction. Committing first and backfilling
+   * afterwards is what produces an index that lags its own manuscript, and it
+   * fails in the direction hardest to notice: the prose looks right until a
+   * later scene reads a partition that never updated.
+   */
+  backfill?(input: {
+    readonly sceneId: string;
+    readonly draft: Draft;
+    readonly packet: ContextPacket;
+  }): Promise<readonly FileWrite[]>;
   /**
    * The LLM verification track. Runs only after the deterministic layer is
    * satisfied, because a model should never be asked to find what a comparison
@@ -79,6 +113,8 @@ export interface SceneRequest {
   readonly maxRepairs: number;
   /** Where the prose lands, relative to the index root. */
   readonly prosePath: string;
+  /** Where the declared delta lands. Defaults under `continuity/`. */
+  readonly deltaPath?: string;
 }
 
 export type SceneOutcome =
@@ -88,6 +124,10 @@ export type SceneOutcome =
       readonly attempts: number;
       readonly history: readonly SceneState[];
       readonly findings: readonly Finding[];
+      /** Partitions this scene wrote, for the audit of what the index gained. */
+      readonly derivedPaths: readonly string[];
+      /** Non-fatal problems worth reporting rather than hiding. */
+      readonly warnings: readonly string[];
     }
   | {
       readonly status: "REJECTED" | "ABORTED";
@@ -138,6 +178,8 @@ export async function runScene(
   // 1. Context. A build failure is terminal for this attempt on purpose: the
   //    cure is to fix the index or the scene card, not to try again.
   let packet: ContextPacket;
+  /** Recorded rather than thrown: a builder that failed is a result, not a stop. */
+  let builderError: string | null = null;
   try {
     packet = buildContextPacket(request.packet, request.available);
   } catch (error) {
@@ -153,6 +195,20 @@ export async function runScene(
       );
     }
     throw error;
+  }
+  // The builder runs against the assembled skeleton rather than the raw item
+  // list, so it can see what is already covered and add only what is not. A
+  // failure here degrades to the skeleton: a scene written from a thinner packet
+  // is a worse scene, and a scene not written at all is no scene.
+  if (collaborators.build) {
+    try {
+      const extra = await collaborators.build({ sceneId: request.sceneId, skeleton: packet });
+      if (extra.length > 0) {
+        packet = buildContextPacket(request.packet, [...request.available, ...extra]);
+      }
+    } catch (error) {
+      builderError = error instanceof Error ? error.message : String(error);
+    }
   }
   tx.transition("CONTEXT_BUILT", "context-builder", { artifact: packet.rendered });
 
@@ -230,6 +286,25 @@ export async function runScene(
   //    the prose and the delta go in one call or neither does.
   tx.transition("COMMITTING", "orchestrator");
   const findings = tx.snapshot().findings;
+
+  // Backfill before the commit, so every partition derived from this scene is in
+  // the same transaction as the prose. A backfill that fails does not lose the
+  // scene: the prose and the declared delta still land, and the gap is visible in
+  // the reference check rather than silently absent.
+  let derived: readonly FileWrite[] = [];
+  let backfillError: string | null = null;
+  if (collaborators.backfill) {
+    try {
+      derived = await collaborators.backfill({
+        sceneId: request.sceneId,
+        draft: lastDraft!,
+        packet,
+      });
+    } catch (error) {
+      backfillError = error instanceof Error ? error.message : String(error);
+    }
+  }
+
   try {
     const commit = await index.commit({
       txid: request.txid,
@@ -239,10 +314,11 @@ export async function runScene(
       prose: { relPath: request.prosePath, content: lastDraft!.prose },
       stateDelta: [
         {
-          relPath: `index/story/continuity/deltas/${request.sceneId}.json`,
+          relPath: request.deltaPath ?? `continuity/deltas/${request.sceneId}.json`,
           content: JSON.stringify(lastDraft!.delta, null, 2),
         },
       ],
+      derived,
     });
     tx.transition("COMMITTED", "index-manager");
     return {
@@ -251,6 +327,11 @@ export async function runScene(
       attempts: tx.attempt + 1,
       history: tx.snapshot().history.map((h) => h.to),
       findings,
+      derivedPaths: derived.map((d) => d.relPath),
+      warnings: [
+        ...(builderError ? [`context-builder failed: ${builderError}`] : []),
+        ...(backfillError ? [`backfill failed: ${backfillError}`] : []),
+      ],
     };
   } catch (error) {
     if (error instanceof CommitRefused && error.code === "STALE_BASE") {

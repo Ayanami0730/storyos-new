@@ -365,6 +365,19 @@ export async function writeStory(options: {
    */
   readonly bus: SceneToolBus;
   readonly onScene?: (sceneId: string) => void;
+  /** Resident context-builder, when one is configured. */
+  readonly build?: (input: {
+    readonly sceneId: string;
+    readonly skeleton: import("../context/types.ts").ContextPacket;
+  }) => Promise<readonly ContextItem[]>;
+  /** Resident index-manager's backfill, when one is configured. */
+  readonly backfill?: (input: {
+    readonly sceneId: string;
+    readonly draft: import("./scene-loop.ts").Draft;
+    readonly packet: import("../context/types.ts").ContextPacket;
+  }) => Promise<readonly import("../index/commit.ts").FileWrite[]>;
+  /** Where prose goes; the tree groups scenes into chapters. */
+  readonly prosePathFor?: (sceneId: string) => string;
   /**
    * Progress, because a forty-scene run that prints nothing for an hour is
    * indistinguishable from a hung one, and the difference matters at 3am.
@@ -374,6 +387,8 @@ export async function writeStory(options: {
   const { residents, index, premise, targetWords, maxRepairs, planSink } = options;
 
   const say = options.log ?? (() => {});
+  const buildScene = options.build;
+  const backfillScene = options.backfill;
   say(`planning for ${targetWords} words`);
   const plan = await planStory({
     residents,
@@ -408,6 +423,8 @@ export async function writeStory(options: {
       sceneId: card.id,
       txid,
       bus: options.bus,
+      ...(buildScene ? { build: buildScene } : {}),
+      ...(backfillScene ? { backfill: backfillScene } : {}),
     });
     options.onScene?.(card.id);
 
@@ -427,7 +444,7 @@ export async function writeStory(options: {
         canon,
         knownEntities,
         maxRepairs,
-        prosePath: `manuscript/${card.id}.md`,
+        prosePath: options.prosePathFor?.(card.id) ?? `manuscript/${card.id}.md`,
       },
       { index, collaborators },
       );
@@ -451,11 +468,12 @@ export async function writeStory(options: {
     );
 
     if (outcome.status === "COMMITTED") {
-      const text = await index.read(`manuscript/${card.id}.md`);
+      for (const warning of outcome.warnings) say(`${card.id} warning — ${warning}`);
+      const text = await index.read(options.prosePathFor?.(card.id) ?? `manuscript/${card.id}.md`);
       prose.push(text);
       previousProse = text;
       const delta = JSON.parse(
-        await index.read(`index/story/continuity/deltas/${card.id}.json`),
+        await index.read(`continuity/deltas/${card.id}.json`),
       ) as SceneDelta;
       canon = absorb(canon, card.id, delta);
       committedScenes.push(card.id);

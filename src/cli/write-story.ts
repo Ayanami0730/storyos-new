@@ -11,21 +11,32 @@
  * on the unhappy path.
  */
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { Agent } from "@earendil-works/pi-agent-core";
 
 import { summaryPrompt, thresholdsFor } from "../agents/compaction.ts";
+import { indexManagerTools } from "../agents/index-manager-tools.ts";
 import { AgentMemory, memorySection } from "../agents/memory.ts";
 import { memoryTools } from "../agents/memory-tools.ts";
 import { PERSONAS, withBackbone } from "../agents/personas.ts";
 import { type AgentLike, ResidentAgents } from "../agents/residents.ts";
+import { skillTools } from "../agents/skill-tools.ts";
+import { SkillLibrary, installStarterSkills, skillsSection } from "../agents/skills.ts";
+import { PartitionWriter } from "../index/backfill.ts";
 import { CanonicalIndex } from "../index/commit.ts";
+import { initialiseProject, chapterFor, partitionReport, paths, sceneIndexOf } from "../index/tree.ts";
 import { TokenBudget, profileById, taskBudgetFor } from "../runtime/budget.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import { SceneToolBus } from "../runtime/collaborators.ts";
 import { type ModelId, installGateway } from "../runtime/gateway.ts";
+import {
+  BuilderBus,
+  askBuilderTool,
+  builderBrief,
+  followUpBrief,
+} from "../runtime/packet-builder.ts";
 import {
   type StoryPlan,
   planTool,
@@ -33,6 +44,8 @@ import {
   updatePlanTool,
   writeStory,
 } from "../runtime/story.ts";
+import { shellTool } from "../tools/shell-tool.ts";
+import { checkReferences, renderReferenceReport } from "../verification/references.ts";
 
 interface Args {
   premise: string;
@@ -83,10 +96,26 @@ const say = (line: string) =>
   console.error(`[${new Date().toISOString().slice(11, 19)}] ${line}`);
 
 const gateway = installGateway();
-const index = new CanonicalIndex(path.join(outDir, "project"));
+const projectRoot = path.join(outDir, "project");
+const index = new CanonicalIndex(projectRoot);
 await index.init("genesis");
 
+/**
+ * The partitioned tree, before anything runs.
+ *
+ * Created empty but complete, because a partition an agent cannot list is a
+ * partition it will not fill: `relations/` did not exist in the first
+ * implementation until something wrote a relation, and nothing ever did.
+ */
+const { created } = await initialiseProject(projectRoot, {
+  premise: args.premise,
+  targetWords: args.target,
+  agentsRoot: path.join(import.meta.dirname, "../../agents"),
+});
+say(`project initialised: ${created.length} paths under ${projectRoot}`);
+
 const bus = new SceneToolBus();
+const builderBus = new BuilderBus();
 // One object, two readers: the plan tool writes it, update_plan revises it, and
 // the story loop reads whatever it currently says.
 const planState: { plan?: StoryPlan; committed: Set<string> } = { committed: new Set() };
@@ -109,6 +138,28 @@ const profile = profileById(args.profile);
 const taskBudget = taskBudgetFor(profile, args.target);
 const budget = new TokenBudget(taskBudget);
 
+/** One id per run, so transcripts from separate runs never interleave. */
+const runId = `run-${new Date().toISOString().replace(/[:.]/g, "-")}`;
+
+/**
+ * Follow-up rounds the writer may spend on the builder.
+ *
+ * The brief said "比如最多三轮". Three is the starting point rather than the
+ * answer: every round is recorded with the findings that followed it, so whether
+ * a third is worth its cost becomes a number instead of an argument.
+ */
+const FOLLOW_UP_ROUNDS = 3;
+
+/**
+ * The live backfill buffer for the scene being committed.
+ *
+ * Set immediately before index-manager is invoked and cleared after, because its
+ * tools are registered once against a getter — the same reason the scene tool bus
+ * exists. A tool closing over scene 1's writer would still be filing scene 40's
+ * characters into scene 1's transaction.
+ */
+let partitionWriter: PartitionWriter | null = null;
+
 /**
  * Memory lives under the run's project directory unless told otherwise, so two
  * runs of the same premise start from the same blank slate. Sharing it across
@@ -116,9 +167,23 @@ const budget = new TokenBudget(taskBudget);
  * better at the eleventh — but it makes a result depend on history that is not
  * in the inputs, so it is opt-in and it goes in the summary.
  */
-const memoryRoot = args.memoryDir
-  ? path.resolve(args.memoryDir)
-  : path.join(outDir, "project", "agents");
+const memoryRoot = args.memoryDir ? path.resolve(args.memoryDir) : projectRoot;
+
+/**
+ * Skills, installed once per role.
+ *
+ * An empty library is a mechanism nobody uses: the first agent to face a promise
+ * audit improvises one rather than writing one down. Only descriptions reach the
+ * prompt, so the starter set costs a line each.
+ */
+const skillLibraries = new Map<AgentRole, SkillLibrary>(
+  PERSONAS.map((p) => [p.role, new SkillLibrary({ root: memoryRoot, role: p.role })]),
+);
+const skillIndex = new Map<AgentRole, string>();
+for (const [role, library] of skillLibraries) {
+  await installStarterSkills(memoryRoot, role);
+  skillIndex.set(role, skillsSection(await library.all()));
+}
 
 const memories = new Map<AgentRole, AgentMemory>(
   PERSONAS.map((p) => [
@@ -140,7 +205,20 @@ const residents = new ResidentAgents({
   agentsRoot: path.join(import.meta.dirname, "../../agents"),
   personas,
   budget,
-  promptSuffix: (role) => memorySection(memoryIndex.get(role) ?? ""),
+  promptSuffix: (role) =>
+    `${memorySection(memoryIndex.get(role) ?? "")}\n\n${skillIndex.get(role) ?? ""}`,
+  transcriptSink: async (role, messages, meta) => {
+    // The brief asked for raw conversation on disk, and its absence has already
+    // cost real time: reconstructing what an agent was told in a finished run
+    // required replaying the packet, which says nothing about what it replied.
+    const rel = paths.transcript(role, runId);
+    const full = path.join(projectRoot, rel);
+    await mkdir(path.dirname(full), { recursive: true });
+    const lines = messages.map((m) =>
+      JSON.stringify({ at: new Date().toISOString(), txid: meta.txid, ...m }),
+    );
+    await appendFile(full, `${lines.join("\n")}\n`, "utf8");
+  },
   compaction: {
     thresholds: thresholdsFor(profile),
     // Each agent compresses its own transcript with its own model. Routing this
@@ -169,16 +247,43 @@ const residents = new ResidentAgents({
   },
   factory: (persona, systemPrompt, toolNames) => {
     const role = persona.role as AgentRole;
+    const knownEntities = () => (planState.plan?.entities ?? []).map((e) => e.id);
     const tools = [
       ...bus.toolsFor(role),
       ...(role === "orchestrator"
         ? [planTool(planState, sceneCountFor(args.target)), updatePlanTool(planState)]
         : []),
+      // Uniform read reach, at last actually uniform: every role gets the same
+      // shell over the same tree, and the difference between roles is only what
+      // they may write.
+      shellTool({
+        projectRoot,
+        budgetKey: () => `${role}:${storyState.scenes.at(-1) ?? "plan"}`,
+        onRead: () => builderBus.noteRead(),
+      }),
+      ...(role === "index-manager" ? indexManagerTools(() => partitionWriter!) : []),
+      ...(role === "context-builder" ? builderBus.tools() : []),
+      ...(role === "writer"
+        ? [
+            askBuilderTool({
+              maxRounds: FOLLOW_UP_ROUNDS,
+              roundsUsed: () => builderBus.contribution().followUps.length,
+              ask: askContextBuilder,
+            }),
+          ]
+        : []),
       ...memoryTools(memories.get(role)!, {
         source: () => storyState.scenes.at(-1) ?? "planning",
-        knownEntities: () => (planState.plan?.entities ?? []).map((e) => e.id),
+        knownEntities,
         onChange: async () => {
           memoryIndex.set(role, await memories.get(role)!.refreshIndex());
+          residents.refreshSystemPrompt(role);
+        },
+      }),
+      ...skillTools(skillLibraries.get(role)!, {
+        knownEntities,
+        onChange: async () => {
+          skillIndex.set(role, skillsSection(await skillLibraries.get(role)!.all()));
           residents.refreshSystemPrompt(role);
         },
       }),
@@ -197,10 +302,107 @@ const residents = new ResidentAgents({
 });
 
 /**
- * The read surface. Deliberately not a general shell in this entry point: the
- * committed index is small and structured, and a real shell here would mean
- * standing up a sandbox before we have a single measured story. The guarded
- * shell is the production path; this is the one that gets us a number.
+ * Ask the resident context-builder to answer the writer's question.
+ *
+ * Declared here rather than inline because the writer's tool closes over it and
+ * the writer is constructed before the first scene opens.
+ */
+async function askContextBuilder(question: string): Promise<string> {
+  const scene = builderBus.sceneId;
+  const before = builderBus.contribution().followUps.length;
+  await residents.invoke(
+    "context-builder",
+    followUpBrief({
+      sceneId: scene,
+      question,
+      round: before + 1,
+      maxRounds: FOLLOW_UP_ROUNDS,
+    }),
+    { txid: `tx-${scene}`, caller: "orchestrator" },
+  );
+  const answered = builderBus.contribution().followUps;
+  return (
+    answered.at(-1)?.answer ??
+    "the context-builder did not answer through answer_writer; treat the question as " +
+      "unanswered rather than assuming a value"
+  );
+}
+
+/** Build P2–P4 for a scene by asking the resident builder to search the index. */
+async function buildContext(input: {
+  readonly sceneId: string;
+  readonly skeleton: { readonly rendered: string };
+}) {
+  builderBus.open(input.sceneId);
+  const card = planState.plan?.scenes.find((s) => s.id === input.sceneId);
+  await residents.invoke(
+    "context-builder",
+    builderBrief({
+      sceneId: input.sceneId,
+      intent: card?.intent ?? "unknown",
+      presentEntities: card?.presentEntities ?? [],
+      skeleton: input.skeleton.rendered,
+      committedScenes: [...planState.committed],
+    }),
+    { txid: `tx-${input.sceneId}`, caller: "orchestrator" },
+  );
+  const contribution = builderBus.contribution();
+  say(
+    `${input.sceneId} context-builder added ${contribution.items.length} item(s) ` +
+      `after ${contribution.reads} read(s)`,
+  );
+  return contribution.items;
+}
+
+/**
+ * Fold an approved scene into the index by asking the resident index-manager.
+ *
+ * The prose and delta are shown to it, not derived from it: this is the step the
+ * brief described as its whole job, and the parts that matter — did this scene
+ * change a relationship, which promise did it pay off, where did it land on the
+ * tension curve — are judgements, not transformations.
+ */
+async function backfillScene(input: {
+  readonly sceneId: string;
+  readonly draft: { readonly prose: string; readonly delta: unknown };
+}) {
+  partitionWriter = new PartitionWriter(index, input.sceneId);
+  try {
+    await residents.invoke(
+      "index-manager",
+      [
+        `Scene ${input.sceneId} has been approved. Fold it into the index.`,
+        "",
+        "Work through the partitions in order: identity, then state, then belief, then",
+        "relations, then events, then rhythm, then promises. If you want a state attribute",
+        "that is not in the vocabulary, what you have is an event.",
+        "",
+        "Only record what the prose supports. An index that improves on what was written",
+        "will disagree with the manuscript, and nothing downstream can tell which is right.",
+        "",
+        `## The prose\n\n${input.draft.prose}`,
+        "",
+        `## What the writer declared\n\n${JSON.stringify(input.draft.delta, null, 2)}`,
+      ].join("\n"),
+      { txid: `tx-${input.sceneId}`, caller: "orchestrator" },
+    );
+    const writes = partitionWriter.writes();
+    say(
+      `${input.sceneId} index-manager wrote ${writes.length} partition file(s): ` +
+        `${partitionWriter.touched().map((p) => p.split("/")[0]).join(", ") || "none"}`,
+    );
+    return writes;
+  } finally {
+    partitionWriter = null;
+  }
+}
+
+/**
+ * A path-addressed read, kept alongside the shell.
+ *
+ * Redundant with `run_command` for a capable agent, and worth keeping anyway: it
+ * answers "read exactly this" without spending a shell budget slot, and its
+ * not-found message is written to be useful rather than to be a shell error.
  */
 function readIndexTool(idx: CanonicalIndex) {
   return {
@@ -249,6 +451,9 @@ try {
     targetWords: args.target,
     maxRepairs: args.maxRepairs,
     log: say,
+    build: buildContext,
+    backfill: backfillScene,
+    prosePathFor: (sceneId) => paths.scene(chapterFor(sceneIndexOf(sceneId)), sceneId),
     planSink: planState,
     bus,
     onScene: (sceneId) => {
@@ -285,6 +490,17 @@ async function committedOnDisk(): Promise<{ scenes: string[]; words: number }> {
 }
 
 const onDisk = await committedOnDisk();
+
+/**
+ * Cross-partition links, checked at the end and reported either way.
+ *
+ * Zero tokens, and it sees the class of defect nothing else can: every file is
+ * individually well-formed, so the damage only exists between them.
+ */
+const referenceReport = await checkReferences(projectRoot, {
+  knownScenes: new Set(onDisk.scenes),
+});
+say(renderReferenceReport(referenceReport));
 
 await writeFile(
   path.join(outDir, "ledger.jsonl"),
@@ -363,9 +579,27 @@ const summary = {
     peak_output_tokens: ledger.reduce((n, e) => Math.max(n, e.usage.output), 0),
     compactions: residents.compactions(),
   },
+  /**
+   * What the index actually gained, which is the question the first long run
+   * could not answer: it reported nine committed scenes while producing no
+   * character files, no relations and no timeline at all.
+   */
+  index: {
+    partitions: await partitionReport(projectRoot),
+    references: referenceReport.counts,
+    dangling: referenceReport.dangling,
+    scenes_committed_on_disk: onDisk.scenes,
+  },
   memory: {
     root: memoryRoot,
     shared_across_runs: args.memoryDir !== null,
+    skills: Object.fromEntries(
+      await Promise.all(
+        [...skillLibraries].map(
+          async ([role, library]) => [role, (await library.all()).map((s) => s.slug)] as const,
+        ),
+      ),
+    ),
     topics: Object.fromEntries(
       await Promise.all(
         [...memories].map(

@@ -226,14 +226,19 @@ export class AgentMemory {
   readonly #knownEntities: () => readonly string[];
 
   constructor(options: {
-    /** Usually `<project>/agents`; each role gets a subdirectory under it. */
+    /**
+     * The project root. Memory lands in `.<role>/memory/`, matching the tree —
+     * the brief asked for a dot-directory per worker holding `memory/` and
+     * `skills/` together, because they are the two halves of one thing: what this
+     * role knows about working here.
+     */
     readonly root: string;
     readonly role: AgentRole;
     readonly now?: () => number;
     /** Read fresh each time: the entity list grows while the story is written. */
     readonly knownEntities?: () => readonly string[];
   }) {
-    this.#dir = path.join(options.root, options.role, "memory");
+    this.#dir = path.join(options.root, `.${options.role}`, "memory");
     this.#now = options.now ?? (() => Date.now());
     this.#knownEntities = options.knownEntities ?? (() => []);
   }

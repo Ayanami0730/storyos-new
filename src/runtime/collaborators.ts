@@ -15,6 +15,8 @@
 
 import { Type } from "typebox";
 
+import type { ContextItem, ContextPacket } from "../context/types.ts";
+import type { FileWrite } from "../index/commit.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import type { Finding } from "../transaction/types.ts";
 import {
@@ -254,6 +256,12 @@ const VERIFIER_BRIEF = [
   "",
   "For any contradiction you must quote both sides. If you cannot point at the passage it",
   "contradicts, you have a suspicion, not a finding: report it as a warning or not at all.",
+  "",
+  "You can read the whole book. `run_command` reaches every committed scene under",
+  "novel/chapters/, every character file, the relation records and the promise ledger — so",
+  "when a passage looks wrong, check before reporting. The packet is what the writer was",
+  "given, not the limit of what you may consult, and a finding that quotes the actual",
+  "earlier scene is one the writer can act on rather than argue with.",
 ].join("\n");
 
 
@@ -295,6 +303,20 @@ export function residentCollaborators(options: {
   readonly txid: string;
   /** When present, tools are shared across scenes through the bus. */
   readonly bus?: SceneToolBus;
+  /**
+   * Ask the resident context-builder to enrich the skeleton. Omit to run without
+   * a builder, which is the ablation that says what the builder is worth.
+   */
+  readonly build?: (input: {
+    readonly sceneId: string;
+    readonly skeleton: ContextPacket;
+  }) => Promise<readonly ContextItem[]>;
+  /** Ask the resident index-manager to fold the approved scene into the index. */
+  readonly backfill?: (input: {
+    readonly sceneId: string;
+    readonly draft: Draft;
+    readonly packet: ContextPacket;
+  }) => Promise<readonly FileWrite[]>;
 }): {
   readonly collaborators: SceneCollaborators;
   readonly toolsFor: (role: AgentRole) => unknown[];
@@ -306,6 +328,8 @@ export function residentCollaborators(options: {
   return {
     toolsFor: (role) => bus.toolsFor(role),
     collaborators: {
+      ...(options.build ? { build: options.build } : {}),
+      ...(options.backfill ? { backfill: options.backfill } : {}),
       async draft({ packet, attempt, repairBrief }): Promise<Draft> {
         capture.prose = undefined;
         capture.delta = undefined;

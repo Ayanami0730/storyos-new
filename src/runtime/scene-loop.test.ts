@@ -137,7 +137,7 @@ describe("a clean scene", () => {
     // Both artefacts, or neither: the delta must be on disk too.
     const delta = JSON.parse(
       await readFile(
-        path.join(root, "index/story/continuity/deltas/s-011.json"),
+        path.join(root, "continuity/deltas/s-011.json"),
         "utf8",
       ),
     );
@@ -351,7 +351,7 @@ describe("failures that are not the writer's fault", () => {
       baseCommitId: "commit-0",
       actor: "index-manager",
       prose: { relPath: "manuscript/s-010.md", content: "elsewhere" },
-      stateDelta: [{ relPath: "index/story/continuity/deltas/s-010.json", content: "{}" }],
+      stateDelta: [{ relPath: "continuity/deltas/s-010.json", content: "{}" }],
     });
 
     const outcome = await runScene(request(), {
@@ -387,7 +387,7 @@ describe("failures that are not the writer's fault", () => {
     // prose without any delta — rather than firing on an inert scene.
     assert.deepEqual((outcome as { commit: { writtenPaths: readonly string[] } }).commit.writtenPaths, [
       "manuscript/s-011.md",
-      "index/story/continuity/deltas/s-011.json",
+      "continuity/deltas/s-011.json",
     ]);
   });
 });

@@ -214,6 +214,13 @@ export class ResidentAgents {
   readonly #budget: TokenBudget | null;
   readonly #promptSuffix: ((role: AgentRole) => string) | null;
   readonly #turnTimeoutMs: number;
+  readonly #transcriptSink:
+    | ((
+        role: AgentRole,
+        messages: readonly PiMessage[],
+        meta: { txid: string; durationMs: number },
+      ) => Promise<void> | void)
+    | null;
   readonly #compactions: CompactionRecord[] = [];
   /** Roles currently inside a compaction, so summarising cannot re-enter it. */
   readonly #compacting = new Set<AgentRole>();
@@ -243,6 +250,25 @@ export class ResidentAgents {
     readonly promptSuffix?: (role: AgentRole) => string;
     /** Per turn, tool loop included. See `DEFAULT_TURN_TIMEOUT_MS`. */
     readonly turnTimeoutMs?: number;
+    /**
+     * Append a turn's raw messages to disk.
+     *
+     * The brief asked for this in as many words — *"他们的memory、原始对话也会落盘
+     * 到index的合适位置"* — and its absence has already cost real time: working out
+     * what the writer was actually told in a finished run required reconstructing
+     * the packet from the plan and replaying canon forward, and that only works
+     * because packet assembly happens to be deterministic. It says nothing about
+     * what the model replied, which tools it tried first, or what a tool handed
+     * back. Case analysis without transcripts is guesswork.
+     *
+     * Failures here are swallowed by the caller on purpose: losing a transcript
+     * must never lose a scene.
+     */
+    readonly transcriptSink?: (
+      role: AgentRole,
+      messages: readonly PiMessage[],
+      meta: { readonly txid: string; readonly durationMs: number },
+    ) => Promise<void> | void;
   }) {
     this.#agentsRoot = options.agentsRoot;
     this.#factory = options.factory;
@@ -252,6 +278,7 @@ export class ResidentAgents {
     this.#budget = options.budget ?? null;
     this.#promptSuffix = options.promptSuffix ?? null;
     this.#turnTimeoutMs = options.turnTimeoutMs ?? DEFAULT_TURN_TIMEOUT_MS;
+    this.#transcriptSink = options.transcriptSink ?? null;
   }
 
   #persona(role: AgentRole): PersonaSpec {
@@ -341,6 +368,13 @@ export class ResidentAgents {
     // whatever it spent, and a ledger that omits the expensive failures makes
     // the run look cheaper than it was.
     const entry = this.#account(role, context.txid, fresh, durationMs, timedOut);
+    // Written before the timeout throw: a stalled turn's partial transcript is
+    // the most informative artefact a stalled turn produces.
+    try {
+      await this.#transcriptSink?.(role, fresh, { txid: context.txid, durationMs });
+    } catch {
+      // Losing a transcript must never lose a scene.
+    }
     if (timedOut) {
       this.#budget?.charge(entry.usage.total);
       throw new TurnTimeout(role, this.#turnTimeoutMs);
