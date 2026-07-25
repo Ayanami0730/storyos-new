@@ -34,6 +34,7 @@
 
 ```bash
 npm install
+export https_proxy="${https_proxy:-http://127.0.0.1:7897}"
 YS_KEY="$(security find-generic-password -s ai.metastone.yuanshi-api -a ayanami -w)" \
   node smoke/gateway-tool-loop.mjs
 ```
@@ -42,6 +43,8 @@ YS_KEY="$(security find-generic-password -s ai.metastone.yuanshi-api -a ayanami 
 gpt-5.5 都是 404），所以必须注册 `api: "openai-completions"` 的自定义 provider，不能只改
 内置 provider 的 baseUrl；网关**拒绝中国大陆 IP**，而 Node 的 undici 默认不读代理环境变量，
 于是同样的请求 curl 成功、Node 报 403 说不支持大陆 IP，必须先装全局 `ProxyAgent`。
+`smoke/proxy-setup.mjs` 会读取 `https_proxy` 并安装全局 `ProxyAgent`。如果本地代理不在
+`127.0.0.1:7897`，请替换上面的地址。sgp-dev 可以直连 gateway，不要在那里设置本地代理。
 细节见 `FOUNDATION.md`。
 
 ---
@@ -77,6 +80,7 @@ Requires Node ≥ 22.19.0 (pi's declared engine constraint).
 
 ```bash
 npm install
+export https_proxy="${https_proxy:-http://127.0.0.1:7897}"
 YS_KEY="$(security find-generic-password -s ai.metastone.yuanshi-api -a ayanami -w)" \
   node smoke/gateway-tool-loop.mjs
 ```
@@ -87,4 +91,7 @@ register a custom provider pinned to `api: "openai-completions"` rather than
 re-pointing the built-in one; and the gateway **rejects mainland-China IPs**
 while Node's undici ignores proxy environment variables, so an identical request
 succeeds from curl and fails from Node with an error blaming geography. Install a
-global `ProxyAgent` first. Details in `FOUNDATION.md`.
+global `ProxyAgent` first. `smoke/proxy-setup.mjs` reads `https_proxy` and installs
+that dispatcher. Replace `127.0.0.1:7897` if your local proxy uses another address.
+sgp-dev reaches the gateway directly, so do not set a local proxy there. Details
+in `FOUNDATION.md`.

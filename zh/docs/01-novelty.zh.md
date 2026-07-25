@@ -51,7 +51,7 @@ prompt 的内容**，没有 component 能按需查询完整 state。因此总会
 
 - chapter *N* 的 writer 看到的是 chapter 1..*N*−1 的有损 summary，而不是
   正文，因此无法核对一处只有模糊印象的细节；
-- critic/verifier 即使存在，看到的也是 draft，而不是用于判断 consistency
+- critic/verifier 即使存在，看到的也是 draft，而不是用于 judge consistency
   所需的 character state 或 open promise；
 - 写作中确立的 fact 无法回流到 outline 或 character sheet，因为不存在
   从 prose 回到 plan 的 write path；

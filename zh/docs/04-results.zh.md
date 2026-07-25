@@ -8,7 +8,7 @@
 
 ## 1. ConStory tuning-20 —— 一致性（CED，越低越好）
 
-CED = 检出的不同错误子类数 ÷（词数 / 10,000），每万词取值范围 [0, 19]。来源：`storyos/experiments/reproduction-subsubset/checker/*.summary.json`。
+CED = 检出的不同错误子类数 ÷（词数 / 10,000），每 10k 词取值范围 [0, 19]。来源：`storyos/experiments/reproduction-subsubset/checker/*.summary.json`。
 
 | 系统 | 类别 | CED ↓ | 平均词数 | 完成数 |
 |---|---|---:|---:|---:|
@@ -24,9 +24,9 @@ CED = 检出的不同错误子类数 ÷（词数 / 10,000），每万词取值�
 
 v2 的分类分解：`timeline_plot_logic` 1.92、`factual_detail` 1.38、`narrative_style` 0.92、`characterization` 0.23、`world_building_setting` 0.23。按任务型分解：Continuation 6.17、Completion 4.58、Generation 3.88、Expansion 3.59。14 个任务、130,557 词，单题 CED 从 0.00（task 1004）到 8.79（task 0），方差很大且 n 很小。
 
-有两条限定必须永远跟着这张表一起出现：frontier 那几行用的是不同 backbone；v2 的 5 个失败任务被排除在它的均值之外，如果这些失败恰好是更难的题，那 4.69 是偏乐观的。
+有两条限定必须永远跟着这张表一起出现：frontier 那几行用的是不同 backbone；v2 的 5 个失败任务被排除在它的均值之外，如果这些失败恰好是更难的题，这会使 v2 的结果偏乐观。
 
-诚实解读：在受控 backbone 下我们赢了所有分解式 harness，但输给最朴素的 baseline。根因见 `03-v2-postmortem.zh.md`。
+诚实解读：在受控 backbone 下我们赢了所有分解式 harness，但输给最朴素的 baseline。根因见 `03-v2-postmortem.md`。
 
 ## 2. FreshNovelBench subset-10 —— 系统能不能写到 novel length
 
@@ -50,9 +50,9 @@ v2 的分类分解：`timeline_plot_logic` 1.92、`factual_detail` 1.38、`narra
 
 同样这 19 个任务（`storyos/runs/tuning-local-r1-20260724-after-3m-w20k/`）：
 
-- 154 个 scene draft 被提交、279 个被拒 → **首过率 35.6%**
+- 154 个 scene draft 被 commit、279 个被 reject → **首过率 35.6%**
 - 按 validator 分的 findings：epistemic 363、semantic-fatal 198、audit 46、contract 17、schema 14、temporal 2
-- 14/19 完成；5 个失败全部停在提交 9 个场景（约 8.4k 词）之后，被拒稿负载耗尽了 token 预算
+- 14/19 完成；5 个失败全部停在 9 个已 commit 的 scene（约 8.4k 词）之后，rejection 负载耗尽了 token 预算
 
 做出 14/19 这个突破的改动是把单题预算提到 3M token、writer completion cap 提到 20k，也就是远端 codex 已经验证过的那套配置。在此之前每一轮本地 run 都是 0/19。
 
@@ -60,8 +60,8 @@ v2 的分类分解：`timeline_plot_logic` 1.92、`factual_detail` 1.38、`narra
 
 `storyos/experiments/degradation/analysis_summary.json`，4 个 premise × 5 个目标档，N=20 个完成 cell：
 
-- 原始错误实例数 vs 实际词数：**r = 0.405，p = 0.076** —— 正相关但在 α = 0.05 下不显著
-- CED（按长度归一）vs 实际词数：**r = −0.202，p = 0.394** —— 略负，不显著
+- 原始错误实例数 vs 实际词数：**r = 0.405, p = 0.076** —— 正相关但在 α = 0.05 下不显著
+- CED（按长度归一）vs 实际词数：**r = −0.202, p = 0.394** —— 略负，不显著
 - 按 category CED 求和的主导错误类别：timeline/plot logic 53.1、factual detail 37.0、characterization 13.6、world-building 13.2、style 13.0
 - 即使目标给到 24,000 词，实际产出也从未超过 14,100 词
 
@@ -92,11 +92,11 @@ v2 的分类分解：`timeline_plot_logic` 1.92、`factual_detail` 1.38、`narra
 | dome | 是 | 4/20 | 否 | 约 972 calls/题；失败多为"输出越出 9k–11k 词门" |
 | recurrentgpt | 适配器已有 | 否 | 否 | 需要真正的 sentence-transformers VectorDB → 要 GPU |
 | longwriter-zero-32b | 未部署 | 否 | 否 | 需要一整张 GPU |
-| general-agent 档（pi-agent-raw） | 仅设计 | 否 | 否 | 最干净的"有无 narrative OS"消融 |
+| general-agent 档（pi-agent-raw） | 仅设计 | 否 | 否 | 最干净的"有无 narrative OS" ablation |
 
 ## 8. 完全还没测的东西
 
-消融一个都没跑：gate on/off、bounded working set 大小、repair 预算 k ∈ {0,1,2,4}、关掉 audit 轨、关掉 semantic 轨、typed patch vs 自由文本、关掉 versioning。注错研究（3 类错误 × 10 个实例 × 4 种模式）已预注册但未执行。没有人评。我们自己的系统没有跑过 40k 词。冻结的 200 题报告集的 paired-bootstrap 解锁门（10,000 次重采样、seed 20260724、两轮 CI 下界都 > 0）还完全没碰。
+一个 ablation 都没跑：gate on/off、bounded working set 大小、repair 预算 k ∈ {0,1,2,4}、关掉 audit 轨、关掉 semantic 轨、typed patch vs 自由文本、关掉 versioning。注错研究（3 类错误 × 10 个实例 × 4 种模式）已预注册但未执行。没有人评。我们自己的系统没有跑过 40k 词。冻结的 200 题报告集的 paired-bootstrap 解锁门（10,000 次重采样、seed 20260724、两轮 CI 下界都 > 0）还完全没碰。
 
 ## 9. 产物位置
 
