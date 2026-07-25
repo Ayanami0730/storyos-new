@@ -160,14 +160,126 @@ per-model rates, so `estimated_usd` is empty by design rather than guessed):
   runs ≈ 15.3k tokens per book-run at 121K tokens per book: a 40k-word story
   (~53k tokens) is roughly 44% of that per run.
 
-## 6. Open decisions
+## 6. Third-party benches: no standard exists, so split the burden of proof
 
-- **Main third-party bench**: ConStory is being demoted (its 8–10k design cannot
-  show length degradation, which is our motivation). Candidates under evaluation
-  in `survey/bench-selection-analysis.md`: whether EQ-Bench Longform's prescribed
-  brainstorm→plan→revise flow admits an agent harness at all, and whether
-  LongBench-Write is the better neutral yardstick despite its 20k ceiling.
-- **Target length anchoring**: replace the manual 40k/60k/80k tiers with
-  per-task targets derived from each source novel's real length. Feasibility and
-  cost analysis in `benchmarks/novelbench/length-anchoring-analysis.md`.
-- **Mode imbalance**: 42 `from_scratch` vs 8 `continuation`. Rebalance or declare.
+Full matrix and per-bench evaluation in `survey/bench-selection-analysis.md`
+(27 works × their evaluation sets).
+
+**The headline is a negative result.** Long-form story generation has no
+SWE-Bench-scale common yardstick. Highest co-usage across 27 works is **4**
+(LongBench-Write: LongWriter, StoryWriter, LongWriter-Zero, IS-CoT — three of them
+not the original authors). At least 12 of the 27 build their own evaluation set.
+What gets reused in this field is **protocols** (Tell Me A Story's pairwise
+protocol, HANNA's rubric, BookWorld's pairwise) rather than **data**.
+
+**No public benchmark reaches 40,000 words.** The ceiling is LongBench-Write's
+20k. And the gap has a second, sharper layer: every system that *does* write 40k+
+evaluates itself on a self-built set with a tiny sample. MAGNET's 100-page tier is
+**one story** — and so is every one of its ablations; its judge alignment was
+validated on **one** 20-page story; the 6/11/12 hallucination counts it reports at
+100 pages are **ATLAS's raw output, never human-verified**, while ATLAS's recall on
+its own gold set is 0.8. EvoSpark writes 200–250k words but never states n.
+**Beyond ~10k words, evaluation in this field degenerates into case
+demonstration.** That is the necessity argument for our own bench, and it is
+stronger than the contamination argument.
+
+### EQ-Bench Longform is out
+
+Two reasons, either sufficient. First, **zero of the 29 deep-read papers report a
+score on it** — it is a model leaderboard, not something the field evaluates
+against, so it cannot serve as a neutral yardstick. Second, its **chapter
+degradation formula is unknown** to us, and that metric was the entire reason to
+want it. Until the formula is read from the repository we cannot tell whether it
+measures degradation along length at all (if it is merely a first-vs-last chapter
+delta, it is blind to "collapses in the middle, recovers by the end"). Its 14-dim
+rubric names, slop algorithm and n-gram repetition definitions are equally
+unknown. Do not cite it in the motivation before reading the code.
+
+On the harness question the answer is nevertheless useful: **technically it could
+score a harness**, because all four metric families consume finished prose only —
+nothing in the pipeline scores the brainstorm/plan/revise intermediates. The
+blocker is the runner's generation interface, which is engineering, not validity.
+
+### Recommended split
+
+| Role | Bench | What it buys | Cost |
+|---|---|---|---|
+| **Main** | MoPS premises + Tell Me A Story pairwise protocol | the only combination neutral in *both* data and protocol; 8k-word scale; three comparable harness rivals (DOC, Agents' Room, StoryWriter) | human evaluation is expensive — thousands of USD even at 30–50 prompts |
+| Secondary A | LongBench-Write | proves the consistency gain is not bought by writing short; highest co-usage; runnable in two days | 20k ceiling; must re-run every comparison row ourselves |
+| Secondary B | ConStory | auditable consistency errors; the only bench with agent coordinates | 8–10k only; CED unusable (see §1) |
+| Conditional | EQ-Bench Longform | chapter degradation, *if* the formula holds up | side table only, never a SOTA claim |
+
+**Excluded, with reasons.** WritingBench is excluded on **validity**, not cost:
+its absolute-score critic is nearly blind to orchestration gains —
+LongWriter-Zero's thinking ablation is worth **+0.08** there versus **+553 Elo** on
+pairwise. Our gains would be flattened. Also excluded: HelloBench, WebNovelBench,
+LongGenBench, DOC-20, NARRA-Gym.
+
+### Two corrections to numbers previously circulated
+
+**LongBench-Write's composite is $\bar S = (20S_q + S_l)/2$, not
+$(S_q + 20S_l)/2$.** Our own survey list contradicts itself between its table row
+and its formula section; back-computation settles it — GPT-4o's
+$(20 \times 4.1 + 52.8)/2 = 67.4$ hits the reported value exactly, the other
+ordering gives 530. Consequence that matters: with $S_q \in [1,5]$ scaled by 20 and
+$S_l \in [0,100]$, **half of the composite is length compliance**. StoryWriterGLM's
+83.7 is therefore about half a length score, and $S_l$ must always be reported
+separately.
+
+**Cross-paper LongBench-Write numbers are not comparable.** GPT-4o scores 78.6 in
+the original paper and **67.4** in StoryWriter's re-run — an 11.2-point gap,
+roughly twice the 5.8-point method gain being claimed. So LongWriter-Zero's
+"86.3 vs 84.0, ahead by 2.3" carries no signal against 11.2 points of
+evaluator noise. Every comparison row must be re-run under one frozen evaluator.
+
+## 7. Target length stays on the frozen tiers
+
+**Decision: do not anchor targets to source-novel length.** Analysis in
+`benchmarks/novelbench/length-anchoring-analysis.md`.
+
+We cannot anchor to a length we do not have. `books.csv` carries `page_count`
+50/50 with dual-source verification, but **real word counts 0/50** — and
+`estimated_words` is not a second datum: its ratio to `page_count` has exactly one
+distinct value, 275.0, so it is a pure derivation.
+
+Page-to-word conversion is unreliable at the magnitude that matters. The decisive
+evidence is inside our own book list: *Steel Gods* is **448 pages (US) versus 576
+(UK)**, +28.6%; *Elizabeth and Marilyn* 368 vs 448, +21.7%. The same text under
+different typesetting differs by 22–29%, which is a 35,200-word swing in an
+anchored target — wider than the entire 40k→60k tier gap. The conversion error is
+also correlated with dialogue density, hence with **genre**, putting the bias on
+the dimension we least want contaminated. And *Steel Gods* happens to be one of
+only eight `continuation` tasks.
+
+**A premise I stated earlier was wrong and caused this detour.** I described the
+40k tier as "systematically below the source novels" as if that were a defect.
+`benchmarks/novelbench/selection-protocol.md:30-33` had already declared the
+opposite: the tiers are a balanced factorial assignment, all 21 genre-by-length
+cells are filled, and — verbatim — "Assigning a 40k target does not claim that its
+source novel was 40k words." Anchoring would dismantle a frozen controlled factor.
+
+Cost would be 1.71× (+33.8M tokens and +16.3 hours per system per round; +169M for
+the five-tier E2), median target 98k, and 35 of 50 tasks would consume more than
+half the frozen 3M per-task budget. Length diversity would get *worse*: 82% of
+tasks would crowd into an 80k–120k band versus today's clean 40/60/80.
+
+**What we do instead:** report the estimated source length as a **covariate**
+("target 40k, source estimated 92k, ratio 0.43"). That keeps the factorial design
+and comparability while stating honestly how our targets relate to real novels.
+
+One of the analysis's objections is partly neutralised by §1: longer targets
+mechanically improve CED (numerator capped at 19, so
+$\mathrm{CED}_{\max} = 190{,}000/w$), but **EID has no cap and is length-robust**.
+That argues for the EID switch rather than against anchoring per se — the core
+objection, that we have no real length to anchor to, is untouched.
+
+## 8. Open decisions
+
+- **Mode imbalance is the real defect.** 42 `from_scratch` vs 8 `continuation`,
+  and it is **confounded with genre**: mystery 0, romance 0, science_fiction 3,
+  horror 2, the rest 1 each. Any per-mode result currently carries a genre effect.
+  Cheap to fix: ConStory-style `continuation` describes a starting point in natural
+  language rather than supplying literal prose, so only prompts change — no new
+  books, no re-running the contamination probe. Do this before the report round.
+- **Read EQ-Bench's degradation formula and runner interface** before any decision
+  that depends on it (P0 in `survey/bench-selection-analysis.md`).
