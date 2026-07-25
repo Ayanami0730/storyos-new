@@ -33,6 +33,21 @@ export interface CompactionThresholds {
   readonly maxOutput: number;
   /** Fraction of the effective budget at which level 1 fires. */
   readonly level1Fraction: number;
+  /**
+   * Fraction at which level 2 fires.
+   *
+   * Proportional as well as absolute because the two answer different questions.
+   * The reserve below asks "is there still room for one more turn"; this asks
+   * "has this session drifted far enough that a verbatim transcript is no longer
+   * the best use of the window". On a 256k ceiling the reserve alone would only
+   * fire at 95% full, which is late enough that the summary is written under
+   * pressure over material that should have been folded long before.
+   *
+   * The shape is Popia's: prepare early, apply late, two proportional tiers
+   * (0.65 / 0.80 there against a 32k window). The brief asked for the same thing
+   * in the same words — "达到80%第一次，就会压缩工具，第二次就会做summary".
+   */
+  readonly level2Fraction: number;
   /** Tokens below the effective budget at which level 2 fires. */
   readonly level2Reserve: number;
   /** Tokens below the effective budget at which no new turn is allowed. */
@@ -60,6 +75,7 @@ export function thresholdsFor(profile: {
     contextWindow: profile.inputCeiling,
     maxOutput: profile.maxCompletionTokens,
     level1Fraction: 0.7,
+    level2Fraction: 0.85,
     level2Reserve: 13_000,
     blockReserve: 3_000,
     keepRecentToolResults: 10,
@@ -78,7 +94,9 @@ export type CompactionLevel = "none" | "level1" | "level2" | "block";
 export function levelFor(usedTokens: number, t: CompactionThresholds): CompactionLevel {
   const E = effectiveBudget(t);
   if (usedTokens >= E - t.blockReserve) return "block";
-  if (usedTokens >= E - t.level2Reserve) return "level2";
+  // Whichever comes first: the proportional tier catches a session that has
+  // drifted, the reserve catches one that is about to run out of room.
+  if (usedTokens >= Math.min(E * t.level2Fraction, E - t.level2Reserve)) return "level2";
   if (usedTokens >= E * t.level1Fraction) return "level1";
   return "none";
 }
@@ -193,6 +211,11 @@ export async function compactLevel2(
   const tokensBefore = total(messages);
 
   // Never split a tool call from its result, and never fold a pinned message.
+  // The tail is kept even at the hard block: Popia's chat memory degrades rather
+  // than refusing — "如果预算不够放任何近期消息，至少保留最后 1-2 条" — and the same
+  // applies here for a stronger reason. A refusal at this point aborts a scene
+  // mid-transaction, which costs everything spent on it, while an over-long
+  // request costs one provider error we can see and retry.
   const tailStart = Math.max(0, messages.length - t.keepRecentMessages);
   const pinnedBefore = messages.slice(0, tailStart).filter((m) => m.pinned);
   const folded = messages.slice(0, tailStart).filter((m) => !m.pinned);
@@ -258,6 +281,14 @@ export function summaryPrompt(input: StorySummaryInput): string {
     "the index and you will re-read them — a summary that asserts them becomes a",
     "second source of truth that nobody can check. Refer to them by name and move on.",
     "",
+    // Popia's summary prompt names what may never be compressed, and the reason
+    // generalises: a summary written under pressure compresses whatever is
+    // longest, which is usually the narrative thread rather than the profiles.
+    "If you are short of room, compress your own reasoning and any tool output first.",
+    "NEVER compress: where the story currently stands, what the open threads are, or",
+    "what you were part-way through doing. Those are the parts a summary exists for;",
+    "everything else you can re-read.",
+    "",
     `Canon currently in force: ${input.canonDigest}`,
     `Open promises: ${input.openPromises.join("; ") || "none recorded"}`,
     `Recent scenes: ${input.recentSceneIds.join(", ") || "none"}`,
@@ -267,7 +298,26 @@ export function summaryPrompt(input: StorySummaryInput): string {
   ].join("\n");
 }
 
-/** Cheap and deliberately rough; the ledger carries the real counts. */
+/**
+ * Cheap and deliberately rough; the ledger carries the real counts.
+ *
+ * Weighted per script rather than a flat `length / 4`, because a flat divisor
+ * fails in one specific direction and Popia's chat memory service has already
+ * paid for the lesson: it underestimates, so a threshold computed from it is
+ * never crossed, so compaction never fires and nobody sees an error. Their
+ * comment records the fix and the reason —
+ *
+ *   "本函数对 ASCII 使用 3.2 chars/token（兼顾散文和 JSON 混合场景），对非 ASCII
+ *    使用 1.2 chars/token。相比旧版（4.0 / 1.0）更贴近实际，避免因低估导致 summary
+ *    阈值永远不触发。"
+ *   — onlyside/internal/utils/token_estimator.go
+ *
+ * We are in the same mixed regime: English prose plus JSON tool payloads plus
+ * occasional CJK. 3.2 and 1.2 chars per token, in integer arithmetic to keep the
+ * function exact and cheap.
+ */
 export function estimateTokens(text: string): number {
-  return Math.ceil(text.length / 4);
+  let weight = 0;
+  for (const ch of text) weight += ch.codePointAt(0)! <= 0x7f ? 10 : 27;
+  return Math.max(text.length > 0 ? 1 : 0, Math.floor(weight / 32));
 }

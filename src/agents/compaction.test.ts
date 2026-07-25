@@ -175,7 +175,23 @@ describe("the summary prompt", () => {
 
 describe("token estimate", () => {
   it("is rough and cheap, which is all a threshold needs", () => {
-    assert.equal(estimateTokens("abcd"), 1);
-    assert.equal(estimateTokens("a".repeat(4001)), 1001);
+    // 3.2 ASCII characters per token, with a floor of one for any non-empty
+    // string: rounding a real cost down to zero is the one error a threshold
+    // cannot absorb.
+    assert.equal(estimateTokens("abc"), 1);
+    assert.equal(estimateTokens("a".repeat(3200)), 1000);
+  });
+
+  it("never under-counts non-ASCII, which is how a threshold stops firing", () => {
+    // A flat length/4 divisor reads CJK at a quarter of its real cost, so a
+    // session full of it never crosses the threshold and compaction silently
+    // never runs. Popia hit exactly this and reweighted to 1.2 chars per token.
+    assert.ok(estimateTokens("的".repeat(100)) > estimateTokens("a".repeat(100)) * 2);
+    assert.equal(estimateTokens("的".repeat(1200)), 1012);
+  });
+
+  it("counts a short string as at least one token, and empty as none", () => {
+    assert.equal(estimateTokens(""), 0);
+    assert.equal(estimateTokens("a"), 1);
   });
 });
