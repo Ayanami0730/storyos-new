@@ -35,18 +35,51 @@ And on ConStory tuning-20 (8–10k targets), where CED is consistency errors per
 | agentwrite | 6.15 | 15,065 |
 | agents-room-style | 6.61 | 14,098 |
 
-Read together, these two tables are a **length–consistency Pareto front**. Raw
-frontier models are the most consistent thing we measured and cannot reach novel
-length at all. Every system that reaches novel length is a decomposition harness,
-and every decomposition harness is markedly less consistent. Nobody currently
-gets both.
+Read together, these two tables suggest a **length–consistency Pareto front**:
+raw frontier models are the most consistent thing we measured and cannot reach
+novel length at all, while everything that reaches novel length is a
+decomposition harness with markedly worse consistency.
 
-### The claimed cause
+**This reading is provisional.** The harness CED rows are inflated by
+unfaithfulness in our own adapters (see `04-results.md` §0), so the size of the
+consistency gap — and possibly its direction — will change once the adapters are
+restored and re-run. The length column is unaffected: nobody weakened the raw
+models, and their 11–22% attainment is a clean result.
 
-Not context *capacity* — a 1M-token window holds a 40k-word novel comfortably.
-The cause is that in existing harnesses **each component only receives whatever
-its upstream stage hardcoded into its prompt**, and no component can query the
-full state on demand. So some stage always lacks context it needed:
+### The claimed cause — corrected 2026-07-25 after a code audit
+
+The first formulation of this claim was **falsified by our own audit** and must
+not be used. We had written that "each component only receives whatever its
+upstream stage hardcoded into its prompt, and no component can query the full
+state on demand". Three systems are direct counter-examples:
+
+- **AgentWrite** passes the accumulated full text into every writing step
+  (`LongWriter@447539b:agentwrite/write.py:56-84`).
+- **Agents' Room** defines every agent as reading the *complete* shared
+  scratchpad, then appending to it (paper §3, Algorithm 1).
+- **WriteHERE** hands each call `memory.article` (all prose so far),
+  `node.get_all_layer_plan()` (the global plan) and the dependency closure
+  (`recursive/agent/agents/regular.py:98-114`).
+
+The defensible claim, which survives the audit, is narrower and sharper:
+
+> Existing long-form writing systems either pass an untyped monolithic
+> scratchpad to every stage or expose only lossy, stage-specific views such as
+> rolling summaries, top-k memories and dependency-scoped outputs. None provides
+> a provenance-aware canonical narrative index that every specialist can query on
+> demand and update through a validated atomic commit path.
+
+Two things follow. Seeing all the prose is not the same as having queryable
+state: none of these systems lets a component ask "what does this character know
+as of scene 12" or "which promises are still open" and get back typed records
+with source spans. And the word "root cause" is not supported — ablations show
+context flow is causally linked to quality (RecurrentGPT loses coherence without
+its memories; DOME's conflict rate rises from 0.56 to 4.52 without MEM;
+StoryWriter's summary window beats discarding history), but no system has run the
+controlled experiment that isolates canonical-state access. The paper must say
+**a shared structural bottleneck**, not *the* root cause.
+
+The concrete gaps that remain true across systems:
 
 - the writer of chapter *N* sees a lossy summary of chapters 1..*N*−1, not the
   prose, so it cannot check a detail it half-remembers;

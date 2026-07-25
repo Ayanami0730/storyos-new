@@ -8,6 +8,35 @@ frontier models and are therefore **not** a controlled comparison. Checker/judge
 is `gpt-5.5`, selected because `gpt-5-mini` failed the preregistered calibration
 threshold.
 
+## 0. VALIDITY WARNING — the harness rows below are not yet a fair comparison
+
+A code-level audit of our own baseline adapters against the official
+implementations (`../../research/2026-07/25-baseline-context-flow-audit.md` §
+"我方 baseline adapters 的复现忠实度警报") found that three adapters are
+**unfaithfully weakened**, in every case in the direction that flatters us:
+
+- **AgentWrite**: our writer prompt carries only premise, continuation setup and
+  the current section brief (`storyos/src/baselines/implementations.py:393-405`).
+  The official implementation passes the **accumulated full text so far** into
+  every step (`LongWriter@447539b:agentwrite/write.py:56-84`). Our version
+  effectively writes each section in isolation.
+- **Agents' Room**: our writer receives the current brief plus a list of
+  completed chapter *titles* (`implementations.py:540-566`). The paper specifies
+  that every agent reads the **complete current shared scratchpad**, including
+  planning blocks and prose written so far. We manufactured the most severe
+  context break in the comparison.
+- **RecurrentGPT**: our adapter dropped both the previous paragraph and the
+  long-term top-k retrieval that the official loop performs.
+- **DOME**: our writer omits `last_chapter_story`, which the official DHO writer
+  prompt includes (`storyos/src/baselines/dome.py:681-716`).
+
+Consequence: the 5.06 / 6.15 / 6.61 harness scores are inflated (i.e. made worse)
+by our own implementation choices, so **"harnesses lose to bare long-context"
+is not established** and this table must not be published in its current form.
+Required before any claim rests on it: restore faithfulness, re-run the affected
+systems, re-score, and re-derive the table. The `bare-long-context`, `raw-*` and
+`storyos-index` rows are unaffected.
+
 ## 1. ConStory tuning-20 — consistency (CED, lower is better)
 
 CED = distinct error subtypes detected ÷ (words / 10,000), range [0, 19] per 10k
