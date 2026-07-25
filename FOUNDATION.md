@@ -73,6 +73,35 @@ setGlobalDispatcher(new ProxyAgent(process.env.https_proxy));
 This is the single most confusing failure mode: identical requests work from the
 shell and fail from Node with an error that blames geography rather than config.
 
+## Gotcha 4 — `{ output }` is accepted and the model never sees it
+
+A tool's `execute` must return
+
+```js
+return { content: [{ type: "text", text: payload }] };
+```
+
+Returning `{ output: payload }` — or a bare string — **fails silently**. The
+tool runs, the loop advances, the model replies, and nothing errors; the model
+simply never receives the payload and answers as though the lookup came back
+empty. Measured (`smoke/tool-result-roundtrip.ts`), asking for a value only
+obtainable from the tool:
+
+| returned shape | tool ran | model saw the value |
+|---|---|---|
+| `{ output: "eye_colour: vermilion" }` | yes | **no** — "I couldn't find any canon record" |
+| `"eye_colour: vermilion"` | yes | **no** — "read_canon returned no data" |
+| `{ content: [{ type: "text", text: … }] }` | yes | **yes** — "vermilion" |
+
+This is worth dwelling on, because the version of this file that recommended
+`{ output }` cited the smoke test below as evidence, and the smoke test could
+not have caught it: it asserted that a tool was called and that some text came
+back, both of which stay true when the payload is dropped. **A capability test
+must ask for something only the capability can supply.** Ours now does — the
+secret-value check above is the regression, and the resident-layer smoke test
+confirms it end to end (the writer reads canon, drafts from it, and cites the
+file path on a later turn from its own session).
+
 ## Validated capability
 
 `smoke/gateway-tool-loop.mjs` drives one agent with a `read_canon` tool:

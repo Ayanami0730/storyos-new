@@ -58,15 +58,22 @@ const readCanon = {
   parameters: readCanonSchema,
   execute: async (_toolCallId, args) => {
     calls.push({ tool: "read_canon", args });
+    // Shape matters: `{ output }` is accepted by the loop and silently never
+    // reaches the model. See smoke/tool-result-roundtrip.ts.
     return {
-      output: JSON.stringify({
-        character: args.character,
-        facts: [
-          "sceneRange 1-4: stranger to Mara",
-          "sceneRange 5-9: mentor to Mara",
-          "sceneRange 10-: estranged from Mara",
-        ],
-      }),
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify({
+            character: args.character,
+            facts: [
+              "sceneRange 1-4: stranger to Mara",
+              "sceneRange 5-9: mentor to Mara",
+              "sceneRange 10-: estranged from Mara",
+            ],
+          }),
+        },
+      ],
     };
   },
 };
