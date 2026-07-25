@@ -4,8 +4,11 @@ Read this first, then `FOUNDATION.md` (validated platform facts), then
 `docs/01-novelty.md` (what the paper claims), then `docs/02-architecture.md`
 (what to build).
 
-This repo is the **engine**. The paper, benchmarks, baselines and v2 engine stay
-in the separate `storyos` repo (`git@github.com:Ayanami0730/storyos.git`).
+This repo is the **system**: `Ayanami0730/storyos-new`, branch `main`. It accepts
+tasks concurrently and emits complete results. Everything that *judges* those
+results — data, evaluation scripts, every reproduced baseline, the paper, the v2
+engine — stays in `storyos`, reachable here as the `storyos-legacy` remote. The
+flow is one-way: run here, evaluate there.
 
 ## Why v3 exists
 

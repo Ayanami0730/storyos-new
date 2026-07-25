@@ -6,8 +6,10 @@
 `docs/01-novelty.md`（论文主张），最后读 `docs/02-architecture.md`
 （待实现内容）。
 
-这个 repo 是**引擎**。论文、benchmark、baseline 和 v2 引擎仍放在独立的
-`storyos` repo（`git@github.com:Ayanami0730/storyos.git`）中。
+这个 repo 是**完整的系统**：`Ayanami0730/storyos-new`，分支 `main`。它可以并发接收
+task、输出完整结果。而**评估**这些结果所需的一切——数据、评估脚本、所有复现的 baseline、
+论文、v2 引擎——留在 `storyos` 仓库里，在这边通过 `storyos-legacy` remote 可达。
+流向是单向的：在这边跑，到那边评估。
 
 ## 为什么要做 v3
 

@@ -1,7 +1,20 @@
 # StoryOS v3
 
-长篇小说写作 agent harness 的引擎实现。论文、benchmark、baseline 和 v2 引擎在另一个仓库
-（`git@github.com:Ayanami0730/storyos.git`），这里只放引擎。
+长篇小说写作 agent harness 的完整系统实现。**仓库 `Ayanami0730/storyos-new`，分支 `main`。**
+
+## 两个仓库的分工（2026-07-25 定）
+
+| 仓库 | 放什么 |
+|---|---|
+| **`storyos-new`（本仓库）** | 完整的 harness 系统。可以并发接收 task，输出完整结果 |
+| `storyos`（`storyos-legacy` remote） | 全部数据、评估脚本、所有 baseline 复现、论文写作、v2 引擎 |
+
+流向是单向的：本仓库跑出结果 → 拿到 `storyos` 仓库里去评估。所以本仓库**不放** benchmark
+数据、checker、baseline 实现和论文；`storyos` 仓库**不放** harness 实现。
+
+本仓库的历史起点是 `storyos` 仓库上的孤立分支 `v3-engine`（独立根提交，与 v2 主干零共享
+历史），2026-07-25 迁出为独立仓库。`storyos-legacy` remote 仍指向 `storyos`，方便查 v2 的
+提交历史。
 
 ## 现在处于什么状态
 
@@ -61,9 +74,19 @@ YS_KEY="$(cat ~/.config/ys/key)" node smoke/gateway-tool-loop.mjs
 
 # StoryOS v3 (English)
 
-Engine implementation of a long-form novel-writing agent harness. The paper,
-benchmarks, baselines and the v2 engine live in a separate repository
-(`git@github.com:Ayanami0730/storyos.git`); this repo is only the engine.
+The complete long-form novel-writing agent harness. **Repository
+`Ayanami0730/storyos-new`, branch `main`.**
+
+Repository split, decided 2026-07-25: this repo is the *system* — it accepts
+tasks concurrently and emits complete results. Everything used to *judge* those
+results lives in `storyos` (reachable here as the `storyos-legacy` remote): all
+data, evaluation scripts, every reproduced baseline, the paper, and the v2
+engine. The flow is one-way — run here, evaluate there. So this repo carries no
+benchmark data, no checker, no baseline implementations and no paper, and
+`storyos` carries no harness implementation.
+
+History begins at the orphan branch `v3-engine` in `storyos` (independent root
+commit, zero shared history with the v2 trunk), split out on 2026-07-25.
 
 ## Current status
 

@@ -5,18 +5,19 @@ scoring artifact behind the numbers in `04-results.md` sat in an uncommitted
 working tree on one laptop until now. They are split across git and sgp-dev.
 Read this before trying to reproduce or cite anything from v2.
 
-The v2 repository is `Ayanami0730/storyos`, branch `codex-run`, tip `c4b211c`.
-The v3 tree you are reading is the orphan branch `v3-engine` in the same
-repository. Full detail is in the v2 `README.md` section 接手须知; this file is
-the pointer, not the source of truth.
+The v2 repository is `Ayanami0730/storyos`, branch `codex-run`, tip `fd124e7`.
+The tree you are reading was split out on 2026-07-25 into its own repository,
+`Ayanami0730/storyos-new` branch `main`; `storyos` remains reachable here as the
+`storyos-legacy` remote. Full detail is in the v2 `README.md` section 接手须知;
+this file is the pointer, not the source of truth.
 
-## Branches
+## Branches in `storyos` (the v2 / evaluation repository)
 
 | Branch | Contents |
 |---|---|
 | `codex-run` | v2 trunk: engine, the 8-page submission, figures, all scoring evidence |
 | `mac-src-20260725` | The 11 engine/test files edited on the laptop, based on `702bcde` |
-| `v3-engine` | This tree. Independent root commit, no shared history with the trunk |
+| `v3-engine` | Frozen ancestor of `storyos-new`; do not commit here any more |
 | `main` | Retired, behind `codex-run` |
 
 ## What is in git
