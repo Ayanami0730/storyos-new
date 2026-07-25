@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { makeFinding } from "../verification/finding.ts";
 import { SceneTransaction } from "./machine.ts";
 import { IllegalTransitionError } from "./types.ts";
 import type { Finding } from "./types.ts";
@@ -26,12 +27,15 @@ function toApproved(tx: SceneTransaction): SceneTransaction {
     .transition("APPROVED", "verifier");
 }
 
-const fatal: Finding = {
-  id: "f1",
-  validator: "semantic",
+const fatal: Finding = makeFinding({
+  subtype: "appearance_mismatches",
+  validator: "continuity",
   severity: "fatal",
-  message: "contradicts canon",
-};
+  reasoning: "her eyes were established as grey",
+  evidence: { quote: "her green eyes narrowed", source: "s-001" },
+  contradicts: { quote: "grey", source: "index/story/bible/characters/mira.yaml" },
+  editLocus: { kind: "draft", quote: "her green eyes narrowed" },
+});
 
 describe("invariant 1: only index-manager commits", () => {
   it("lets index-manager finish the commit", () => {
@@ -94,6 +98,54 @@ describe("invariant 2: prose and state delta commit together", () => {
       /requires the contextPacket artifact/,
     );
     assert.equal(tx.state, "OPEN");
+  });
+});
+
+describe("repair rounds that make no progress", () => {
+  it("reports a finding the writer failed to shift, so the loop can escalate early", () => {
+    const tx = open()
+      .transition("CONTEXT_BUILT", "context-builder", { artifact: "packet" })
+      .transition("DRAFTED", "writer", { artifact: "draft-1" })
+      .transition("STATE_DELTA_PROPOSED", "writer", { artifact: "{}" })
+      .transition("VALIDATING", "orchestrator")
+      .transition("REPAIR_REQUIRED", "verifier", { findings: [fatal] })
+      .transition("DRAFTED", "writer", { artifact: "draft-2" })
+      .transition("STATE_DELTA_PROPOSED", "writer", { artifact: "{}" })
+      .transition("VALIDATING", "orchestrator")
+      // The verifier rewords its explanation but points at the same passage.
+      .transition("REPAIR_REQUIRED", "verifier", {
+        findings: [
+          makeFinding({
+            subtype: "appearance_mismatches",
+            validator: "continuity",
+            severity: "fatal",
+            reasoning: "eye colour still disagrees with the bible",
+            evidence: { quote: "her green eyes narrowed", source: "s-001" },
+            contradicts: {
+              quote: "grey",
+              source: "index/story/bible/characters/mira.yaml",
+            },
+            editLocus: { kind: "draft", quote: "her green eyes narrowed" },
+          }),
+        ],
+      });
+
+    assert.equal(tx.persistentFindings().length, 1);
+  });
+
+  it("reports nothing persistent when the writer actually fixed it", () => {
+    const tx = open()
+      .transition("CONTEXT_BUILT", "context-builder", { artifact: "packet" })
+      .transition("DRAFTED", "writer", { artifact: "draft-1" })
+      .transition("STATE_DELTA_PROPOSED", "writer", { artifact: "{}" })
+      .transition("VALIDATING", "orchestrator")
+      .transition("REPAIR_REQUIRED", "verifier", { findings: [fatal] })
+      .transition("DRAFTED", "writer", { artifact: "draft-2" })
+      .transition("STATE_DELTA_PROPOSED", "writer", { artifact: "{}" })
+      .transition("VALIDATING", "orchestrator")
+      .transition("APPROVED", "verifier", { findings: [] });
+
+    assert.deepEqual(tx.persistentFindings(), []);
   });
 });
 

@@ -13,6 +13,7 @@
  *  4. The repair budget is bounded and counted in one place.
  */
 
+import { blocking, unchangedAcrossRound } from "../verification/finding.ts";
 import {
   type AgentRole,
   type Finding,
@@ -45,6 +46,8 @@ export class SceneTransaction {
   #baseCommitId: string;
   #artifacts: SceneArtifacts = {};
   #findings: Finding[] = [];
+  /** Snapshot taken when a repair round starts, so the loop can see no progress. */
+  #findingsAtLastRound: Finding[] = [];
   #history: SceneTransactionSnapshot["history"][number][] = [];
   readonly #now: () => Date;
   readonly #init: SceneTransactionInit;
@@ -153,6 +156,9 @@ export class SceneTransaction {
       this.#attempt += 1;
       // Findings belong to the attempt that produced them; a new draft starts
       // with a clean slate so a stale finding can never block a fresh commit.
+      // Kept aside, not discarded: the next round's findings are only
+      // interpretable against the ones they were supposed to fix.
+      this.#findingsAtLastRound = this.#findings;
       this.#findings = [];
     }
 
@@ -191,7 +197,18 @@ export class SceneTransaction {
 
   /** Findings that are blocking, i.e. anything above a warning. */
   blockingFindings(): readonly Finding[] {
-    return this.#findings.filter((f) => f.severity !== "warning");
+    return blocking(this.#findings);
+  }
+
+  /**
+   * Findings the last repair round failed to shift.
+   *
+   * A bounded budget stops a repair loop from running forever but does not
+   * stop it from wasting every round on a defect the writer cannot see how to
+   * fix. This is the signal to escalate early instead.
+   */
+  persistentFindings(): readonly Finding[] {
+    return unchangedAcrossRound(this.#findingsAtLastRound, this.#findings);
   }
 
   snapshot(): SceneTransactionSnapshot {

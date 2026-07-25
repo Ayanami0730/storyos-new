@@ -77,13 +77,19 @@ export interface SceneArtifacts {
   readonly validationFindings?: string;
 }
 
-export interface Finding {
-  readonly validator: string;
-  readonly severity: "warning" | "error" | "fatal";
-  readonly message: string;
-  /** Stable id so an unchanged finding across rounds is detectable. */
-  readonly id: string;
-}
+/**
+ * The transaction speaks the verifier's vocabulary rather than its own.
+ *
+ * An earlier version of this file declared a local `{validator, severity,
+ * message, id}`, which is all a state machine strictly needs. It was also all
+ * the writer ever received, and a writer told only "severity: error,
+ * contradicts canon" can do nothing but rewrite the scene — the mechanism
+ * behind v2's nine consecutive drafts with identical prose digests. The richer
+ * type is defined in `verification/finding.ts` with the reasoning.
+ */
+import type { Finding } from "../verification/finding.ts";
+
+export type { Finding };
 
 export interface SceneTransactionSnapshot {
   readonly txid: string;
