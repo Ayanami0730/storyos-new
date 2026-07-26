@@ -232,13 +232,29 @@ function toCompactable(m: PiMessage, sourceIndex: number): CompactableMessage {
   };
 }
 
-/** Put a compacted body back into the pi message it came from. */
+/**
+ * Put a compacted body back into the pi message it came from.
+ *
+ * Only messages the policy actually evicted are rewritten; everything else is
+ * returned untouched, by identity. The previous version worked out whether a
+ * message had changed by joining its blocks' `.text` and comparing with the
+ * compacted text — and a `toolCall` block has no `.text`, so an assistant
+ * message that made a tool call never compared equal to itself. Every one of
+ * them was flattened into a plain text block, which deleted the `tool_calls`
+ * the following tool results were answers to, and the provider rejected the
+ * next request outright:
+ *
+ *   400 messages with role 'tool' must be a response to a preceding message
+ *       with 'tool_calls'
+ *
+ * The lesson is narrower than "compare more carefully": a transform should say
+ * what it changed rather than leave the caller to detect it, because the caller
+ * can only detect it through a representation that has already lost the detail
+ * that mattered.
+ */
 function rewrite(original: PiMessage | undefined, m: CompactableMessage): PiMessage {
   if (!original) return { role: m.role, content: [{ type: "text", text: m.text }] };
-  const blocks = Array.isArray(original.content) ? original.content : [];
-  const unchanged =
-    blocks.map((b) => (b as { text?: string }).text ?? "").join("\n") === m.text;
-  if (unchanged) return original;
+  if (!m.evicted) return original;
   return { ...original, content: [{ type: "text", text: m.text }] };
 }
 

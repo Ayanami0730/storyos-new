@@ -157,6 +157,21 @@ export interface CompactableMessage {
   readonly artifactPath?: string;
   /** One line describing what the payload was, kept when the payload is not. */
   readonly digest?: string;
+  /**
+   * Set by level 1 on the messages whose payload it replaced.
+   *
+   * Explicit rather than inferred, because inferring it is a bug we shipped.
+   * The caller used to decide "did this change?" by joining every block's
+   * `.text` and comparing — and a `toolCall` block has no `.text`, so an
+   * assistant message that made a tool call never matched itself. Every such
+   * message was therefore rewritten into a plain text block, its `tool_calls`
+   * destroyed, and the provider rejected the next request with *"messages with
+   * role 'tool' must be a response to a preceding message with 'tool_calls'"*.
+   *
+   * It survived for weeks because compaction had never actually run. The first
+   * time it did, it broke the context-builder on the very next turn.
+   */
+  readonly evicted?: boolean;
   readonly text: string;
   /**
    * Never compacted. Transaction records and the standing instruction are the
@@ -212,7 +227,7 @@ export function compactLevel1(
       `[tool result evicted] ${m.toolName ?? "tool"} (${m.toolCallId ?? "?"})` +
       (m.digest ? ` — ${m.digest}` : "") +
       (m.artifactPath ? `. Re-read at ${m.artifactPath}.` : ". Re-run the call to see it again.");
-    return { ...m, text: pointer, tokens: estimateTokens(pointer) };
+    return { ...m, text: pointer, tokens: estimateTokens(pointer), evicted: true };
   });
 
   return {

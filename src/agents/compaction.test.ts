@@ -98,6 +98,43 @@ describe("the cost trigger, which asks a different question than headroom", () =
   });
 });
 
+describe("what compaction must not touch", () => {
+  it("marks only the messages it evicted", () => {
+    const history = [
+      msg({ kind: "user", text: "build the packet", pinned: true }),
+      ...Array.from({ length: 13 }, (_, i) => toolResult(i)),
+      msg({ text: "done" }),
+    ];
+    const r = compactLevel1(history, T);
+    const marked = r.messages.filter((m) => m.evicted);
+
+    // The caller rewrites a pi message only where this flag is set. It used to
+    // work out "did this change?" by joining every block's `.text` and
+    // comparing — and a toolCall block has no `.text`, so an assistant message
+    // that called a tool never matched itself, was flattened into plain text,
+    // and lost the `tool_calls` its results were answers to. The provider then
+    // rejected the whole next request. The flag exists so that inference is
+    // never attempted again.
+    assert.equal(marked.length, 13 - T.keepRecentToolResults);
+    for (const m of marked) assert.equal(m.kind, "toolResult");
+    assert.equal(r.messages.filter((m) => m.kind !== "toolResult" && m.evicted).length, 0);
+  });
+
+  it("leaves the kept tail and the pinned instruction unmarked", () => {
+    const history = [
+      msg({ kind: "user", text: "standing instruction", pinned: true }),
+      ...Array.from({ length: 12 }, (_, i) => toolResult(i)),
+    ];
+    const r = compactLevel1(history, T);
+    assert.equal(r.messages[0]!.evicted, undefined);
+    // The last ten tool results are the working set; evicting those would make
+    // the agent re-read what it just looked at.
+    for (const m of r.messages.slice(-T.keepRecentToolResults)) {
+      assert.equal(m.evicted, undefined);
+    }
+  });
+});
+
 describe("level 1 — evict what can be re-fetched", () => {
   const history = [
     msg({ kind: "user", text: "write scene 1", pinned: true }),
