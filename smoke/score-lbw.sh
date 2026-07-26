@@ -46,11 +46,34 @@ python3 score_lbw.py \
   --judgements "$OUT_ROOT/judgements" \
   --concurrency 1
 
-python3 - "$OUT_ROOT/judgements/gpt-5.5/$SYSTEM.jsonl" "$TASK_ID" <<'PY'
-import json, sys
-path, task = sys.argv[1], sys.argv[2]
+python3 - "$OUT_ROOT/judgements/gpt-5.5/$SYSTEM.jsonl" "$TASK_ID" "$OUT_ROOT/$SYSTEM/longbench-write/$TASK_ID.txt" <<'PY'
+import hashlib, json, sys
+path, task, text_file = sys.argv[1], sys.argv[2], sys.argv[3]
 rows = [json.loads(l) for l in open(path) if l.strip()]
-row = [r for r in rows if r["task_id"] == task][-1]
+
+# Match the judgement to the text by digest, not by being last in the file.
+#
+# The scorer appends, and it re-judges a cell whose text changed, so the file can
+# hold rows for texts that are not the one on disk. Taking the last row is how a
+# score got reported for a 540-word story when the manuscript was 602 words: two
+# processes had been writing into one run directory, and the wrapper had no way to
+# notice. A scoring harness that can print a number for a text you do not have is
+# worse than one that refuses.
+digest = hashlib.sha256(open(text_file, "rb").read()).hexdigest()
+mine = [r for r in rows if r["task_id"] == task and r.get("text_sha256") == digest]
+if not mine:
+    seen = [
+        f"{r.get('response_words')}w/{(r.get('text_sha256') or '?')[:8]}"
+        for r in rows
+        if r["task_id"] == task
+    ]
+    print(
+        f"no judgement matches the text that was just scored ({digest[:8]}). "
+        f"Rows present for {task}: {seen or 'none'}. Refusing to report a score for a "
+        f"different text — check whether two runs shared this directory."
+    )
+    raise SystemExit(1)
+row = mine[-1]
 if "scores" not in row:
     print("judge failed:", row.get("error")); raise SystemExit(1)
 sq = row["s_quality_raw"]; sl = row["s_length"]
