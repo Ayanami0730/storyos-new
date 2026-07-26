@@ -21,7 +21,6 @@
  * index — that would undo the one guarantee the whole design is built on.
  */
 
-import type { CanonicalIndex } from "../index/commit.ts";
 import type { Finding } from "../transaction/types.ts";
 import type {
   DeclaredPayoff,
@@ -159,37 +158,6 @@ export function renderRevisionBrief(
     "Current text of the scenes in scope:",
     ...span.map((s) => `\n### ${s}\n${proseByScene.get(s) ?? "(missing)"}`),
   ].join("\n");
-}
-
-/**
- * Apply one revision by re-committing a scene's prose.
- *
- * Deliberately the same commit path as a first draft: same actor check, same
- * base-commit check, same atomicity. The alternative — letting revision write
- * directly — would mean the index has two doors and only one of them is
- * guarded.
- */
-export async function commitRevision(input: {
-  readonly index: CanonicalIndex;
-  readonly txid: string;
-  readonly sceneId: string;
-  readonly prose: string;
-  readonly delta: SceneDelta;
-}): Promise<string> {
-  const commit = await input.index.commit({
-    txid: input.txid,
-    sceneId: input.sceneId,
-    baseCommitId: await input.index.head(),
-    actor: "index-manager",
-    prose: { relPath: `manuscript/${input.sceneId}.md`, content: input.prose },
-    stateDelta: [
-      {
-        relPath: `index/story/continuity/deltas/${input.sceneId}.json`,
-        content: JSON.stringify(input.delta, null, 2),
-      },
-    ],
-  });
-  return commit.commitId;
 }
 
 export type { DeclaredPromise, RevisionTask };

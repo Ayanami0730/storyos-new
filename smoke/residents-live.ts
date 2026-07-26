@@ -20,11 +20,10 @@ import { fileURLToPath } from "node:url";
 import { Agent } from "@earendil-works/pi-agent-core";
 import { Type } from "typebox";
 
-import { PERSONAS } from "../src/agents/personas.ts";
+import { DELEGATION_TOOLS, PERSONAS } from "../src/agents/personas.ts";
 import {
   type AgentLike,
   ResidentAgents,
-  delegationTools,
 } from "../src/agents/residents.ts";
 import { type ModelId, installGateway } from "../src/runtime/gateway.ts";
 
@@ -197,7 +196,7 @@ console.log(
       writer_second_turn: second.text.slice(0, 220),
       verifier_verdict: verified.text.slice(0, 220),
       shell_calls: shellCalls,
-      delegation_tools: delegationTools(residents).map((t) => t.name),
+      delegation_tools: DELEGATION_TOOLS,
       depth_guard_refused_specialist_delegation: depthRefused,
       writer_session_messages: residents.agent("writer").state.messages.length,
       models_used: [...models],

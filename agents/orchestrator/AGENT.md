@@ -10,6 +10,39 @@ invocations, so they accumulate familiarity with the book rather than meeting it
 fresh each time. Delegation depth is one: they never call each other, everything
 routes through you.
 
+Each takes a `brief`: what is particular about this scene, in your own words.
+They already know their jobs and carry their own memory of the book, so a brief
+that restates their role wastes a turn. Say what this scene needs that the last
+one did not — a thread to pick up, a register to hold, a fact you want checked
+especially hard.
+
+## The calls are the transaction
+
+`call_context_builder`, `call_writer`, `call_verifier` and `call_index_manager`
+are not four ways to ask for help; they are the four states of a scene. The
+sequence is enforced. Call one out of turn and it comes back as a refusal naming
+the state the scene is in and the call that is legal instead — read that and make
+that call, rather than trying the same one again.
+
+`call_index_manager` **is** the commit. There is no separate commit tool, because
+index-manager is the only actor that may produce COMMITTED: prose, state delta
+and every backfilled partition land in one transaction or none of them does. It
+is only legal once the verifier has approved.
+
+Everything each call produces is written to a file, and the reply tells you
+where. The packet the builder assembled, the draft, the audit — you can read any
+of them with `bash` or `read` before deciding what to do next. That is the point
+of the paths: your judgement about a scene should rest on what is actually there,
+not on a summary of it.
+
+## Before a scene, look
+
+You have the whole project. The committed scenes are under `novel/chapters/`,
+the outline in `novel/outline/`, the promise ledger at
+`continuity/plot-contracts.jsonl`, the tension curve at
+`novel/outline/rhythm.csv`. Before opening a scene, read enough to know whether
+the plan you wrote before any prose existed is still the right plan.
+
 ## The plan is a working document, not a contract
 
 You write the plan before any of the prose exists, so parts of it are wrong and
@@ -29,26 +62,28 @@ prose changes in the revision phase, through a real transaction, or not at all.
 
 ## The loop, per scene
 
-Open a transaction. Have context built. Have the scene drafted and its state
-delta proposed. Send both to the verifier. On approval, ask index-manager to
-commit. On `STALE_BASE`, rebuild context — never retry the commit.
+Have context built. Have the scene drafted and its state delta proposed. Send
+both to the verifier. On approval, call index-manager, which commits. On
+`STALE_BASE`, rebuild context — never retry the commit.
 
-The states are enforced in code; you cannot skip one by asking nicely, and an
-attempt to will come back as a refusal naming the reason. Read the reason.
+A scene is finished when it is committed or when you have abandoned it with a
+reason. Do not stop in the middle: an approved scene nobody committed is a scene
+thrown away for a reason that has nothing to do with writing.
 
 ## Repair budget
 
 Repair rounds are bounded. Spend them deliberately.
 
-Before granting another round, check whether the last one changed anything. If
-the same finding survived a rewrite, a third attempt at the same wording is
-unlikely to be the one that works. Escalate instead: ask the verifier whether
-the finding is actually right, ask the writer what it thinks is going on, or
-abort the scene and re-plan it. A budget stops the loop running forever; it does
-not stop it wasting every round on a defect nobody has understood.
+Before granting another round, check whether the last one changed anything. Read
+the audit file — the reply tells you where it is. If the same finding survived a
+rewrite, a third attempt at the same wording is unlikely to be the one that
+works. Escalate instead: tell the writer in the brief what you think is actually
+going on, ask the verifier to re-examine whether the finding is right, or
+`abandon_scene` with the reason.
 
-Log the finding ids that persist. A defect the loop cannot resolve is worth more
-to us as a recorded failure than as three more silent rewrites.
+`abandon_scene` is a legitimate move and often the right one. A recorded failure
+with a reason is worth more to us than three more silent rewrites, and the tokens
+you save go into the scenes that follow.
 
 ## What to do with warnings
 
@@ -56,6 +91,21 @@ Warnings do not block. Do not spend repair rounds on them at scene time. They
 accumulate, and the global pass over a finished span is where they get
 addressed — unpaid promises, unused abilities, effects with no set-up are only
 judgeable once there is a span to judge them over.
+
+## The whole-story pass
+
+When the draft is complete you get one pass over the finished book. This is the
+only point at which the defects that are *absences* can be seen at all: a promise
+made and never paid off, an ability established and never used, a thread the
+story dropped. Every individual scene is fine, which is exactly why no scene-level
+gate can find them.
+
+Judge each one rather than accepting it. Two constraints make this hard rather
+than tedious: every scene after a defect was written against it, so a repair that
+contradicts a later scene trades a known defect for an unknown one; and a payoff
+dropped in at the deadline with no preparation reads worse than the abandonment
+it was meant to repair. Say which tasks are real, what a fix would have to touch,
+and which are not worth their risk.
 
 ## Cost and stopping
 

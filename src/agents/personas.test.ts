@@ -8,6 +8,8 @@ import {
   DELEGATION_TOOLS,
   PERSONAS,
   READ_TOOLS,
+  SEARCH_TOOLS,
+  allowlistMismatch,
   personaFor,
   systemPromptFor,
   toolNamesFor,
@@ -54,12 +56,43 @@ describe("personas", () => {
     }
   });
 
-  it("gives commit authority to index-manager alone", () => {
+  it("gives every role but the writer the same search reach", () => {
+    for (const role of ROLES) {
+      for (const tool of SEARCH_TOOLS) {
+        assert.equal(
+          toolNamesFor(role).includes(tool),
+          role !== "writer",
+          `${role} search reach is wrong for ${tool}`,
+        );
+      }
+    }
+    // The writer's exception is about attention, not trust: it reads its own
+    // packet and asks the builder, rather than grepping.
+    const writer = toolNamesFor("writer");
+    assert.ok(writer.includes("read_context"));
+    assert.ok(writer.includes("ask_context_builder"));
+  });
+
+  it("routes commit authority through index-manager alone", () => {
+    // There is no `commit` tool. The commit is `call_index_manager`, because
+    // index-manager is the only actor that may produce COMMITTED — so the only
+    // role that can reach a commit at all is the one that may ask for it.
     for (const role of ROLES) {
       assert.equal(
-        toolNamesFor(role).includes("commit_transaction"),
-        role === "index-manager",
+        toolNamesFor(role).includes("call_index_manager"),
+        role === "orchestrator",
       );
+    }
+  });
+
+  it("names only tools that something actually builds", () => {
+    // The previous version of this list named six tools that did not exist,
+    // and nothing noticed because nothing compared it with reality.
+    const misspelt = /^(open_transaction|request_commit|build_context_packet|apply_state_delta|commit_transaction|run_command)$/;
+    for (const role of ROLES) {
+      for (const tool of toolNamesFor(role)) {
+        assert.ok(!misspelt.test(tool), `${role} lists ${tool}, which no factory builds`);
+      }
     }
   });
 
@@ -68,8 +101,8 @@ describe("personas", () => {
     for (const forbidden of [
       "write_staged_scene",
       "propose_state_delta",
-      "apply_state_delta",
-      "commit_transaction",
+      "append_state",
+      "call_index_manager",
     ]) {
       assert.ok(!tools.includes(forbidden), `verifier must not have ${forbidden}`);
     }
@@ -86,6 +119,31 @@ describe("personas", () => {
 
   it("refuses to describe a role it does not have", () => {
     assert.throws(() => personaFor("librarian" as AgentRole), /no persona/);
+  });
+});
+
+describe("the allowlist check", () => {
+  it("passes when what was built is exactly what is allowed", () => {
+    assert.equal(allowlistMismatch("verifier", [...toolNamesFor("verifier")]), null);
+  });
+
+  it("reports a tool granted but never reviewed", () => {
+    const mismatch = allowlistMismatch("verifier", [
+      ...toolNamesFor("verifier"),
+      "propose_state_delta",
+    ]);
+    assert.deepEqual(mismatch?.unlisted, ["propose_state_delta"]);
+    assert.deepEqual(mismatch?.missing, []);
+  });
+
+  it("reports a tool a role needs and did not get", () => {
+    // The direction that fails silently: a role that cannot do its job says
+    // nothing until it tries, and by then it is mid-scene.
+    const mismatch = allowlistMismatch(
+      "writer",
+      toolNamesFor("writer").filter((t) => t !== "propose_state_delta"),
+    );
+    assert.deepEqual(mismatch?.missing, ["propose_state_delta"]);
   });
 });
 

@@ -43,6 +43,11 @@ If the answer is "the index does not contain that", believe it. That is a real
 answer: the thing is genuinely unestablished and you may establish it — but say
 so in your state delta so it becomes canon rather than a floating detail.
 
+Your packet is a file, and the answer is appended to it rather than sent as a
+loose reply. `read_context` re-reads it. Use that when you have asked more than
+one question, or when you want the answer next to the material it belongs with
+instead of scattered up the conversation.
+
 ## What makes a scene worth its place
 
 These are craft, not scoring criteria. They come from what readers of published

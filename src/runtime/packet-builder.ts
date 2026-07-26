@@ -198,6 +198,10 @@ export function builderBrief(input: {
   readonly presentEntities: readonly string[];
   readonly skeleton: string;
   readonly committedScenes: readonly string[];
+  /** Where the assembled packet will be written, and where follow-ups append. */
+  readonly packetPath?: string;
+  /** What the orchestrator asked for on this scene, if it drove this call. */
+  readonly note?: string;
 }): string {
   return [
     `Build the context for scene ${input.sceneId}.`,
@@ -222,11 +226,25 @@ export function builderBrief(input: {
     "Add what you find with add_context_item. Quote the material; a pointer is not context.",
     "Add nothing if there is nothing — a padded packet costs the writer attention it needs",
     "for the scene, and every item you add is also an item the verifier reads.",
+    input.packetPath
+      ? `\nEverything you add is assembled into ${input.packetPath}, which is the document ` +
+        `the writer works from. If it asks a follow-up later, your answer is appended to that ` +
+        `same file rather than sent as a loose reply — so answer as though you were adding to ` +
+        `the packet, because you are.`
+      : "",
+    input.note
+      ? `\n## What the orchestrator asked for on this scene\n\n${input.note.trim()}\n\n` +
+        `That is in addition to the above, not instead of it.`
+      : "",
+    "",
+    "Finish by saying in one sentence what you added and which files you read it from.",
     "",
     "--- P0/P1 skeleton, already in the packet ---",
     "",
     input.skeleton,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 /** The follow-up question, when the writer wants more before drafting. */
@@ -254,6 +272,50 @@ export function followUpBrief(input: {
  * Bounded, and the bound is visible in the refusal: an agent told "no" without a
  * reason retries, and an agent told "you have used your rounds" writes the scene.
  */
+/**
+ * The writer's read of its own packet.
+ *
+ * The writer has no shell, deliberately: its job is the prose, and the measured
+ * behaviour said the shell did not help it — across a whole run it ran four
+ * commands to the builder's forty-eight. But "no shell" is not the same as "no
+ * reading". Its packet is a document written for it, a follow-up answer is
+ * appended to that document, and re-reading it is how the answer becomes part of
+ * the material rather than a reply that scrolled past.
+ *
+ * Scoped to that one file on purpose. A path argument would make this a general
+ * read tool wearing a narrow name.
+ */
+export function readContextTool(options: {
+  readonly path: () => string | null;
+  readonly read: (relPath: string) => Promise<string | null>;
+}): unknown {
+  return {
+    label: "Read context",
+    name: "read_context",
+    description:
+      "Re-read your context packet for this scene, including any follow-up answers that " +
+      "have been appended to it since you were given it.",
+    parameters: Type.Object({
+      purpose: Type.String({ description: "Why you are re-reading it" }),
+    }),
+    execute: async () => {
+      const relPath = options.path();
+      if (!relPath) {
+        return toolText(
+          "there is no packet file for the scene in progress. Everything you were given is " +
+            "in the message that opened this turn.",
+        );
+      }
+      const text = await options.read(relPath);
+      return toolText(
+        text ??
+          `${relPath} has not been written yet. What you were given at the start of this ` +
+            `turn is all there is; do not treat its absence as licence to invent.`,
+      );
+    },
+  };
+}
+
 export function askBuilderTool(options: {
   readonly ask: (question: string) => Promise<string>;
   readonly roundsUsed: () => number;

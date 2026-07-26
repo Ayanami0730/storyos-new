@@ -1,9 +1,9 @@
 /**
- * From a premise to a finished manuscript.
+ * From a plan to a finished manuscript.
  *
- * The scene loop can complete one scene. This is the layer that decides which
- * scenes there are, feeds each one the context the index has accumulated so
- * far, and assembles what comes back.
+ * `plan.ts` decides which scenes there are. This is the layer that runs them:
+ * it feeds each one the context the index has accumulated so far, lets the
+ * orchestrator drive the transaction, and assembles what comes back.
  *
  * The part that carries the paper's claim is `contextFor`. Every scene is
  * written against material *derived from committed state*, not against a
@@ -13,34 +13,27 @@
  * rather than approximately true.
  */
 
-import { Type } from "typebox";
-
 import type { ContextItem } from "../context/types.ts";
-import { stringify as toYaml } from "yaml";
 
-import type { CanonicalIndex, FileWrite } from "../index/commit.ts";
+import type { CanonicalIndex } from "../index/commit.ts";
 import { chapterFor, paths, sceneIndexOf } from "../index/tree.ts";
-import type { AgentRole } from "../transaction/types.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
 import type { ResidentAgents } from "../agents/residents.ts";
+import { type ArtifactStore, artifactPaths } from "./artifacts.ts";
 import { type SceneToolBus, residentCollaborators } from "./collaborators.ts";
+import { type SceneStage, driveScene, sceneBrief } from "./orchestration.ts";
 import { type RevisionPlan, planRevisions } from "./revision.ts";
 import type { SceneDelta } from "../verification/deterministic.ts";
-import { type SceneOutcome, runScene } from "./scene-loop.ts";
+import {
+  type SceneCard,
+  type StoryPlan,
+  planFiles,
+  planStory,
+} from "./plan.ts";
+import { SceneDirector } from "./scene-director.ts";
+import type { SceneCollaborators, SceneOutcome } from "./scene-loop.ts";
 
-export interface SceneCard {
-  readonly id: string;
-  readonly intent: string;
-  readonly presentEntities: readonly string[];
-  readonly targetWords: number;
-}
-
-export interface StoryPlan {
-  readonly logline: string;
-  readonly entities: readonly { readonly id: string; readonly sketch: string }[];
-  readonly worldRules: readonly string[];
-  readonly scenes: readonly SceneCard[];
-}
+export type { SceneCard, StoryPlan };
 
 export interface StoryResult {
   readonly manuscript: string;
@@ -50,8 +43,22 @@ export interface StoryResult {
   readonly canon: readonly CanonFact[];
   /** Scenes that never committed, with why. Reported, never hidden. */
   readonly failures: readonly { readonly sceneId: string; readonly reason: string }[];
-  /** What the whole-story pass found. Suggestions, never gate decisions. */
+  /** What the whole-story pass found, and what was done about it. */
   readonly revision: RevisionPlan;
+  /**
+   * How much of the driving the orchestrator actually did.
+   *
+   * The point of making it drive is that it can decide — revise the outline
+   * before a scene, abandon one that is not worth repairing. Whether it does is
+   * not something to assume from the fact that it has the tools: the first run
+   * where all five agents were live had the orchestrator send eight messages in
+   * total and delegate nothing. So the split is recorded per run.
+   */
+  readonly driving: {
+    readonly scenesDriven: number;
+    readonly stepsByOrchestrator: number;
+    readonly stepsRescuedByEngine: number;
+  };
 }
 
 function toolText(text: string) {
@@ -64,284 +71,6 @@ function toolText(text: string) {
  * Scene count is derived from the target rather than left to the model: a model
  * asked for "a plan for 40,000 words" reliably proposes a dozen scenes and then
  * has to write 3,000 words each, which is where single-call length limits bite.
- */
-export function sceneCountFor(targetWords: number, wordsPerScene = 1_200): number {
-  return Math.max(4, Math.round(targetWords / wordsPerScene));
-}
-
-export function planTool(sink: { plan?: StoryPlan }, sceneCount: number): unknown {
-  return {
-    label: "Submit plan",
-    name: "submit_plan",
-    description: "Submit the story plan. Call once.",
-    parameters: Type.Object({
-      logline: Type.String(),
-      entities: Type.Array(
-        Type.Object({
-          id: Type.String({ description: "Stable id, e.g. char-mira or loc-harbour" }),
-          sketch: Type.String({ description: "One or two sentences" }),
-        }),
-      ),
-      world_rules: Type.Array(Type.String()),
-      scenes: Type.Array(
-        Type.Object({
-          intent: Type.String({ description: "What this scene accomplishes" }),
-          present: Type.Array(Type.String({ description: "Entity ids present" })),
-        }),
-      ),
-    }),
-    execute: async (
-      _id: string,
-      args: {
-        logline: string;
-        entities: { id: string; sketch: string }[];
-        world_rules: string[];
-        scenes: { intent: string; present: string[] }[];
-      },
-    ) => {
-      const scenes = args.scenes ?? [];
-      if (scenes.length < Math.floor(sceneCount * 0.6)) {
-        return toolText(
-          `rejected: ${scenes.length} scenes is too few for the target. Propose about ` +
-            `${sceneCount}. Each scene is written by a separate call, so a short plan does ` +
-            `not shorten the work — it makes each scene carry more words than one call writes well.`,
-        );
-      }
-      const ids = new Set((args.entities ?? []).map((e) => e.id));
-      const unknown = scenes.flatMap((s) =>
-        (s.present ?? []).filter((p) => !ids.has(p)),
-      );
-      if (unknown.length > 0) {
-        return toolText(
-          `rejected: scenes reference entities that are not in your entity list: ` +
-            `${[...new Set(unknown)].join(", ")}. Add them or fix the ids.`,
-        );
-      }
-
-      // An intent that names a character the scene does not list as present is
-      // an instruction the writer cannot follow safely. It happened on the first
-      // run with the tree: scene 1's intent said "Elias meets Mira at the
-      // Watchhouse" while `present` listed neither, so the writer invented what
-      // it had not been given and the scene was rejected three times over
-      // entities that were in the plan all along.
-      const missing = scenes.flatMap((s, i) => {
-        const present = new Set(s.present ?? []);
-        const named = [...ids].filter(
-          (id) =>
-            !present.has(id) &&
-            // Match on the distinctive part of the id, so `char-elias-warden`
-            // is found in prose that says "Elias".
-            new RegExp(`\\b${id.replace(/^(char|loc|obj|fac)-/, "").split("-")[0]}\\b`, "i").test(
-              s.intent ?? "",
-            ),
-        );
-        return named.map((id) => `scene ${i + 1} (${s.intent?.slice(0, 40)}…) names ${id}`);
-      });
-      if (missing.length > 0) {
-        return toolText(
-          `rejected: ${missing.length} scene(s) describe an entity they do not list as ` +
-            `present:\n- ${missing.join("\n- ")}\nThe writer only receives state and ` +
-            `beliefs for entities in \`present\`, so an intent that requires one which is ` +
-            `absent asks the writer to invent it. Add them to \`present\` or rewrite the ` +
-            `intent.`,
-        );
-      }
-      sink.plan = {
-        logline: args.logline,
-        entities: args.entities ?? [],
-        worldRules: args.world_rules ?? [],
-        scenes: scenes.map((s, i) => ({
-          id: `s-${String(i + 1).padStart(3, "0")}`,
-          intent: s.intent,
-          presentEntities: s.present ?? [],
-          targetWords: 0,
-        })),
-      };
-      return toolText(`plan accepted: ${scenes.length} scenes.`);
-    },
-  };
-}
-
-/**
- * Revise the remaining plan mid-story.
- *
- * Modelled on how a coding agent keeps a live todo list rather than a plan it
- * wrote once: the outline is a working document, and the prose is the thing
- * that teaches you what the outline should have said. Our writer prompt already
- * invites deviation proposals; this is where one can be acted on.
- *
- * The hard boundary is committed scenes. They are on the page, later scenes
- * were written against them, and "revising" one by editing the plan would make
- * the plan disagree with the manuscript silently. Changing committed prose is
- * the revision phase's job, through a real transaction.
- */
-export function updatePlanTool(state: {
-  plan?: StoryPlan;
-  committed: ReadonlySet<string>;
-}): unknown {
-  return {
-    label: "Update plan",
-    name: "update_plan",
-    description:
-      "Revise the scenes that have not been written yet. Use when the prose has diverged " +
-      "from the outline, a thread needs more room, or a planned scene is no longer earning " +
-      "its place. Say why.",
-    parameters: Type.Object({
-      reason: Type.String({ description: "What the prose taught you that the plan got wrong" }),
-      scenes: Type.Array(
-        Type.Object({
-          id: Type.String({ description: "Existing scene id to replace, or 'new'" }),
-          intent: Type.String(),
-          present: Type.Array(Type.String()),
-        }),
-      ),
-    }),
-    execute: async (
-      _id: string,
-      args: { reason: string; scenes: { id: string; intent: string; present: string[] }[] },
-    ) => {
-      if (!state.plan) return toolText("rejected: there is no plan yet.");
-      if (!args.reason?.trim()) {
-        return toolText("rejected: reason is required — an unexplained plan change is a drift.");
-      }
-      const touched = (args.scenes ?? []).filter((s) => state.committed.has(s.id));
-      if (touched.length > 0) {
-        return toolText(
-          `rejected: ${touched.map((s) => s.id).join(", ")} are already written and later ` +
-            `scenes were built on them. To change committed prose, raise it in the revision ` +
-            `phase; editing the plan would leave the plan disagreeing with the manuscript.`,
-        );
-      }
-
-      const kept = state.plan.scenes.filter((s) => state.committed.has(s.id));
-      const perScene = state.plan.scenes[0]?.targetWords ?? 1200;
-      const replacements = (args.scenes ?? []).map((s, i) => ({
-        id: s.id === "new" ? `s-${String(kept.length + i + 1).padStart(3, "0")}` : s.id,
-        intent: s.intent,
-        presentEntities: s.present ?? [],
-        targetWords: perScene,
-      }));
-      state.plan = { ...state.plan, scenes: [...kept, ...replacements] };
-      return toolText(
-        `plan updated: ${kept.length} scene(s) already written kept, ` +
-          `${replacements.length} ahead.`,
-      );
-    },
-  };
-}
-
-export async function planStory(options: {
-  readonly residents: ResidentAgents;
-  readonly premise: string;
-  readonly targetWords: number;
-  readonly txid: string;
-  readonly sink: { plan?: StoryPlan };
-}): Promise<StoryPlan> {
-  const { residents, premise, targetWords, txid, sink } = options;
-  const sceneCount = sceneCountFor(targetWords);
-  const perScene = Math.round(targetWords / sceneCount);
-
-  await residents.invoke(
-    "orchestrator",
-    `Plan a story of about ${targetWords} words from this premise.\n\n${premise}\n\n` +
-      `Propose about ${sceneCount} scenes of roughly ${perScene} words each. Give every ` +
-      `character, location and significant object a stable id now — later scenes can only ` +
-      `refer to entities that exist. State the world rules the story must not break. ` +
-      `Then call submit_plan.`,
-    { txid, caller: "orchestrator", selfCall: true },
-  );
-
-  if (!sink.plan) throw new Error("the orchestrator produced no plan");
-  return {
-    ...sink.plan,
-    scenes: sink.plan.scenes.map((s) => ({ ...s, targetWords: perScene })),
-  };
-}
-
-/**
- * The plan, as files.
- *
- * A pure projection, so the engine writes it rather than spending a model call:
- * there is no judgement in turning a scene list into scene cards. What matters
- * is that it exists on disk *before the first scene is built*, because every
- * downstream agent is told to work from the index and until now the index did
- * not contain the story's own outline.
- *
- * Entity stubs are part of it. An empty `characters/char-mira/profile.yaml` is
- * not clutter — it is the difference between "this character has no recorded
- * identity yet" and "this character does not exist", and the verifier has
- * already rejected a scene three times for confusing the two.
- */
-export function planFiles(plan: StoryPlan, premise: string): readonly FileWrite[] {
-  const files: FileWrite[] = [
-    { relPath: paths.premise(), content: `${premise.trim()}\n` },
-    { relPath: paths.logline(), content: `${plan.logline}\n` },
-    {
-      relPath: paths.worldRules(),
-      content: toYaml({
-        note: "What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.",
-        rules: plan.worldRules,
-      }),
-    },
-    {
-      relPath: paths.beats(),
-      content: toYaml({
-        scenes: plan.scenes.map((s) => ({
-          id: s.id,
-          chapter: chapterFor(sceneIndexOf(s.id)),
-          intent: s.intent,
-          present: s.presentEntities,
-          target_words: s.targetWords,
-        })),
-      }),
-    },
-  ];
-
-  for (const chapter of new Set(plan.scenes.map((s) => chapterFor(sceneIndexOf(s.id))))) {
-    const scenes = plan.scenes.filter((s) => chapterFor(sceneIndexOf(s.id)) === chapter);
-    files.push({
-      relPath: paths.chapterCard(chapter),
-      content: toYaml({
-        chapter,
-        scenes: scenes.map((s) => ({ id: s.id, intent: s.intent, present: s.presentEntities })),
-      }),
-    });
-  }
-
-  for (const entity of plan.entities) {
-    if (entity.id.startsWith("char-")) {
-      files.push({
-        relPath: paths.profile(entity.id),
-        content: toYaml({
-          id: entity.id,
-          name: entity.id.replace(/^char-/, ""),
-          sketch: entity.sketch,
-          identity: {},
-          provenance: {},
-        }),
-      });
-    } else if (entity.id.startsWith("loc-")) {
-      files.push({
-        relPath: paths.location(entity.id),
-        content: toYaml({ id: entity.id, sketch: entity.sketch, first_seen: null }),
-      });
-    } else {
-      files.push({
-        relPath: paths.object(entity.id),
-        content: toYaml({ id: entity.id, sketch: entity.sketch, first_seen: null }),
-      });
-    }
-  }
-
-  return files;
-}
-
-/**
- * The packet material for one scene, assembled from committed state.
- *
- * Priorities are what the builder enforces; what belongs in each is this
- * function's judgement. The one that matters most is P1: a character's *current*
- * facts, so the writer is never guessing at state the index already knows.
  */
 export function contextFor(input: {
   readonly card: SceneCard;
@@ -498,18 +227,18 @@ export async function writeStory(options: {
    * mean the writer files its prose into a buffer nobody reads.
    */
   readonly bus: SceneToolBus;
+  /**
+   * Which director the orchestrator's `call_*` tools point at. Same reason as
+   * the bus: registered once, swapped per scene.
+   */
+  readonly stage: SceneStage;
+  /** Working artefacts on disk, so a hand-off is a path rather than a string. */
+  readonly artifacts: ArtifactStore;
   readonly onScene?: (sceneId: string) => void;
   /** Resident context-builder, when one is configured. */
-  readonly build?: (input: {
-    readonly sceneId: string;
-    readonly skeleton: import("../context/types.ts").ContextPacket;
-  }) => Promise<readonly ContextItem[]>;
+  readonly build?: SceneCollaborators["build"];
   /** Resident index-manager's backfill, when one is configured. */
-  readonly backfill?: (input: {
-    readonly sceneId: string;
-    readonly draft: import("./scene-loop.ts").Draft;
-    readonly packet: import("../context/types.ts").ContextPacket;
-  }) => Promise<readonly import("../index/commit.ts").FileWrite[]>;
+  readonly backfill?: SceneCollaborators["backfill"];
   /** Where prose goes; the tree groups scenes into chapters. */
   readonly prosePathFor?: (sceneId: string) => string;
   /**
@@ -521,8 +250,6 @@ export async function writeStory(options: {
   const { residents, index, premise, targetWords, maxRepairs, planSink } = options;
 
   const say = options.log ?? (() => {});
-  const buildScene = options.build;
-  const backfillScene = options.backfill;
   say(`planning for ${targetWords} words`);
   const plan = await planStory({
     residents,
@@ -546,29 +273,34 @@ export async function writeStory(options: {
   const committedScenes: string[] = [];
   const committedDeltas: SceneDelta[] = [];
   const proseByScene = new Map<string, string>();
+  const driving = { scenesDriven: 0, stepsByOrchestrator: 0, stepsRescuedByEngine: 0 };
 
   say(
     `plan: ${plan.scenes.length} scenes, ${plan.entities.length} entities, ` +
       `${plan.worldRules.length} world rules`,
   );
 
-  for (const card of plan.scenes) {
+  // The plan is re-read each iteration rather than iterated over: `update_plan`
+  // may rewrite the scenes ahead between scenes, and a `for...of` over the
+  // original array would keep writing the outline the orchestrator has already
+  // decided was wrong.
+  for (let i = 0; i < (planSink.plan ?? plan).scenes.length; i += 1) {
+    const card = (planSink.plan ?? plan).scenes[i]!;
     const txid = `tx-${card.id}`;
     const sceneStarted = Date.now();
     say(`${card.id} start — ${card.intent.slice(0, 70)}`);
+
     const { collaborators } = residentCollaborators({
       residents,
       sceneId: card.id,
       txid,
       bus: options.bus,
-      ...(buildScene ? { build: buildScene } : {}),
-      ...(backfillScene ? { backfill: backfillScene } : {}),
+      ...(options.build ? { build: options.build } : {}),
+      ...(options.backfill ? { backfill: options.backfill } : {}),
     });
     options.onScene?.(card.id);
 
-    let outcome: SceneOutcome;
-    try {
-      outcome = await runScene(
+    const director = new SceneDirector(
       {
         txid,
         sceneId: card.id,
@@ -584,25 +316,59 @@ export async function writeStory(options: {
         maxRepairs,
         prosePath: options.prosePathFor?.(card.id) ?? `manuscript/${card.id}.md`,
       },
-      { index, collaborators },
-      );
-    } catch (error) {
-      // A collaborator that never produced an artefact is a scene failure, not
-      // a run failure. Recorded and moved past, exactly like a rejected scene:
-      // the failure rate is a result we want, and a harness that halts on the
-      // first misbehaving turn produces no result at all.
-      const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-      say(`${card.id} FAILED — ${reason}`);
-      failures.push({ sceneId: card.id, reason });
-      earlierIntents.push(`${card.intent} [scene not completed]`);
-      continue;
-    }
+      { index, collaborators, artifacts: options.artifacts },
+    );
+
+    const run = await driveScene({
+      residents,
+      stage: options.stage,
+      director,
+      txid,
+      brief: sceneBrief({
+        sceneId: card.id,
+        intent: card.intent,
+        presentEntities: card.presentEntities,
+        targetWords: card.targetWords,
+        chapter: chapterFor(sceneIndexOf(card.id)),
+        position: { index: i + 1, total: (planSink.plan ?? plan).scenes.length },
+        committed: committedScenes,
+        failed: failures.map((f) => f.sceneId),
+        repairBudget: maxRepairs,
+      }),
+      log: say,
+    });
+
+    const outcome = run.outcome;
+    driving.scenesDriven += 1;
+    driving.stepsByOrchestrator += run.orchestratorSteps;
+    driving.stepsRescuedByEngine += run.rescuedSteps;
+
+    // What the orchestrator thought happened, next to what did. Written per
+    // scene because the two disagreeing is the most informative thing a run can
+    // produce about whether agent-driven orchestration is working.
+    await options.artifacts.write(
+      artifactPaths.sceneLog(card.id),
+      [
+        `# ${card.id}`,
+        "",
+        `Outcome: ${outcome.status} after ${outcome.attempts} attempt(s), ` +
+          `${outcome.findings.length} finding(s).`,
+        `Steps driven by the orchestrator: ${run.orchestratorSteps}. ` +
+          `Finished by the engine: ${run.rescuedSteps}.`,
+        "",
+        "## The orchestrator's account",
+        "",
+        run.account || "(it said nothing)",
+        "",
+      ].join("\n"),
+    );
 
     scenes.push({ card, outcome });
     say(
       `${card.id} ${outcome.status} after ${outcome.attempts} attempt(s), ` +
         `${Math.round((Date.now() - sceneStarted) / 1000)}s, ` +
-        `${outcome.findings.length} finding(s)`,
+        `${outcome.findings.length} finding(s), ` +
+        `${run.orchestratorSteps} step(s) driven`,
     );
 
     if (outcome.status === "COMMITTED") {
@@ -625,9 +391,7 @@ export async function writeStory(options: {
       failures.push({
         sceneId: card.id,
         reason:
-          "reason" in outcome
-            ? outcome.reason
-            : (outcome as { status: string }).status,
+          "reason" in outcome ? outcome.reason : (outcome as { status: string }).status,
       });
       earlierIntents.push(`${card.intent} [scene not completed]`);
     }
@@ -644,14 +408,119 @@ export async function writeStory(options: {
     proseByScene,
   });
 
+  /**
+   * The revision plan, on disk and then in front of the orchestrator.
+   *
+   * This layer has existed for two rounds and changed no prose in either,
+   * because nothing read what it produced: the tasks went into a JSON file and
+   * the story loop returned. A checker whose findings nobody acts on is a
+   * measurement, not a mechanism — and the defects it sees are the ones a
+   * scene-level gate is structurally blind to, so they are exactly the ones that
+   * have no other route into the manuscript.
+   *
+   * What the orchestrator can do about them is bounded on purpose. Every scene
+   * after the defect is already written and was written against it, so a repair
+   * that contradicts a later scene trades a known defect for an unknown one. It
+   * gets the tasks, the whole book to read, and the plan tool; a rewrite of
+   * committed prose remains a transaction and is not attempted here.
+   */
+  await options.artifacts.write(
+    artifactPaths.revisionPlan(),
+    renderRevisionPlan({ revision, committed: committedScenes, failures }),
+  );
+
+  if (revision.tasks.length > 0 || failures.length > 0) {
+    say(
+      `revision pass: ${revision.tasks.length} task(s), ` +
+        `${revision.coverage.contractsOpen} unpaid promise(s)`,
+    );
+    try {
+      await residents.invoke(
+        "orchestrator",
+        [
+          "The draft is complete. This is the whole-story pass — the only point at which",
+          "defects that are absences rather than errors can be seen at all: a promise made",
+          "and never paid off, an ability established and never used, a thread the story",
+          "dropped. A scene-level gate cannot see any of them, because each individual scene",
+          "is fine.",
+          "",
+          `The plan is written to ${artifactPaths.revisionPlan()}. Read it, then read what it`,
+          "points at — you have the whole book under novel/chapters/ and the promise ledger",
+          "at continuity/plot-contracts.jsonl.",
+          "",
+          renderRevisionPlan({ revision, committed: committedScenes, failures }),
+          "",
+          "Two constraints, and they are what make this hard rather than tedious. Every scene",
+          "after a defect is already written and was written against it, so a repair that",
+          "contradicts a later scene trades a known defect for an unknown one. And a payoff",
+          "dropped in at the deadline with no preparation reads worse than the abandonment it",
+          "was meant to repair.",
+          "",
+          "So do not rewrite anything now. Say, for each task: whether it is real, what the",
+          "fix would have to touch, and whether the fix is worth its risk. Record anything",
+          "you would do differently next time with `remember` — the next story is where that",
+          "judgement is worth something.",
+        ].join("\n"),
+        { txid: "tx-revision", caller: "orchestrator", selfCall: true },
+      );
+    } catch (error) {
+      // A failed revision pass does not invalidate a finished draft. It costs
+      // the assessment, which is worth recording and not worth the manuscript.
+      say(
+        `revision pass failed — ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
   const manuscript = prose.join("\n\n");
   return {
     manuscript,
     words: manuscript.split(/\s+/).filter(Boolean).length,
-    plan,
+    plan: planSink.plan ?? plan,
     scenes,
     canon,
     failures,
     revision,
+    driving,
   };
+}
+
+/** The whole-story pass, as a document rather than a JSON dump. */
+export function renderRevisionPlan(input: {
+  readonly revision: RevisionPlan;
+  readonly committed: readonly string[];
+  readonly failures: readonly { readonly sceneId: string; readonly reason: string }[];
+}): string {
+  const { revision } = input;
+  return [
+    "# Revision plan",
+    "",
+    `Committed scenes: ${input.committed.length}. ` +
+      `Did not complete: ${input.failures.length}.`,
+    `Promises made: ${revision.coverage.contractsChecked}. ` +
+      `Still unpaid: ${revision.coverage.contractsOpen}.`,
+    `Capabilities established: ${revision.coverage.capabilitiesChecked}.`,
+    "",
+    revision.tasks.length === 0
+      ? "No revision tasks. Nothing in the story is owed to the reader and unpaid."
+      : revision.tasks
+          .map(
+            (task, i) =>
+              `## Task ${i + 1} — ${task.finding.subtype}\n\n` +
+              `${task.rationale}.\n\n` +
+              `Scenes in scope: ${task.targetScenes.join(", ")}.\n\n` +
+              `> ${task.finding.evidence.quote.slice(0, 300)}\n\n` +
+              `${task.finding.reasoning}`,
+          )
+          .join("\n\n"),
+    "",
+    input.failures.length > 0
+      ? `## Scenes that never landed\n\n${input.failures
+          .map((f) => `- ${f.sceneId}: ${f.reason}`)
+          .join("\n")}`
+      : "",
+    "",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }

@@ -4,13 +4,12 @@ import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 
 import type { AgentRole } from "../transaction/types.ts";
+import { SceneStage, delegationToolNameFor, orchestratorTools } from "../runtime/orchestration.ts";
 import { PERSONAS } from "./personas.ts";
 import {
   type AgentLike,
   DelegationError,
   ResidentAgents,
-  delegationToolName,
-  delegationTools,
 } from "./residents.ts";
 
 const AGENTS_ROOT = path.join(
@@ -166,41 +165,22 @@ describe("delegation depth", () => {
   });
 });
 
-describe("delegation tools", () => {
-  it("exposes exactly the four callees, never the orchestrator", () => {
-    const { registry } = residents();
-    assert.deepEqual(
-      delegationTools(registry).map((t) => t.name).sort(),
-      [
-        "call_context_builder",
-        "call_index_manager",
-        "call_verifier",
-        "call_writer",
-      ],
-    );
+describe("delegation", () => {
+  it("names a delegation tool after the role it reaches", () => {
+    assert.equal(delegationToolNameFor("index-manager"), "call_index_manager");
   });
 
-  it("names the tool after the role", () => {
-    assert.equal(delegationToolName("index-manager"), "call_index_manager");
-  });
-
-  it("requires a txid, because an unattributable call cannot be billed", () => {
-    const { registry } = residents();
-    const tool = delegationTools(registry)[0]!;
-    assert.deepEqual(
-      tool.validate({ txid: "", task: "do it" }).map((e) => e.path),
-      ["txid"],
-    );
-    assert.deepEqual(tool.validate({ txid: "tx-1", task: "" }).map((e) => e.path), [
-      "task",
-    ]);
-    assert.deepEqual(tool.validate({ txid: "tx-1", task: "do it" }), []);
-  });
-
-  it("returns the callee's answer to the orchestrator", async () => {
-    const { registry } = residents();
-    const writer = delegationTools(registry).find((t) => t.name === "call_writer")!;
-    assert.equal(await writer.run({ txid: "tx-1", task: "draft" }), "did: draft");
+  it("attributes every delegation to a transaction without asking the model for one", () => {
+    // The delegation tools used to take a `txid` argument and validate it. They
+    // no longer take one: the director owns the transaction and supplies it, so
+    // a call that is not attributable to a transaction is not expressible
+    // rather than merely rejected. What the orchestrator passes is a brief.
+    const tools = orchestratorTools(new SceneStage()) as {
+      name: string;
+      parameters: { properties?: Record<string, unknown> };
+    }[];
+    const call = tools.find((t) => t.name === "call_writer")!;
+    assert.deepEqual(Object.keys(call.parameters.properties ?? {}), ["brief"]);
   });
 });
 

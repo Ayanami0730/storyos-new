@@ -312,6 +312,26 @@ const VERIFIER_BRIEF = [
 
 
 /**
+ * The orchestrator's brief for this step, wrapped so its status is unambiguous.
+ *
+ * It is an addition to a standing instruction, never a replacement. The parts of
+ * a brief that make a step correct — quote the material, refuse to invent, name
+ * the file you read it from — are exactly the parts a per-scene note would
+ * accidentally override if it arrived as bare text at the end of the prompt.
+ */
+function orchestratorNote(note: string | undefined): string {
+  if (!note?.trim()) return "";
+  return [
+    "",
+    "## What the orchestrator asked for on this scene",
+    "",
+    note.trim(),
+    "",
+    "That is in addition to your standing instructions above, not instead of them.",
+  ].join("\n");
+}
+
+/**
  * A tool bus, because residency and per-scene state pull in opposite directions.
  *
  * Agents live for the whole story, so their tools are registered once. But each
@@ -376,21 +396,47 @@ export function residentCollaborators(options: {
     collaborators: {
       ...(options.build ? { build: options.build } : {}),
       ...(options.backfill ? { backfill: options.backfill } : {}),
-      async draft({ packet, attempt, repairBrief }): Promise<Draft> {
+      async draft({ packet, attempt, repairBrief, packetPath, auditPath, note }): Promise<Draft> {
         capture.prose = undefined;
         capture.delta = undefined;
 
         const task =
           attempt === 0
-            ? `${packet.rendered}\n\nWrite scene ${sceneId}. Call write_staged_scene with the ` +
-              `prose, then propose_state_delta with everything it established.`
-            : `Your draft of ${sceneId} came back with findings. Repair the specific defects ` +
-              `below — do not rewrite the scene wholesale, and read each finding's locus ` +
-              `before you change anything.\n\n${repairBrief}\n\nThen call write_staged_scene ` +
-              `and propose_state_delta again.\n\nIf one of these findings is a mistake you ` +
-              `can see yourself making again on later scenes, record the lesson with ` +
-              `\`remember\` first — a repair round is where the durable lessons are, and it ` +
-              `is the one moment you can still see what you did wrong.`;
+            ? [
+                packet.rendered,
+                "",
+                `Write scene ${sceneId}. Call write_staged_scene with the prose, then ` +
+                  `propose_state_delta with everything it established.`,
+                // The path as well as the contents. The packet above is what it
+                // says now; the file is where a follow-up answer will be
+                // appended, and re-reading it is how the writer sees the answer
+                // in the material rather than as a loose reply.
+                packetPath
+                  ? `Your packet is also at ${packetPath}. If you ask a follow-up, the answer ` +
+                    `is appended there — read_context re-reads it.`
+                  : "",
+                orchestratorNote(note),
+              ]
+                .filter(Boolean)
+                .join("\n")
+            : [
+                `Your draft of ${sceneId} came back with findings. Repair the specific ` +
+                  `defects below — do not rewrite the scene wholesale, and read each ` +
+                  `finding's locus before you change anything.`,
+                "",
+                repairBrief,
+                "",
+                auditPath ? `The full audit is at ${auditPath}.` : "",
+                `Then call write_staged_scene and propose_state_delta again.`,
+                "",
+                `If one of these findings is a mistake you can see yourself making again on ` +
+                  `later scenes, record the lesson with \`remember\` first — a repair round ` +
+                  `is where the durable lessons are, and it is the one moment you can still ` +
+                  `see what you did wrong.`,
+                orchestratorNote(note),
+              ]
+                .filter(Boolean)
+                .join("\n");
 
         await residents.invoke("writer", task, { txid, caller: "orchestrator" });
 
@@ -430,13 +476,26 @@ export function residentCollaborators(options: {
         return { prose: capture.prose, delta: capture.delta };
       },
 
-      async review({ packet, draft }) {
+      async review({ packet, draft, note }) {
         capture.findings = [];
         await residents.invoke(
           "verifier",
-          `${VERIFIER_BRIEF}\n\n## Context the writer was given\n\n${packet.rendered}\n\n` +
-            `## The draft\n\n${draft.prose}\n\n## What the writer says it established\n\n` +
-            `${JSON.stringify(draft.delta.claims, null, 2)}`,
+          [
+            VERIFIER_BRIEF,
+            orchestratorNote(note),
+            "",
+            `## Context the writer was given\n\n${packet.rendered}`,
+            "",
+            `## The draft\n\n${draft.prose}`,
+            "",
+            `## What the writer says it established\n\n${JSON.stringify(
+              draft.delta.claims,
+              null,
+              2,
+            )}`,
+          ]
+            .filter(Boolean)
+            .join("\n"),
           { txid, caller: "orchestrator" },
         );
         return [...capture.findings];

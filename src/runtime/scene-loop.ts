@@ -1,14 +1,20 @@
 /**
- * The scene transaction, driven end to end.
+ * The scene transaction's vocabulary, and the deterministic driver for it.
  *
  * Everything before this file was a part: a state machine that refuses illegal
  * moves, a packet builder that fails on a missing constraint, three layers of
- * verification, an atomic commit. This is where they become a loop that can
- * finish a scene — and where the decisions the parts deliberately left open
- * have to be made.
+ * verification, an atomic commit. `SceneDirector` turns them into steps that
+ * refuse to run out of order; this is the driver that walks those steps in the
+ * obvious sequence, with no model deciding anything.
  *
- * Three of those decisions are worth stating, because each is a place a
- * plausible implementation would go wrong.
+ * It is used in two places. Tests drive it, because the interesting failures in
+ * a control flow are ordering and budget rather than token generation. And the
+ * engine drives it to finish a scene the orchestrator left half-done, so an
+ * orchestrator that loses the thread degrades to the old behaviour instead of
+ * losing the scene.
+ *
+ * Three decisions live in the director and are worth stating here, because each
+ * is a place a plausible implementation would go wrong.
  *
  * **A repair round that changes nothing ends the loop early.** The budget
  * bounds how long a repair loop runs; it does not stop it spending every round
@@ -25,23 +31,12 @@
  * consecutive drafts with identical prose digests.
  */
 
-import { buildContextPacket } from "../context/packet.ts";
 import type { ContextItem, ContextPacket, PacketRequest } from "../context/types.ts";
-import { PacketBuildError } from "../context/types.ts";
-import {
-  type CommitResult,
-  type FileWrite,
-  CanonicalIndex,
-  CommitRefused,
-} from "../index/commit.ts";
-import { SceneTransaction } from "../transaction/machine.ts";
+import type { CommitResult, FileWrite } from "../index/commit.ts";
+import { CanonicalIndex } from "../index/commit.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
-import {
-  type CanonFact,
-  type SceneDelta,
-  verifyDeterministic,
-} from "../verification/deterministic.ts";
-import { blocking, renderRepairBrief, unchangedAcrossRound } from "../verification/finding.ts";
+import type { CanonFact, SceneDelta } from "../verification/deterministic.ts";
+import { type DirectorDeps, SceneDirector } from "./scene-director.ts";
 
 /** What the writer returns for one attempt. */
 export interface Draft {
@@ -67,6 +62,15 @@ export interface SceneCollaborators {
   build?(input: {
     readonly sceneId: string;
     readonly skeleton: ContextPacket;
+    /**
+     * What the orchestrator asked for, in its own words.
+     *
+     * Present only when the orchestrator drove this step. It is an addition to
+     * the standing brief, never a replacement: the parts of a brief that make a
+     * step correct — quote the material, refuse to invent, name the file — are
+     * not the orchestrator's to relax.
+     */
+    readonly note?: string;
   }): Promise<readonly ContextItem[]>;
 
   /** Draft, or redraft in response to findings. */
@@ -75,6 +79,11 @@ export interface SceneCollaborators {
     readonly attempt: number;
     /** Empty on the first attempt. */
     readonly repairBrief: string;
+    /** Where the packet is on disk, so the writer can re-read it after a follow-up. */
+    readonly packetPath?: string | null;
+    /** Where the last audit is, on a repair round. */
+    readonly auditPath?: string | null;
+    readonly note?: string;
   }): Promise<Draft>;
 
   /**
@@ -91,6 +100,7 @@ export interface SceneCollaborators {
     readonly sceneId: string;
     readonly draft: Draft;
     readonly packet: ContextPacket;
+    readonly note?: string;
   }): Promise<readonly FileWrite[]>;
   /**
    * The LLM verification track. Runs only after the deterministic layer is
@@ -100,6 +110,7 @@ export interface SceneCollaborators {
   review(input: {
     readonly packet: ContextPacket;
     readonly draft: Draft;
+    readonly note?: string;
   }): Promise<readonly Finding[]>;
 }
 
@@ -146,213 +157,32 @@ export type SceneOutcome =
       readonly findings: readonly Finding[];
     };
 
+/**
+ * Walk the director's steps in order until the scene is finished.
+ *
+ * The loop is deliberately dull: build, then draft-and-verify until the
+ * verifier stops asking for repairs, then commit. Every judgement it could
+ * make — is another round worth it, has this finding already survived a
+ * rewrite, may this commit proceed — belongs to the director and is refused
+ * there, so a second driver cannot make a different decision than this one.
+ */
 export async function runScene(
   request: SceneRequest,
-  deps: {
-    readonly collaborators: SceneCollaborators;
-    readonly index: CanonicalIndex;
-    readonly now?: () => Date;
-  },
+  deps: DirectorDeps,
 ): Promise<SceneOutcome> {
-  const { collaborators, index } = deps;
-  const tx = new SceneTransaction({
-    txid: request.txid,
-    sceneId: request.sceneId,
-    baseCommitId: request.packet.baseCommitId,
-    maxRepairs: request.maxRepairs,
-    ...(deps.now ? { now: deps.now } : {}),
-  });
+  const director = new SceneDirector(request, deps);
 
-  const finish = (
-    status: "REJECTED" | "ABORTED",
-    reason: string,
-    findings: readonly Finding[] = [],
-  ): SceneOutcome => ({
-    status,
-    reason,
-    attempts: tx.attempt + 1,
-    history: tx.snapshot().history.map((h) => h.to),
-    findings,
-  });
-
-  // 1. Context. A build failure is terminal for this attempt on purpose: the
-  //    cure is to fix the index or the scene card, not to try again.
-  let packet: ContextPacket;
-  /** Recorded rather than thrown: a builder that failed is a result, not a stop. */
-  let builderError: string | null = null;
-  try {
-    packet = buildContextPacket(request.packet, request.available);
-  } catch (error) {
-    if (error instanceof PacketBuildError) {
-      tx.transition("ABORTED", "orchestrator");
-      return finish(
-        "ABORTED",
-        `context build failed: ${error.message}. ` +
-          (error.missingIds.length > 0
-            ? `Supply ${error.missingIds.join(", ")} or remove them from the scene card; ` +
-              `do not let the writer infer them.`
-            : "Reduce the scene's mandatory material or raise the budget."),
-      );
-    }
-    throw error;
+  await director.buildContext();
+  while (!director.isTerminal() && director.state !== "APPROVED") {
+    const drafted = await director.draft();
+    if (!drafted.ok) break;
+    const verified = await director.verify();
+    if (!verified.ok) break;
   }
-  // The builder runs against the assembled skeleton rather than the raw item
-  // list, so it can see what is already covered and add only what is not. A
-  // failure here degrades to the skeleton: a scene written from a thinner packet
-  // is a worse scene, and a scene not written at all is no scene.
-  if (collaborators.build) {
-    try {
-      const extra = await collaborators.build({ sceneId: request.sceneId, skeleton: packet });
-      if (extra.length > 0) {
-        packet = buildContextPacket(request.packet, [...request.available, ...extra]);
-      }
-    } catch (error) {
-      builderError = error instanceof Error ? error.message : String(error);
-    }
-  }
-  tx.transition("CONTEXT_BUILT", "context-builder", { artifact: packet.rendered });
+  if (director.state === "APPROVED") await director.commit();
 
-  let repairBrief = "";
-  let previousFindings: readonly Finding[] = [];
-  let lastDraft: Draft | null = null;
-  // Counted here rather than read off the machine: the machine increments on
-  // the REPAIR_REQUIRED -> DRAFTED edge, which happens *after* the writer has
-  // already been asked, so reading it here would tell the writer it is on
-  // attempt 0 during every repair round.
-  let attempt = 0;
-
-  for (;;) {
-    // 2. Draft and declare. Both, always: prose whose state change was never
-    //    recorded will be contradicted by the next scene.
-    const draft = await collaborators.draft({ packet, attempt, repairBrief });
-    lastDraft = draft;
-    tx.transition("DRAFTED", "writer", { artifact: draft.prose });
-    tx.transition("STATE_DELTA_PROPOSED", "writer", {
-      artifact: JSON.stringify(draft.delta),
-    });
-    tx.transition("VALIDATING", "orchestrator");
-
-    // 3. Cheapest and most certain first. The deterministic layer costs nothing
-    //    and cannot be talked out of a contradiction; only what it cannot
-    //    settle goes to a model.
-    const deterministic = verifyDeterministic({
-      delta: draft.delta,
-      canon: request.canon,
-      knownEntities: request.knownEntities,
-    });
-
-    let findings: readonly Finding[] = deterministic.findings;
-    if (blocking(findings).length === 0) {
-      findings = [...findings, ...(await collaborators.review({ packet, draft }))];
-    }
-
-    const blockers = blocking(findings);
-    if (blockers.length === 0) {
-      tx.transition("APPROVED", "verifier", { findings });
-      break;
-    }
-
-    // 4. Would another round help? A finding that survived a rewrite is
-    //    evidence that it would not.
-    const persistent = unchangedAcrossRound(previousFindings, blockers);
-    if (persistent.length > 0) {
-      tx.transition("REJECTED", "verifier", { findings });
-      return finish(
-        "REJECTED",
-        `${persistent.length} finding(s) survived a rewrite unchanged ` +
-          `(${persistent.map((f) => f.id).join(", ")}). Another round would buy the ` +
-          `same draft again; the defect needs a decision, not a retry.`,
-        findings,
-      );
-    }
-
-    if (tx.repairBudgetRemaining <= 0) {
-      tx.transition("REJECTED", "verifier", { findings });
-      return finish(
-        "REJECTED",
-        `repair budget of ${request.maxRepairs} exhausted with ${blockers.length} ` +
-          `blocking finding(s) outstanding`,
-        findings,
-      );
-    }
-
-    tx.transition("REPAIR_REQUIRED", "verifier", { findings });
-    previousFindings = blockers;
-    repairBrief = renderRepairBrief(findings);
-    attempt += 1;
-  }
-
-  // 5. Commit. index-manager is the only actor that can produce COMMITTED, and
-  //    the prose and the delta go in one call or neither does.
-  tx.transition("COMMITTING", "orchestrator");
-  const findings = tx.snapshot().findings;
-
-  // Backfill before the commit, so every partition derived from this scene is in
-  // the same transaction as the prose. A backfill that fails does not lose the
-  // scene: the prose and the declared delta still land, and the gap is visible in
-  // the reference check rather than silently absent.
-  let derived: readonly FileWrite[] = [];
-  let backfillError: string | null = null;
-  if (collaborators.backfill) {
-    try {
-      derived = await collaborators.backfill({
-        sceneId: request.sceneId,
-        draft: lastDraft!,
-        packet,
-      });
-    } catch (error) {
-      backfillError = error instanceof Error ? error.message : String(error);
-    }
-  }
-
-  try {
-    const commit = await index.commit({
-      txid: request.txid,
-      sceneId: request.sceneId,
-      baseCommitId: tx.baseCommitId,
-      actor: "index-manager",
-      prose: { relPath: request.prosePath, content: lastDraft!.prose },
-      stateDelta: [
-        {
-          relPath: request.deltaPath ?? `continuity/deltas/${request.sceneId}.json`,
-          content: JSON.stringify(lastDraft!.delta, null, 2),
-        },
-      ],
-      derived,
-    });
-    tx.transition("COMMITTED", "index-manager");
-    return {
-      status: "COMMITTED",
-      commit,
-      attempts: tx.attempt + 1,
-      history: tx.snapshot().history.map((h) => h.to),
-      findings,
-      derivedPaths: derived.map((d) => d.relPath),
-      warnings: [
-        ...(builderError ? [`context-builder failed: ${builderError}`] : []),
-        ...(backfillError ? [`backfill failed: ${backfillError}`] : []),
-      ],
-    };
-  } catch (error) {
-    if (error instanceof CommitRefused && error.code === "STALE_BASE") {
-      const head = await index.head();
-      tx.markStaleBase(head);
-      return {
-        status: "STALE_BASE",
-        reason:
-          `HEAD moved to ${head} while this scene was being written, so the delta was ` +
-          `computed against a world that no longer exists. Rebuild the packet against ` +
-          `the new base; do not retry the commit.`,
-        newBaseCommitId: head,
-        attempts: tx.attempt + 1,
-        history: tx.snapshot().history.map((h) => h.to),
-        findings,
-      };
-    }
-    if (error instanceof CommitRefused) {
-      tx.transition("ABORTED", "orchestrator");
-      return finish("ABORTED", `commit refused (${error.code}): ${error.message}`, findings);
-    }
-    throw error;
-  }
+  return director.outcome();
 }
+
+export { SceneDirector } from "./scene-director.ts";
+export type { DirectorDeps, StepReport } from "./scene-director.ts";

@@ -33,8 +33,27 @@ export interface PersonaSpec {
   readonly mayDelegate: boolean;
 }
 
-/** Available to every role. Uniform read reach is a design guarantee. */
-export const READ_TOOLS: readonly string[] = ["run_command", "read_relation_history"];
+/**
+ * Available to every role. Uniform read reach is a design guarantee.
+ *
+ * `read_relation_history` is here rather than only on the writer because a
+ * relation's narrative view — what two people were to each other at each stage
+ * and what changed it — is as much use to the verifier checking whether a scene
+ * contradicts their history as to the writer creating it. Reading a YAML gives
+ * you the structure instead.
+ */
+export const READ_TOOLS: readonly string[] = ["read_relation_history"];
+
+/**
+ * The shell and the path-addressed read, for every role but the writer.
+ *
+ * The writer's exception is about attention, not trust. Measured over a whole
+ * run it issued four shell commands to the context-builder's forty-eight and
+ * asked the builder nothing at all — a research tool it barely used alongside a
+ * question it never asked produced neither. Its input surface is its packet,
+ * `read_context` to re-read it, and `ask_context_builder` to extend it.
+ */
+export const SEARCH_TOOLS: readonly string[] = ["bash", "read", "read_index"];
 
 /**
  * Also available to every role.
@@ -46,25 +65,35 @@ export const READ_TOOLS: readonly string[] = ["run_command", "read_relation_hist
  * lesson a verifier learns about its own false positives is worth exactly as
  * much as the one a writer learns about voice.
  */
-export const MEMORY_TOOLS: readonly string[] = ["remember", "read_memory"];
+export const MEMORY_TOOLS: readonly string[] = [
+  "remember",
+  "read_memory",
+  "read_skill",
+  "write_skill",
+];
 
 export const PERSONAS: readonly PersonaSpec[] = [
   {
     role: "orchestrator",
     model: "gpt-5-mini",
-    writeTools: ["open_transaction", "abort_transaction", "request_commit"],
+    writeTools: ["submit_plan", "update_plan", "abandon_scene"],
     mayDelegate: true,
   },
   {
     role: "context-builder",
     model: "gpt-5-mini",
-    writeTools: ["build_context_packet"],
+    writeTools: ["add_context_item", "answer_writer"],
     mayDelegate: false,
   },
   {
     role: "writer",
     model: "gpt-5-mini",
-    writeTools: ["write_staged_scene", "propose_state_delta"],
+    writeTools: [
+      "write_staged_scene",
+      "propose_state_delta",
+      "read_context",
+      "ask_context_builder",
+    ],
     mayDelegate: false,
   },
   {
@@ -77,11 +106,31 @@ export const PERSONAS: readonly PersonaSpec[] = [
   {
     role: "index-manager",
     model: "gpt-5-mini",
-    writeTools: ["apply_state_delta", "commit_transaction"],
+    writeTools: [
+      "upsert_character",
+      "upsert_entity",
+      "append_state",
+      "append_beliefs",
+      "record_relation_phase",
+      "append_event",
+      "record_rhythm",
+      "register_promise",
+      "pay_off_promise",
+      "record_retcon",
+    ],
     mayDelegate: false,
   },
 ];
 
+/**
+ * The orchestrator's delegation tools.
+ *
+ * Each is a call to a resident specialist *and* a step of the scene
+ * transaction, which is not a coincidence: the transaction's actors are the
+ * specialists. `call_index_manager` is the commit, because index-manager is the
+ * only actor that may produce COMMITTED — so there is no separate commit tool
+ * for a different role to reach.
+ */
 export const DELEGATION_TOOLS: readonly string[] = [
   "call_context_builder",
   "call_writer",
@@ -100,10 +149,34 @@ export function toolNamesFor(role: AgentRole): readonly string[] {
   const persona = personaFor(role);
   return [
     ...READ_TOOLS,
+    ...(role === "writer" ? [] : SEARCH_TOOLS),
     ...MEMORY_TOOLS,
     ...persona.writeTools,
     ...(persona.mayDelegate ? DELEGATION_TOOLS : []),
   ];
+}
+
+/**
+ * Check what was actually built against what the role is allowed.
+ *
+ * This list used to name six tools that did not exist — `open_transaction`,
+ * `build_context_packet`, `apply_state_delta` and others — while the factory
+ * ignored it entirely and assembled tools from a conditional expression
+ * somewhere else. A permission model nothing consults is a comment, and this
+ * one was a comment that had drifted into being wrong. Comparing both ways
+ * matters: a tool granted but not listed is an unreviewed capability, and a
+ * tool listed but not granted is a role that cannot do its job and will not say
+ * so until it tries.
+ */
+export function allowlistMismatch(
+  role: AgentRole,
+  built: readonly string[],
+): { readonly unlisted: readonly string[]; readonly missing: readonly string[] } | null {
+  const allowed = new Set(toolNamesFor(role));
+  const actual = new Set(built);
+  const unlisted = [...actual].filter((t) => !allowed.has(t)).sort();
+  const missing = [...allowed].filter((t) => !actual.has(t)).sort();
+  return unlisted.length === 0 && missing.length === 0 ? null : { unlisted, missing };
 }
 
 /**

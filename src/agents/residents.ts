@@ -14,8 +14,6 @@
  * that matters was written to a file.
  */
 
-import { Agent } from "@earendil-works/pi-agent-core";
-
 import {
   type CompactableMessage,
   type CompactionLevel,
@@ -30,7 +28,6 @@ import {
 } from "./compaction.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import { type TokenBudget } from "../runtime/budget.ts";
-import { type ModelId, installGateway } from "../runtime/gateway.ts";
 import { type PersonaSpec, personaFor, systemPromptFor, toolNamesFor } from "./personas.ts";
 
 /** One entry per model call, so a finished novel comes with its bill. */
@@ -580,70 +577,4 @@ function textOf(messages: readonly AgentLike["state"]["messages"][number][]): st
     .map((c) => (c as { text: string }).text)
     .join("\n")
     .trim();
-}
-
-/**
- * The `call_*` tools, defined here rather than sketched in a diagram.
- *
- * They were the least specified part of the architecture and they are the
- * system's main artery: everything except the orchestrator's own reasoning
- * flows through them. `txid` is required on every call because a delegation
- * that is not attributable to a transaction cannot be billed, replayed, or
- * blamed.
- */
-export interface DelegationCall {
-  readonly txid: string;
-  /** What the callee is being asked to do, in full. */
-  readonly task: string;
-}
-
-export const DELEGATION_TARGETS: readonly AgentRole[] = [
-  "context-builder",
-  "writer",
-  "verifier",
-  "index-manager",
-];
-
-export function delegationToolName(role: AgentRole): string {
-  return `call_${role.replace(/-/g, "_")}`;
-}
-
-export function delegationTools(residents: ResidentAgents) {
-  return DELEGATION_TARGETS.map((role) => ({
-    name: delegationToolName(role),
-    description: `Delegate to the resident ${role}. It keeps its own session, so refer to earlier work rather than restating it.`,
-    validate: (args: DelegationCall) => {
-      const errors: { path: string; problem: string }[] = [];
-      if (!args?.txid?.trim()) {
-        errors.push({
-          path: "txid",
-          problem: "required: a delegation outside a transaction cannot be billed or replayed",
-        });
-      }
-      if (!args?.task?.trim()) {
-        errors.push({ path: "task", problem: "required: say what the callee should do" });
-      }
-      return errors;
-    },
-    run: async (args: DelegationCall) =>
-      (await residents.invoke(role, args.task, { txid: args.txid, caller: "orchestrator" }))
-        .text,
-  }));
-}
-
-/** Build a real pi-backed factory. Kept apart so tests never touch the network. */
-export function piAgentFactory(
-  buildTools: (role: AgentRole, names: readonly string[]) => unknown[],
-): AgentFactory {
-  const gateway = installGateway();
-  return (persona, systemPrompt, toolNames) => {
-    return new (Agent as unknown as new (init: unknown) => AgentLike)({
-      initialState: {
-        systemPrompt,
-        model: gateway.model(persona.model as ModelId),
-        thinkingLevel: "off",
-        tools: buildTools(persona.role, toolNames),
-      },
-    });
-  };
 }
