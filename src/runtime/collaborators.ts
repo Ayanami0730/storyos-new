@@ -26,8 +26,8 @@ import {
 } from "../verification/deterministic.ts";
 import { makeFinding } from "../verification/finding.ts";
 import { LITERARY_EXEMPTIONS, SUBTYPES, subtypesForTier } from "../verification/taxonomy.ts";
-import type { Draft, SceneCollaborators } from "./scene-loop.ts";
-import type { ResidentAgents } from "../agents/residents.ts";
+import { type Draft, type SceneCollaborators, VerificationUnavailable } from "./scene-loop.ts";
+import { type ResidentAgents, TurnFailed } from "../agents/residents.ts";
 
 export class CollaboratorError extends Error {}
 
@@ -312,6 +312,20 @@ const VERIFIER_BRIEF = [
 
 
 /**
+ * A turn in which the model emitted nothing at all.
+ *
+ * Output tokens rather than text, because a turn whose whole content was tool
+ * calls has no text and did plenty. Zero output tokens means the model produced
+ * no tokens of any kind.
+ */
+function silentTurn(turn: {
+  readonly text: string;
+  readonly ledger: { readonly usage: { readonly output: number }; readonly toolCalls: number };
+}): boolean {
+  return turn.ledger.usage.output === 0 && turn.ledger.toolCalls === 0 && !turn.text.trim();
+}
+
+/**
  * The orchestrator's brief for this step, wrapped so its status is unambiguous.
  *
  * It is an addition to a standing instruction, never a replacement. The parts of
@@ -478,26 +492,74 @@ export function residentCollaborators(options: {
 
       async review({ packet, draft, note }) {
         capture.findings = [];
-        await residents.invoke(
-          "verifier",
-          [
-            VERIFIER_BRIEF,
-            orchestratorNote(note),
-            "",
-            `## Context the writer was given\n\n${packet.rendered}`,
-            "",
-            `## The draft\n\n${draft.prose}`,
-            "",
-            `## What the writer says it established\n\n${JSON.stringify(
-              draft.delta.claims,
-              null,
-              2,
-            )}`,
-          ]
-            .filter(Boolean)
-            .join("\n"),
-          { txid, caller: "orchestrator" },
-        );
+        const task = [
+          VERIFIER_BRIEF,
+          orchestratorNote(note),
+          "",
+          `## Context the writer was given\n\n${packet.rendered}`,
+          "",
+          `## The draft\n\n${draft.prose}`,
+          "",
+          `## What the writer says it established\n\n${JSON.stringify(
+            draft.delta.claims,
+            null,
+            2,
+          )}`,
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+        /**
+         * A verifier that could not run is not a verifier that found nothing.
+         *
+         * This is the most dangerous failure the system has, because it fails
+         * *open* and looks like success: the verifier reports defects by calling
+         * a tool, so a call that never happened leaves an empty findings buffer,
+         * an empty buffer has no blockers, and no blockers is an approval.
+         *
+         * Measured, not imagined. On the first orchestrator-driven run every
+         * `gemini-3.1-pro-preview` call returned
+         * `429 channel:model_rate_limited`; pi recorded each as an assistant
+         * message with empty content and `stopReason: "error"` rather than
+         * throwing, and every scene was logged "APPROVED, 0 findings". The run
+         * looked flawless precisely because the gate never ran.
+         *
+         * `invoke` now retries the retryable ones and raises `TurnFailed` when
+         * it cannot get through. Converting it here rather than letting it
+         * escape keeps the distinction the director needs: the scene is
+         * committable, and it is not verified.
+         */
+        let turn: Awaited<ReturnType<typeof residents.invoke>>;
+        try {
+          turn = await residents.invoke("verifier", task, { txid, caller: "orchestrator" });
+        } catch (error) {
+          if (error instanceof TurnFailed) {
+            throw new VerificationUnavailable(
+              `the verifier could not be reached for ${sceneId}: ${error.message}`,
+            );
+          }
+          throw error;
+        }
+
+        if (silentTurn(turn) && capture.findings.length === 0) {
+          // No error, and nothing said either. One explicit second ask, because
+          // "found nothing" costs at least a sentence and "said nothing" costs
+          // no tokens at all.
+          const retry = await residents.invoke(
+            "verifier",
+            `Your last reply was empty — no text and no tool calls — so nothing was ` +
+              `recorded and the scene is currently unchecked. Check it now. If it is ` +
+              `genuinely clean, say so in a sentence; an empty reply is read as approval ` +
+              `and neither of us wants that to be how a scene gets through.\n\n${task}`,
+            { txid, caller: "orchestrator" },
+          );
+          if (silentTurn(retry) && capture.findings.length === 0) {
+            throw new VerificationUnavailable(
+              `the verifier produced no output twice for ${sceneId} — no text, no tool ` +
+                `calls, zero output tokens.`,
+            );
+          }
+        }
         return [...capture.findings];
       },
     },

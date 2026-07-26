@@ -45,6 +45,28 @@ export interface Draft {
 }
 
 /**
+ * The model verification layer could not be run at all.
+ *
+ * Distinct from "the verifier found nothing", and the distinction is the whole
+ * point. This failure is the most dangerous one the system has because it fails
+ * *open* and looks like success: an empty reply leaves the findings buffer
+ * empty, an empty buffer has no blockers, and no blockers is an approval. On the
+ * first orchestrator-driven run the verifier returned zero output tokens twice
+ * and the scene was recorded as "APPROVED, 0 findings".
+ *
+ * Raising it as a distinct error lets the scene still commit — the deterministic
+ * layer did run, and throwing away sound prose over a provider failure is the
+ * worse trade — while making the run say out loud that its findings count is not
+ * a quality result.
+ */
+export class VerificationUnavailable extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "VerificationUnavailable";
+  }
+}
+
+/**
  * The two model-backed steps, behind an interface.
  *
  * Kept abstract so the loop's control flow is testable without the network —
@@ -139,6 +161,12 @@ export type SceneOutcome =
       readonly derivedPaths: readonly string[];
       /** Non-fatal problems worth reporting rather than hiding. */
       readonly warnings: readonly string[];
+      /**
+       * True when the model verification layer never ran, so this scene passed
+       * on the deterministic layer alone. Counted per run, because a run with
+       * any of these must not report its findings count as a quality result.
+       */
+      readonly unverified: boolean;
     }
   | {
       readonly status: "REJECTED" | "ABORTED";

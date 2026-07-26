@@ -111,6 +111,19 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
         })) ?? [],
     repair_rounds: result?.scenes.reduce((n, s) => n + (s.outcome.attempts - 1), 0) ?? 0,
     findings_total: result?.scenes.reduce((n, s) => n + s.outcome.findings.length, 0) ?? 0,
+    /**
+     * Scenes that committed without ever reaching the model verifier.
+     *
+     * Sitting next to `findings_total` on purpose, because it is the number
+     * that says whether `findings_total` means anything. A verifier returning
+     * zero output tokens leaves an empty findings buffer, an empty buffer has
+     * no blockers, and no blockers is an approval — so the failure produces a
+     * flawless-looking run. It happened on the first orchestrator-driven run,
+     * on every scene.
+     */
+    scenes_unverified:
+      result?.scenes.filter((s) => s.outcome.status === "COMMITTED" && s.outcome.unverified)
+        .length ?? 0,
     canon_facts: result?.canon.length ?? 0,
     promises_declared: result ? result.revision.coverage.contractsChecked : 0,
     promises_unpaid: result ? result.revision.coverage.contractsOpen : 0,
@@ -118,6 +131,18 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     tokens: ledger.reduce((n, e) => n + e.usage.total, 0),
     calls: ledger.length,
     roll_up: input.residents.rollUp(),
+    /**
+     * Read alongside `roll_up`, which has one trap in it.
+     *
+     * Its `ms` no longer sums to wall time: an orchestrator turn contains the
+     * turns it delegates, because `call_verifier` blocks for a whole verifier
+     * turn. Those seconds are counted twice, once for each role. Tokens are
+     * unaffected — every agent's usage comes from its own calls — so the token
+     * column is additive and the time column is not.
+     */
+    roll_up_note:
+      "roll_up.ms double-counts: the orchestrator's turns contain the turns they " +
+      "delegate. Use elapsed_ms for wall time. roll_up.tokens is additive.",
     /**
      * How much of the loop the orchestrator drove itself.
      *

@@ -22,7 +22,12 @@ import { makeFinding } from "../verification/finding.ts";
 import { ArtifactStore, artifactPaths } from "./artifacts.ts";
 import { SceneStage, driveScene, orchestratorTools } from "./orchestration.ts";
 import { SceneDirector } from "./scene-director.ts";
-import type { Draft, SceneCollaborators, SceneRequest } from "./scene-loop.ts";
+import {
+  type Draft,
+  type SceneCollaborators,
+  type SceneRequest,
+  VerificationUnavailable,
+} from "./scene-loop.ts";
 
 const roots: string[] = [];
 after(async () => {
@@ -255,6 +260,76 @@ describe("steps report what they produced", () => {
     await director.draft("short sentences");
 
     assert.deepEqual(collabs.notes, ["keep the fog out of it", "short sentences"]);
+  });
+});
+
+describe("a verifier that produced nothing", () => {
+  /** Collaborators whose review reports that the layer could not be run. */
+  function unavailable(): SceneCollaborators {
+    return {
+      async draft() {
+        return goodDraft();
+      },
+      async review(): Promise<readonly import("../transaction/types.ts").Finding[]> {
+        throw new VerificationUnavailable("zero output tokens, twice");
+      },
+    };
+  }
+
+  it("commits the scene rather than losing sound prose to a provider failure", async () => {
+    const { index, artifacts } = await freshIndex();
+    const director = new SceneDirector(request(), {
+      index,
+      artifacts,
+      collaborators: unavailable(),
+    });
+    await director.buildContext();
+    await director.draft();
+    await director.verify();
+    await director.commit();
+
+    // The deterministic layer did run. Throwing away a clean draft because the
+    // model verifier's socket died is the worse trade.
+    assert.equal(director.state, "COMMITTED");
+  });
+
+  it("records that the scene was never checked, instead of reporting it clean", async () => {
+    const { index, artifacts } = await freshIndex();
+    const director = new SceneDirector(request(), {
+      index,
+      artifacts,
+      collaborators: unavailable(),
+    });
+    await director.buildContext();
+    await director.draft();
+    const verified = await director.verify();
+    await director.commit();
+
+    const outcome = director.outcome() as {
+      status: string;
+      unverified: boolean;
+      warnings: readonly string[];
+    };
+    // This is the failure that fails *open*: no findings means no blockers
+    // means approved, so an absent verifier produces a flawless-looking scene.
+    // "0 findings" must never be the only thing the run remembers about it.
+    assert.equal(outcome.unverified, true);
+    assert.match(outcome.warnings.join(" "), /never reached the model verifier/);
+    assert.match(verified.text, /unchecked rather than clean/);
+  });
+
+  it("marks a normally verified scene as verified", async () => {
+    const { index, artifacts } = await freshIndex();
+    const director = new SceneDirector(request(), {
+      index,
+      artifacts,
+      collaborators: collaborators(),
+    });
+    await director.buildContext();
+    await director.draft();
+    await director.verify();
+    await director.commit();
+    assert.equal((director.outcome() as { unverified: boolean }).unverified, false);
   });
 });
 

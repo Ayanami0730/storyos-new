@@ -46,6 +46,8 @@ export interface LedgerEntry {
   };
   readonly toolCalls: number;
   readonly stopReason?: string;
+  /** The provider's own words when the call failed, so a bad run says why. */
+  readonly errorMessage?: string;
   /**
    * Prompt size of the **last** model call in this turn — the transcript as the
    * provider last saw it.
@@ -70,6 +72,16 @@ export interface PiMessage {
   readonly usage?: Record<string, number>;
   readonly model?: string;
   readonly stopReason?: string;
+  /**
+   * Set by pi when the provider call failed.
+   *
+   * pi does not throw on a provider error. It appends an assistant message with
+   * empty content, zero usage and `stopReason: "error"`, and the loop carries
+   * on. For most callers that is a reasonable choice; for us it was a hole
+   * straight through the gate, because our verifier reports defects by calling a
+   * tool and a call that never happened is indistinguishable from a clean scene.
+   */
+  readonly errorMessage?: string;
   /** On a toolResult message these are top-level, not inside a content block. */
   readonly toolCallId?: string;
   readonly toolName?: string;
@@ -231,6 +243,49 @@ function rewrite(original: PiMessage | undefined, m: CompactableMessage): PiMess
 
 export class DelegationError extends Error {}
 
+/**
+ * The provider refused or failed, and retrying did not help.
+ *
+ * Thrown rather than returned because the alternative is what we had: pi
+ * records a failed call as an empty assistant message with `stopReason:
+ * "error"` and the loop continues, so a rate-limited verifier looks exactly
+ * like a verifier that found nothing. Measured on the first orchestrator-driven
+ * run — every `gemini-3.1-pro-preview` call came back
+ * `429 channel:model_rate_limited`, every scene was recorded APPROVED with zero
+ * findings, and nothing anywhere said the gate had not run.
+ */
+export class TurnFailed extends Error {
+  readonly attempts: number;
+  constructor(role: AgentRole, detail: string, attempts: number) {
+    super(`${role}'s turn failed after ${attempts} attempt(s): ${detail}`);
+    this.name = "TurnFailed";
+    this.attempts = attempts;
+  }
+}
+
+/**
+ * Worth trying again, or not.
+ *
+ * Rate limits and transient server errors are the retryable ones and they are
+ * also the common ones: a cross-family verifier shares a gateway quota with
+ * everything else on it, so 429 is a scheduling accident rather than a
+ * statement about the request. A 400 or a 404 will fail identically forever and
+ * retrying only spends the budget slower.
+ */
+export function isRetryableTurnError(message: string): boolean {
+  return /\b(429|5\d\d)\b|rate.?limit|resource exhausted|overloaded|timeout|ECONNRESET|EAI_AGAIN/i.test(
+    message,
+  );
+}
+
+/**
+ * Backoff between retries.
+ *
+ * Seconds rather than milliseconds because the thing being waited out is a
+ * provider's quota window, and a retry 200ms after a 429 is just a second 429.
+ */
+export const RETRY_BACKOFF_MS: readonly number[] = [5_000, 20_000, 60_000];
+
 export class ResidentAgents {
   readonly #agents = new Map<AgentRole, AgentLike>();
   readonly #ledger: LedgerEntry[] = [];
@@ -250,6 +305,15 @@ export class ResidentAgents {
       ) => Promise<void> | void)
     | null;
   readonly #compactions: CompactionRecord[] = [];
+  readonly #retryBackoffMs: readonly number[];
+  readonly #onRetry:
+    | ((event: {
+        readonly role: AgentRole;
+        readonly attempt: number;
+        readonly waitMs: number;
+        readonly detail: string;
+      }) => void)
+    | null;
   /** Roles currently inside a compaction, so summarising cannot re-enter it. */
   readonly #compacting = new Set<AgentRole>();
   /** Message count already accounted for, per role, so usage is not double-counted. */
@@ -301,6 +365,25 @@ export class ResidentAgents {
       messages: readonly PiMessage[],
       meta: { readonly txid: string; readonly durationMs: number },
     ) => Promise<void> | void;
+    /**
+     * Called before each backoff wait.
+     *
+     * A run that quietly slept ninety seconds per scene waiting out a quota is
+     * indistinguishable in the log from a run that was merely slow, and the two
+     * call for completely different responses.
+     */
+    readonly onRetry?: (event: {
+      readonly role: AgentRole;
+      readonly attempt: number;
+      readonly waitMs: number;
+      readonly detail: string;
+    }) => void;
+    /**
+     * Waits between retries. Overridden only by tests — the defaults are a
+     * policy about a provider's quota window, and a unit test should assert the
+     * retry happened rather than sit through eighty-five seconds of it.
+     */
+    readonly retryBackoffMs?: readonly number[];
   }) {
     this.#agentsRoot = options.agentsRoot;
     this.#factory = options.factory;
@@ -317,6 +400,8 @@ export class ResidentAgents {
           ? () => timeout
           : defaultTurnTimeoutFor;
     this.#transcriptSink = options.transcriptSink ?? null;
+    this.#onRetry = options.onRetry ?? null;
+    this.#retryBackoffMs = options.retryBackoffMs ?? RETRY_BACKOFF_MS;
   }
 
   #persona(role: AgentRole): PersonaSpec {
@@ -399,9 +484,32 @@ export class ResidentAgents {
     const before = agent.state.messages.length;
     const started = this.#now();
     const deadlineMs = this.#turnTimeoutFor(role);
-    const timedOut = await this.#promptWithDeadline(agent, task, deadlineMs);
-    const durationMs = this.#now() - started;
 
+    /**
+     * Retry a provider failure, rewinding the transcript first.
+     *
+     * The rewind matters. pi has already appended the user message and the
+     * failed assistant reply, so re-prompting without truncating would leave the
+     * agent's own history holding a question it appears to have answered with
+     * silence — twice, three times — and a resident agent carries that
+     * impression into every later scene.
+     */
+    let timedOut = false;
+    let failure: string | null = null;
+    let attempts = 0;
+    for (;;) {
+      attempts += 1;
+      agent.state.messages = agent.state.messages.slice(0, before);
+      timedOut = await this.#promptWithDeadline(agent, task, deadlineMs);
+      failure = timedOut ? null : providerFailure(agent.state.messages.slice(before));
+      if (!failure) break;
+      const wait = this.#retryBackoffMs[attempts - 1];
+      if (wait === undefined || !isRetryableTurnError(failure)) break;
+      this.#onRetry?.({ role, attempt: attempts, waitMs: wait, detail: failure });
+      await new Promise((resolve) => setTimeout(resolve, wait));
+    }
+
+    const durationMs = this.#now() - started;
     const fresh = agent.state.messages.slice(before);
     // Accounted before the throw, deliberately: an aborted turn still spent
     // whatever it spent, and a ledger that omits the expensive failures makes
@@ -417,6 +525,13 @@ export class ResidentAgents {
     if (timedOut) {
       this.#budget?.charge(entry.usage.total);
       throw new TurnTimeout(role, deadlineMs);
+    }
+    if (failure) {
+      // Raised rather than returned. A caller handed an empty turn cannot tell
+      // it apart from a turn that had nothing to say, and for the verifier those
+      // two readings differ by the whole quality gate.
+      this.#budget?.charge(entry.usage.total);
+      throw new TurnFailed(role, failure, attempts);
     }
     const text = textOf(fresh);
     // Charge before compacting: the tokens were spent either way, and a run
@@ -555,6 +670,7 @@ export class ResidentAgents {
     let toolCalls = 0;
     let model = this.#persona(role).model as string;
     let stopReason: string | undefined;
+    let errorMessage: string | undefined;
     let contextTokens = 0;
 
     for (const message of fresh) {
@@ -569,6 +685,7 @@ export class ResidentAgents {
       }
       if (message.model) model = message.model;
       if (message.stopReason) stopReason = message.stopReason;
+      if (message.errorMessage) errorMessage = message.errorMessage;
       if (Array.isArray(message.content)) {
         toolCalls += message.content.filter(
           (c) => (c as { type?: string }).type === "toolCall",
@@ -586,6 +703,7 @@ export class ResidentAgents {
       toolCalls,
       contextTokens,
       ...(timedOut ? { stopReason: "timeout" } : stopReason ? { stopReason } : {}),
+      ...(errorMessage ? { errorMessage } : {}),
     };
     this.#ledger.push(entry);
     this.#accounted.set(role, (this.#accounted.get(role) ?? 0) + fresh.length);
@@ -601,7 +719,17 @@ export class ResidentAgents {
     return [...this.#ledger];
   }
 
-  /** Per-role and per-model roll-up for the run summary. */
+  /**
+   * Per-role and per-model roll-up for the run summary.
+   *
+   * `ms` does not sum to wall time and must not be read as though it did. Once
+   * the orchestrator drives the loop, one of its turns *contains* the turns it
+   * delegates: a `call_verifier` blocks for the whole verifier turn, so those
+   * seconds are counted once against the verifier and again against the
+   * orchestrator. Tokens do not have this problem — each agent's usage is
+   * reported by its own calls — so `tokens` is additive and `ms` is not. The
+   * run's real duration is `elapsed_ms` in the summary.
+   */
   rollUp(): Record<string, { calls: number; tokens: number; ms: number }> {
     const out: Record<string, { calls: number; tokens: number; ms: number }> = {};
     for (const e of this.#ledger) {
@@ -613,6 +741,22 @@ export class ResidentAgents {
     }
     return out;
   }
+}
+
+/**
+ * The provider's error for this turn, or null if it completed.
+ *
+ * Reads the messages pi appended rather than catching an exception, because pi
+ * does not throw: a failed call becomes an assistant message with empty
+ * content, zero usage and `stopReason: "error"`.
+ */
+function providerFailure(fresh: readonly PiMessage[]): string | null {
+  for (const message of fresh) {
+    if (message.stopReason === "error") {
+      return message.errorMessage ?? "the provider returned an error with no message";
+    }
+  }
+  return null;
 }
 
 function textOf(messages: readonly AgentLike["state"]["messages"][number][]): string {

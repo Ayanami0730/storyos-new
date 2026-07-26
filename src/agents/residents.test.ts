@@ -12,6 +12,7 @@ import {
   DelegationError,
   ResidentAgents,
   defaultTurnTimeoutFor,
+  isRetryableTurnError,
 } from "./residents.ts";
 
 const AGENTS_ROOT = path.join(
@@ -183,6 +184,123 @@ describe("delegation", () => {
     }[];
     const call = tools.find((t) => t.name === "call_writer")!;
     assert.deepEqual(Object.keys(call.parameters.properties ?? {}), ["brief"]);
+  });
+});
+
+describe("a provider call that fails", () => {
+  /**
+   * An agent that fails a scripted number of times, the way pi actually fails.
+   *
+   * Not by throwing: pi appends an assistant message with empty content, zero
+   * usage and `stopReason: "error"`, and the loop carries on. That shape is the
+   * whole reason this class of bug is dangerous, so the fake reproduces it
+   * rather than a convenient exception.
+   */
+  class FlakyAgent extends FakeAgent {
+    failures: number;
+    readonly errorMessage: string;
+
+    constructor(
+      systemPrompt: string,
+      toolNames: readonly string[],
+      model: string,
+      failures: number,
+      errorMessage: string,
+    ) {
+      super(systemPrompt, toolNames, model);
+      this.failures = failures;
+      this.errorMessage = errorMessage;
+    }
+
+    override async prompt(input: string): Promise<void> {
+      this.prompts.push(input);
+      if (this.failures > 0) {
+        this.failures -= 1;
+        this.state.messages.push({ role: "user", content: [{ type: "text", text: input }] });
+        this.state.messages.push({
+          role: "assistant",
+          content: [],
+          usage: { input: 0, output: 0, cacheRead: 0, totalTokens: 0 },
+          stopReason: "error",
+          errorMessage: this.errorMessage,
+        });
+        return;
+      }
+      await super.prompt(input);
+    }
+  }
+
+  function flaky(failures: number, errorMessage: string) {
+    const retries: { role: AgentRole; attempt: number }[] = [];
+    const registry = new ResidentAgents({
+      agentsRoot: AGENTS_ROOT,
+      personas: PERSONAS,
+      // Zero waits: the backoff durations are a policy about a provider's quota
+      // window, not something a unit test should sit through.
+      retryBackoffMs: [0, 0, 0],
+      onRetry: ({ role, attempt }) => retries.push({ role, attempt }),
+      factory: (persona, systemPrompt, toolNames) =>
+        new FlakyAgent(systemPrompt, toolNames, persona.model, failures, errorMessage),
+    });
+    return { registry, retries };
+  }
+
+  it("classifies which failures are worth retrying", () => {
+    // A rate limit is a scheduling accident and says nothing about the request;
+    // a 400 will fail identically forever and retrying only spends the budget
+    // more slowly.
+    assert.ok(isRetryableTurnError("429: channel:model_rate_limited"));
+    assert.ok(isRetryableTurnError("503 Service Unavailable"));
+    assert.ok(isRetryableTurnError("Resource exhausted. Please try again later."));
+    assert.ok(!isRetryableTurnError("400: invalid request: unknown field"));
+    assert.ok(!isRetryableTurnError("404: model_not_found"));
+  });
+
+  it("raises rather than returning an empty turn that reads as success", async () => {
+    const { registry } = flaky(99, "400: invalid request");
+    // The failure this pins: our verifier reports defects by calling a tool, so
+    // a turn that never happened is indistinguishable from a clean scene unless
+    // somebody throws.
+    await assert.rejects(
+      () => registry.invoke("verifier", "check it", ctx),
+      /TurnFailed|turn failed/,
+    );
+  });
+
+  it("gets through a rate limit that clears, rather than reporting a clean scene", async () => {
+    const { registry, retries } = flaky(2, "429: channel:model_rate_limited");
+    const turn = await registry.invoke("verifier", "check it", ctx);
+    // The whole point. Two 429s used to mean "APPROVED, 0 findings"; now they
+    // mean two waits and then an actual verification.
+    assert.match(turn.text, /did: check it/);
+    assert.deepEqual(
+      retries.map((r) => r.attempt),
+      [1, 2],
+    );
+  });
+
+  it("does not retry a failure that will never succeed", async () => {
+    const { registry, retries } = flaky(99, "400: invalid request");
+    await registry.invoke("verifier", "check it", ctx).catch(() => {});
+    assert.deepEqual(retries, []);
+  });
+
+  it("still records what a failed turn cost, with the provider's own words", async () => {
+    const { registry } = flaky(99, "429: channel:model_rate_limited");
+    await registry.invoke("verifier", "check it", ctx).catch(() => {});
+    const entry = registry.ledger().at(-1)!;
+    assert.equal(entry.stopReason, "error");
+    assert.match(entry.errorMessage!, /model_rate_limited/);
+  });
+
+  it("rewinds the transcript before retrying, so silence is not left in history", async () => {
+    const { registry } = flaky(99, "429: rate limited");
+    await registry.invoke("verifier", "check it", ctx).catch(() => {});
+    const messages = registry.agent("verifier").state.messages;
+    // A resident agent keeps its history for the whole book. Leaving three
+    // copies of a question it appears to have answered with silence would
+    // follow it into every later scene.
+    assert.equal(messages.filter((m) => m.role === "user").length, 1);
   });
 });
 

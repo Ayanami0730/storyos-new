@@ -48,7 +48,13 @@ import type { Finding, SceneState } from "../transaction/types.ts";
 import { verifyDeterministic } from "../verification/deterministic.ts";
 import { blocking, renderRepairBrief, unchangedAcrossRound } from "../verification/finding.ts";
 import { type ArtifactStore, artifactPaths, renderAudit } from "./artifacts.ts";
-import type { Draft, SceneCollaborators, SceneOutcome, SceneRequest } from "./scene-loop.ts";
+import {
+  type Draft,
+  type SceneCollaborators,
+  type SceneOutcome,
+  type SceneRequest,
+  VerificationUnavailable,
+} from "./scene-loop.ts";
 
 /** Which delegation a step corresponds to, for the report and the refusal text. */
 export type StepName = "context" | "draft" | "verify" | "commit" | "abandon";
@@ -113,6 +119,8 @@ export class SceneDirector {
   #warnings: string[] = [];
   #lastAuditPath: string | null = null;
   #packetPath: string | null = null;
+  /** True when the model verification layer never ran for this scene. */
+  #unverified = false;
 
   constructor(request: SceneRequest, deps: DirectorDeps) {
     this.#request = request;
@@ -362,15 +370,27 @@ export class SceneDirector {
     });
 
     let findings: readonly Finding[] = deterministic.findings;
+    let unavailable: string | null = null;
     if (blocking(findings).length === 0) {
-      findings = [
-        ...findings,
-        ...(await this.#deps.collaborators.review({
-          packet: this.#packet!,
-          draft: this.#lastDraft!,
-          ...(note ? { note } : {}),
-        })),
-      ];
+      try {
+        findings = [
+          ...findings,
+          ...(await this.#deps.collaborators.review({
+            packet: this.#packet!,
+            draft: this.#lastDraft!,
+            ...(note ? { note } : {}),
+          })),
+        ];
+      } catch (error) {
+        if (!(error instanceof VerificationUnavailable)) throw error;
+        // The scene still commits: the deterministic layer ran, and discarding
+        // sound prose over a provider failure is the worse trade. What must not
+        // happen is that it passes quietly — a run whose verifier never spoke
+        // reports "0 findings", which reads as a quality result and is not one.
+        unavailable = error.message;
+        this.#unverified = true;
+        this.#warnings.push(`scene never reached the model verifier: ${error.message}`);
+      }
     }
     this.#findings = findings;
 
@@ -396,8 +416,13 @@ export class SceneDirector {
       return report(
         "verify",
         this.state,
-        `${this.#request.sceneId} APPROVED with ${warnings} warning(s). ` +
-          `Warnings do not block and are not worth a repair round at scene time. ` +
+        (unavailable
+          ? `${this.#request.sceneId} passed the deterministic layer, but the model ` +
+            `verifier never ran: ${unavailable} Treat this as unchecked rather than clean. ` +
+            `Committing is still the right move — the prose is sound as far as anything ` +
+            `could tell — but say so in your account of the scene. `
+          : `${this.#request.sceneId} APPROVED with ${warnings} warning(s). ` +
+            `Warnings do not block and are not worth a repair round at scene time. `) +
           `Call call_index_manager to fold it into the index and commit.`,
         paths,
       );
@@ -559,6 +584,7 @@ export class SceneDirector {
         findings: this.#findings,
         derivedPaths: this.#derived.map((d) => d.relPath),
         warnings: [...this.#warnings],
+        unverified: this.#unverified,
       };
     }
     if (this.state === "STALE_BASE") {

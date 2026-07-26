@@ -219,6 +219,15 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
     promptSuffix: (role) =>
       `${memorySection(memoryIndex.get(role) ?? "")}\n\n${skillIndex.get(role) ?? ""}`,
     transcriptSink: (role, messages, meta) => options.transcriptSink(role, messages, meta),
+    // A run that quietly slept ninety seconds a scene waiting out a quota looks
+    // exactly like a run that was slow, and the two call for different
+    // responses. The 429s that made every scene unverified were invisible until
+    // someone opened a transcript.
+    onRetry: ({ role, attempt, waitMs, detail }) =>
+      say(
+        `${role} call failed (attempt ${attempt}), waiting ${Math.round(waitMs / 1000)}s: ` +
+          `${detail.slice(0, 160)}`,
+      ),
     compaction: {
       thresholds: thresholdsFor(profile),
       // Each agent compresses its own transcript with its own model. Routing
@@ -417,7 +426,8 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
     readonly draft: Draft;
     readonly note?: string;
   }): Promise<readonly FileWrite[]> {
-    partitionWriter = new PartitionWriter(index, input.sceneId);
+    const writer = new PartitionWriter(index, input.sceneId);
+    partitionWriter = writer;
     try {
       await residents.invoke(
         "index-manager",
@@ -443,12 +453,37 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
           .join("\n"),
         { txid: `tx-${input.sceneId}`, caller: "orchestrator" },
       );
-      const writes = partitionWriter.writes();
+      const writes = writer.writes();
       say(
         `${input.sceneId} index-manager wrote ${writes.length} partition file(s): ` +
-          `${partitionWriter.touched().map((p) => p.split("/")[0]).join(", ") || "none"}`,
+          `${writer.touched().map((p) => p.split("/")[0]).join(", ") || "none"}`,
       );
       return writes;
+    } catch (error) {
+      /**
+       * Keep what it managed to fold before it failed.
+       *
+       * Measured, not hypothetical: on the first orchestrator-driven run the
+       * index-manager accepted two character profiles, five entities and three
+       * state entries in 106 seconds, then a single model call returned nothing
+       * for 794 seconds until the watchdog aborted the turn — and every one of
+       * those nine accepted writes was discarded, because the throw reached a
+       * handler that treated the whole fold as absent. The scene committed with
+       * its `identity: {}` stub untouched and no `state.jsonl` at all.
+       *
+       * Those writes are not partial in any sense that matters. Each went
+       * through its typed tool, was validated, and was accepted. Losing them
+       * because a *later* call hung turns a fold that mostly worked into no
+       * fold, in the one step whose entire purpose is not to lose anything.
+       */
+      const salvaged = writer.writes();
+      const message = error instanceof Error ? error.message : String(error);
+      say(
+        `${input.sceneId} index-manager failed after ${salvaged.length} accepted ` +
+          `write(s) — keeping them and committing anyway: ${message}`,
+      );
+      if (salvaged.length === 0) throw error;
+      return salvaged;
     } finally {
       partitionWriter = null;
     }
