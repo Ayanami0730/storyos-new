@@ -4,12 +4,14 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 
+import { CanonicalIndex } from "./commit.ts";
 import {
   AGENT_ROLES,
   LEDGER_FILES,
   PARTITIONS,
   SCHEMAS,
   chapterFor,
+  committedScenes,
   initialiseProject,
   partitionReport,
   paths,
@@ -110,5 +112,32 @@ describe("where a scene lands", () => {
   it("reads a scene number back out of its id", () => {
     assert.equal(sceneIndexOf("s-013"), 13);
     assert.throws(() => sceneIndexOf("chapter-one"));
+  });
+});
+
+describe("scenes on disk", () => {
+  it("reads them from the chapter tree, not a flat directory", async () => {
+    // The first version listed a flat `manuscript/`, which the tree had already
+    // replaced. It returned nothing, and the reference check then reported every
+    // state entry as pointing at a scene that did not exist: 53 "broken"
+    // references over an intact index.
+    const root = await project();
+    const index = new CanonicalIndex(root);
+    await index.init("genesis");
+    for (const [chapter, scene] of [
+      ["ch-01", "s-002"],
+      ["ch-01", "s-001"],
+      ["ch-02", "s-005"],
+    ]) {
+      await index.seed([{ relPath: paths.scene(chapter!, scene!), content: "prose" }]);
+    }
+    assert.deepEqual(
+      (await committedScenes(root)).map((s) => s.sceneId),
+      ["s-001", "s-002", "s-005"],
+    );
+  });
+
+  it("is empty rather than throwing before anything is written", async () => {
+    assert.deepEqual(await committedScenes(await project()), []);
   });
 });

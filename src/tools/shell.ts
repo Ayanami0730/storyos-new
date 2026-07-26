@@ -58,6 +58,16 @@ const FORBIDDEN: readonly { readonly pattern: RegExp; readonly why: string }[] =
     pattern: /(^|[\s;|&])git\s+(commit|push|checkout|reset|clean)/,
     why: "run provenance depends on the engine owning every commit",
   },
+  {
+    pattern: /runtime\/transcripts/,
+    why:
+      "transcripts are another agent's private session, not canon. Asked to find " +
+      "material with no outline on disk, a context-builder once read the orchestrator's " +
+      "transcript and cited it as provenance for the cast — resourceful, and wrong twice: " +
+      "a transcript records what was said rather than what is true, and it is nobody's " +
+      "source of truth but its own author's. Whatever you are looking for belongs in the " +
+      "index; if it is not there, that absence is the finding",
+  },
 ];
 
 export interface ShellRequest {

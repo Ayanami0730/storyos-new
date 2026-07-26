@@ -16,7 +16,9 @@
 import { Type } from "typebox";
 
 import type { ContextItem } from "../context/types.ts";
-import type { CanonicalIndex } from "../index/commit.ts";
+import { stringify as toYaml } from "yaml";
+
+import type { CanonicalIndex, FileWrite } from "../index/commit.ts";
 import { chapterFor, paths, sceneIndexOf } from "../index/tree.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
@@ -257,6 +259,84 @@ export async function planStory(options: {
 }
 
 /**
+ * The plan, as files.
+ *
+ * A pure projection, so the engine writes it rather than spending a model call:
+ * there is no judgement in turning a scene list into scene cards. What matters
+ * is that it exists on disk *before the first scene is built*, because every
+ * downstream agent is told to work from the index and until now the index did
+ * not contain the story's own outline.
+ *
+ * Entity stubs are part of it. An empty `characters/char-mira/profile.yaml` is
+ * not clutter — it is the difference between "this character has no recorded
+ * identity yet" and "this character does not exist", and the verifier has
+ * already rejected a scene three times for confusing the two.
+ */
+export function planFiles(plan: StoryPlan, premise: string): readonly FileWrite[] {
+  const files: FileWrite[] = [
+    { relPath: paths.premise(), content: `${premise.trim()}\n` },
+    { relPath: paths.logline(), content: `${plan.logline}\n` },
+    {
+      relPath: paths.worldRules(),
+      content: toYaml({
+        note: "What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.",
+        rules: plan.worldRules,
+      }),
+    },
+    {
+      relPath: paths.beats(),
+      content: toYaml({
+        scenes: plan.scenes.map((s) => ({
+          id: s.id,
+          chapter: chapterFor(sceneIndexOf(s.id)),
+          intent: s.intent,
+          present: s.presentEntities,
+          target_words: s.targetWords,
+        })),
+      }),
+    },
+  ];
+
+  for (const chapter of new Set(plan.scenes.map((s) => chapterFor(sceneIndexOf(s.id))))) {
+    const scenes = plan.scenes.filter((s) => chapterFor(sceneIndexOf(s.id)) === chapter);
+    files.push({
+      relPath: paths.chapterCard(chapter),
+      content: toYaml({
+        chapter,
+        scenes: scenes.map((s) => ({ id: s.id, intent: s.intent, present: s.presentEntities })),
+      }),
+    });
+  }
+
+  for (const entity of plan.entities) {
+    if (entity.id.startsWith("char-")) {
+      files.push({
+        relPath: paths.profile(entity.id),
+        content: toYaml({
+          id: entity.id,
+          name: entity.id.replace(/^char-/, ""),
+          sketch: entity.sketch,
+          identity: {},
+          provenance: {},
+        }),
+      });
+    } else if (entity.id.startsWith("loc-")) {
+      files.push({
+        relPath: paths.location(entity.id),
+        content: toYaml({ id: entity.id, sketch: entity.sketch, first_seen: null }),
+      });
+    } else {
+      files.push({
+        relPath: paths.object(entity.id),
+        content: toYaml({ id: entity.id, sketch: entity.sketch, first_seen: null }),
+      });
+    }
+  }
+
+  return files;
+}
+
+/**
  * The packet material for one scene, assembled from committed state.
  *
  * Priorities are what the builder enforces; what belongs in each is this
@@ -451,6 +531,10 @@ export async function writeStory(options: {
     txid: "tx-plan",
     sink: planSink,
   });
+
+  // The initial index, before any scene is built against it.
+  const seeded = await index.seed(planFiles(plan, premise));
+  say(`initial index seeded: ${seeded.writtenPaths.length} file(s)`);
 
   const knownEntities = new Set(plan.entities.map((e) => e.id));
   let canon: readonly CanonFact[] = [];

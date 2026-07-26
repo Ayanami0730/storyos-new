@@ -220,6 +220,48 @@ export class CanonicalIndex {
   }
 
   /**
+   * Write the initial index: the plan, as files, before any scene exists.
+   *
+   * The brief put this first — *"orchestrator根据premise先委派indexmanager，initial
+   * index"* — and it was missing, with a consequence nobody would predict: the
+   * context-builder, asked to find material and finding an outline nowhere on
+   * disk, went and read **the orchestrator's transcript** and cited
+   * `runtime/transcripts/orchestrator/…jsonl` as provenance for the cast. It was
+   * the only place the plan existed. Resourceful, and wrong twice over — a
+   * transcript is runtime debris rather than canon, and one agent's private
+   * session is not another's source of truth.
+   *
+   * Separate from `commit` because a plan has no prose and no state delta, and
+   * relaxing those two requirements on the scene path would remove the check
+   * that keeps prose and state together.
+   */
+  async seed(
+    files: readonly FileWrite[],
+    actor: AgentRole = "index-manager",
+  ): Promise<CommitResult> {
+    if (actor !== "index-manager") {
+      throw new CommitRefused(
+        "WRONG_ACTOR",
+        `${actor} may not write canonical state; only index-manager may`,
+      );
+    }
+    for (const f of files) assertInsideRoot(this.#root, f.relPath);
+    const at = this.#now().toISOString();
+    const baseCommitId = await this.head();
+    const commitId = digest([baseCommitId, "seed", at, ...files.flatMap((f) => [f.relPath, f.content])]);
+
+    for (const f of files) {
+      const full = path.resolve(this.#root, f.relPath);
+      await mkdir(path.dirname(full), { recursive: true });
+      await writeFile(full, f.content, "utf8");
+    }
+    await writeFile(path.join(this.#root, HEAD), commitId, "utf8");
+    fsyncDir(this.#root);
+
+    return { commitId, baseCommitId, writtenPaths: files.map((f) => f.relPath), at };
+  }
+
+  /**
    * Staging directories left behind by a crash. Their intent files say what was
    * meant to happen; a caller can replay or discard them.
    */
