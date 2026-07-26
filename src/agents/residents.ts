@@ -308,7 +308,7 @@ export class TurnFailed extends Error {
  * retrying only spends the budget slower.
  */
 export function isRetryableTurnError(message: string): boolean {
-  return /\b(429|5\d\d)\b|rate.?limit|resource exhausted|overloaded|time(?:d)?[\s_-]*out|terminated|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up/i.test(
+  return /\b(429|5\d\d)\b|rate.?limit|rate_limit|too_many_requests|resource exhausted|负载已饱和|overloaded|time(?:d)?[\s_-]*out|terminated|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up/i.test(
     message,
   );
 }

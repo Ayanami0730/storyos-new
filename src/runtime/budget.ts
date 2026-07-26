@@ -163,9 +163,41 @@ export class BudgetExhausted extends Error {
 export class TokenBudget {
   #spent = 0;
   readonly #budget: number;
+  readonly #enforce: boolean;
 
-  constructor(budget: number = TASK_TOKEN_BUDGET) {
+  /**
+   * Counting by default, stopping only when asked.
+   *
+   * This used to enforce unconditionally, and that was our own invention rather
+   * than any benchmark's rule. LongBench-Write defines **no** per-task token
+   * budget — `evaluation/pred.py` caps a single decode at `max_new_tokens=32768`
+   * and nothing else — and the baseline runner on that benchmark reached the
+   * same conclusion independently and substituted a meter for the budget, with
+   * the reason written out in `run_lbw.py`:
+   *
+   *   > enforcing it inverts what the benchmark measures: spending tokens to
+   *   > reach a length target is the harness capability under test, so failing a
+   *   > system for spending them scores it on our scaffolding instead of on its
+   *   > writing. Consumption belongs in the cost column, after the fact.
+   *
+   * So every baseline row on that table was produced by a system nothing
+   * stopped, while ours stopped itself — and on `lbw081` it stopped at two
+   * scenes of four. That is not a stricter comparison, it is a different
+   * experiment. The system should decide when it is finished; the ceiling is a
+   * posterior statistic.
+   *
+   * Enforcement stays available because ConStory-style comparisons against a
+   * declared allowance still want it, and because an unbounded loop with a bug
+   * in it should have something to hit. It is opt-in and recorded.
+   */
+  constructor(budget: number = TASK_TOKEN_BUDGET, options: { readonly enforce?: boolean } = {}) {
     this.#budget = budget;
+    this.#enforce = options.enforce ?? false;
+  }
+
+  /** True when the ceiling stops the run rather than merely being reported. */
+  get enforced(): boolean {
+    return this.#enforce;
   }
 
   get spent(): number {
@@ -196,13 +228,13 @@ export class TokenBudget {
    * plus a revision pass. A 2% overrun was reported as 50%.
    */
   assertNotExhausted(): void {
-    if (this.exhausted) throw new BudgetExhausted(this.#spent, this.#budget);
+    if (this.#enforce && this.exhausted) throw new BudgetExhausted(this.#spent, this.#budget);
   }
 
   /** Charge a completed call. Throws once the total is past the ceiling. */
   charge(tokens: number): void {
     this.#spent += tokens;
-    if (this.#spent > this.#budget) {
+    if (this.#enforce && this.#spent > this.#budget) {
       throw new BudgetExhausted(this.#spent, this.#budget);
     }
   }

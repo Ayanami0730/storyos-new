@@ -54,6 +54,15 @@ interface Args {
    * existed and is the control arm; `docker` is the strong claim.
    */
   sandbox: SandboxId;
+  /**
+   * Stop the run at the token ceiling instead of merely reporting it.
+   *
+   * Off by default, matching the baselines this system is compared with:
+   * LongBench-Write defines no per-task budget and its runner counts without
+   * stopping. Turning it on makes the run a different experiment, so it is
+   * recorded in the summary.
+   */
+  enforceBudget: boolean;
 }
 
 async function parseArgs(argv: readonly string[]): Promise<Args> {
@@ -61,6 +70,7 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     const i = argv.indexOf(flag);
     return i >= 0 ? argv[i + 1] : undefined;
   };
+  const has = (flag: string) => argv.includes(flag);
   const premiseFile = get("--premise-file");
   const premise = premiseFile ? await readFile(premiseFile, "utf8") : (get("--premise") ?? "");
   if (!premise.trim()) {
@@ -75,6 +85,7 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     profile: get("--profile") ?? "parity",
     memoryDir: get("--memory-dir") ?? null,
     sandbox: (get("--sandbox") as SandboxId | undefined) ?? "none",
+    enforceBudget: has("--enforce-budget"),
   };
 }
 
@@ -149,7 +160,12 @@ const index = new CanonicalIndex(projectRoot, {
 
 const profile = profileById(args.profile);
 const taskBudget = taskBudgetFor(profile, args.target);
-const budget = new TokenBudget(taskBudget);
+const budget = new TokenBudget(taskBudget, { enforce: args.enforceBudget });
+say(
+  args.enforceBudget
+    ? `token ceiling ENFORCED at ${taskBudget.toLocaleString()} — the run will stop there`
+    : `token ceiling ${taskBudget.toLocaleString()} is reported, not enforced (--enforce-budget to stop at it)`,
+);
 const artifacts = new ArtifactStore(projectRoot);
 
 /** One id per run, so transcripts from separate runs never interleave. */

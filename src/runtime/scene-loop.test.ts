@@ -184,7 +184,7 @@ describe("repair rounds", () => {
     assert.match(brief, /contradicts: "grey"/);
   });
 
-  it("stops early when a finding survives a rewrite, instead of buying the same draft again", async () => {
+  it("stops early when a finding survives a rewrite, and commits rather than deleting the scene", async () => {
     const { index } = await freshIndex();
     // The writer changes the prose but not the offending claim.
     const outcome = await runScene(request({ maxRepairs: 5 }), {
@@ -192,16 +192,25 @@ describe("repair rounds", () => {
       collaborators: scripted({ drafts: [contradicting, contradicting] }),
     });
 
-    assert.equal(outcome.status, "REJECTED");
+    // Stopping early is still right: a finding that survived a rewrite will
+    // survive the next one, and three more rounds buy the same draft again.
     assert.equal(outcome.attempts, 2, "should not have spent the whole budget");
-    assert.match(
-      (outcome as { reason: string }).reason,
-      /survived a rewrite unchanged/,
-    );
-    assert.match((outcome as { reason: string }).reason, /needs a decision, not a retry/);
+    // But the scene lands. Deleting it was measured and it was the worse trade:
+    // one dropped scene cost fifteen points of length score and left the
+    // manuscript opening mid-investigation, which is a larger defect than the one
+    // the gate objected to and one that nothing records.
+    assert.equal(outcome.status, "COMMITTED");
+    const committed = outcome as {
+      unresolvedFindings: readonly unknown[];
+      warnings: readonly string[];
+    };
+    assert.equal(committed.unresolvedFindings.length, 1, "the defect is carried, not forgotten");
+    assert.match(committed.warnings.join(" "), /survived a rewrite unchanged/);
+    // And it is auditable on disk, or "the gate still has teeth" has no artefact.
+    assert.match(await index.read("continuity/unresolved/s-011.json"), /eye_colour|green/);
   });
 
-  it("rejects once the budget runs out on genuinely new findings each round", async () => {
+  it("commits with the defect recorded once the budget runs out on new findings each round", async () => {
     const { index } = await freshIndex();
     // Each attempt contradicts canon at a different quote, so nothing persists.
     const drafts = ["green", "blue", "amber"].map((colour) => ({
@@ -224,8 +233,13 @@ describe("repair rounds", () => {
       collaborators: scripted({ drafts }),
     });
 
-    assert.equal(outcome.status, "REJECTED");
-    assert.match((outcome as { reason: string }).reason, /repair budget of 2 exhausted/);
+    assert.equal(outcome.status, "COMMITTED");
+    const committed = outcome as {
+      unresolvedFindings: readonly unknown[];
+      warnings: readonly string[];
+    };
+    assert.equal(committed.unresolvedFindings.length, 1);
+    assert.match(committed.warnings.join(" "), /repair budget of 2 round\(s\) ran out/);
   });
 
   it("does not call the model verifier while a deterministic contradiction stands", async () => {

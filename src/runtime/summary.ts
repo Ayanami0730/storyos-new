@@ -27,6 +27,7 @@ import type { AgentRole } from "../transaction/types.ts";
 import type { ReferenceReport } from "../verification/references.ts";
 import type { BudgetProfile, TokenBudget } from "./budget.ts";
 import { priceLedger } from "./rates.ts";
+import { VERSION, VERSION_NOTE } from "../version.ts";
 import type { Harness } from "./assembly.ts";
 import type { StoryResult } from "./story.ts";
 
@@ -88,6 +89,13 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
   const ledger: readonly LedgerEntry[] = input.residents.ledger();
 
   return {
+    /**
+     * Which harness produced this. First field on purpose: a result whose
+     * version is unknown cannot be compared with anything, and four of this
+     * version's fixes changed measured numbers by large factors.
+     */
+    harness_version: VERSION,
+    harness_version_note: VERSION_NOTE,
     premise_words: args.premise.split(/\s+/).filter(Boolean).length,
     target_words: args.target,
     backbone: args.backbone ?? "default (gpt-5-mini, verifier cross-family)",
@@ -133,6 +141,33 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     scenes_unverified:
       result?.scenes.filter((s) => s.outcome.status === "COMMITTED" && s.outcome.unverified)
         .length ?? 0,
+    /**
+     * Scenes that committed carrying a defect the repair loop could not fix.
+     *
+     * The gate objected and was overruled on purpose: deleting a scene costs
+     * more than the defect does — one dropped scene took fifteen points off the
+     * length score and left the manuscript opening mid-investigation. So the
+     * scene lands and this number is how the run admits it. A manuscript with
+     * these is not a clean one, and `findings_total` alone would not say so.
+     */
+    scenes_with_unresolved_findings:
+      result?.scenes.filter(
+        (s) => s.outcome.status === "COMMITTED" && s.outcome.unresolvedFindings.length > 0,
+      ).length ?? 0,
+    unresolved_findings: (result?.scenes ?? [])
+      .filter((s) => s.outcome.status === "COMMITTED" && s.outcome.unresolvedFindings.length > 0)
+      .flatMap((s) =>
+        s.outcome.status === "COMMITTED"
+          ? s.outcome.unresolvedFindings.map((f) => ({
+              scene: s.card.id,
+              subtype: f.subtype,
+              severity: f.severity,
+              reasoning: f.reasoning,
+              suggestion: f.suggestion ?? null,
+              quote: f.evidence.quote.slice(0, 160),
+            }))
+          : [],
+      ),
     canon_facts: result?.canon.length ?? 0,
     promises_declared: result ? result.revision.coverage.contractsChecked : 0,
     promises_unpaid: result ? result.revision.coverage.contractsOpen : 0,
@@ -220,6 +255,14 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
       max_completion_tokens: profile.maxCompletionTokens,
       input_ceiling: profile.inputCeiling,
       task_token_budget: input.taskBudget,
+      /**
+       * Whether the ceiling stopped the run or merely counted.
+       *
+       * Reported because it changes what the row means. Every LongBench-Write
+       * baseline ran unstopped — its runner substitutes a meter for the budget
+       * on purpose — so an enforced row is not comparable with them.
+       */
+      enforced: budget.enforced,
       spent: budget.spent,
       utilisation: Number((budget.spent / input.taskBudget).toFixed(3)),
       tokens_per_output_word: Number((budget.spent / Math.max(1, onDisk.words)).toFixed(1)),

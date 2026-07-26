@@ -275,6 +275,8 @@ export async function writeStory(options: {
   const committedDeltas: SceneDelta[] = [];
   const proseByScene = new Map<string, string>();
   const driving = { scenesDriven: 0, stepsByOrchestrator: 0, stepsRescuedByEngine: 0 };
+  /** Words actually on the page, recounted from committed prose after each scene. */
+  let committedWords = 0;
 
   say(
     `plan: ${plan.scenes.length} scenes, ${plan.entities.length} entities, ` +
@@ -327,6 +329,7 @@ export async function writeStory(options: {
         stage: options.stage,
         director,
         txid,
+        words: { committed: committedWords, target: targetWords },
         brief: sceneBrief({
           sceneId: card.id,
           intent: card.intent,
@@ -337,6 +340,7 @@ export async function writeStory(options: {
           committed: committedScenes,
           failed: failures.map((f) => f.sceneId),
           repairBudget: maxRepairs,
+          words: { committed: committedWords, target: targetWords },
         }),
         log: say,
       });
@@ -385,7 +389,7 @@ export async function writeStory(options: {
       `${card.id} ${outcome.status} after ${outcome.attempts} attempt(s), ` +
         `${Math.round((Date.now() - sceneStarted) / 1000)}s, ` +
         `${outcome.findings.length} finding(s), ` +
-        `${run.orchestratorSteps} step(s) driven`,
+        `${run.orchestratorSteps} step(s) driven, ${committedWords}/${targetWords} words so far`,
     );
 
     if (outcome.status === "COMMITTED") {
@@ -397,6 +401,7 @@ export async function writeStory(options: {
         await index.read(`continuity/deltas/${card.id}.json`),
       ) as SceneDelta;
       canon = absorb(canon, card.id, delta);
+      committedWords += text.split(/\s+/).filter(Boolean).length;
       committedScenes.push(card.id);
       committedDeltas.push(delta);
       proseByScene.set(card.id, text);

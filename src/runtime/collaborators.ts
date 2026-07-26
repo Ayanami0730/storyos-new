@@ -190,6 +190,13 @@ function verifierTools(live: () => Capture, sceneId: () => string): unknown[] {
           Type.String({ description: "Verbatim passage it contradicts; required for pairs" }),
         ),
         contradicts_source: Type.Optional(Type.String({ description: "Where that came from" })),
+        suggestion: Type.String({
+          description:
+            "What the writer should actually change, concretely. It cannot look anything " +
+            "up — no shell, no index — so 'make the timeline consistent' is not actionable " +
+            "and 'move the key's discovery to after Hale opens the door, and cut the later " +
+            "clause claiming it was already in the lock' is.",
+        }),
         edit_locus: Type.String({
           description: "draft | canon | unresolved — where the fix belongs",
         }),
@@ -208,6 +215,7 @@ function verifierTools(live: () => Capture, sceneId: () => string): unknown[] {
                 : "warning") as "warning" | "error" | "fatal",
               reasoning: args.reasoning ?? "",
               evidence: { quote: args.quote ?? "", source: sceneId() },
+              ...(args.suggestion ? { suggestion: args.suggestion } : {}),
               ...(args.contradicts_quote
                 ? {
                     contradicts: {
@@ -286,6 +294,15 @@ const VERIFIER_BRIEF = [
   "Report a defect with write_findings, one call per defect. Call nothing if it looks fine —",
   "an empty finding list is a normal result and manufacturing a finding to appear useful",
   "makes the novel worse.",
+  "",
+  "Every finding needs a `suggestion`: what the writer should actually change. This is not",
+  "politeness, it is the difference between a defect that gets fixed and one that does not.",
+  "The writer has no shell, no index access and no way to look anything up — your finding is",
+  "the whole of what it knows about the problem. `make the timeline consistent` leaves it",
+  "guessing; `move the key's discovery to after Hale opens the door, and cut the later clause",
+  "claiming it was already in the lock` can be carried out. A scene that cannot be repaired",
+  "in the rounds available is committed with your finding attached to it, so a vague",
+  "suggestion becomes a permanent defect in the book rather than a lost round.",
   "",
   "These are not defects:",
   ...LITERARY_EXEMPTIONS.map((e) => `  - ${e}`),
@@ -423,6 +440,7 @@ export function residentCollaborators(options: {
         packetPath,
         auditPath,
         gaps,
+        words,
         note,
       }): Promise<Draft> {
         capture.prose = undefined;
@@ -446,6 +464,13 @@ export function residentCollaborators(options: {
                 packetPath
                   ? `Your packet is also at ${packetPath}. If you ask a follow-up, the answer ` +
                     `is appended there — read_context re-reads it.`
+                  : "",
+                words
+                  ? `\nLength check: ${words.committed} of ${words.target} words are on the ` +
+                    `page across the whole task so far. You cannot see the manuscript, so this ` +
+                    `is the only place that number reaches you — if the book is running short ` +
+                    `of its target, this scene is where that gets corrected, and a scene that ` +
+                    `comes in well under its own target is how a book ends up short.`
                   : "",
                 orchestratorNote(note),
               ]

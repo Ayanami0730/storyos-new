@@ -71,6 +71,17 @@ export interface Finding {
   readonly evidence: Evidence;
   /** The other half of a contradiction pair, when the subtype has one. */
   readonly contradicts?: Evidence;
+  /**
+   * What to actually change, in the writer's terms.
+   *
+   * Diagnosis is not instruction, and the writer cannot go and look. It has no
+   * shell, no index access and no memory of the scene beyond its own draft — so
+   * a finding that only says *what is wrong* leaves it guessing at *what would
+   * be right*, and guessing is how three repair rounds produce three drafts with
+   * the same defect in different words. That is exactly what happened to the one
+   * scene this system has dropped.
+   */
+  readonly suggestion?: string;
   readonly editLocus: EditLocus;
 }
 
@@ -92,6 +103,7 @@ export function makeFinding(input: {
   readonly reasoning: string;
   readonly evidence: Evidence;
   readonly contradicts?: Evidence;
+  readonly suggestion?: string;
   readonly editLocus: EditLocus;
 }): Finding {
   const spec = subtypeSpec(input.subtype);
@@ -125,6 +137,7 @@ export function makeFinding(input: {
     reasoning: input.reasoning.trim(),
     evidence: input.evidence,
     ...(input.contradicts ? { contradicts: input.contradicts } : {}),
+    ...(input.suggestion?.trim() ? { suggestion: input.suggestion.trim() } : {}),
     editLocus: input.editLocus,
   };
 }
@@ -194,6 +207,7 @@ export function renderRepairBrief(findings: readonly Finding[]): string {
         `  contradicts: "${f.contradicts.quote}"  <${locate(f.contradicts)}>`,
       );
     }
+    if (f.suggestion) lines.push(`  do this: ${f.suggestion}`);
     switch (f.editLocus.kind) {
       case "draft":
         lines.push(`  fix here: "${f.editLocus.quote}"`);

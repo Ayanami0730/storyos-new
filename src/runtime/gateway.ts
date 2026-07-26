@@ -29,6 +29,36 @@ export const PROVIDER_ID = "yuanshi-sg";
 export const REQUEST_TIMEOUT_MS = 300_000;
 
 /**
+ * Attempts for a single HTTP request, and the waits between them.
+ *
+ * Deliberately quicker and more numerous than the turn-level schedule. A turn
+ * retry rewinds and re-runs everything, so it can afford to wait a minute; a
+ * request retry is resuming one call inside a tool loop that may have thirty of
+ * them, so what it needs is to get through soon. Six attempts over ~30s covers
+ * the bursty contention we measured — probing a rate-limited channel directly
+ * returned `200, 429, 429`, roughly one request in three — while staying well
+ * inside the per-turn watchdog.
+ */
+export const REQUEST_ATTEMPTS = 6;
+export const REQUEST_BACKOFF_MS: readonly number[] = [500, 1_500, 3_000, 6_000, 12_000];
+
+/**
+ * Worth asking again, or not.
+ *
+ * Kept separate from the turn-level classifier because the strings differ: this
+ * one sees transport and provider errors as thrown by the stream, where the
+ * other reads what pi wrote into a failed assistant message. Both lists come
+ * from real failure text rather than from imagining what a failure might say —
+ * the first version of the other one matched `timeout` and missed
+ * `Request timed out.`
+ */
+export function isRetryableRequestError(message: string): boolean {
+  return /\b(408|429|5\d\d)\b|rate.?limit|rate_limit|too_many_requests|resource exhausted|负载已饱和|overloaded|time(?:d)?[\s_-]*out|terminated|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up|fetch failed/i.test(
+    message,
+  );
+}
+
+/**
  * Models verified against the gateway on 2026-07-25 by direct probe, not from
  * documentation. `gpt-5.5-mini` and every `-high` / `-medium` suffixed name
  * return 503 `model_not_found`, and `o4-mini` returns 404 — do not add them
@@ -93,16 +123,45 @@ export function installGateway(): GatewayHandle {
 
   const models = createModels();
   models.setProvider(provider as never);
-  setDefaultStreamFn((m, context, options) =>
-    (models as never as { stream: Function }).stream(m, context, {
-      // Belt and braces with the turn watchdog in `ResidentAgents`. pi documents
-      // `timeoutMs` as honoured only by providers that support it, and whether
-      // this gateway's completions path does is unverified — so this is the
-      // cheap fast path, not the guarantee. The guarantee is the watchdog.
-      timeoutMs: REQUEST_TIMEOUT_MS,
-      ...(options as object),
-    }),
-  );
+  setDefaultStreamFn(async (m, context, options) => {
+    /**
+     * Retry the request itself, underneath the turn-level retry.
+     *
+     * Two layers, because they catch different things. The turn-level retry in
+     * `ResidentAgents` sees a *finished* turn that pi recorded as failed, and its
+     * cure is to rewind the transcript and ask again — correct, and expensive,
+     * since it discards a whole turn's work. This one sees a single request fail
+     * and simply asks again, which is what a 429 on the fourth of thirty tool
+     * calls actually needs.
+     *
+     * Without it, one rate-limited call in the middle of a long tool loop threw
+     * the whole turn away. That was most of what went wrong on the run where the
+     * gateway was degraded: scenes aborted after ten minutes of successful work
+     * because a single request in the middle of them came back 429.
+     */
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= REQUEST_ATTEMPTS; attempt += 1) {
+      try {
+        return await (models as never as { stream: Function }).stream(m, context, {
+          // pi documents `timeoutMs` as honoured only by providers that support
+          // it, and whether this gateway's completions path does is unverified —
+          // so this is the cheap fast path, not the guarantee. The guarantee is
+          // the watchdog in `ResidentAgents`.
+          timeoutMs: REQUEST_TIMEOUT_MS,
+          ...(options as object),
+        });
+      } catch (error) {
+        lastError = error;
+        const message = error instanceof Error ? error.message : String(error);
+        if (attempt >= REQUEST_ATTEMPTS || !isRetryableRequestError(message)) throw error;
+        const wait = REQUEST_BACKOFF_MS[attempt - 1] ?? 8_000;
+        // Jittered, so several agents that hit the same quota window do not wake
+        // together and collide again on every attempt.
+        await new Promise((r) => setTimeout(r, Math.round(wait * (0.75 + Math.random() * 0.5))));
+      }
+    }
+    throw lastError;
+  });
 
   installed = {
     models,

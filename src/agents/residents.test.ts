@@ -636,7 +636,7 @@ describe("ledger", () => {
     // measured run — 7,490,529 of 8,369,537 — against 879,008 of fresh input
     // and output. Charging it stopped runs after about a ninth of the work the
     // baselines are allowed, every one of which counts `input + output` alone.
-    const budget = new TokenBudget(1_000);
+    const budget = new TokenBudget(1_000, { enforce: true });
     const { registry } = residents(budget);
     await registry.invoke("writer", "draft", ctx);
     const [entry] = registry.ledger();

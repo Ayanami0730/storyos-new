@@ -122,6 +122,16 @@ export interface SceneCollaborators {
      * only became apparent at the moment the writer filled one in.
      */
     readonly gaps?: readonly ContextGap[];
+    /**
+     * Words committed so far against the whole task's target.
+     *
+     * Passed structurally rather than left to the orchestrator to mention,
+     * because a number relayed through a prompt is a number that gets dropped —
+     * and this is the one the benchmark weights at half the score. The writer
+     * cannot see the manuscript, so without this it writes every scene to the
+     * same length whether the book is running short or long.
+     */
+    readonly words?: { readonly committed: number; readonly target: number };
     readonly note?: string;
   }): Promise<Draft>;
 
@@ -184,6 +194,15 @@ export type SceneOutcome =
        * any of these must not report its findings count as a quality result.
        */
       readonly unverified: boolean;
+      /**
+       * Blocking findings the repair loop could not resolve before the scene was
+       * committed anyway.
+       *
+       * Non-empty means the gate objected and was overruled — deliberately,
+       * because deleting the scene costs more than the defect does. Counted per
+       * run, because a manuscript with these is not a clean one.
+       */
+      readonly unresolvedFindings: readonly Finding[];
     }
   | {
       readonly status: "REJECTED" | "ABORTED";

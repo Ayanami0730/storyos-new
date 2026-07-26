@@ -124,6 +124,10 @@ export class SceneDirector {
   #gaps: readonly ContextGap[] = [];
   /** True when the model verification layer never ran for this scene. */
   #unverified = false;
+  /** Blocking findings the repair loop could not resolve, if it committed anyway. */
+  #unresolved: readonly Finding[] = [];
+  /** Why the loop stopped trying, in words the orchestrator can repeat. */
+  #defectNote: string | null = null;
 
   constructor(request: SceneRequest, deps: DirectorDeps) {
     this.#request = request;
@@ -280,7 +284,7 @@ export class SceneDirector {
   }
 
   /** Draft, or redraft against the last audit. */
-  async draft(note?: string): Promise<StepReport> {
+  async draft(note?: string, words?: { committed: number; target: number }): Promise<StepReport> {
     if (this.state !== "CONTEXT_BUILT" && this.state !== "REPAIR_REQUIRED") {
       return this.#refuse(
         "draft",
@@ -302,6 +306,7 @@ export class SceneDirector {
         packetPath: this.#packetPath,
         auditPath: this.#lastAuditPath,
         gaps: this.#gaps,
+        ...(words ? { words } : {}),
         ...(note ? { note } : {}),
       });
     } catch (error) {
@@ -338,12 +343,12 @@ export class SceneDirector {
       );
     }
 
-    const words = draft.prose.split(/\s+/).filter(Boolean).length;
+    const draftWords = draft.prose.split(/\s+/).filter(Boolean).length;
     return report(
       "draft",
       this.state,
       [
-        `${this.#request.sceneId} drafted (attempt ${this.#attempt + 1}): ${words} words, ` +
+        `${this.#request.sceneId} drafted (attempt ${this.#attempt + 1}): ${draftWords} words, ` +
           `${draft.delta.claims.length} claim(s), ` +
           `${draft.delta.promises?.length ?? 0} promise(s) made, ` +
           `${draft.delta.paysOff?.length ?? 0} paid off.`,
@@ -440,30 +445,48 @@ export class SceneDirector {
       );
     }
 
-    // A finding that survived a rewrite is evidence that another round would
-    // buy the same draft again.
+    /**
+     * Out of repair rounds, or repairing the same defect twice over.
+     *
+     * This used to reject the scene, which deleted it. That was the wrong trade
+     * and the run that exposed it says so plainly: `s-001` was dropped over one
+     * finding, the manuscript then opened on scene two, and the length score
+     * fell fifteen points — on a benchmark where half the score is length.
+     *
+     * The alternative is not "a better scene". It is *no scene*, and a hole
+     * damages everything after it: later scenes were built against a scene the
+     * reader never sees, the chapter opens mid-investigation, and the defect the
+     * gate objected to is replaced by a larger one nothing recorded.
+     *
+     * So the scene commits, carrying its unresolved findings, and the run counts
+     * them. The gate keeps its teeth — it produces a number the summary must
+     * report, and a scene committed with a known defect is auditable in
+     * `continuity/findings.jsonl` — while no longer being able to punch holes in
+     * the manuscript. What it may never do is pass quietly: `defective` rides on
+     * the outcome exactly as `unverified` does.
+     */
     const persistent = unchangedAcrossRound(this.#previousFindings, blockers);
-    if (persistent.length > 0) {
-      this.#tx.transition("REJECTED", "verifier", { findings });
-      this.#terminal = {
-        status: "REJECTED",
-        reason:
-          `${persistent.length} finding(s) survived a rewrite unchanged ` +
-          `(${persistent.map((f) => f.id).join(", ")}). Another round would buy the ` +
-          `same draft again; the defect needs a decision, not a retry.`,
-      };
-      return report("verify", this.state, this.#terminal.reason, paths, false);
-    }
-
-    if (this.#tx.repairBudgetRemaining <= 0) {
-      this.#tx.transition("REJECTED", "verifier", { findings });
-      this.#terminal = {
-        status: "REJECTED",
-        reason:
-          `repair budget of ${this.#request.maxRepairs} exhausted with ${blockers.length} ` +
-          `blocking finding(s) outstanding`,
-      };
-      return report("verify", this.state, this.#terminal.reason, paths, false);
+    const outOfRounds = this.#tx.repairBudgetRemaining <= 0;
+    if (persistent.length > 0 || outOfRounds) {
+      this.#unresolved = blockers;
+      this.#defectNote = persistent.length > 0
+        ? `${persistent.length} finding(s) survived a rewrite unchanged ` +
+          `(${persistent.map((f) => f.id).join(", ")}), so another round would buy the ` +
+          `same draft again`
+        : `the repair budget of ${this.#request.maxRepairs} round(s) ran out with ` +
+          `${blockers.length} blocking finding(s) outstanding`;
+      this.#tx.transition("APPROVED", "verifier", { findings });
+      return report(
+        "verify",
+        this.state,
+        `${this.#request.sceneId} is being committed WITH ${blockers.length} unresolved ` +
+          `finding(s): ${this.#defectNote}. Discarding the scene would leave a hole that ` +
+          `costs more than the defect does, so it lands and the defect is recorded. Call ` +
+          `call_index_manager to commit it, and say in your account what is still wrong ` +
+          `with it.` +
+          (this.#lastAuditPath ? ` Audit: ${this.#lastAuditPath}.` : ""),
+        paths,
+      );
     }
 
     this.#tx.transition("REPAIR_REQUIRED", "verifier", { findings });
@@ -530,7 +553,28 @@ export class SceneDirector {
             content: JSON.stringify(this.#lastDraft!.delta, null, 2),
           },
         ],
-        derived: this.#derived,
+        derived: [
+          ...this.#derived,
+          // A scene committed with a known defect has to be findable later, or
+          // "the gate still has teeth" is a claim with no artefact behind it.
+          ...(this.#unresolved.length > 0
+            ? [
+                {
+                  relPath: `continuity/unresolved/${this.#request.sceneId}.json`,
+                  content:
+                    JSON.stringify(
+                      {
+                        scene: this.#request.sceneId,
+                        why: this.#defectNote,
+                        findings: this.#unresolved,
+                      },
+                      null,
+                      2,
+                    ) + "\n",
+                },
+              ]
+            : []),
+        ],
       });
       this.#tx.transition("COMMITTED", "index-manager");
       return report(
@@ -596,8 +640,14 @@ export class SceneDirector {
         history,
         findings: this.#findings,
         derivedPaths: this.#derived.map((d) => d.relPath),
-        warnings: [...this.#warnings],
+        warnings: [
+          ...this.#warnings,
+          ...(this.#defectNote
+            ? [`committed with ${this.#unresolved.length} unresolved finding(s): ${this.#defectNote}`]
+            : []),
+        ],
         unverified: this.#unverified,
+        unresolvedFindings: this.#unresolved,
       };
     }
     if (this.state === "STALE_BASE") {

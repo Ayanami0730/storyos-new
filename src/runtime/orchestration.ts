@@ -47,9 +47,16 @@ function toolText(text: string) {
 export class SceneStage {
   #director: SceneDirector | null = null;
   #steps: { scene: string; step: string; ok: boolean }[] = [];
+  #words: { committed: number; target: number } = { committed: 0, target: 0 };
 
-  open(director: SceneDirector): void {
+  open(director: SceneDirector, words?: { committed: number; target: number }): void {
     this.#director = director;
+    if (words) this.#words = words;
+  }
+
+  /** Words on the page against the task target, for the writer's draft prompt. */
+  get words(): { committed: number; target: number } {
+    return this.#words;
   }
 
   close(): void {
@@ -73,7 +80,7 @@ export class SceneStage {
 const DELEGATION: readonly {
   readonly role: AgentRole;
   readonly what: string;
-  readonly run: (d: SceneDirector, note: string) => Promise<StepReport>;
+  readonly run: (d: SceneDirector, note: string, stage: SceneStage) => Promise<StepReport>;
 }[] = [
   {
     role: "context-builder",
@@ -88,7 +95,7 @@ const DELEGATION: readonly {
     what:
       "Have the scene drafted, or repaired if the verifier sent it back. It returns prose " +
       "and a state delta; neither is committed yet.",
-    run: (d, note) => d.draft(note),
+    run: (d, note, stage) => d.draft(note, stage.words),
   },
   {
     role: "verifier",
@@ -158,7 +165,7 @@ export function orchestratorTools(stage: SceneStage): unknown[] {
             "scene.",
         );
       }
-      const result = await entry.run(director, args.brief?.trim() ?? "");
+      const result = await entry.run(director, args.brief?.trim() ?? "", stage);
       stage.note(director.sceneId, entry.role, result.ok);
       return toolText(
         `${result.text}\n\nScene state: ${director.state}. Next: ${director.nextStep()}.`,
@@ -207,6 +214,15 @@ export function sceneBrief(input: {
   readonly committed: readonly string[];
   readonly failed: readonly string[];
   readonly repairBudget: number;
+  /**
+   * Words on the page so far, against the whole task's target.
+   *
+   * The system was flying blind on the one number half its benchmark score is
+   * made of: nothing counted the manuscript as it grew, so nothing could notice
+   * it running short until the run was over. A scene target is a plan; this is
+   * the outcome, and only the orchestrator is in a position to act on the gap.
+   */
+  readonly words: { readonly committed: number; readonly target: number };
 }): string {
   return [
     `Run scene ${input.sceneId} — number ${input.position.index} of ${input.position.total}, ` +
@@ -219,6 +235,13 @@ export function sceneBrief(input: {
       ? `Committed so far: ${input.committed.join(", ")}.`
       : "Nothing has been committed yet; this is the first scene.",
     input.failed.length > 0 ? `Did not complete: ${input.failed.join(", ")}.` : "",
+    "",
+    `Length so far: ${input.words.committed} words committed of ${input.words.target} for the ` +
+      `whole task; ${Math.max(0, input.words.target - input.words.committed)} still to write ` +
+      `across ${input.position.total - input.position.index + 1} remaining scene(s). Half of ` +
+      `the score on this kind of task is length compliance, so if the committed scenes are ` +
+      `running short of their targets, say so in the writer's brief — it cannot see this ` +
+      `number and will otherwise keep writing to the same length.`,
     "",
     "The sequence is fixed and enforced: call_context_builder, then call_writer, then",
     "call_verifier, then call_index_manager once it is approved. A call out of order comes",
@@ -267,6 +290,8 @@ export async function driveScene(options: {
   readonly director: SceneDirector;
   readonly brief: string;
   readonly txid: string;
+  /** Words on the page against the task target, forwarded to the writer. */
+  readonly words?: { committed: number; target: number };
   /** Nudges after the orchestrator stops short of a terminal state. */
   readonly maxNudges?: number;
   readonly log?: (line: string) => void;
@@ -275,7 +300,7 @@ export async function driveScene(options: {
   const say = options.log ?? (() => {});
   const maxNudges = options.maxNudges ?? 1;
 
-  stage.open(director);
+  stage.open(director, options.words);
   const before = stage.steps().length;
   let account = "";
 
