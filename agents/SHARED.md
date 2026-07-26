@@ -14,7 +14,13 @@ That is the whole design, and every rule below follows from it.
 
 ## The index is the truth
 
-`index/` is canonical. If a fact is not in the index, it is not established,
+The project directory **is** the state of the novel: `novel/` holds the outline
+and the prose, `characters/` `locations/` `objects/` `factions/` the entities,
+`relations/` one file per pair, `events/` the chronology, `world/` what is true
+regardless of who knows it, and `continuity/` the checkable layer — canon facts,
+promises, retcons, findings. `HARNESS.md` in the project root is the full map.
+
+If a fact is not in the index, it is not established,
 however clearly you remember writing it. If a fact is in the index, it holds,
 even if the prose in front of you suggests otherwise — say so rather than
 quietly writing around it.
@@ -42,14 +48,19 @@ form one half of a contradiction pair.
 
 ## Reading
 
-You have a shell (`run_command`) with the usual tools: `grep`, `ls`, `find`,
-`head`, `wc`, `cat`. Every role has the same read reach — no one has a narrower
-view of the index than anyone else.
+You have `bash` with the usual tools — `grep`, `ls`, `find`, `head`, `wc`, `cat`
+— and `read` for a single file with paging. Every role has the same read reach,
+with one exception stated in its own prompt: the writer has no shell, because its
+job is the prose and it asks the context-builder instead.
 
-Read narrowly. `grep -n "eye_colour" index/story/bible/characters/mira.yaml`
-answers the question; `cat` on the whole manuscript displaces the material you
-were given for this scene and gets truncated anyway. Every call needs a
-`purpose` — one line, what you are trying to find out.
+Read narrowly. `grep -n "eye_colour" characters/char-mira/profile.yaml` answers
+the question; `cat` on the whole manuscript displaces the material you were given
+for this scene and gets truncated anyway.
+
+Reads are budgeted. `bash`, `read` and `read_index` share one allowance per
+scene, so a fortieth grep is not free — it is the same growing transcript re-sent
+one more time, and that arithmetic was 81% of one run's entire token bill. Decide
+what you need to know, then look it up.
 
 Some reads have a dedicated tool because the useful thing is a derived view
 rather than the bytes. `read_relation_history` is the main one: it gives you a
@@ -62,17 +73,28 @@ Anything that changes state goes through a typed tool, never the shell. The
 tools validate immediately and answer with the exact field that is wrong — read
 that answer and fix it in the same turn rather than retrying blind.
 
-Only `index-manager` writes to `index/` and `manuscript/`. Everyone else writes
-to `staging/<txid>/`, and staging is not real until it is committed.
+Only `index-manager` writes canonical state, and that is enforced by the
+operating system rather than by this paragraph: the canonical partitions are
+mounted read-only into the process that runs your shell, so a write to them fails
+with `Read-only file system` no matter how it is phrased. Your own
+`.<role>/` directory and `staging/<txid>/` are writable, and staging is not real
+until it is committed.
 
 ## A scene is a transaction
 
 `OPEN → CONTEXT_BUILT → DRAFTED → STATE_DELTA_PROPOSED → VALIDATING → (REPAIR ≤k
-| REJECTED | APPROVED) → COMMITTING → (STALE_BASE → CONTEXT_BUILT | COMMITTED)`
+| APPROVED) → COMMITTING → (STALE_BASE → CONTEXT_BUILT | COMMITTED)`
 
 Prose and the state change it implies land together or neither lands. A scene
 that is written but whose facts were never recorded is worse than an unwritten
 scene: the next scene will contradict it, and nothing will know why.
+
+A scene the repair rounds could not fix is **committed anyway**, carrying its
+unresolved findings into `continuity/unresolved/<scene>.json`. That is deliberate:
+deleting a scene leaves a hole every later scene was written against, which is a
+larger defect than the one being deleted and one that nothing records. The gate
+still counts — a run reports how many scenes carry unresolved findings — but it
+cannot punch holes in the manuscript.
 
 ## When you are unsure
 
