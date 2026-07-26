@@ -52,27 +52,19 @@ export interface StoryPlan {
  * the worst quality in it (3.83, against raw `gpt-5-mini`'s 4.67 on the same
  * backbone).
  *
- * ## And why this constant is not validated by that score
+ * ## What the rerun said
  *
- * Rerunning the same task as **one** scene scored *lower*: 82.0 against 88.0, with
- * S_q falling 3.83 → 3.33 (coherence and reading experience each dropping a
- * point) and only length improving marginally. So the one measurement available
- * points against this change, and it is kept anyway for a reason that has to be
- * stated plainly rather than buried:
+ * Same task as **one** scene: 93.6 against 88.0, with S_q rising 3.83 → 4.50
+ * (coherence, breadth and reading experience each gaining) at the cost of two
+ * points of length compliance. It also cost **$0.46 against $1.31** and 304
+ * tokens per delivered word against 4,542 — four scenes of 125 words spend four
+ * packets, four verifier passes and four commits on 500 words of prose.
  *
- *  - n = 1 per configuration, on a 500-word story, scored on a 1–5 integer scale
- *    where a single point of S_q moves S̄ by ten. That cannot separate a real
- *    effect from judge variance, and the two runs produced entirely different
- *    stories rather than the same story cut differently.
- *  - Both configurations lose to a raw single call on the same backbone (92.6).
- *    The finding that survives is not "one scene or four" but **the harness does
- *    not repay its overhead below roughly 2,000 words**, and neither setting fixes
- *    that. Splitting a 500-word story into four scenes is the more expensive way
- *    to lose.
- *
- * Treat the 500 as a structural floor with an argument behind it and no score
- * behind it. If short tasks ever matter to a result, this needs several samples
- * per arm, not one.
+ * One sample per arm on a 1–5 integer quality scale is weak evidence and the two
+ * runs produced different stories rather than one story cut two ways, so the size
+ * of the gap means little. The direction agrees with the structural argument,
+ * which is what this constant rests on: a passage that must open and close inside
+ * 125 words is not a scene.
  *
  * Nothing at 2,000 words and above changes, which is deliberate: those lengths
  * have been scored, and silently altering their scene counts would invalidate

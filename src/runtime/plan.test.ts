@@ -17,10 +17,10 @@ describe("scene count", () => {
    * unstructured call to the same model. A scene that has to open and close inside
    * 125 words is not a scene.
    *
-   * This pins the structure, not a score: rerunning that task as one scene scored
-   * *lower* (82.0 against 88.0). See `MIN_WORDS_PER_SCENE` — one sample per arm on
-   * a 1–5 quality scale cannot settle it, and the finding that does survive is
-   * that neither arm repays the harness's overhead at 500 words.
+   * Rerunning it as a single scene scored 93.6 against 88.0 for $0.46 against
+   * $1.31. This pins the structure rather than the score — one sample per arm on a
+   * 1–5 quality scale says little about the size of that gap — but the direction
+   * agrees with the argument.
    */
   it("yields the four-scene floor rather than slicing a short task into fragments", () => {
     assert.equal(sceneCountFor(500), 1);
