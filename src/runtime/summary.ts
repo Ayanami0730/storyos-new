@@ -136,7 +136,19 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     promises_declared: result ? result.revision.coverage.contractsChecked : 0,
     promises_unpaid: result ? result.revision.coverage.contractsOpen : 0,
     revision_tasks: result?.revision.tasks.length ?? 0,
-    tokens: ledger.reduce((n, e) => n + e.usage.total, 0),
+    /**
+     * What a comparison may use: `input + output`, which is what every baseline
+     * counts (`run_lbw.py`: `used_tokens += input_tokens + output_tokens`).
+     */
+    tokens: ledger.reduce((n, e) => n + e.usage.billable, 0),
+    /**
+     * What the provider reported, cache reads included — and it is mostly cache
+     * reads. On a measured run 89.5% of this number was `cacheRead`. It is the
+     * honest figure for what moved over the wire and the wrong figure for any
+     * table that puts us beside a system counting fresh tokens only.
+     */
+    tokens_reported_including_cache: ledger.reduce((n, e) => n + e.usage.total, 0),
+    tokens_cache_read: ledger.reduce((n, e) => n + e.usage.cacheRead, 0),
     calls: ledger.length,
     roll_up: input.residents.rollUp(),
     /**

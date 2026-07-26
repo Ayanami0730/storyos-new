@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 
 import type { AgentRole } from "../transaction/types.ts";
+import { TokenBudget } from "../runtime/budget.ts";
 import { SceneStage, delegationToolNameFor, orchestratorTools } from "../runtime/orchestration.ts";
 import { PERSONAS } from "./personas.ts";
 import {
@@ -88,13 +89,14 @@ class FakeAgent implements AgentLike {
   }
 }
 
-function residents() {
+function residents(budget?: TokenBudget) {
   const built: FakeAgent[] = [];
   let clock = 1_000;
   const registry = new ResidentAgents({
     agentsRoot: AGENTS_ROOT,
     personas: PERSONAS,
     now: () => (clock += 250),
+    ...(budget ? { budget } : {}),
     factory: (persona, systemPrompt, toolNames) => {
       const agent = new FakeAgent(systemPrompt, toolNames, persona.model);
       built.push(agent);
@@ -609,7 +611,27 @@ describe("ledger", () => {
     await registry.invoke("verifier", "check", ctx);
     const roll = registry.rollUp();
     assert.equal(roll["writer:gpt-5-mini"]!.calls, 2);
-    assert.equal(roll["writer:gpt-5-mini"]!.tokens, 310);
+    // `tokens` is input + output, which is what every baseline counts and
+    // therefore the only figure a comparison may use.
+    assert.equal(roll["writer:gpt-5-mini"]!.tokens, 280);
+    // `reported` keeps what the provider actually said, cache reads included.
+    assert.equal(roll["writer:gpt-5-mini"]!.reported, 310);
     assert.equal(roll["verifier:gemini-3.1-pro-preview"]!.calls, 1);
+  });
+
+  it("keeps cache reads out of what the budget charges", async () => {
+    // The bug this pins cost most of every long run. pi's `totalTokens`
+    // includes `cacheRead`, and under prompt caching that was 89.5% of a
+    // measured run — 7,490,529 of 8,369,537 — against 879,008 of fresh input
+    // and output. Charging it stopped runs after about a ninth of the work the
+    // baselines are allowed, every one of which counts `input + output` alone.
+    const budget = new TokenBudget(1_000);
+    const { registry } = residents(budget);
+    await registry.invoke("writer", "draft", ctx);
+    const [entry] = registry.ledger();
+    assert.equal(entry!.usage.total, 155);
+    assert.equal(entry!.usage.billable, 140);
+    assert.equal(entry!.usage.cacheRead, 10);
+    assert.equal(budget.spent, 140);
   });
 });

@@ -43,7 +43,25 @@ export interface LedgerEntry {
     readonly output: number;
     readonly cacheRead: number;
     readonly reasoning: number;
+    /** Everything the provider reported, `cacheRead` included. */
     readonly total: number;
+    /**
+     * `input + output` — what the baselines count, and therefore what the
+     * budget must charge.
+     *
+     * The distinction is not pedantic; it was costing us most of every run. pi's
+     * `totalTokens` includes `cacheRead`, and under prompt caching that is the
+     * overwhelming majority of it: on a measured run, 7,490,529 of 8,369,537
+     * reported tokens — **89.5%** — were cache reads, against 879,008 of fresh
+     * input and output. Charging the budget with `total` therefore stopped our
+     * runs after roughly a ninth of the work the baselines are allowed, because
+     * every baseline counts `input_tokens + output_tokens` and nothing else
+     * (`run_lbw.py`: `self.used_tokens += input_tokens + output_tokens`).
+     *
+     * Both numbers are kept. `total` is what the provider says the call was;
+     * `billable` is what a comparison may use.
+     */
+    readonly billable: number;
   };
   readonly toolCalls: number;
   readonly stopReason?: string;
@@ -570,20 +588,20 @@ export class ResidentAgents {
       // Losing a transcript must never lose a scene.
     }
     if (timedOut) {
-      this.#budget?.charge(entry.usage.total);
+      this.#budget?.charge(entry.usage.billable);
       throw new TurnTimeout(role, deadlineMs);
     }
     if (failure) {
       // Raised rather than returned. A caller handed an empty turn cannot tell
       // it apart from a turn that had nothing to say, and for the verifier those
       // two readings differ by the whole quality gate.
-      this.#budget?.charge(entry.usage.total);
+      this.#budget?.charge(entry.usage.billable);
       throw new TurnFailed(role, failure, attempts);
     }
     const text = textOf(fresh);
     // Charge before compacting: the tokens were spent either way, and a run
     // that hides its spend behind a compaction step is not comparable.
-    this.#budget?.charge(entry.usage.total);
+    this.#budget?.charge(entry.usage.billable);
     await this.#maybeCompact(role, agent, entry);
     return { text, ledger: entry };
   }
@@ -727,7 +745,7 @@ export class ResidentAgents {
     durationMs: number,
     timedOut = false,
   ): LedgerEntry {
-    const usage = { input: 0, output: 0, cacheRead: 0, reasoning: 0, total: 0 };
+    const usage = { input: 0, output: 0, cacheRead: 0, reasoning: 0, total: 0, billable: 0 };
     let toolCalls = 0;
     let model = this.#persona(role).model as string;
     let stopReason: string | undefined;
@@ -741,6 +759,7 @@ export class ResidentAgents {
         usage.cacheRead += message.usage.cacheRead ?? 0;
         usage.reasoning += message.usage.reasoning ?? 0;
         usage.total += message.usage.totalTokens ?? 0;
+        usage.billable += (message.usage.input ?? 0) + (message.usage.output ?? 0);
         // Overwritten by each successive call, so what survives is the last.
         contextTokens = (message.usage.input ?? 0) + (message.usage.cacheRead ?? 0);
       }
@@ -791,13 +810,14 @@ export class ResidentAgents {
    * reported by its own calls — so `tokens` is additive and `ms` is not. The
    * run's real duration is `elapsed_ms` in the summary.
    */
-  rollUp(): Record<string, { calls: number; tokens: number; ms: number }> {
-    const out: Record<string, { calls: number; tokens: number; ms: number }> = {};
+  rollUp(): Record<string, { calls: number; tokens: number; reported: number; ms: number }> {
+    const out: Record<string, { calls: number; tokens: number; reported: number; ms: number }> = {};
     for (const e of this.#ledger) {
       const key = `${e.role}:${e.model}`;
-      const row = (out[key] ??= { calls: 0, tokens: 0, ms: 0 });
+      const row = (out[key] ??= { calls: 0, tokens: 0, reported: 0, ms: 0 });
       row.calls += 1;
-      row.tokens += e.usage.total;
+      row.tokens += e.usage.billable;
+      row.reported += e.usage.total;
       row.ms += e.durationMs;
     }
     return out;

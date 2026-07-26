@@ -121,6 +121,18 @@ export function profileById(id: string): BudgetProfile {
   return profile;
 }
 
+/**
+ * What the budget counts.
+ *
+ * `input + output`, matching every baseline runner
+ * (`run_lbw.py`: `used_tokens += input_tokens + output_tokens`). It deliberately
+ * excludes `cacheRead`, and the reason is a measurement rather than a
+ * preference: on one run 7,490,529 of 8,369,537 provider-reported tokens —
+ * 89.5% — were cache reads. A budget that charges those stops a run after
+ * roughly a ninth of the work its comparators are allowed, which is not a
+ * stricter comparison but a broken one.
+ */
+
 /** The per-task ceiling for a target length under a profile. */
 export function taskBudgetFor(profile: BudgetProfile, targetWords: number): number {
   return Math.max(profile.minTaskBudget, Math.round(targetWords * profile.tokensPerTargetWord));
