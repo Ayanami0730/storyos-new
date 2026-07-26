@@ -47,7 +47,7 @@ import {
 import { type AgentLike, ResidentAgents } from "../agents/residents.ts";
 import { skillTools } from "../agents/skill-tools.ts";
 import { SkillLibrary, installStarterSkills, skillsSection } from "../agents/skills.ts";
-import type { ContextItem, ContextPacket } from "../context/types.ts";
+import type { ContextPacket } from "../context/types.ts";
 import { PartitionWriter } from "../index/backfill.ts";
 import type { CanonicalIndex, FileWrite } from "../index/commit.ts";
 import { paths } from "../index/tree.ts";
@@ -62,22 +62,16 @@ import { type ModelId, installGateway } from "./gateway.ts";
 import { SceneStage, orchestratorTools } from "./orchestration.ts";
 import {
   BuilderBus,
+  FOLLOW_UP_ROUNDS,
   askBuilderTool,
   builderBrief,
   followUpBrief,
   readContextTool,
 } from "./packet-builder.ts";
-import { type StoryPlan, planTool, sceneCountFor, updatePlanTool } from "./plan.ts";
-import type { Draft } from "./scene-loop.ts";
 
-/**
- * Follow-up rounds the writer may spend on the builder.
- *
- * The brief said *"比如最多三轮"*. Three is the starting point rather than the
- * answer: every round is recorded with the findings that followed it, so whether
- * a third is worth its cost becomes a number instead of an argument.
- */
-export const FOLLOW_UP_ROUNDS = 3;
+export { FOLLOW_UP_ROUNDS };
+import { type StoryPlan, planTool, sceneCountFor, updatePlanTool } from "./plan.ts";
+import type { BuildResult, Draft } from "./scene-loop.ts";
 
 /** One shell read, with who ran it and during which scene. */
 export interface ReadRecord {
@@ -124,7 +118,7 @@ export interface Harness {
     readonly sceneId: string;
     readonly skeleton: ContextPacket;
     readonly note?: string;
-  }) => Promise<readonly ContextItem[]>;
+  }) => Promise<BuildResult>;
   readonly backfill: (input: {
     readonly sceneId: string;
     readonly draft: Draft;
@@ -386,7 +380,7 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
     readonly sceneId: string;
     readonly skeleton: ContextPacket;
     readonly note?: string;
-  }): Promise<readonly ContextItem[]> {
+  }): Promise<BuildResult> {
     builderBus.open(
       input.sceneId,
       input.skeleton.items.map((i) => i.id),
@@ -408,9 +402,9 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
     const contribution = builderBus.contribution();
     say(
       `${input.sceneId} context-builder added ${contribution.items.length} item(s) ` +
-        `after ${contribution.reads} read(s)`,
+        `after ${contribution.reads} read(s), and recorded ${contribution.gaps.length} gap(s)`,
     );
-    return contribution.items;
+    return { items: contribution.items, gaps: contribution.gaps };
   }
 
   /**

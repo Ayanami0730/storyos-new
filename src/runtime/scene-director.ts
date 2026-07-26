@@ -48,6 +48,7 @@ import type { Finding, SceneState } from "../transaction/types.ts";
 import { verifyDeterministic } from "../verification/deterministic.ts";
 import { blocking, renderRepairBrief, unchangedAcrossRound } from "../verification/finding.ts";
 import { type ArtifactStore, artifactPaths, renderAudit } from "./artifacts.ts";
+import { type ContextGap, FOLLOW_UP_ROUNDS, renderGaps } from "./packet-builder.ts";
 import {
   type Draft,
   type SceneCollaborators,
@@ -119,6 +120,7 @@ export class SceneDirector {
   #warnings: string[] = [];
   #lastAuditPath: string | null = null;
   #packetPath: string | null = null;
+  #gaps: readonly ContextGap[] = [];
   /** True when the model verification layer never ran for this scene. */
   #unverified = false;
 
@@ -223,16 +225,17 @@ export class SceneDirector {
     let builderSays = "";
     if (this.#deps.collaborators.build) {
       try {
-        const extra = await this.#deps.collaborators.build({
+        const built = await this.#deps.collaborators.build({
           sceneId: this.#request.sceneId,
           skeleton: packet,
           ...(note ? { note } : {}),
         });
-        added = extra.length;
-        if (extra.length > 0) {
+        added = built.items.length;
+        this.#gaps = built.gaps;
+        if (built.items.length > 0) {
           packet = buildContextPacket(this.#request.packet, [
             ...this.#request.available,
-            ...extra,
+            ...built.items,
           ]);
         }
       } catch (error) {
@@ -250,7 +253,8 @@ export class SceneDirector {
     if (this.#deps.artifacts) {
       this.#packetPath = await this.#deps.artifacts.write(
         artifactPaths.packet(this.#request.sceneId),
-        `# Context packet — ${this.#request.sceneId}\n\n${packet.rendered}\n`,
+        `# Context packet — ${this.#request.sceneId}\n\n${packet.rendered}\n` +
+          `${renderGaps(this.#gaps, FOLLOW_UP_ROUNDS)}\n`,
       );
     }
 
@@ -262,7 +266,8 @@ export class SceneDirector {
           `${packet.coverage.usedWords} words, coverage ${
             packet.coverage.complete ? "complete" : "partial"
           }.`,
-        `The builder added ${added} item(s) beyond the deterministic skeleton.`,
+        `The builder added ${added} item(s) beyond the deterministic skeleton, and recorded ` +
+          `${this.#gaps.length} gap(s) it could not fill from the index.`,
         this.#packetPath ? `Packet: ${this.#packetPath}` : "",
         builderSays,
       ]
@@ -294,6 +299,7 @@ export class SceneDirector {
         repairBrief: this.#repairBrief,
         packetPath: this.#packetPath,
         auditPath: this.#lastAuditPath,
+        gaps: this.#gaps,
         ...(note ? { note } : {}),
       });
     } catch (error) {

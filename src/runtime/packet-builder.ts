@@ -46,6 +46,39 @@ function toolText(text: string) {
   return { content: [{ type: "text", text }] };
 }
 
+/**
+ * Follow-up rounds the writer may spend on the builder.
+ *
+ * The brief said *"比如最多三轮"*. Three is the starting point rather than the
+ * answer: every round is recorded with the findings that followed it, so whether
+ * a third is worth its cost becomes a number instead of an argument. So far the
+ * number has been zero rounds in three runs, which says nothing about three and
+ * everything about the writer never being shown a reason to ask.
+ */
+export const FOLLOW_UP_ROUNDS = 3;
+
+/**
+ * Something this scene needs that the index does not contain.
+ *
+ * The reason this type exists is a measurement. Across three runs the writer
+ * asked the builder **zero** questions, with the tool registered, named in its
+ * prompt and given a section of its own. Reading a writer transcript explained
+ * why, and it was not reluctance: nothing in the packet said anything was
+ * missing. A packet presents itself as complete, an agent handed a complete
+ * document and an instruction to write does not stop to interrogate it, and the
+ * gaps only became visible at the moment the writer invented something to fill
+ * them — by which point asking is not the obvious move, finishing is.
+ *
+ * So the builder now says what it looked for and did not find. A named gap is
+ * something to ask about; an absence is not.
+ */
+export interface ContextGap {
+  /** What the scene needs, in the writer's terms. */
+  readonly need: string;
+  /** Where the builder looked, so the writer does not send it back over the same ground. */
+  readonly searched: string;
+}
+
 /** What the builder contributed, so its value can be measured rather than assumed. */
 export interface BuilderContribution {
   readonly sceneId: string;
@@ -54,6 +87,8 @@ export interface BuilderContribution {
   readonly reads: number;
   /** Follow-up questions answered for the writer in this scene. */
   readonly followUps: readonly { readonly question: string; readonly answer: string }[];
+  /** What this scene needs and the index does not have. */
+  readonly gaps: readonly ContextGap[];
 }
 
 /**
@@ -63,6 +98,7 @@ export interface BuilderContribution {
 export class BuilderBus {
   #items: ContextItem[] = [];
   #followUps: { question: string; answer: string }[] = [];
+  #gaps: ContextGap[] = [];
   #reads = 0;
   #sceneId = "s-000";
   #taken: ReadonlySet<string> = new Set();
@@ -80,6 +116,7 @@ export class BuilderBus {
     this.#sceneId = sceneId;
     this.#items = [];
     this.#followUps = [];
+    this.#gaps = [];
     this.#reads = 0;
     this.#taken = new Set(takenIds);
   }
@@ -98,6 +135,7 @@ export class BuilderBus {
       items: [...this.#items],
       reads: this.#reads,
       followUps: [...this.#followUps],
+      gaps: [...this.#gaps],
     };
   }
 
@@ -171,6 +209,35 @@ export class BuilderBus {
         },
       },
       {
+        label: "Note gap",
+        name: "note_gap",
+        description:
+          "Record something this scene will need that the index does not contain. Use it " +
+          "when a search comes back empty and the writer would otherwise have to invent " +
+          "the answer: a place with no description on file, two characters with no " +
+          "recorded history, a promise whose exact wording you could not find. This is " +
+          "not a failure to report — an unrecorded gap is the one the writer fills " +
+          "silently, and an invented fact is indistinguishable from an established one " +
+          "the moment it is on the page.",
+        parameters: Type.Object({
+          need: Type.String({ description: "What the scene needs, in the writer's terms" }),
+          searched: Type.String({
+            description: "Where you looked, so nobody sends you back over the same ground",
+          }),
+        }),
+        execute: async (_id: string, args: { need: string; searched: string }) => {
+          if (!args.need?.trim()) return toolText("rejected: say what is missing.");
+          if (!args.searched?.trim()) {
+            return toolText(
+              "rejected: say where you looked. A gap with no search behind it is a guess " +
+                "that something is absent, and the writer cannot tell the two apart.",
+            );
+          }
+          bus.#gaps.push({ need: args.need, searched: args.searched });
+          return toolText(`gap recorded: ${args.need}`);
+        },
+      },
+      {
         label: "Answer writer",
         name: "answer_writer",
         description:
@@ -226,6 +293,14 @@ export function builderBrief(input: {
     "Add what you find with add_context_item. Quote the material; a pointer is not context.",
     "Add nothing if there is nothing — a padded packet costs the writer attention it needs",
     "for the scene, and every item you add is also an item the verifier reads.",
+    "",
+    "Then record what you could **not** find, with note_gap. Read the scene's intent and ask",
+    "what a writer must know to write it: what this place looks like, whether these two have",
+    "met, what exactly was promised. For each one you searched for and did not find, note it.",
+    "This half matters as much as the first. What you add, the writer uses; what you record",
+    "as missing is what the writer would otherwise invent without noticing it was inventing —",
+    "and an invented fact is indistinguishable from an established one the moment it is on",
+    "the page.",
     input.packetPath
       ? `\nEverything you add is assembled into ${input.packetPath}, which is the document ` +
         `the writer works from. If it asks a follow-up later, your answer is appended to that ` +
@@ -245,6 +320,31 @@ export function builderBrief(input: {
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+/**
+ * The gap list, as the writer sees it.
+ *
+ * Rendered as a decision rather than a report. Every line offers exactly two
+ * moves and names the cost of each, because the failure being fixed is not that
+ * the writer chose badly — it is that it never noticed there was a choice.
+ */
+export function renderGaps(gaps: readonly ContextGap[], maxRounds: number): string {
+  if (gaps.length === 0) return "";
+  return [
+    "",
+    "## What the index does not have",
+    "",
+    "The context-builder searched for these and came back empty. Each is something this",
+    "scene needs, so each one you leave alone is one you will invent without meaning to.",
+    "",
+    ...gaps.map((g) => `- **${g.need}** (searched: ${g.searched})`),
+    "",
+    `For each: either ask \`ask_context_builder\` — you have ${maxRounds} questions and they`,
+    "cost far less than a repair round — or invent it deliberately and put it in your state",
+    "delta so it becomes canon rather than a floating detail. What you may not do is fill it",
+    "in silently; that is the one move nothing downstream can detect.",
+  ].join("\n");
 }
 
 /** The follow-up question, when the writer wants more before drafting. */

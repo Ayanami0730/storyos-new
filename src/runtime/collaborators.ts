@@ -28,6 +28,7 @@ import { makeFinding } from "../verification/finding.ts";
 import { LITERARY_EXEMPTIONS, SUBTYPES, subtypesForTier } from "../verification/taxonomy.ts";
 import { type Draft, type SceneCollaborators, VerificationUnavailable } from "./scene-loop.ts";
 import { type ResidentAgents, TurnFailed } from "../agents/residents.ts";
+import { FOLLOW_UP_ROUNDS, renderGaps } from "./packet-builder.ts";
 
 export class CollaboratorError extends Error {}
 
@@ -342,6 +343,18 @@ function orchestratorNote(note: string | undefined): string {
     note.trim(),
     "",
     "That is in addition to your standing instructions above, not instead of them.",
+    // The warning is for a measured failure, not a hypothetical one. On the
+    // first orchestrator-driven run its briefs specified whole scenes down to
+    // the invented detail — "give the quay a name/id on the folio and a quoted
+    // folio line with coordinates" — and the writer, handed a complete
+    // specification, asked the builder nothing across four scenes. A fact that
+    // arrives in a brief has been through neither the index nor the verifier,
+    // so treating one as established is how an invention becomes canon with
+    // nothing anywhere recording that it was invented.
+    "If it states a story fact that is not in your packet — a name, a measurement, a",
+    "quotation, a piece of history — that fact has not been checked against the index by",
+    "anyone. Ask about it or establish it yourself in the state delta. Do not write it down",
+    "as though it were already true.",
   ].join("\n");
 }
 
@@ -387,16 +400,9 @@ export function residentCollaborators(options: {
    * Ask the resident context-builder to enrich the skeleton. Omit to run without
    * a builder, which is the ablation that says what the builder is worth.
    */
-  readonly build?: (input: {
-    readonly sceneId: string;
-    readonly skeleton: ContextPacket;
-  }) => Promise<readonly ContextItem[]>;
+  readonly build?: SceneCollaborators["build"];
   /** Ask the resident index-manager to fold the approved scene into the index. */
-  readonly backfill?: (input: {
-    readonly sceneId: string;
-    readonly draft: Draft;
-    readonly packet: ContextPacket;
-  }) => Promise<readonly FileWrite[]>;
+  readonly backfill?: SceneCollaborators["backfill"];
 }): {
   readonly collaborators: SceneCollaborators;
   readonly toolsFor: (role: AgentRole) => unknown[];
@@ -410,7 +416,15 @@ export function residentCollaborators(options: {
     collaborators: {
       ...(options.build ? { build: options.build } : {}),
       ...(options.backfill ? { backfill: options.backfill } : {}),
-      async draft({ packet, attempt, repairBrief, packetPath, auditPath, note }): Promise<Draft> {
+      async draft({
+        packet,
+        attempt,
+        repairBrief,
+        packetPath,
+        auditPath,
+        gaps,
+        note,
+      }): Promise<Draft> {
         capture.prose = undefined;
         capture.delta = undefined;
 
@@ -418,6 +432,10 @@ export function residentCollaborators(options: {
           attempt === 0
             ? [
                 packet.rendered,
+                // Before the instruction to write, not after it. An agent given
+                // a document and an order to produce follows the order; the
+                // gaps have to arrive while there is still a decision to make.
+                renderGaps(gaps ?? [], FOLLOW_UP_ROUNDS),
                 "",
                 `Write scene ${sceneId}. Call write_staged_scene with the prose, then ` +
                   `propose_state_delta with everything it established.`,

@@ -36,7 +36,14 @@ import type { CommitResult, FileWrite } from "../index/commit.ts";
 import { CanonicalIndex } from "../index/commit.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
 import type { CanonFact, SceneDelta } from "../verification/deterministic.ts";
+import type { ContextGap } from "./packet-builder.ts";
 import { type DirectorDeps, SceneDirector } from "./scene-director.ts";
+
+/** What a context build produced: material found, and material known to be absent. */
+export interface BuildResult {
+  readonly items: readonly ContextItem[];
+  readonly gaps: readonly ContextGap[];
+}
 
 /** What the writer returns for one attempt. */
 export interface Draft {
@@ -93,7 +100,7 @@ export interface SceneCollaborators {
      * not the orchestrator's to relax.
      */
     readonly note?: string;
-  }): Promise<readonly ContextItem[]>;
+  }): Promise<BuildResult>;
 
   /** Draft, or redraft in response to findings. */
   draft(input: {
@@ -105,6 +112,16 @@ export interface SceneCollaborators {
     readonly packetPath?: string | null;
     /** Where the last audit is, on a repair round. */
     readonly auditPath?: string | null;
+    /**
+     * What the builder searched for and could not find.
+     *
+     * Carried to the writer because the alternative was measured and it does
+     * not work: across three runs the writer asked zero follow-up questions
+     * with the tool registered and its prompt describing it at length. A packet
+     * presents itself as complete, so there was nothing to ask about — the gaps
+     * only became apparent at the moment the writer filled one in.
+     */
+    readonly gaps?: readonly ContextGap[];
     readonly note?: string;
   }): Promise<Draft>;
 

@@ -16,6 +16,27 @@ that restates their role wastes a turn. Say what this scene needs that the last
 one did not — a thread to pick up, a register to hold, a fact you want checked
 especially hard.
 
+### A brief is not where facts come from
+
+This is the one way to misuse these tools, and it is an easy one because it feels
+like being helpful. On the first run driven this way, a brief to the writer read:
+*"give the quay a name/id on the folio and a quoted folio line with coordinates
+that contradicts Senna's measured azimuths."* Every specific in that sentence was
+invented in the brief. It had been through neither the index nor the verifier, and
+once the writer put it on the page nothing anywhere recorded that it had been made
+up. The writer also asked the context-builder nothing at all that run — handed a
+complete specification, there was nothing left to ask.
+
+So: if you find yourself supplying a name, a measurement, a quotation or a piece of
+history, you are writing the scene, and you are the one role that must not. Put the
+*need* in the builder's brief instead — "find or note the absence of a folio line
+for the quay Senna measured" — and let the writer receive it as material with a
+source, or as a declared gap it must ask about or establish deliberately.
+
+What belongs in a writer's brief: intent, emphasis, register, which thread this
+scene is carrying, what went wrong last time. What belongs in the builder's: what
+to go and look for.
+
 ## The calls are the transaction
 
 `call_context_builder`, `call_writer`, `call_verifier` and `call_index_manager`

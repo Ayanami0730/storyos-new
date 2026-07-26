@@ -20,6 +20,7 @@ import { CanonicalIndex } from "../index/commit.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
 import { makeFinding } from "../verification/finding.ts";
 import { ArtifactStore, artifactPaths } from "./artifacts.ts";
+import type { ContextGap } from "./packet-builder.ts";
 import { SceneStage, driveScene, orchestratorTools } from "./orchestration.ts";
 import { SceneDirector } from "./scene-director.ts";
 import {
@@ -91,18 +92,25 @@ function collaborators(options: {
   drafts?: Draft[];
   reviews?: (readonly import("../transaction/types.ts").Finding[])[];
   build?: readonly ContextItem[];
-} = {}): SceneCollaborators & { notes: (string | undefined)[] } {
+  gaps?: readonly ContextGap[];
+} = {}): SceneCollaborators & {
+  notes: (string | undefined)[];
+  gapsSeen: (readonly ContextGap[] | undefined)[];
+} {
   const notes: (string | undefined)[] = [];
+  const gapsSeen: (readonly ContextGap[] | undefined)[] = [];
   let draftIndex = 0;
   let reviewIndex = 0;
   return {
     notes,
+    gapsSeen,
     async build({ note }) {
       notes.push(note);
-      return options.build ?? [];
+      return { items: options.build ?? [], gaps: options.gaps ?? [] };
     },
-    async draft({ note }) {
+    async draft({ note, gaps }) {
       notes.push(note);
+      gapsSeen.push(gaps);
       const drafts = options.drafts ?? [goodDraft()];
       return drafts[Math.min(draftIndex++, drafts.length - 1)]!;
     },
@@ -260,6 +268,70 @@ describe("steps report what they produced", () => {
     await director.draft("short sentences");
 
     assert.deepEqual(collabs.notes, ["keep the fog out of it", "short sentences"]);
+  });
+});
+
+describe("gaps the index could not fill", () => {
+  const gaps: readonly ContextGap[] = [
+    { need: "what the warden tower looks like inside", searched: "locations/, novel/chapters/" },
+    { need: "whether Senna and Jun have met before", searched: "relations/, events/timeline.jsonl" },
+  ];
+
+  it("carries them from the build to the writer", async () => {
+    const { index, artifacts } = await freshIndex();
+    const collabs = collaborators({ gaps });
+    const director = new SceneDirector(request(), { index, artifacts, collaborators: collabs });
+
+    await director.buildContext();
+    await director.draft();
+
+    // The failure this fixes: three runs, zero follow-up questions, with the
+    // tool registered and the prompt describing it at length. A packet presents
+    // itself as complete, so there was nothing to ask about — the gaps only
+    // became visible at the moment the writer filled one in.
+    assert.deepEqual(collabs.gapsSeen[0], gaps);
+  });
+
+  it("puts them in the packet file, so a re-read still shows them", async () => {
+    const { index, artifacts } = await freshIndex();
+    const director = new SceneDirector(request(), {
+      index,
+      artifacts,
+      collaborators: collaborators({ gaps }),
+    });
+    await director.buildContext();
+
+    const packet = (await artifacts.read(artifactPaths.packet("s-011")))!;
+    assert.match(packet, /What the index does not have/);
+    assert.match(packet, /whether Senna and Jun have met before/);
+    // Where the builder looked, so the writer does not send it back over the
+    // same ground.
+    assert.match(packet, /events\/timeline\.jsonl/);
+  });
+
+  it("tells the orchestrator how many went unfilled", async () => {
+    const { index, artifacts } = await freshIndex();
+    const director = new SceneDirector(request(), {
+      index,
+      artifacts,
+      collaborators: collaborators({ gaps }),
+    });
+    const built = await director.buildContext();
+    assert.match(built.text, /2 gap\(s\)/);
+  });
+
+  it("says nothing when the index had everything", async () => {
+    const { index, artifacts } = await freshIndex();
+    const director = new SceneDirector(request(), {
+      index,
+      artifacts,
+      collaborators: collaborators(),
+    });
+    await director.buildContext();
+    // A gap section with no gaps in it is noise in the one place attention is
+    // most expensive.
+    const packet = (await artifacts.read(artifactPaths.packet("s-011")))!;
+    assert.doesNotMatch(packet, /What the index does not have/);
   });
 });
 
