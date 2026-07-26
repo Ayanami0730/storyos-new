@@ -42,11 +42,32 @@ export const DEFAULT_SHELL_LIMITS: ShellLimits = {
   maxCallsPerTransaction: 40,
 };
 
-/** Commands refused outright, with the reason the agent should read. */
+/**
+ * Commands refused outright, with the reason the agent should read.
+ *
+ * Worth being clear about what this list is and is not. It is a claim about the
+ * commands we thought of, and it will never be complete: `cp`, `touch` and
+ * `install` were all missing from it for weeks, and `sort -o` writes a file
+ * without appearing on anybody's list of dangerous commands. That is not an
+ * argument for a longer list — it is the argument for the sandbox, where the
+ * kernel refuses the write and completeness is not required of us.
+ *
+ * It stays anyway, for two reasons. It is the only barrier under the `none`
+ * backend, which is the control arm. And a refusal that says *"use the typed
+ * write tools so the change is validated and attributed"* teaches an agent what
+ * to do instead, where `Read-only file system` only teaches it that something
+ * broke.
+ */
 const FORBIDDEN: readonly { readonly pattern: RegExp; readonly why: string }[] = [
   {
     pattern: /(^|[\s;|&])(rm|mv|truncate|dd|shred)\s/,
     why: "canonical state changes only through the commit path, never through the shell",
+  },
+  {
+    pattern: /(^|[\s;|&])(cp|ln|touch|install|rsync|mkdir)\s/,
+    why:
+      "these write to the filesystem, and canonical state changes only through the commit " +
+      "path. Read with cat, grep, sed, find and ls; change things with the typed tools",
   },
   {
     pattern: />>?\s*\S/,

@@ -22,6 +22,8 @@
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { selectSandbox } from "../sandbox/backends.ts";
+import type { SandboxId } from "../sandbox/types.ts";
 import { ArtifactStore } from "../runtime/artifacts.ts";
 import { assembleHarness, defaultAgentsRoot, transcriptPath } from "../runtime/assembly.ts";
 import { TokenBudget, profileById, taskBudgetFor } from "../runtime/budget.ts";
@@ -47,6 +49,11 @@ interface Args {
    * for a measured run, which is why it has to be asked for and is recorded.
    */
   memoryDir: string | null;
+  /**
+   * How the write gate is enforced. `none` reproduces every run before this
+   * existed and is the control arm; `docker` is the strong claim.
+   */
+  sandbox: SandboxId;
 }
 
 async function parseArgs(argv: readonly string[]): Promise<Args> {
@@ -67,6 +74,7 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     maxRepairs: Number(get("--max-repairs") ?? 2),
     profile: get("--profile") ?? "parity",
     memoryDir: get("--memory-dir") ?? null,
+    sandbox: (get("--sandbox") as SandboxId | undefined) ?? "none",
   };
 }
 
@@ -79,8 +87,6 @@ const say = (line: string) =>
   console.error(`[${new Date().toISOString().slice(11, 19)}] ${line}`);
 
 const projectRoot = path.join(outDir, "project");
-const index = new CanonicalIndex(projectRoot);
-await index.init("genesis");
 
 /**
  * The partitioned tree, before anything runs.
@@ -89,12 +95,43 @@ await index.init("genesis");
  * partition it will not fill: `relations/` did not exist in the first
  * implementation until something wrote a relation, and nothing ever did.
  */
+// Created before the gate shuts, because the tree has to exist to be locked.
+await new CanonicalIndex(projectRoot).init("genesis");
 const { created } = await initialiseProject(projectRoot, {
   premise: args.premise,
   targetWords: args.target,
   agentsRoot: defaultAgentsRoot(),
 });
 say(`project initialised: ${created.length} paths under ${projectRoot}`);
+
+/**
+ * The write gate, shut before any agent exists.
+ *
+ * Then demonstrated rather than asserted: the backend attempts a forbidden
+ * write and reports what stopped it, and that result goes in the summary. A
+ * guarantee nobody checks is a comment, and a misconfigured mount should be
+ * caught in the second before a run rather than inferred from a damaged index
+ * an hour later.
+ */
+const selection = await selectSandbox(args.sandbox, projectRoot);
+const sandbox = selection.backend;
+if (selection.fellBackFrom) {
+  // Loud, because a run that silently downgraded would report a guarantee it
+  // does not have.
+  say(
+    `WARNING: --sandbox ${selection.fellBackFrom} was unavailable (${selection.reason}); ` +
+      `running with ${sandbox.id} enforcement instead`,
+  );
+}
+const gate = await sandbox.probe();
+say(
+  `write gate: ${sandbox.id} (${sandbox.enforcement}) — ` +
+    `${gate.writeRefused ? "verified" : "NOT ENFORCED"}: ${gate.detail}`,
+);
+
+const index = new CanonicalIndex(projectRoot, {
+  writeGate: (fn) => sandbox.withWriteAccess(fn),
+});
 
 const profile = profileById(args.profile);
 const taskBudget = taskBudgetFor(profile, args.target);
@@ -115,6 +152,7 @@ const harness = await assembleHarness({
   backbone: args.backbone,
   memoryRoot: args.memoryDir ? path.resolve(args.memoryDir) : projectRoot,
   runId,
+  sandbox,
   log: say,
   // The brief asked for raw conversation on disk, and its absence has already
   // cost real time: reconstructing what an agent was told in a finished run
@@ -157,6 +195,8 @@ try {
   fatal = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
 }
 
+await sandbox.dispose();
+
 const elapsedMs = Date.now() - started;
 const onDisk = await committedOnDisk(projectRoot);
 
@@ -190,6 +230,15 @@ const summary = await buildSummary({
   elapsedMs,
   onDisk,
   referenceReport,
+  sandbox: {
+    id: sandbox.id,
+    enforcement: sandbox.enforcement,
+    requested: args.sandbox,
+    fell_back_from: selection.fellBackFrom,
+    fallback_reason: selection.reason,
+    gate_verified: gate.writeRefused,
+    gate_detail: gate.detail,
+  },
 });
 
 await writeFile(

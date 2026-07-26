@@ -72,6 +72,14 @@ export interface SummaryInput {
   readonly elapsedMs: number;
   readonly onDisk: { readonly scenes: readonly string[]; readonly words: number };
   readonly referenceReport: ReferenceReport;
+  /**
+   * What actually enforced the write gate, and whether it was demonstrated.
+   *
+   * In the summary rather than the log because it qualifies every other number
+   * in the file: "only index-manager writes canonical state" is a different
+   * claim when a mount enforced it than when a regular expression did.
+   */
+  readonly sandbox: Record<string, unknown>;
 }
 
 export async function buildSummary(input: SummaryInput): Promise<Record<string, unknown>> {
@@ -187,6 +195,7 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
       utilisation: Number((budget.spent / input.taskBudget).toFixed(3)),
       tokens_per_output_word: Number((budget.spent / Math.max(1, onDisk.words)).toFixed(1)),
     },
+    sandbox: input.sandbox,
     context: {
       thresholds: thresholdsFor(profile),
       // The ceiling actually reached, so a run that needed the larger window is

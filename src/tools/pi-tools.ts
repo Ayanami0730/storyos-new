@@ -42,6 +42,20 @@ export interface NativeToolOptions {
     readonly command: string;
     readonly durationMs: number;
   }) => void;
+  /**
+   * Where a command actually runs.
+   *
+   * Supplied by a sandbox backend that confines it. Omitted, commands run on the
+   * host with the refusal list as the only barrier — which is what every run
+   * before the sandbox existed did, and is the honest control arm rather than a
+   * secret default.
+   */
+  readonly shell?: {
+    exec(
+      command: string,
+      options?: { cwd?: string; timeoutMs?: number },
+    ): Promise<{ stdout: string; stderr: string; exitCode: number }>;
+  };
 }
 
 interface HarnessTool {
@@ -116,7 +130,44 @@ function adapt(tool: HarnessTool, env: NodeExecutionEnv): unknown {
  */
 export function nativeTools(options: NativeToolOptions): unknown[] {
   const limits: ShellLimits = { ...DEFAULT_SHELL_LIMITS, ...options.limits };
-  const env = new NodeExecutionEnv({ cwd: options.projectRoot });
+  const host = new NodeExecutionEnv({ cwd: options.projectRoot });
+  /**
+   * Reads stay on the host, execution may not.
+   *
+   * pi's `read` goes through `readTextFile`, and every role is meant to see the
+   * whole tree — confining reads would break the uniform-read-reach guarantee to
+   * solve a problem nobody has. Writes are the thing being gated, and the only
+   * write vector an agent has is `bash`, so swapping `exec` alone is both
+   * necessary and sufficient.
+   */
+  const env = options.shell
+    ? (Object.create(host, {
+        exec: {
+          value: async (
+            command: string,
+            opts?: {
+              cwd?: string;
+              timeout?: number;
+              onStdout?: (chunk: string) => void;
+              onStderr?: (chunk: string) => void;
+            },
+          ) => {
+            const result = await options.shell!.exec(command, {
+              ...(opts?.cwd ? { cwd: opts.cwd } : {}),
+              ...(opts?.timeout ? { timeoutMs: opts.timeout } : {}),
+            });
+            // pi captures output through these callbacks, not from the return
+            // value — the return only carries the exit code. A backend that
+            // fills in `stdout` and stops produces a tool result the model sees
+            // as empty, which is the silent-payload failure from `FOUNDATION`
+            // gotcha 4 wearing different clothes.
+            if (result.stdout) opts?.onStdout?.(result.stdout);
+            if (result.stderr) opts?.onStderr?.(result.stderr);
+            return { ok: true as const, value: result };
+          },
+        },
+      }) as NodeExecutionEnv)
+    : host;
   const used = new Map<string, number>();
 
   const bash = createBashTool({

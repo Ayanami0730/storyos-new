@@ -97,10 +97,28 @@ function assertInsideRoot(root: string, relPath: string): string {
 export class CanonicalIndex {
   readonly #root: string;
   readonly #now: () => Date;
+  readonly #gate: <T>(fn: () => Promise<T>) => Promise<T>;
 
-  constructor(root: string, options: { readonly now?: () => Date } = {}) {
+  constructor(
+    root: string,
+    options: {
+      readonly now?: () => Date;
+      /**
+       * Opens the canonical tree for the duration of a write and shuts it
+       * again.
+       *
+       * Supplied by a sandbox backend. It belongs here rather than at the call
+       * sites because this class is the definition of "a write to canonical
+       * state" — putting the gate anywhere else would mean a future write path
+       * could be added without one, which is exactly how v2 ended up with the
+       * write path spread across modules.
+       */
+      readonly writeGate?: <T>(fn: () => Promise<T>) => Promise<T>;
+    } = {},
+  ) {
     this.#root = path.resolve(root);
     this.#now = options.now ?? (() => new Date());
+    this.#gate = options.writeGate ?? ((fn) => fn());
   }
 
   get root(): string {
@@ -153,6 +171,15 @@ export class CanonicalIndex {
     const files = [request.prose, ...request.stateDelta, ...(request.derived ?? [])];
     for (const f of files) assertInsideRoot(this.#root, f.relPath);
 
+    // The gate opens only after every refusal has been checked, so a rejected
+    // commit never unlocks the tree at all.
+    return this.#gate(() => this.#write(request, files));
+  }
+
+  async #write(
+    request: CommitRequest,
+    files: readonly FileWrite[],
+  ): Promise<CommitResult> {
     const at = this.#now().toISOString();
     const commitId = digest([
       request.baseCommitId,
@@ -246,19 +273,26 @@ export class CanonicalIndex {
       );
     }
     for (const f of files) assertInsideRoot(this.#root, f.relPath);
-    const at = this.#now().toISOString();
-    const baseCommitId = await this.head();
-    const commitId = digest([baseCommitId, "seed", at, ...files.flatMap((f) => [f.relPath, f.content])]);
+    return this.#gate(async () => {
+      const at = this.#now().toISOString();
+      const baseCommitId = await this.head();
+      const commitId = digest([
+        baseCommitId,
+        "seed",
+        at,
+        ...files.flatMap((f) => [f.relPath, f.content]),
+      ]);
 
-    for (const f of files) {
-      const full = path.resolve(this.#root, f.relPath);
-      await mkdir(path.dirname(full), { recursive: true });
-      await writeFile(full, f.content, "utf8");
-    }
-    await writeFile(path.join(this.#root, HEAD), commitId, "utf8");
-    fsyncDir(this.#root);
+      for (const f of files) {
+        const full = path.resolve(this.#root, f.relPath);
+        await mkdir(path.dirname(full), { recursive: true });
+        await writeFile(full, f.content, "utf8");
+      }
+      await writeFile(path.join(this.#root, HEAD), commitId, "utf8");
+      fsyncDir(this.#root);
 
-    return { commitId, baseCommitId, writtenPaths: files.map((f) => f.relPath), at };
+      return { commitId, baseCommitId, writtenPaths: files.map((f) => f.relPath), at };
+    });
   }
 
   /**

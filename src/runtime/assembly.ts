@@ -55,6 +55,7 @@ import type { AgentRole } from "../transaction/types.ts";
 import { readIndexTool } from "../tools/read-index.ts";
 import { nativeTools } from "../tools/pi-tools.ts";
 import { relationHistoryTool } from "../tools/relation-tool.ts";
+import type { SandboxBackend } from "../sandbox/types.ts";
 import { type ArtifactStore, artifactPaths, renderFollowUp } from "./artifacts.ts";
 import { type BudgetProfile, TokenBudget } from "./budget.ts";
 import { SceneToolBus } from "./collaborators.ts";
@@ -95,6 +96,11 @@ export interface AssemblyOptions {
   readonly memoryRoot: string;
   /** One id per run, so transcripts from separate runs never interleave. */
   readonly runId: string;
+  /**
+   * Where agent shell commands run, when a backend confines them. Omitted, they
+   * run on the host with the refusal list as the only barrier.
+   */
+  readonly sandbox?: SandboxBackend;
   readonly log: (line: string) => void;
   readonly transcriptSink: (
     role: AgentRole,
@@ -278,6 +284,9 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
           : [
               ...nativeTools({
                 projectRoot,
+                ...(options.sandbox && options.sandbox.id !== "none"
+                  ? { shell: options.sandbox.shell }
+                  : {}),
                 budgetKey: () => `${role}:${scene()}`,
                 // Attributed per role. One shared counter would credit the
                 // builder with the verifier's reads too, and "was the grep worth

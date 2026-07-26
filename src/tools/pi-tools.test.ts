@@ -106,6 +106,67 @@ describe("pi's bash, with our policy in its prepare hook", () => {
   });
 });
 
+describe("bash routed through a sandbox", () => {
+  /** A stand-in backend that records what it was asked to run. */
+  function recordingShell() {
+    const ran: string[] = [];
+    return {
+      ran,
+      exec: async (command: string) => {
+        ran.push(command);
+        return { stdout: "from the sandbox", stderr: "", exitCode: 0 };
+      },
+    };
+  }
+
+  it("sends the command to the backend instead of the host", async () => {
+    const root = await mkdtemp(path.join(tmpdir(), "storyos-pitools-sb-"));
+    await writeFile(path.join(root, "note.md"), "on the host\n", "utf8");
+    const shell = recordingShell();
+    const tools = nativeTools({
+      projectRoot: root,
+      budgetKey: () => "tx-1",
+      shell,
+    }) as Tool[];
+
+    const out = await tools
+      .find((t) => t.name === "bash")!
+      .execute("1", { command: "cat note.md" });
+
+    // The integration point that makes the whole gate real: the tool the agent
+    // holds must run where the confinement is, not next to it.
+    assert.deepEqual(shell.ran, ["cat note.md"]);
+    assert.match(text(out), /from the sandbox/);
+  });
+
+  it("still refuses a forbidden command before it reaches the backend", async () => {
+    const root = await mkdtemp(path.join(tmpdir(), "storyos-pitools-sb2-"));
+    const shell = recordingShell();
+    const tools = nativeTools({
+      projectRoot: root,
+      budgetKey: () => "tx-1",
+      shell,
+    }) as Tool[];
+
+    const out = await tools
+      .find((t) => t.name === "bash")!
+      .execute("1", { command: "echo x > world/rules.yaml" });
+
+    // Two independent barriers, in the right order. The sandbox is what makes
+    // the guarantee true; the policy is what makes the refusal *legible* — an
+    // agent told "writes go through the typed tools" tries the typed tool,
+    // where one told "Read-only file system" tries something else.
+    assert.deepEqual(shell.ran, []);
+    assert.match(text(out), /typed write tools|redirection/);
+  });
+
+  it("runs on the host when no backend is supplied, which is the control arm", async () => {
+    const { bash } = await project();
+    const out = await bash.execute("1", { command: "cat note.md" });
+    assert.match(text(out), /harbour warden/);
+  });
+});
+
 describe("pi's read", () => {
   it("reads a file, and can page rather than truncating blindly", async () => {
     const { root, read } = await project();
