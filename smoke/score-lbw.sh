@@ -30,6 +30,11 @@ mkdir -p "$OUT_ROOT/$SYSTEM/longbench-write"
 cp "$RUN_DIR/story.md" "$OUT_ROOT/$SYSTEM/longbench-write/$TASK_ID.txt"
 
 cd "$LBW"
+# score_lbw.py puts only its own directory on sys.path, but lbw_systems.py imports
+# src.baselines, so the repo root has to come through PYTHONPATH. This is what
+# the worktree's own score_full.sh does.
+REPO_ROOT="$(cd ../.. && pwd)"
+export PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 python3 score_lbw.py \
   --systems "$SYSTEM" \
   --tasks "$TASK_ID" \

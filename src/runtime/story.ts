@@ -519,7 +519,19 @@ export function renderRevisionPlan(input: {
     `Capabilities established: ${revision.coverage.capabilitiesChecked}.`,
     "",
     revision.tasks.length === 0
-      ? "No revision tasks. Nothing in the story is owed to the reader and unpaid."
+      ? revision.coverage.contractsOpen > 0
+        ? // Two numbers on the same page must not contradict each other. The
+          // first version said "nothing is owed to the reader and unpaid"
+          // directly under "still unpaid: 2", because it read the task count
+          // and described the promise count. An open promise with no deadline
+          // is not yet a defect — the global pass only raises one once a
+          // declared `due_by_scene` has passed — but saying nothing is owed
+          // when something is owed teaches the reader to distrust the file.
+          `No revision tasks. ${revision.coverage.contractsOpen} promise(s) are still ` +
+          `open, but none declared a scene by which they had to pay off, so nothing is ` +
+          `overdue. Judge them yourself: an open loop the story never returns to reads ` +
+          `as abandonment whether or not a deadline was written down.`
+        : "No revision tasks, and no promise left unpaid."
       : revision.tasks
           .map(
             (task, i) =>
