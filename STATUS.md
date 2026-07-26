@@ -70,8 +70,73 @@ otherwise, and the summary records which.
 (a run at `--max-repairs 4` committed scenes at attempt 4 that a run at 2 would
 have thrown away); the verifier's remaining rejections are spatial and causal
 reasoning, which may be real defects the writer cannot repair or may need a
-different repair brief; promises are still declared and never paid; the revision
-phase still produces tasks nothing consumes.
+different repair brief.
+
+## 0c. Iteration log — 2026-07-26, the orchestrator actually orchestrating
+
+The previous round got all five agents live and produced the first clean run
+(`runs/v8-native`: 4/4 scenes committed, 3,936 of 4,000 words, no dangling
+cross-partition references, `relations/` and `beliefs.jsonl` populated for the
+first time). Reading its transcripts turned up the thing this round is about.
+
+**The orchestrator sent eight messages in the entire run and delegated nothing.**
+It planned, called `update_plan` once, and stopped. Every scene was driven by the
+engine calling the other four in a fixed order. Its own `AGENT.md` described a
+loop — "open a transaction, have context built, have the scene drafted, send both
+to the verifier" — that it had no tools to perform: `delegationTools` existed in
+`residents.ts`, had tests, and was **never registered on any agent**. So the
+architecture's central claim, five agents collaborating over a shared index, was
+being carried by four agents and a for-loop.
+
+What changed:
+
+- **`SceneDirector`** breaks the scene transaction into steps that refuse to run
+  out of order. Both drivers use the same steps: `runScene` walks them
+  deterministically (what tests use), and `orchestratorTools` exposes them as
+  `call_context_builder` / `call_writer` / `call_verifier` / `call_index_manager`.
+  A call in the wrong state comes back naming the state and the legal next call.
+- **`call_index_manager` is the commit.** Not a delegation followed by a commit —
+  index-manager is the only actor that may produce COMMITTED, so the delegation
+  and the transition are one call and there is no second commit tool for a
+  different role to reach.
+- **The engine finishes what the orchestrator leaves**, and records how many
+  steps it had to rescue. That number is the measurement: a scene carried to a
+  commit by the orchestrator alone is evidence agent-driven orchestration works;
+  a rescued one is evidence it does not yet. Either way the novel gets written,
+  which matters because losing an approved scene to a missed tool call would
+  corrupt the only headline number with a failure unrelated to writing.
+- **Artefacts are paths, not inlined strings.** The packet goes to
+  `.context-builder/history/<ch>/<scene>.md`, drafts to `.writer/drafts/`, audits
+  to `.verifier/audits/<scene>-aN.md`, the orchestrator's own account to
+  `.orchestrator/scenes/`. A follow-up answer is **appended to the packet it was
+  asked about** and the writer re-reads it with `read_context`, which is what the
+  brief described. Before this, the orchestrator had never seen any artefact of
+  any scene, which made "decide whether the outline needs revising" a decision
+  from nothing.
+- **The revision phase is consumed.** It produced tasks for two rounds and
+  changed no prose in either, because nothing read them. The plan is now written
+  to `.orchestrator/revision-plan.md` and put in front of the orchestrator, which
+  judges each task rather than accepting it — with the two constraints that make
+  it hard stated: later scenes were written against the defect, and a payoff with
+  no preparation reads worse than the abandonment it repairs.
+
+Three pieces of debt were paid at the same time:
+
+- **The persona allowlists were fiction.** They named six tools that no factory
+  built (`open_transaction`, `build_context_packet`, `apply_state_delta`, …) while
+  the factory ignored the list entirely. They now name real tools and the factory
+  checks both directions — granted-but-unlisted is an unreviewed capability,
+  listed-but-not-granted is a role that cannot do its job and will not say so
+  until mid-scene. `smoke/allowlist.ts` builds all five before a run starts.
+- **Dead code removed**: `piAgentFactory`, `commitRevision` (which still wrote to
+  the flat `manuscript/` path the tree replaced), and the unregistered
+  `delegationTools` — the third parallel tool mechanism in this repo.
+- **The CLI stopped being a god object**: 691 → 213 lines, with assembly, summary
+  and planning in modules named after what they do.
+
+309 tests and typecheck pass. Whether the orchestrator uses any of this is a
+question for the run, not the code — the previous round is a standing reminder
+that having a tool and using it are different facts.
 
 ## 1. Sync gaps — CLOSED 2026-07-25 14:00
 

@@ -8,8 +8,10 @@ import { SceneStage, delegationToolNameFor, orchestratorTools } from "../runtime
 import { PERSONAS } from "./personas.ts";
 import {
   type AgentLike,
+  DEFAULT_TURN_TIMEOUT_MS,
   DelegationError,
   ResidentAgents,
+  defaultTurnTimeoutFor,
 } from "./residents.ts";
 
 const AGENTS_ROOT = path.join(
@@ -233,6 +235,31 @@ describe("a turn that stops responding", () => {
     const entry = registry.ledger().at(-1)!;
     assert.equal(entry.role, "writer");
     assert.equal(entry.stopReason, "timeout");
+  });
+
+  it("gives the orchestrator room for the turns its own turn contains", () => {
+    // The bug this pins was one edit away from shipping. Once the orchestrator
+    // drives the loop, a single `call_verifier` blocks for a whole verifier
+    // turn, and one scene nests a build, a draft, a review and a commit plus up
+    // to two more draft-and-review pairs. Against the slowest turns measured
+    // (verifier 527s, builder 118s, index-manager 136s) a repaired scene is
+    // around 2,000s of entirely legitimate work — so a specialist's ceiling
+    // applied to the orchestrator would abort healthy scenes mid-commit and
+    // blame a timeout.
+    const slowestSpecialistTurnMs = 527_000;
+    const scenesWorstCase = 118_000 + 3 * (64_000 + slowestSpecialistTurnMs) + 136_000;
+
+    assert.ok(
+      defaultTurnTimeoutFor("orchestrator") > scenesWorstCase,
+      "the orchestrator must outlast a scene that spends its whole repair budget",
+    );
+    for (const role of PERSONAS.map((p) => p.role).filter((r) => r !== "orchestrator")) {
+      assert.equal(defaultTurnTimeoutFor(role), DEFAULT_TURN_TIMEOUT_MS);
+      assert.ok(
+        defaultTurnTimeoutFor(role) > slowestSpecialistTurnMs,
+        `${role}'s ceiling must sit above the slowest legitimate turn observed`,
+      );
+    }
   });
 });
 

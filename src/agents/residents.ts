@@ -100,22 +100,53 @@ export class TurnTimeout extends Error {
   constructor(role: AgentRole, ms: number) {
     super(
       `${role} did not finish its turn within ${Math.round(ms / 1000)}s and was aborted. ` +
-        `Median turns are around 45s and the slowest observed was 301s, so this is a stalled ` +
-        `request rather than a slow one.`,
+        (role === "orchestrator"
+          ? `An orchestrator turn nests the specialists' turns, so this ceiling is far above ` +
+            `any legitimate scene — reaching it means it was looping, not working.`
+          : `The slowest legitimate turn observed is 527s, so this is a stalled request ` +
+            `rather than a slow one.`),
     );
     this.name = "TurnTimeout";
   }
 }
 
 /**
- * Ceiling on a single turn, tool loop included.
+ * Ceiling on a specialist's turn, tool loop included.
  *
- * Twice the slowest turn we have measured. Without it one stalled socket ends
- * the run: a 24k-word attempt sat on a single established connection for over
- * twenty minutes with no CPU, no output and no error, and would have sat there
- * indefinitely — at forty scenes that is not an edge case, it is a certainty.
+ * Without one, a stalled socket ends the run: a 24k-word attempt sat on a single
+ * established connection for over twenty minutes with no CPU, no output and no
+ * error, and would have sat there indefinitely — at forty scenes that is not an
+ * edge case, it is a certainty.
+ *
+ * Raised from 600s on 2026-07-26 because the measurement it was calibrated
+ * against had moved. It was set at twice the slowest turn then observed (301s);
+ * the slowest since is a 527s verifier turn, which left 14% of headroom on a
+ * legitimate turn. The gateway's own 300s per-request timeout is what catches a
+ * dead socket now, so this is the backstop for a turn that keeps making calls
+ * without finishing rather than the first line of defence.
  */
-export const DEFAULT_TURN_TIMEOUT_MS = 600_000;
+export const DEFAULT_TURN_TIMEOUT_MS = 900_000;
+
+/**
+ * Ceiling on the orchestrator's turn.
+ *
+ * Much larger, and not because the orchestrator is slower. Its turn is a
+ * *supervisor* turn: a single `call_verifier` blocks for a whole verifier turn,
+ * and driving one scene nests a build, a draft, a review and a commit, plus two
+ * more draft-and-review pairs if the repair budget is spent. At the slowest
+ * turns we have measured that is around 2,000s of legitimate work, all of it
+ * already guarded turn by turn underneath.
+ *
+ * So this number is not protecting against a hang — the children are. It is
+ * protecting against an orchestrator that has started looping, and it is set
+ * where a scene that is merely slow can never reach it.
+ */
+export const ORCHESTRATOR_TURN_TIMEOUT_MS = 5_400_000;
+
+/** The ceiling for a role. */
+export function defaultTurnTimeoutFor(role: AgentRole): number {
+  return role === "orchestrator" ? ORCHESTRATOR_TURN_TIMEOUT_MS : DEFAULT_TURN_TIMEOUT_MS;
+}
 
 export type AgentFactory = (
   persona: PersonaSpec,
@@ -210,7 +241,7 @@ export class ResidentAgents {
   readonly #compaction: CompactionConfig | null;
   readonly #budget: TokenBudget | null;
   readonly #promptSuffix: ((role: AgentRole) => string) | null;
-  readonly #turnTimeoutMs: number;
+  readonly #turnTimeoutFor: (role: AgentRole) => number;
   readonly #transcriptSink:
     | ((
         role: AgentRole,
@@ -245,8 +276,12 @@ export class ResidentAgents {
      * compaction would be the thing compaction eats.
      */
     readonly promptSuffix?: (role: AgentRole) => string;
-    /** Per turn, tool loop included. See `DEFAULT_TURN_TIMEOUT_MS`. */
-    readonly turnTimeoutMs?: number;
+    /**
+     * Per turn, tool loop included. A number applies to every role; a function
+     * lets the orchestrator have the larger ceiling its nested turns need. See
+     * `defaultTurnTimeoutFor`.
+     */
+    readonly turnTimeoutMs?: number | ((role: AgentRole) => number);
     /**
      * Append a turn's raw messages to disk.
      *
@@ -274,7 +309,13 @@ export class ResidentAgents {
     this.#compaction = options.compaction ?? null;
     this.#budget = options.budget ?? null;
     this.#promptSuffix = options.promptSuffix ?? null;
-    this.#turnTimeoutMs = options.turnTimeoutMs ?? DEFAULT_TURN_TIMEOUT_MS;
+    const timeout = options.turnTimeoutMs;
+    this.#turnTimeoutFor =
+      typeof timeout === "function"
+        ? timeout
+        : typeof timeout === "number"
+          ? () => timeout
+          : defaultTurnTimeoutFor;
     this.#transcriptSink = options.transcriptSink ?? null;
   }
 
@@ -357,7 +398,8 @@ export class ResidentAgents {
     const agent = this.agent(role);
     const before = agent.state.messages.length;
     const started = this.#now();
-    const timedOut = await this.#promptWithDeadline(agent, task);
+    const deadlineMs = this.#turnTimeoutFor(role);
+    const timedOut = await this.#promptWithDeadline(agent, task, deadlineMs);
     const durationMs = this.#now() - started;
 
     const fresh = agent.state.messages.slice(before);
@@ -374,7 +416,7 @@ export class ResidentAgents {
     }
     if (timedOut) {
       this.#budget?.charge(entry.usage.total);
-      throw new TurnTimeout(role, this.#turnTimeoutMs);
+      throw new TurnTimeout(role, deadlineMs);
     }
     const text = textOf(fresh);
     // Charge before compacting: the tokens were spent either way, and a run
@@ -391,10 +433,14 @@ export class ResidentAgents {
    * streaming into `state.messages`, so a later turn would find another
    * agent's half-finished reply appended to its own transcript.
    */
-  async #promptWithDeadline(agent: AgentLike, task: string): Promise<boolean> {
+  async #promptWithDeadline(
+    agent: AgentLike,
+    task: string,
+    timeoutMs: number,
+  ): Promise<boolean> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const deadline = new Promise<"timeout">((resolve) => {
-      timer = setTimeout(() => resolve("timeout"), this.#turnTimeoutMs);
+      timer = setTimeout(() => resolve("timeout"), timeoutMs);
     });
     try {
       const outcome = await Promise.race([
