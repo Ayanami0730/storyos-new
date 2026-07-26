@@ -48,6 +48,7 @@ import type { Finding, SceneState } from "../transaction/types.ts";
 import { verifyDeterministic } from "../verification/deterministic.ts";
 import { blocking, renderRepairBrief, unchangedAcrossRound } from "../verification/finding.ts";
 import { type ArtifactStore, artifactPaths, renderAudit } from "./artifacts.ts";
+import { BudgetExhausted } from "./budget.ts";
 import { type ContextGap, FOLLOW_UP_ROUNDS, renderGaps } from "./packet-builder.ts";
 import {
   type Draft,
@@ -239,6 +240,7 @@ export class SceneDirector {
           ]);
         }
       } catch (error) {
+        if (error instanceof BudgetExhausted) throw error;
         const message = error instanceof Error ? error.message : String(error);
         this.#warnings.push(`context-builder failed: ${message}`);
         builderSays = `The builder failed (${message}); the skeleton was used unchanged.`;
@@ -303,6 +305,10 @@ export class SceneDirector {
         ...(note ? { note } : {}),
       });
     } catch (error) {
+      // A spent budget is the one failure that is not this scene's. Swallowing
+      // it as an aborted scene is what let a run continue past its own hard
+      // stop and turn a 2% overrun into 50%.
+      if (error instanceof BudgetExhausted) throw error;
       // A collaborator that never produced an artefact ends this scene, not the
       // run. Recorded like a rejection: the failure rate is a result we want,
       // and a harness that halts on the first misbehaving turn produces none.
@@ -500,6 +506,7 @@ export class SceneDirector {
           ...(note ? { note } : {}),
         });
       } catch (error) {
+        if (error instanceof BudgetExhausted) throw error;
         // A backfill that fails does not lose the scene: the prose and the
         // declared delta still land, and the gap shows up in the reference
         // check rather than being silently absent.

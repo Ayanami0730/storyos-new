@@ -8,6 +8,36 @@ import {
   TokenBudget,
 } from "./budget.ts";
 
+describe("the hard stop actually stopping", () => {
+  it("refuses before spending once the ceiling is passed", () => {
+    const budget = new TokenBudget(100);
+    assert.throws(() => budget.charge(150), BudgetExhausted);
+    // `charge` can only ever notice an overrun after the tokens are gone. This
+    // is the check that makes the stop hard, and it fires without spending
+    // anything at all.
+    assert.equal(budget.exhausted, true);
+    assert.throws(() => budget.assertNotExhausted(), BudgetExhausted);
+    assert.equal(budget.spent, 150);
+  });
+
+  it("stays quiet while there is room, including exactly at the ceiling", () => {
+    const budget = new TokenBudget(100);
+    budget.charge(100);
+    assert.equal(budget.exhausted, false);
+    assert.doesNotThrow(() => budget.assertNotExhausted());
+  });
+
+  it("keeps reporting the real overrun rather than the ceiling", () => {
+    // The first run to reach this passed 8M at 8.1M and went on to spend 12.0M,
+    // because each scene caught the throw and the next scene tried anyway. What
+    // the summary reports has to stay the truth even so.
+    const budget = new TokenBudget(8_000_000);
+    assert.throws(() => budget.charge(8_149_485), BudgetExhausted);
+    assert.equal(budget.spent, 8_149_485);
+    assert.equal(budget.remaining, 0);
+  });
+});
+
 describe("the shared budget", () => {
   it("matches the values the baseline runners already fixed", () => {
     // experiments/novelbench-run/run_nbrun.py: WRITER_TOKEN_CAP / TOKEN_BUDGET.

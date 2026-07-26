@@ -168,6 +168,25 @@ export class TokenBudget {
     return this.#budget;
   }
 
+  /** True once the ceiling has been passed and nothing further should be spent. */
+  get exhausted(): boolean {
+    return this.#spent > this.#budget;
+  }
+
+  /**
+   * Refuse before spending, rather than reporting after.
+   *
+   * `charge` can only ever notice an overrun once the tokens are gone, because
+   * a call's cost is not known until it returns. That made the "hard stop" soft
+   * in the only way that matters: on the first run to hit it, the ceiling was
+   * passed at 8.1M of 8M and the run went on to spend **12.0M** — the loop
+   * caught the throw per scene, moved to the next scene, and paid for two more
+   * plus a revision pass. A 2% overrun was reported as 50%.
+   */
+  assertNotExhausted(): void {
+    if (this.exhausted) throw new BudgetExhausted(this.#spent, this.#budget);
+  }
+
   /** Charge a completed call. Throws once the total is past the ceiling. */
   charge(tokens: number): void {
     this.#spent += tokens;

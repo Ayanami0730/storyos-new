@@ -20,6 +20,7 @@ import { chapterFor, paths, sceneIndexOf } from "../index/tree.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
 import type { ResidentAgents } from "../agents/residents.ts";
 import { type ArtifactStore, artifactPaths } from "./artifacts.ts";
+import { BudgetExhausted } from "./budget.ts";
 import { type SceneToolBus, residentCollaborators } from "./collaborators.ts";
 import { type SceneStage, driveScene, sceneBrief } from "./orchestration.ts";
 import { type RevisionPlan, planRevisions } from "./revision.ts";
@@ -319,24 +320,40 @@ export async function writeStory(options: {
       { index, collaborators, artifacts: options.artifacts },
     );
 
-    const run = await driveScene({
-      residents,
-      stage: options.stage,
-      director,
-      txid,
-      brief: sceneBrief({
-        sceneId: card.id,
-        intent: card.intent,
-        presentEntities: card.presentEntities,
-        targetWords: card.targetWords,
-        chapter: chapterFor(sceneIndexOf(card.id)),
-        position: { index: i + 1, total: (planSink.plan ?? plan).scenes.length },
-        committed: committedScenes,
-        failed: failures.map((f) => f.sceneId),
-        repairBudget: maxRepairs,
-      }),
-      log: say,
-    });
+    let run: Awaited<ReturnType<typeof driveScene>>;
+    try {
+      run = await driveScene({
+        residents,
+        stage: options.stage,
+        director,
+        txid,
+        brief: sceneBrief({
+          sceneId: card.id,
+          intent: card.intent,
+          presentEntities: card.presentEntities,
+          targetWords: card.targetWords,
+          chapter: chapterFor(sceneIndexOf(card.id)),
+          position: { index: i + 1, total: (planSink.plan ?? plan).scenes.length },
+          committed: committedScenes,
+          failed: failures.map((f) => f.sceneId),
+          repairBudget: maxRepairs,
+        }),
+        log: say,
+      });
+    } catch (error) {
+      if (!(error instanceof BudgetExhausted)) throw error;
+      // Stop the story rather than trying the next scene. Every scene after the
+      // ceiling costs real tokens to fail, and a run that keeps going past its
+      // own hard stop reports an overrun many times the size of the real one.
+      say(`${card.id} not attempted — ${error.message}`);
+      for (const remaining of (planSink.plan ?? plan).scenes.slice(i)) {
+        failures.push({
+          sceneId: remaining.id,
+          reason: "not attempted: the per-task token budget was exhausted",
+        });
+      }
+      break;
+    }
 
     const outcome = run.outcome;
     driving.scenesDriven += 1;

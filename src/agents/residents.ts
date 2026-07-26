@@ -479,6 +479,9 @@ export class ResidentAgents {
     if (!task.trim()) {
       throw new DelegationError(`empty task sent to ${role}`);
     }
+    // Before the call, not after it. `charge` can only notice an overrun once
+    // the tokens are gone; this is what makes the stop hard.
+    this.#budget?.assertNotExhausted();
 
     const agent = this.agent(role);
     const before = agent.state.messages.length;

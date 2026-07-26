@@ -28,6 +28,7 @@ import { Type } from "typebox";
 
 import type { AgentRole } from "../transaction/types.ts";
 import type { ResidentAgents } from "../agents/residents.ts";
+import { BudgetExhausted } from "./budget.ts";
 import type { SceneDirector, StepReport } from "./scene-director.ts";
 import type { SceneOutcome } from "./scene-loop.ts";
 
@@ -297,6 +298,12 @@ export async function driveScene(options: {
       account = `${account}\n${next.text}`.trim();
     }
   } catch (error) {
+    // Except when there is nothing left to spend. Rescuing a scene with an
+    // exhausted budget buys a second failure at full price.
+    if (error instanceof BudgetExhausted) {
+      stage.close();
+      throw error;
+    }
     // An orchestrator turn that failed is not a scene that must fail. The
     // rescue below still runs, so a timeout on the driving turn costs the
     // scene's autonomy rather than the scene.
