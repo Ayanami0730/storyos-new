@@ -51,7 +51,8 @@ import {
   updatePlanTool,
   writeStory,
 } from "../runtime/story.ts";
-import { shellTool } from "../tools/shell-tool.ts";
+import { nativeTools } from "../tools/pi-tools.ts";
+import { relationHistoryTool } from "../tools/relation-tool.ts";
 import { checkReferences, renderReferenceReport } from "../verification/references.ts";
 
 interface Args {
@@ -272,7 +273,8 @@ const residents = new ResidentAgents({
       // Uniform read reach, at last actually uniform: every role gets the same
       // shell over the same tree, and the difference between roles is only what
       // they may write.
-      shellTool({
+      // pi's own bash and read, with our refusal policy in bash's prepare hook.
+      ...nativeTools({
         projectRoot,
         budgetKey: () => `${role}:${storyState.scenes.at(-1) ?? "plan"}`,
         // Attributed per role. One shared counter would credit the builder with
@@ -282,6 +284,15 @@ const residents = new ResidentAgents({
           reads.push({ role, scene: storyState.scenes.at(-1) ?? "plan", ...entry });
           if (role === "context-builder") builderBus.noteRead();
         },
+      }),
+      // Novelty 2's consumption path. The relation records are finally being
+      // written; without this the writer can only `cat` a YAML file and gets the
+      // raw structure instead of the narrative view `renderHistory` produces —
+      // and a data structure with no consumption path does not reach the prose
+      // we are scored on.
+      relationHistoryTool({
+        read: (relPath) => index.read(relPath),
+        role,
       }),
       ...(role === "index-manager" ? indexManagerTools(() => partitionWriter!) : []),
       ...(role === "context-builder" ? builderBus.tools() : []),

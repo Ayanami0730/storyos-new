@@ -14,7 +14,13 @@
  * looks complete is worse than a refusal.
  */
 
-import { ToolRefusal } from "./registry.ts";
+/** A tool saying no, with a reason the model is meant to read and act on. */
+export class ToolRefusal extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ToolRefusal";
+  }
+}
 
 export interface ShellLimits {
   /** Characters returned inline. Beyond this the payload is spilled to a file. */
@@ -69,6 +75,22 @@ const FORBIDDEN: readonly { readonly pattern: RegExp; readonly why: string }[] =
       "index; if it is not there, that absence is the finding",
   },
 ];
+
+/**
+ * Why a command is refused, or null.
+ *
+ * The policy, extracted from the executor so pi's own `bash` can enforce it
+ * through its `prepare` hook. pi has no opinion about what a novel-writing agent
+ * may run, correctly — the execution, truncation and spilling are generic and
+ * theirs; the list of things that would corrupt *this* system is ours.
+ */
+export function refusalFor(command: string, _limits: ShellLimits): string | null {
+  if (!command.trim()) return "refused: command is empty";
+  for (const { pattern, why } of FORBIDDEN) {
+    if (pattern.test(command)) return `refused: ${why}`;
+  }
+  return null;
+}
 
 export interface ShellRequest {
   readonly command: string;
