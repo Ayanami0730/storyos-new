@@ -26,6 +26,7 @@ import { committedScenes, partitionReport } from "../index/tree.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import type { ReferenceReport } from "../verification/references.ts";
 import type { BudgetProfile, TokenBudget } from "./budget.ts";
+import { priceLedger } from "./rates.ts";
 import type { Harness } from "./assembly.ts";
 import type { StoryResult } from "./story.ts";
 
@@ -149,6 +150,22 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
      */
     tokens_reported_including_cache: ledger.reduce((n, e) => n + e.usage.total, 0),
     tokens_cache_read: ledger.reduce((n, e) => n + e.usage.cacheRead, 0),
+    /**
+     * What this run would cost at the providers' public list prices.
+     *
+     * Not a bill. The company gateway publishes no rate card, so nothing here
+     * knows what we were actually charged; this answers the reproducible
+     * question instead — what would someone pay running the same tokens
+     * against the public APIs. Cached input is priced at its own (90% cheaper)
+     * rate, because it is most of our traffic and charging it at the full input
+     * rate would overstate the cost of this design by roughly ten times.
+     */
+    cost_estimate: {
+      note:
+        "list-price estimate against the providers' public rates, not the gateway's " +
+        "billing. Cached input priced separately. See src/runtime/rates.ts for sources.",
+      ...priceLedger(ledger.map((e) => ({ model: e.model, usage: e.usage }))),
+    },
     calls: ledger.length,
     roll_up: input.residents.rollUp(),
     /**
