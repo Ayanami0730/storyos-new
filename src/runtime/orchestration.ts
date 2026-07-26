@@ -112,6 +112,23 @@ export function delegationToolNameFor(role: AgentRole): string {
 }
 
 /**
+ * These must never run concurrently with each other.
+ *
+ * pi executes a batch of tool calls in parallel by default
+ * (`toolExecution ?? "parallel"`), and each of these drives a state transition
+ * on the same director. Two issued in one assistant message would interleave
+ * two transitions on one transaction — and the plausible batch is exactly the
+ * damaging one: an orchestrator that emits `call_writer` and `call_verifier`
+ * together would have the verifier reading a draft while the writer is still
+ * producing it, through a capture buffer they share.
+ *
+ * The refusals do not save us here. They are checks on the state at the moment
+ * of the call, and two calls that begin simultaneously both see the state
+ * before either.
+ */
+const SEQUENTIAL = "sequential" as const;
+
+/**
  * The orchestrator's tool surface for the scene in progress.
  *
  * A call in the wrong state is refused with the state it is in and the call
@@ -122,6 +139,7 @@ export function orchestratorTools(stage: SceneStage): unknown[] {
   const tools: unknown[] = DELEGATION.map((entry) => ({
     label: `Call ${entry.role}`,
     name: delegationToolNameFor(entry.role),
+    executionMode: SEQUENTIAL,
     description:
       `${entry.what} It keeps its own session across scenes, so refer to earlier work ` +
       `rather than restating it. \`brief\` is added to its standing instructions — use it ` +
@@ -150,6 +168,7 @@ export function orchestratorTools(stage: SceneStage): unknown[] {
   tools.push({
     label: "Abandon scene",
     name: "abandon_scene",
+    executionMode: SEQUENTIAL,
     description:
       "Give up on the scene in progress and move on. Use when a defect needs a decision " +
       "nobody in the loop can make, or when repairing it is costing more than the scene is " +

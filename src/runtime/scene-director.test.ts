@@ -290,6 +290,20 @@ describe("the orchestrator's tools", () => {
     assert.match(tools.get("call_index_manager")!.description, /commit/i);
   });
 
+  it("runs sequentially, because each call is a transition on one transaction", () => {
+    // pi's default is parallel. An orchestrator emitting `call_writer` and
+    // `call_verifier` in one message would have the verifier reading a draft
+    // while the writer is still producing it, through a buffer they share — and
+    // the state checks cannot catch it, because two calls that begin together
+    // both see the state before either.
+    for (const tool of orchestratorTools(new SceneStage()) as {
+      name: string;
+      executionMode?: string;
+    }[]) {
+      assert.equal(tool.executionMode, "sequential", `${tool.name} may not run in parallel`);
+    }
+  });
+
   it("refuses every call when no scene is open", async () => {
     const tools = toolMap(new SceneStage());
     for (const name of ["call_writer", "call_verifier", "abandon_scene"]) {
