@@ -284,8 +284,34 @@ export function isRetryableTurnError(message: string): boolean {
  *
  * Seconds rather than milliseconds because the thing being waited out is a
  * provider's quota window, and a retry 200ms after a 429 is just a second 429.
+ *
+ * Six attempts rather than four, and that number comes from a measurement. When
+ * the cross-family verifier's channel was being rate-limited, probing it
+ * directly returned `200, 429, 429` — the model was up and the shared quota was
+ * simply contended, roughly one request in three getting through. Against odds
+ * like that, four attempts is not persistence, it is a coin flip: it fails
+ * about one time in five, and it failed on the first scene of the run that
+ * prompted this. Six takes that to roughly one in eleven.
+ *
+ * The lesson generalises past this incident. A contended shared quota wants
+ * *more attempts*, where a genuinely exhausted one wants *longer waits*, and
+ * only one of those can be read off an error code — so the schedule does both
+ * and lets the cheap case exit early.
  */
-export const RETRY_BACKOFF_MS: readonly number[] = [5_000, 20_000, 60_000];
+export const RETRY_BACKOFF_MS: readonly number[] = [
+  5_000, 15_000, 30_000, 60_000, 90_000, 120_000,
+];
+
+/**
+ * Jitter, so concurrent agents do not retry in lockstep.
+ *
+ * Without it, two roles that hit the same quota window at the same moment wake
+ * together and collide again on every attempt, turning a shared limit into a
+ * synchronised one.
+ */
+export function withJitter(ms: number): number {
+  return Math.round(ms * (0.75 + Math.random() * 0.5));
+}
 
 export class ResidentAgents {
   readonly #agents = new Map<AgentRole, AgentLike>();
@@ -507,8 +533,9 @@ export class ResidentAgents {
       timedOut = await this.#promptWithDeadline(agent, task, deadlineMs);
       failure = timedOut ? null : providerFailure(agent.state.messages.slice(before));
       if (!failure) break;
-      const wait = this.#retryBackoffMs[attempts - 1];
-      if (wait === undefined || !isRetryableTurnError(failure)) break;
+      const scheduled = this.#retryBackoffMs[attempts - 1];
+      if (scheduled === undefined || !isRetryableTurnError(failure)) break;
+      const wait = scheduled > 0 ? withJitter(scheduled) : 0;
       this.#onRetry?.({ role, attempt: attempts, waitMs: wait, detail: failure });
       await new Promise((resolve) => setTimeout(resolve, wait));
     }
