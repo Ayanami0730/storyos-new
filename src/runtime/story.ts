@@ -19,6 +19,7 @@ import type { CanonicalIndex } from "../index/commit.ts";
 import { chapterFor, paths, sceneIndexOf } from "../index/tree.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
 import type { ResidentAgents } from "../agents/residents.ts";
+import { type AllocationState, type SceneAllocation, allocate } from "./allocation.ts";
 import { type ArtifactStore, artifactPaths } from "./artifacts.ts";
 import { BudgetExhausted } from "./budget.ts";
 import { type SceneToolBus, residentCollaborators } from "./collaborators.ts";
@@ -60,6 +61,21 @@ export interface StoryResult {
     readonly stepsByOrchestrator: number;
     readonly stepsRescuedByEngine: number;
   };
+  /**
+   * What each scene was allowed to spend, in scene order.
+   *
+   * Recorded because the schedule rests on an inference rather than a direct
+   * measurement: `experiments/degradation` shows errors accumulating with the
+   * *length* of a finished text, and this design assumes that also means a later
+   * scene of one story is riskier than an earlier one. Putting each scene's
+   * allowance beside its findings and attempts is what makes that assumption
+   * checkable from run data — including checkable as false, in which case the
+   * endgame tiers are buying nothing and should shrink.
+   */
+  readonly allocations: readonly {
+    readonly sceneId: string;
+    readonly allocation: SceneAllocation;
+  }[];
 }
 
 function toolText(text: string) {
@@ -77,10 +93,20 @@ export function contextFor(input: {
   readonly card: SceneCard;
   readonly plan: StoryPlan;
   readonly canon: readonly CanonFact[];
-  readonly previousProse: string | null;
+  /**
+   * The most recent committed scenes, newest last, as many as this scene's
+   * allocation asks for.
+   *
+   * It used to be exactly one — `previousProse` — for every scene of every story.
+   * One is right for scene 2, where there is nothing else, and wrong for a scene
+   * that has to land an ending: the beat list carries intent rather than the
+   * detail a contradiction actually lives in, so a defect against two scenes ago
+   * was invisible to everything except the verifier's own grepping.
+   */
+  readonly recentProse: readonly { readonly sceneId: string; readonly text: string }[];
   readonly earlierIntents: readonly string[];
 }): readonly ContextItem[] {
-  const { card, plan, canon, previousProse, earlierIntents } = input;
+  const { card, plan, canon, recentProse, earlierIntents } = input;
   const items: ContextItem[] = [
     {
       id: "scene-card",
@@ -165,12 +191,17 @@ export function contextFor(input: {
     });
   }
 
-  if (previousProse) {
+  // Newest first, so that if the packet's word budget binds it is the oldest
+  // recall that is dropped rather than the scene immediately before this one.
+  for (const [offset, scene] of [...recentProse].reverse().entries()) {
     items.push({
-      id: "previous-scene",
+      id: offset === 0 ? "previous-scene" : `recent-scene-${scene.sceneId}`,
       priority: "P2",
-      source: "manuscript (previous scene)",
-      content: previousProse,
+      source: paths.scene(chapterFor(sceneIndexOf(scene.sceneId)), scene.sceneId),
+      content:
+        offset === 0
+          ? scene.text
+          : `${scene.sceneId}, ${offset + 1} scene(s) before this one:\n\n${scene.text}`,
     });
   }
 
@@ -220,7 +251,17 @@ export async function writeStory(options: {
   readonly index: CanonicalIndex;
   readonly premise: string;
   readonly targetWords: number;
-  readonly maxRepairs: number;
+  /**
+   * Pin every scene to one repair round instead of allocating by position.
+   *
+   * The uniform-allocation arm, which exists so that "does allocating by position
+   * beat allocating evenly" can be answered by two runs of the same code rather
+   * than by comparing against a previous version of the harness. Null means the
+   * schedule decides.
+   */
+  readonly pinnedRepairs: number | null;
+  /** The holder the writer's own tools read this scene's allowance from. */
+  readonly allocationState: AllocationState;
   readonly planSink: { plan?: StoryPlan };
   /**
    * Shared with whoever constructed the agents. It must be the same bus: the
@@ -248,7 +289,7 @@ export async function writeStory(options: {
    */
   readonly log?: (line: string) => void;
 }): Promise<StoryResult> {
-  const { residents, index, premise, targetWords, maxRepairs, planSink } = options;
+  const { residents, index, premise, targetWords, planSink } = options;
 
   const say = options.log ?? (() => {});
   say(`planning for ${targetWords} words`);
@@ -266,7 +307,8 @@ export async function writeStory(options: {
 
   const knownEntities = new Set(plan.entities.map((e) => e.id));
   let canon: readonly CanonFact[] = [];
-  let previousProse: string | null = null;
+  /** Committed prose in order, so a late scene can be given more than one. */
+  const recentProse: { sceneId: string; text: string }[] = [];
   const earlierIntents: string[] = [];
   const scenes: { card: SceneCard; outcome: SceneOutcome }[] = [];
   const failures: { sceneId: string; reason: string }[] = [];
@@ -275,6 +317,7 @@ export async function writeStory(options: {
   const committedDeltas: SceneDelta[] = [];
   const proseByScene = new Map<string, string>();
   const driving = { scenesDriven: 0, stepsByOrchestrator: 0, stepsRescuedByEngine: 0 };
+  const allocations: { sceneId: string; allocation: SceneAllocation }[] = [];
   /** Words actually on the page, recounted from committed prose after each scene. */
   let committedWords = 0;
 
@@ -291,7 +334,28 @@ export async function writeStory(options: {
     const card = (planSink.plan ?? plan).scenes[i]!;
     const txid = `tx-${card.id}`;
     const sceneStarted = Date.now();
-    say(`${card.id} start — ${card.intent.slice(0, 70)}`);
+
+    /**
+     * What this scene may spend, from where it sits in the story.
+     *
+     * Computed against the plan as it stands now rather than as it stood at
+     * planning time, because `update_plan` can add or remove scenes ahead — and a
+     * position measured against a stale total would put the last scene of a
+     * shortened story in the middle tier.
+     */
+    const allocation = allocate({
+      sceneIndex: i + 1,
+      total: (planSink.plan ?? plan).scenes.length,
+      pinnedRepairs: options.pinnedRepairs,
+    });
+    options.allocationState.open(allocation);
+    allocations.push({ sceneId: card.id, allocation });
+
+    say(
+      `${card.id} start [${allocation.tier} @ ${allocation.position}: ` +
+        `${allocation.repairRounds} repair, ${allocation.followUpRounds} follow-up, ` +
+        `${allocation.recentScenes} recall] — ${card.intent.slice(0, 60)}`,
+    );
 
     const { collaborators } = residentCollaborators({
       residents,
@@ -313,10 +377,17 @@ export async function writeStory(options: {
           hardRequiredIds: ["scene-card", "logline"],
           budgetWords: 60_000,
         },
-        available: contextFor({ card, plan, canon, previousProse, earlierIntents }),
+        available: contextFor({
+          card,
+          plan,
+          canon,
+          // The tail, as deep as this scene's tier asks for.
+          recentProse: recentProse.slice(-allocation.recentScenes),
+          earlierIntents,
+        }),
         canon,
         knownEntities,
-        maxRepairs,
+        allocation,
         prosePath: options.prosePathFor?.(card.id) ?? `manuscript/${card.id}.md`,
       },
       { index, collaborators, artifacts: options.artifacts },
@@ -339,7 +410,7 @@ export async function writeStory(options: {
           position: { index: i + 1, total: (planSink.plan ?? plan).scenes.length },
           committed: committedScenes,
           failed: failures.map((f) => f.sceneId),
-          repairBudget: maxRepairs,
+          allocation,
           words: { committed: committedWords, target: targetWords },
         }),
         log: say,
@@ -396,7 +467,7 @@ export async function writeStory(options: {
       for (const warning of outcome.warnings) say(`${card.id} warning — ${warning}`);
       const text = await index.read(options.prosePathFor?.(card.id) ?? `manuscript/${card.id}.md`);
       prose.push(text);
-      previousProse = text;
+      recentProse.push({ sceneId: card.id, text });
       const delta = JSON.parse(
         await index.read(`continuity/deltas/${card.id}.json`),
       ) as SceneDelta;
@@ -504,6 +575,7 @@ export async function writeStory(options: {
     failures,
     revision,
     driving,
+    allocations,
   };
 }
 

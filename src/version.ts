@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.4.0";
+export const VERSION = "0.5.0";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -23,7 +23,9 @@ export const VERSION = "0.4.0";
  * it, because "0.4.0" alone will mean nothing to them.
  */
 export const VERSION_NOTE =
-  "orchestrator-driven scene loop with path-addressed artefacts, OS-enforced " +
+  "orchestrator-driven scene loop with per-scene compute allocated by position in " +
+  "the story (1/3/5 repair rounds and follow-ups across the opening, middle and " +
+  "final 40%, with recall depth 1/2/3), path-addressed artefacts, OS-enforced " +
   "write gate (docker read-only mount), cost-triggered level-1 compaction, and " +
   "baseline-comparable token accounting (input+output, cache reads excluded)";
 
@@ -39,6 +41,28 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.5.0",
+    note:
+      "per-scene compute is allocated by position in the story instead of by three " +
+      "constants: repair rounds and writer follow-ups go 1 / 3 / 5 across the opening " +
+      "third, the middle third and the final 40%, and the packet carries 1 / 2 / 3 " +
+      "previous scenes of prose. The opening tier is deliberately *tighter* than the " +
+      "0.4.0 default of two repair rounds — rounds not spent where defects are rare are " +
+      "what pay for the tier where they accumulate — so an opening scene in 0.5.0 has " +
+      "less room than the same scene had in 0.4.0 and a late scene has more. The " +
+      "empirical basis is experiments/degradation (consistency-error instances rise with " +
+      "finished length, r=0.711 over 16 cells, all four per-premise correlations " +
+      "positive; timeline/plot and factual detail are 54.8% of them). Note the inference " +
+      "being made: that experiment varies total length across runs, not position within " +
+      "one run, so every scene's allowance is now recorded beside its findings to make " +
+      "the schedule falsifiable from run data. `--max-repairs <n>` no longer sets a " +
+      "global ceiling; it pins every scene to the same allowance and is the " +
+      "uniform-allocation ablation arm. Verifier findings must now carry an actionable " +
+      "`suggestion`, and a scene that cannot be repaired commits with its findings " +
+      "recorded rather than being dropped (that change landed at the end of 0.4.0 and " +
+      "moves the length score materially, so runs straddling it are not comparable)",
+  },
   {
     version: "0.4.0",
     note:

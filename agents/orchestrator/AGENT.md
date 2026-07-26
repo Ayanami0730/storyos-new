@@ -134,6 +134,20 @@ You hold the budget. Tokens spent on repairing one stubborn scene are tokens not
 spent writing the next ten, and a finished novel with a few known defects beats
 an unfinished perfect chapter.
 
+Each scene arrives with its own allowance — repair rounds, writer follow-ups, and
+how far back the packet reaches — and the allowance is larger later in the book.
+That is a measured decision rather than a courtesy: consistency errors accumulate
+against the volume of prose already written, and timeline and factual detail, the
+two classes that depend most on earlier text, are over half of them. Early scenes
+are given deliberately less so that late scenes can be given more.
+
+Two consequences for you. Do not treat an opening scene's single round as a
+constraint to work around by writing longer briefs that specify the scene for the
+writer — a brief is not a source of facts, and inventing them there is worse than
+the defect the round would have fixed. And do not save the endgame allowance: it
+is not carried forward, and the scene it was reserved for is the one being
+written.
+
 Watch for the shapes that consume budget without producing progress: a scene
 that has been redrafted three times, a verifier finding the same defect in every
 scene (usually a bad canon fact, not a bad writer), a context build that keeps

@@ -32,30 +32,23 @@
  *
  * ## Follow-up rounds
  *
- * The brief allowed the writer up to three follow-up questions. That number is
- * now a measured parameter rather than a guess: every round is recorded with the
- * findings that followed, so "does a third round buy anything" is answerable
- * from run data instead of argued.
+ * How many questions the writer may ask is not a property of this file: it is
+ * decided per scene in `allocation.ts` from where the scene sits in the story,
+ * one in the opening third and five in the endgame. It used to be the constant
+ * `FOLLOW_UP_ROUNDS = 3`, and the constant is gone rather than defaulted — a
+ * default would be a second answer to a question that now has one place to ask.
+ * Every round is recorded with the findings that followed, so "did the fifth
+ * round buy anything" stays answerable from run data.
  */
 
 import { Type } from "typebox";
 
 import type { ContextItem, Priority } from "../context/types.ts";
+import type { SceneAllocation } from "./allocation.ts";
 
 function toolText(text: string) {
   return { content: [{ type: "text", text }] };
 }
-
-/**
- * Follow-up rounds the writer may spend on the builder.
- *
- * The brief said *"比如最多三轮"*. Three is the starting point rather than the
- * answer: every round is recorded with the findings that followed it, so whether
- * a third is worth its cost becomes a number instead of an argument. So far the
- * number has been zero rounds in three runs, which says nothing about three and
- * everything about the writer never being shown a reason to ask.
- */
-export const FOLLOW_UP_ROUNDS = 3;
 
 /**
  * Something this scene needs that the index does not contain.
@@ -258,6 +251,35 @@ export class BuilderBus {
   }
 }
 
+/**
+ * How far back to look, by where the scene sits.
+ *
+ * The measured basis is `experiments/degradation`: consistency-error instances
+ * rise with the volume of text a passage has to agree with, and timeline/plot and
+ * factual detail — the two classes that depend on earlier text rather than on the
+ * passage itself — are 54.8% of them. A late scene's risk is concentrated in
+ * material a search of the last scene will not reach.
+ */
+const RECALL_DEPTH: Readonly<Record<SceneAllocation["tier"], string>> = {
+  opening:
+    "This scene is in the opening third. There is little behind it, so recall is cheap and " +
+    "mostly unnecessary — check the scene before it and the entity files, and do not pad. An " +
+    "item added here is an item the writer and the verifier both read.",
+  middle:
+    "This scene is in the middle third. Enough is on the page that the writer can now " +
+    "contradict it without noticing: grep the committed scenes for every entity present, and " +
+    "read the promise ledger for anything falling due. What has changed since a character was " +
+    "last on the page is the thing most often missed.",
+  endgame:
+    "This scene is in the final 40%, and this is where the recall earns its cost. An ending " +
+    "has to be consistent with the whole book rather than with its neighbour, and payoffs " +
+    "land here — so go back to where each thread *started*, not to where it was last " +
+    "mentioned, and quote the original wording of anything being paid off. Read the promise " +
+    "ledger in full. Check every entity present against its first appearance as well as its " +
+    "current state: a detail established in chapter one and quietly drifted since is the " +
+    "defect class that nothing else in the loop can see.",
+};
+
 /** The brief the builder gets. Written to make it grep rather than summarise. */
 export function builderBrief(input: {
   readonly sceneId: string;
@@ -267,6 +289,8 @@ export function builderBrief(input: {
   readonly committedScenes: readonly string[];
   /** Where the assembled packet will be written, and where follow-ups append. */
   readonly packetPath?: string;
+  /** Where this scene sits, and therefore how far back the recall should reach. */
+  readonly allocation: SceneAllocation;
   /** What the orchestrator asked for on this scene, if it drove this call. */
   readonly note?: string;
 }): string {
@@ -289,6 +313,12 @@ export function builderBrief(input: {
     input.committedScenes.length > 0
       ? `Scenes written so far: ${input.committedScenes.join(", ")}.`
       : "Nothing has been written yet, so there is no recall to do — say so and stop.",
+    "",
+    // How hard to look is a function of where the scene is. Told to be equally
+    // thorough everywhere, an agent is thorough where it is cheap: it reads the
+    // previous scene, finds it sufficient, and stops — which is right for scene 2
+    // and is how an ending contradicts chapter 1.
+    RECALL_DEPTH[input.allocation.tier],
     "",
     "Add what you find with add_context_item. Quote the material; a pointer is not context.",
     "Add nothing if there is nothing — a padded packet costs the writer attention it needs",
@@ -419,24 +449,35 @@ export function readContextTool(options: {
 export function askBuilderTool(options: {
   readonly ask: (question: string) => Promise<string>;
   readonly roundsUsed: () => number;
-  readonly maxRounds: number;
+  /**
+   * Read per call, not captured once.
+   *
+   * The limit is now a property of the scene rather than of the system — one
+   * question in the opening third, five in the endgame — and this tool belongs to
+   * a resident agent whose tools are built once at construction. A number passed
+   * in here would be scene 1's allowance enforced for the rest of the book.
+   */
+  readonly maxRounds: () => number;
 }): unknown {
   return {
     label: "Ask context builder",
     name: "ask_context_builder",
     description:
       `Ask the context-builder for something the packet does not contain. It can search ` +
-      `the whole index. Up to ${options.maxRounds} questions per scene — ask for what you ` +
-      `actually need before drafting rather than guessing and being sent back.`,
+      `the whole index. How many questions you get depends on where the scene sits in the ` +
+      `story and is stated in your brief — more later, where there is more to be consistent ` +
+      `with. Ask for what you actually need before drafting rather than guessing and being ` +
+      `sent back.`,
     parameters: Type.Object({
       question: Type.String({ description: "One specific question" }),
     }),
     execute: async (_id: string, args: { question: string }) => {
-      if (options.roundsUsed() >= options.maxRounds) {
+      const maxRounds = options.maxRounds();
+      if (options.roundsUsed() >= maxRounds) {
         return toolText(
-          `no follow-ups left for this scene (${options.maxRounds} used). Write the scene ` +
-            `with what you have, and if a hard constraint is genuinely missing, say so in ` +
-            `your reply instead of inventing it.`,
+          `no follow-ups left for this scene (${maxRounds} used, which is this scene's ` +
+            `allowance). Write the scene with what you have, and if a hard constraint is ` +
+            `genuinely missing, say so in your reply instead of inventing it.`,
         );
       }
       if (!args.question?.trim()) return toolText("rejected: ask something specific.");

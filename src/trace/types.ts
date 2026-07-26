@@ -74,6 +74,23 @@ export interface TraceScene {
   readonly targetWords: number;
   readonly status: string;
   readonly attempts: number;
+  /**
+   * What this scene was allowed to spend, and where in the story that came from.
+   *
+   * In the trace rather than only in the summary because it is the thing a reader
+   * needs in order to interpret the rest of the scene card: three attempts on an
+   * endgame scene and three on an opening scene mean opposite things, since one
+   * had rounds to spare and the other was at its ceiling.
+   */
+  readonly allocation?: {
+    readonly tier: string;
+    readonly position: number;
+    readonly repairRounds: number;
+    readonly followUpRounds: number;
+    readonly recentScenes: number;
+    readonly pinned: boolean;
+    readonly rationale: Bilingual;
+  };
   /** Steps the orchestrator drove itself; the rest the engine finished. */
   readonly stepsByOrchestrator: number;
   readonly stepsRescuedByEngine: number;

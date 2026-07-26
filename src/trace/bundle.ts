@@ -241,6 +241,26 @@ export async function buildBundle(options: BundleOptions): Promise<TraceBundle> 
       targetWords: card.targetWords ?? 0,
       status: committed ? "COMMITTED" : (rejected?.status ?? (reason ? "FAILED" : "UNKNOWN")),
       attempts: Number(/after (\d+) attempt/.exec(wallLine ?? "")?.[1] ?? 0),
+      // Absent for runs from before the schedule existed, and absent rather than
+      // defaulted: a scene card claiming an allowance nothing allocated would be
+      // a fabrication in the one artefact meant to be trustworthy.
+      ...(() => {
+        const record = (summary.allocation?.per_scene ?? []).find(
+          (a: any) => a.scene === sceneId,
+        );
+        if (!record) return {};
+        return {
+          allocation: {
+            tier: record.tier,
+            position: record.position,
+            repairRounds: record.allowed_repair_rounds,
+            followUpRounds: record.allowed_follow_ups,
+            recentScenes: record.recent_scenes_in_packet,
+            pinned: summary.allocation?.pinned_to !== null,
+            rationale: en(record.rationale ?? ""),
+          },
+        };
+      })(),
       stepsByOrchestrator: drove,
       stepsRescuedByEngine: 0,
       wallMs,

@@ -25,6 +25,7 @@ import type { LedgerEntry, ResidentAgents } from "../agents/residents.ts";
 import { committedScenes, partitionReport } from "../index/tree.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import type { ReferenceReport } from "../verification/references.ts";
+import { SCHEDULE } from "./allocation.ts";
 import type { BudgetProfile, TokenBudget } from "./budget.ts";
 import { priceLedger } from "./rates.ts";
 import { VERSION, VERSION_NOTE } from "../version.ts";
@@ -60,7 +61,7 @@ export interface SummaryInput {
     readonly premise: string;
     readonly target: number;
     readonly backbone: string | null;
-    readonly maxRepairs: number;
+    readonly pinnedRepairs: number | null;
     readonly memoryDir: string | null;
   };
   readonly projectRoot: string;
@@ -99,7 +100,21 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     premise_words: args.premise.split(/\s+/).filter(Boolean).length,
     target_words: args.target,
     backbone: args.backbone ?? "default (gpt-5-mini, verifier cross-family)",
-    max_repairs: args.maxRepairs,
+    /**
+     * How the per-scene allowance was decided, and what it bought.
+     *
+     * This block is the whole of the evidence for the schedule, so it is arranged
+     * as the test rather than as a configuration dump: `by_tier` puts each tier's
+     * allowance next to the findings, repair rounds and follow-ups the scenes in
+     * it actually produced. The claim is that later scenes need more; if the
+     * endgame's extra rounds go unused and its findings match the opening's, the
+     * claim is wrong and this is where that shows.
+     *
+     * The inference being tested is stated in `runtime/allocation.ts`:
+     * `experiments/degradation` measured errors accumulating with the length of a
+     * finished text, not with position inside one run.
+     */
+    allocation: allocationReport(input),
     elapsed_ms: input.elapsedMs,
     fatal: input.fatal,
     words: result?.words ?? onDisk.words,
@@ -232,9 +247,9 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     /**
      * The follow-up mechanism, measured rather than assumed.
      *
-     * The writer has been told it may ask the builder questions for three
-     * rounds now and has asked zero. Three is a starting point, not an answer:
-     * these records are what turn "is a third round worth it" into arithmetic.
+     * How many rounds a scene gets is now a function of its position, so the
+     * interesting cut is `by_tier`: an endgame allowance of five that is never
+     * spent past one is a schedule buying prompt text and nothing else.
      */
     follow_ups: {
       total: harness.followUps.length,
@@ -242,7 +257,11 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
         acc[f.scene] = (acc[f.scene] ?? 0) + 1;
         return acc;
       }, {}),
-      questions: harness.followUps.map((f) => f.question.slice(0, 200)),
+      by_tier: harness.followUps.reduce<Record<string, number>>((acc, f) => {
+        acc[f.tier] = (acc[f.tier] ?? 0) + 1;
+        return acc;
+      }, {}),
+      questions: harness.followUps.map((f) => `[${f.tier} ${f.round}/${f.allowed}] ${f.question.slice(0, 200)}`),
     },
     budget: {
       profile: profile.id,
@@ -302,6 +321,89 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
         (await memory.live()).map((m) => m.topic),
       ),
     },
+  };
+}
+
+/**
+ * Each tier's allowance beside what the scenes in it actually did.
+ *
+ * Deliberately not a summary of the configuration — the configuration is in
+ * `SCHEDULE` and is the same every run. What varies, and what a reader needs, is
+ * whether the scenes given more used more and whether they needed to.
+ */
+function allocationReport(input: SummaryInput): Record<string, unknown> {
+  const { result, harness } = input;
+  const allocations = result?.allocations ?? [];
+  const outcomeOf = (sceneId: string) =>
+    result?.scenes.find((s) => s.card.id === sceneId)?.outcome ?? null;
+
+  const tiers: Record<string, unknown> = {};
+  for (const tier of new Set(SCHEDULE.map((p) => p.tier))) {
+    const scenes = allocations.filter((a) => a.allocation.tier === tier);
+    if (scenes.length === 0) continue;
+    const outcomes = scenes.map((s) => outcomeOf(s.sceneId)).filter((o) => o !== null);
+    tiers[tier] = {
+      scenes: scenes.map((s) => s.sceneId),
+      allowed: {
+        repair_rounds: scenes[0]!.allocation.repairRounds,
+        follow_up_rounds: scenes[0]!.allocation.followUpRounds,
+        recent_scenes_in_packet: scenes[0]!.allocation.recentScenes,
+      },
+      used: {
+        // Attempts include the first draft, so rounds spent is attempts - 1.
+        repair_rounds: outcomes.reduce((n, o) => n + Math.max(0, o!.attempts - 1), 0),
+        follow_ups: harness.followUps.filter(
+          (f) => scenes.some((s) => s.sceneId === f.scene),
+        ).length,
+      },
+      /**
+       * The number the schedule stands or falls on. If findings per scene do not
+       * rise across these three rows, position is not predicting risk in our runs
+       * and the endgame tiers are paying for nothing.
+       */
+      findings: outcomes.reduce((n, o) => n + o!.findings.length, 0),
+      findings_per_scene: Number(
+        (outcomes.reduce((n, o) => n + o!.findings.length, 0) / Math.max(1, outcomes.length))
+          .toFixed(2),
+      ),
+      committed: outcomes.filter((o) => o!.status === "COMMITTED").length,
+      unresolved_findings: outcomes.reduce(
+        (n, o) => n + (o!.status === "COMMITTED" ? o!.unresolvedFindings.length : 0),
+        0,
+      ),
+    };
+  }
+
+  return {
+    mode: input.args.pinnedRepairs === null ? "by-position" : "uniform (pinned)",
+    pinned_to: input.args.pinnedRepairs,
+    note:
+      input.args.pinnedRepairs === null
+        ? "per-scene allowance from runtime/allocation.ts; rows below are the test of it"
+        : "position schedule OFF — every scene pinned to the same allowance. This is the " +
+          "ablation arm and is not the default configuration.",
+    schedule: SCHEDULE.map((p) => ({
+      tier: p.tier,
+      up_to_position: p.until === Infinity ? 1 : p.until,
+      repair_rounds: p.repairRounds,
+      follow_up_rounds: p.followUpRounds,
+      recent_scenes_in_packet: p.recentScenes,
+    })),
+    per_scene: allocations.map((a) => ({
+      scene: a.sceneId,
+      tier: a.allocation.tier,
+      position: a.allocation.position,
+      allowed_repair_rounds: a.allocation.repairRounds,
+      allowed_follow_ups: a.allocation.followUpRounds,
+      recent_scenes_in_packet: a.allocation.recentScenes,
+      // The reason travels with the numbers so that neither the trace bundle nor
+      // a reader six months from now has to reconstruct it from the tier name.
+      rationale: a.allocation.rationale,
+      attempts: outcomeOf(a.sceneId)?.attempts ?? null,
+      findings: outcomeOf(a.sceneId)?.findings.length ?? null,
+      status: outcomeOf(a.sceneId)?.status ?? "not attempted",
+    })),
+    by_tier: tiers,
   };
 }
 

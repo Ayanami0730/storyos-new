@@ -58,19 +58,17 @@ import { relationHistoryTool } from "../tools/relation-tool.ts";
 import type { SandboxBackend } from "../sandbox/types.ts";
 import { type ArtifactStore, artifactPaths, renderFollowUp } from "./artifacts.ts";
 import { type BudgetProfile, TokenBudget } from "./budget.ts";
+import { AllocationState, type SceneAllocation } from "./allocation.ts";
 import { SceneToolBus } from "./collaborators.ts";
 import { type ModelId, installGateway } from "./gateway.ts";
 import { SceneStage, orchestratorTools } from "./orchestration.ts";
 import {
   BuilderBus,
-  FOLLOW_UP_ROUNDS,
   askBuilderTool,
   builderBrief,
   followUpBrief,
   readContextTool,
 } from "./packet-builder.ts";
-
-export { FOLLOW_UP_ROUNDS };
 import { type StoryPlan, planTool, sceneCountFor, updatePlanTool } from "./plan.ts";
 import type { BuildResult, Draft } from "./scene-loop.ts";
 
@@ -113,6 +111,11 @@ export interface Harness {
   readonly residents: ResidentAgents;
   readonly bus: SceneToolBus;
   readonly stage: SceneStage;
+  /**
+   * What the scene in progress may spend. The story loop writes it per scene;
+   * the writer's `ask_context_builder` and the follow-up log read it.
+   */
+  readonly allocation: AllocationState;
   readonly planState: { plan?: StoryPlan; committed: Set<string> };
   /** Scene ids in the order they were opened; the summariser reads the tail. */
   readonly storyState: {
@@ -123,6 +126,7 @@ export interface Harness {
   readonly build: (input: {
     readonly sceneId: string;
     readonly skeleton: ContextPacket;
+    readonly allocation: SceneAllocation;
     readonly note?: string;
   }) => Promise<BuildResult>;
   readonly backfill: (input: {
@@ -131,11 +135,19 @@ export interface Harness {
     readonly note?: string;
   }) => Promise<readonly FileWrite[]>;
   readonly reads: readonly ReadRecord[];
-  /** Follow-up exchanges over the whole run, for "was the third round worth it". */
+  /**
+   * Follow-up exchanges over the whole run, for "was the fifth round worth it".
+   *
+   * The tier travels with each one because that is the question the schedule
+   * raises: if the endgame's extra rounds are never used, the schedule is costing
+   * prompt text and buying nothing, and only a per-tier count can say so.
+   */
   readonly followUps: readonly {
     readonly scene: string;
     readonly round: number;
     readonly question: string;
+    readonly tier: string;
+    readonly allowed: number;
   }[];
   readonly memories: ReadonlyMap<AgentRole, AgentMemory>;
   readonly skillLibraries: ReadonlyMap<AgentRole, SkillLibrary>;
@@ -148,6 +160,11 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
   const bus = new SceneToolBus();
   const builderBus = new BuilderBus();
   const stage = new SceneStage();
+  /**
+   * What the scene in progress may spend, for the tools that have to ask at call
+   * time. The story loop opens it per scene; nothing here decides it.
+   */
+  const allocation = new AllocationState();
   const personas: readonly PersonaSpec[] = options.backbone
     ? withBackbone(options.backbone)
     : PERSONAS;
@@ -170,7 +187,13 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
   };
 
   const reads: ReadRecord[] = [];
-  const followUps: { scene: string; round: number; question: string }[] = [];
+  const followUps: {
+    scene: string;
+    round: number;
+    question: string;
+    tier: string;
+    allowed: number;
+  }[] = [];
 
   /**
    * The live backfill buffer for the scene being committed.
@@ -276,7 +299,10 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
                 read: (relPath) => artifacts.read(relPath),
               }),
               askBuilderTool({
-                maxRounds: FOLLOW_UP_ROUNDS,
+                // Asked at call time, not captured at construction. The writer is
+                // resident, so a limit read here once would police scene 40 with
+                // scene 1's allowance.
+                maxRounds: () => allocation.followUpRounds,
                 roundsUsed: () => builderBus.contribution().followUps.length,
                 ask: askContextBuilder,
               }),
@@ -373,9 +399,10 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
   async function askContextBuilder(question: string): Promise<string> {
     const scene = builderBus.sceneId;
     const round = builderBus.contribution().followUps.length + 1;
+    const maxRounds = allocation.followUpRounds;
     await residents.invoke(
       "context-builder",
-      followUpBrief({ sceneId: scene, question, round, maxRounds: FOLLOW_UP_ROUNDS }),
+      followUpBrief({ sceneId: scene, question, round, maxRounds }),
       { txid: `tx-${scene}`, caller: "orchestrator" },
     );
     const answered = builderBus.contribution().followUps;
@@ -383,12 +410,12 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
       answered.at(-1)?.answer ??
       "the context-builder did not answer through answer_writer; treat the question as " +
         "unanswered rather than assuming a value";
-    followUps.push({ scene, round, question });
+    followUps.push({ scene, round, question, tier: allocation.current.tier, allowed: maxRounds });
     await artifacts.append(
       artifactPaths.packet(scene),
       renderFollowUp({ round, question, answer }),
     );
-    say(`${scene} follow-up ${round}/${FOLLOW_UP_ROUNDS} answered`);
+    say(`${scene} follow-up ${round}/${maxRounds} answered (${allocation.current.tier})`);
     return answer;
   }
 
@@ -396,6 +423,7 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
   async function build(input: {
     readonly sceneId: string;
     readonly skeleton: ContextPacket;
+    readonly allocation: SceneAllocation;
     readonly note?: string;
   }): Promise<BuildResult> {
     builderBus.open(
@@ -412,6 +440,7 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
         skeleton: input.skeleton.rendered,
         committedScenes: [...planState.committed],
         packetPath: artifactPaths.packet(input.sceneId),
+        allocation: input.allocation,
         ...(input.note ? { note: input.note } : {}),
       }),
       { txid: `tx-${input.sceneId}`, caller: "orchestrator" },
@@ -419,7 +448,8 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
     const contribution = builderBus.contribution();
     say(
       `${input.sceneId} context-builder added ${contribution.items.length} item(s) ` +
-        `after ${contribution.reads} read(s), and recorded ${contribution.gaps.length} gap(s)`,
+        `after ${contribution.reads} read(s), and recorded ${contribution.gaps.length} gap(s) ` +
+        `[${input.allocation.tier}]`,
     );
     return { items: contribution.items, gaps: contribution.gaps };
   }
@@ -504,6 +534,7 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
     residents,
     bus,
     stage,
+    allocation,
     planState,
     storyState,
     build,

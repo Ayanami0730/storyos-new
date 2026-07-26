@@ -28,6 +28,7 @@ import { Type } from "typebox";
 
 import type { AgentRole } from "../transaction/types.ts";
 import type { ResidentAgents } from "../agents/residents.ts";
+import { type SceneAllocation, renderAllocation } from "./allocation.ts";
 import { BudgetExhausted } from "./budget.ts";
 import type { SceneDirector, StepReport } from "./scene-director.ts";
 import type { SceneOutcome } from "./scene-loop.ts";
@@ -213,7 +214,15 @@ export function sceneBrief(input: {
   readonly position: { readonly index: number; readonly total: number };
   readonly committed: readonly string[];
   readonly failed: readonly string[];
-  readonly repairBudget: number;
+  /**
+   * What this scene may spend, and why this scene rather than another.
+   *
+   * Replaces the flat `repairBudget` number. The orchestrator is the one actor
+   * that can decide *when* to spend a round, so it is the one that needs the
+   * reason and not just the ceiling — and the ceiling now differs per scene, so a
+   * brief that stated a run-wide number would be wrong on most scenes.
+   */
+  readonly allocation: SceneAllocation;
   /**
    * Words on the page so far, against the whole task's target.
    *
@@ -246,7 +255,9 @@ export function sceneBrief(input: {
     "The sequence is fixed and enforced: call_context_builder, then call_writer, then",
     "call_verifier, then call_index_manager once it is approved. A call out of order comes",
     "back as a refusal naming the legal next step. Repairs loop between call_writer and",
-    `call_verifier; you have ${input.repairBudget} repair round(s) for this scene.`,
+    "call_verifier.",
+    "",
+    renderAllocation(input.allocation),
     "",
     "Before you start, look. You have `bash` and `read` over the whole project: the",
     "committed scenes under novel/chapters/, the outline in novel/outline/, the promise",

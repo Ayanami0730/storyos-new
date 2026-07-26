@@ -49,7 +49,7 @@ import { verifyDeterministic } from "../verification/deterministic.ts";
 import { blocking, renderRepairBrief, unchangedAcrossRound } from "../verification/finding.ts";
 import { type ArtifactStore, artifactPaths, renderAudit } from "./artifacts.ts";
 import { BudgetExhausted } from "./budget.ts";
-import { type ContextGap, FOLLOW_UP_ROUNDS, renderGaps } from "./packet-builder.ts";
+import { type ContextGap, renderGaps } from "./packet-builder.ts";
 import {
   type Draft,
   type SceneCollaborators,
@@ -136,7 +136,7 @@ export class SceneDirector {
       txid: request.txid,
       sceneId: request.sceneId,
       baseCommitId: request.packet.baseCommitId,
-      maxRepairs: request.maxRepairs,
+      maxRepairs: request.allocation.repairRounds,
       ...(deps.now ? { now: deps.now } : {}),
     });
   }
@@ -233,6 +233,7 @@ export class SceneDirector {
         const built = await this.#deps.collaborators.build({
           sceneId: this.#request.sceneId,
           skeleton: packet,
+          allocation: this.#request.allocation,
           ...(note ? { note } : {}),
         });
         added = built.items.length;
@@ -260,7 +261,7 @@ export class SceneDirector {
       this.#packetPath = await this.#deps.artifacts.write(
         artifactPaths.packet(this.#request.sceneId),
         `# Context packet — ${this.#request.sceneId}\n\n${packet.rendered}\n` +
-          `${renderGaps(this.#gaps, FOLLOW_UP_ROUNDS)}\n`,
+          `${renderGaps(this.#gaps, this.#request.allocation.followUpRounds)}\n`,
       );
     }
 
@@ -306,6 +307,7 @@ export class SceneDirector {
         packetPath: this.#packetPath,
         auditPath: this.#lastAuditPath,
         gaps: this.#gaps,
+        allocation: this.#request.allocation,
         ...(words ? { words } : {}),
         ...(note ? { note } : {}),
       });
@@ -473,8 +475,10 @@ export class SceneDirector {
         ? `${persistent.length} finding(s) survived a rewrite unchanged ` +
           `(${persistent.map((f) => f.id).join(", ")}), so another round would buy the ` +
           `same draft again`
-        : `the repair budget of ${this.#request.maxRepairs} round(s) ran out with ` +
-          `${blockers.length} blocking finding(s) outstanding`;
+        : `the repair budget of ${this.#request.allocation.repairRounds} round(s) ran out ` +
+          `with ${blockers.length} blocking finding(s) outstanding (this scene is in the ` +
+          `${this.#request.allocation.tier} tier at position ` +
+          `${this.#request.allocation.position})`;
       this.#tx.transition("APPROVED", "verifier", { findings });
       return report(
         "verify",

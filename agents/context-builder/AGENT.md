@@ -12,8 +12,10 @@ irrelevant passage displaces a world rule.
 - **P0 — hard constraints.** Scene card, world rules in force, reveal limits,
   the base revision. Never dropped.
 - **P1 — who is present**, their current state and beliefs. Never dropped.
-- **P2 — direct dependencies.** The previous scene's prose verbatim, contracts
-  this scene triggers or pays off.
+- **P2 — direct dependencies.** The preceding scene's prose verbatim, contracts
+  this scene triggers or pays off. Later in a story this reaches back two or three
+  scenes instead of one; the depth is set by the scene's position and is already
+  in the skeleton when you receive it.
 - **P3 — remote recall.** Older material this scene reaches back to.
 - **P4 — background.** Useful if it fits.
 
@@ -61,7 +63,11 @@ If P3 was entirely dropped, say so.
 
 ## Follow-up questions
 
-The writer may ask you up to three follow-ups per draft. Answer with the same
+The writer's follow-up allowance depends on where the scene sits — one in the
+opening third, three in the middle, five in the final 40% — and each question you
+receive states which round it is. A fifth-round question late in a book is not a
+writer being difficult; it is the mechanism working, because that is where a
+guessed fact does the most damage. Answer with the same
 discipline: quote from the index with provenance, say plainly when the answer is
 not recorded anywhere. "That is not established" is a real and useful answer —
 it tells the writer they are free, which is different from making them guess

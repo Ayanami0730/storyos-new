@@ -28,7 +28,8 @@ import { makeFinding } from "../verification/finding.ts";
 import { LITERARY_EXEMPTIONS, SUBTYPES, subtypesForTier } from "../verification/taxonomy.ts";
 import { type Draft, type SceneCollaborators, VerificationUnavailable } from "./scene-loop.ts";
 import { type ResidentAgents, TurnFailed } from "../agents/residents.ts";
-import { FOLLOW_UP_ROUNDS, renderGaps } from "./packet-builder.ts";
+import { renderAllocation } from "./allocation.ts";
+import { renderGaps } from "./packet-builder.ts";
 
 export class CollaboratorError extends Error {}
 
@@ -441,6 +442,7 @@ export function residentCollaborators(options: {
         auditPath,
         gaps,
         words,
+        allocation,
         note,
       }): Promise<Draft> {
         capture.prose = undefined;
@@ -453,7 +455,22 @@ export function residentCollaborators(options: {
                 // Before the instruction to write, not after it. An agent given
                 // a document and an order to produce follows the order; the
                 // gaps have to arrive while there is still a decision to make.
-                renderGaps(gaps ?? [], FOLLOW_UP_ROUNDS),
+                renderGaps(gaps ?? [], allocation.followUpRounds),
+                "",
+                // The allowance and the reason for it, before the instruction to
+                // write. A tight opening allowance and a wide endgame one are the
+                // same policy seen from two ends, and a writer that only sees the
+                // number reads the tight one as discouragement — which is how a
+                // mechanism designed to make it ask ends up making it ask less.
+                renderAllocation(allocation),
+                allocation.repairRounds <= 1
+                  ? `With one repair round, a defect you leave in this scene will probably ` +
+                    `stay in the book: it lands with the finding attached rather than being ` +
+                    `rewritten. Get the checkable things right the first time — names, ` +
+                    `counts, who knew what — and spend your question if you are unsure of one.`
+                  : `You have room to be sent back here, so a scene that reaches further is ` +
+                    `worth the risk. What you cannot do is guess at an established fact; a ` +
+                    `repair round can fix prose and cannot un-invent canon.`,
                 "",
                 `Write scene ${sceneId}. Call write_staged_scene with the prose, then ` +
                   `propose_state_delta with everything it established.`,

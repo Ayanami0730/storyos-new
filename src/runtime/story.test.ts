@@ -29,7 +29,7 @@ describe("contextFor", () => {
       card: plan.scenes[0]!,
       plan,
       canon: [],
-      previousProse: null,
+      recentProse: [],
       earlierIntents: [],
     });
     const p0 = items.filter((i) => i.priority === "P0").map((i) => i.id);
@@ -45,7 +45,7 @@ describe("contextFor", () => {
       card: plan.scenes[0]!,
       plan,
       canon: [],
-      previousProse: null,
+      recentProse: [],
       earlierIntents: [],
     }).find((i) => i.id === "entity-roster")!;
     for (const entity of plan.entities) assert.match(roster.content, new RegExp(entity.id));
@@ -60,7 +60,7 @@ describe("contextFor", () => {
       card: plan.scenes[0]!,
       plan,
       canon,
-      previousProse: null,
+      recentProse: [],
       earlierIntents: [],
     });
     for (const item of items) {
@@ -77,7 +77,7 @@ describe("contextFor", () => {
       card: plan.scenes[0]!,
       plan,
       canon,
-      previousProse: null,
+      recentProse: [],
       earlierIntents: [],
     });
     const p1 = items.filter((i) => i.priority === "P1");
@@ -92,7 +92,7 @@ describe("contextFor", () => {
       card: plan.scenes[0]!,
       plan,
       canon: [],
-      previousProse: null,
+      recentProse: [],
       earlierIntents: [],
     });
     assert.match(
@@ -106,7 +106,7 @@ describe("contextFor", () => {
       card: plan.scenes[0]!,
       plan,
       canon,
-      previousProse: "She folded the chart.",
+      recentProse: [{ sceneId: "s-001", text: "She folded the chart." }],
       earlierIntents: ["Mira arrives", "the warden lies"],
     });
     assert.equal(items.find((i) => i.id === "previous-scene")!.priority, "P2");

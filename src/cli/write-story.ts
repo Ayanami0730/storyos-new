@@ -24,6 +24,7 @@ import path from "node:path";
 
 import { selectSandbox } from "../sandbox/backends.ts";
 import type { SandboxId } from "../sandbox/types.ts";
+import { SCHEDULE } from "../runtime/allocation.ts";
 import { ArtifactStore } from "../runtime/artifacts.ts";
 import { assembleHarness, defaultAgentsRoot, transcriptPath } from "../runtime/assembly.ts";
 import { TokenBudget, profileById, taskBudgetFor } from "../runtime/budget.ts";
@@ -39,7 +40,17 @@ interface Args {
   target: number;
   out: string;
   backbone: ModelId | null;
-  maxRepairs: number;
+  /**
+   * Pin every scene to the same number of repair rounds and follow-ups, instead
+   * of allocating by position in the story.
+   *
+   * `--max-repairs` used to be a plain number that applied to every scene. It is
+   * now the uniform-allocation *arm*: `dynamic` (the default) runs the schedule
+   * in `runtime/allocation.ts`, and a number turns it off. Keeping the flag able
+   * to do both is what makes "did allocating by position help" answerable with
+   * two runs of one binary rather than with two versions of the harness.
+   */
+  pinnedRepairs: number | null;
   /** `parity` to sit in a table with the baselines, `generous` to find out if it works. */
   profile: string;
   /**
@@ -65,6 +76,26 @@ interface Args {
   enforceBudget: boolean;
 }
 
+/**
+ * `--max-repairs dynamic | <n>`, defaulting to dynamic.
+ *
+ * A typo must not silently become the uniform arm: `--max-repairs tow` parsing to
+ * `NaN` and then to "pinned at NaN rounds" is the kind of thing that produces a
+ * run nobody can characterise afterwards.
+ */
+function pinnedRepairsFrom(raw: string | undefined): number | null {
+  if (raw === undefined || raw === "dynamic") return null;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 0) {
+    throw new Error(
+      `--max-repairs must be \`dynamic\` (allocate by position in the story, the default) ` +
+        `or a non-negative integer to pin every scene to the same allowance; got ` +
+        `${JSON.stringify(raw)}`,
+    );
+  }
+  return n;
+}
+
 async function parseArgs(argv: readonly string[]): Promise<Args> {
   const get = (flag: string) => {
     const i = argv.indexOf(flag);
@@ -81,7 +112,7 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     target: Number(get("--target") ?? 4000),
     out: get("--out") ?? `runs/story-${Date.now()}`,
     backbone: (get("--backbone") as ModelId | undefined) ?? null,
-    maxRepairs: Number(get("--max-repairs") ?? 2),
+    pinnedRepairs: pinnedRepairsFrom(get("--max-repairs")),
     profile: get("--profile") ?? "parity",
     memoryDir: get("--memory-dir") ?? null,
     sandbox: (get("--sandbox") as SandboxId | undefined) ?? "none",
@@ -166,6 +197,14 @@ say(
     ? `token ceiling ENFORCED at ${taskBudget.toLocaleString()} — the run will stop there`
     : `token ceiling ${taskBudget.toLocaleString()} is reported, not enforced (--enforce-budget to stop at it)`,
 );
+say(
+  args.pinnedRepairs === null
+    ? `allowance allocated by position: ${SCHEDULE.map(
+        (p) => `${p.tier} ${p.repairRounds}r/${p.followUpRounds}q/${p.recentScenes}recall`,
+      ).join(", ")}`
+    : `allowance PINNED at ${args.pinnedRepairs} round(s) and 1 scene of recall for every ` +
+        `scene — this is the uniform-allocation arm, not the default`,
+);
 const artifacts = new ArtifactStore(projectRoot);
 
 /** One id per run, so transcripts from separate runs never interleave. */
@@ -208,7 +247,8 @@ try {
     artifacts,
     premise: args.premise,
     targetWords: args.target,
-    maxRepairs: args.maxRepairs,
+    pinnedRepairs: args.pinnedRepairs,
+    allocationState: harness.allocation,
     log: say,
     build: harness.build,
     backfill: harness.backfill,

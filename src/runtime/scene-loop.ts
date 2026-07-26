@@ -36,6 +36,7 @@ import type { CommitResult, FileWrite } from "../index/commit.ts";
 import { CanonicalIndex } from "../index/commit.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
 import type { CanonFact, SceneDelta } from "../verification/deterministic.ts";
+import type { SceneAllocation } from "./allocation.ts";
 import type { ContextGap } from "./packet-builder.ts";
 import { type DirectorDeps, SceneDirector } from "./scene-director.ts";
 
@@ -91,6 +92,8 @@ export interface SceneCollaborators {
   build?(input: {
     readonly sceneId: string;
     readonly skeleton: ContextPacket;
+    /** Where the scene sits, and therefore how much recall is worth doing. */
+    readonly allocation: SceneAllocation;
     /**
      * What the orchestrator asked for, in its own words.
      *
@@ -132,6 +135,17 @@ export interface SceneCollaborators {
      * same length whether the book is running short or long.
      */
     readonly words?: { readonly committed: number; readonly target: number };
+    /**
+     * This scene's allowance, so the writer knows how many questions it has and
+     * why the number is what it is.
+     *
+     * The reason has to travel with the number. A writer told it has five
+     * questions in an endgame scene and one in an opening scene, with no account
+     * of the difference, reads the small number as discouragement — and the
+     * measured failure this whole mechanism exists to fix was a writer that never
+     * asked anything.
+     */
+    readonly allocation: SceneAllocation;
     readonly note?: string;
   }): Promise<Draft>;
 
@@ -170,7 +184,15 @@ export interface SceneRequest {
   readonly available: readonly ContextItem[];
   readonly canon: readonly CanonFact[];
   readonly knownEntities: ReadonlySet<string>;
-  readonly maxRepairs: number;
+  /**
+   * What this scene may spend on asking, checking and repairing.
+   *
+   * Replaces the `maxRepairs` number this used to carry, rather than sitting
+   * beside it. The repair budget is one of three levers that move together with
+   * position in the story, and a request that carried both would let the two
+   * disagree about how many rounds a scene has.
+   */
+  readonly allocation: SceneAllocation;
   /** Where the prose lands, relative to the index root. */
   readonly prosePath: string;
   /** Where the declared delta lands. Defaults under `continuity/`. */

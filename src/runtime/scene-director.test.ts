@@ -19,6 +19,7 @@ import type { ContextItem } from "../context/types.ts";
 import { CanonicalIndex } from "../index/commit.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
 import { makeFinding } from "../verification/finding.ts";
+import { allocate } from "./allocation.ts";
 import { ArtifactStore, artifactPaths } from "./artifacts.ts";
 import type { ContextGap } from "./packet-builder.ts";
 import { SceneStage, driveScene, orchestratorTools } from "./orchestration.ts";
@@ -69,7 +70,7 @@ function request(overrides: Partial<SceneRequest> = {}): SceneRequest {
     available: AVAILABLE,
     canon: CANON,
     knownEntities: new Set(["char-mira"]),
-    maxRepairs: 2,
+    allocation: allocate({ sceneIndex: 1, total: 1, pinnedRepairs: 2 }),
     prosePath: "novel/chapters/ch-01/scenes/s-011.md",
     ...overrides,
   };

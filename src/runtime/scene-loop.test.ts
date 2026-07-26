@@ -9,6 +9,7 @@ import { CanonicalIndex } from "../index/commit.ts";
 import type { Finding } from "../transaction/types.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
 import { makeFinding } from "../verification/finding.ts";
+import { allocate } from "./allocation.ts";
 import { type Draft, type SceneCollaborators, runScene } from "./scene-loop.ts";
 
 const roots: string[] = [];
@@ -64,7 +65,7 @@ function request(overrides: Partial<Parameters<typeof runScene>[0]> = {}) {
     available: AVAILABLE,
     canon: CANON,
     knownEntities: KNOWN,
-    maxRepairs: 2,
+    allocation: allocate({ sceneIndex: 1, total: 1, pinnedRepairs: 2 }),
     prosePath: "manuscript/s-011.md",
     ...overrides,
   } as Parameters<typeof runScene>[0];
@@ -187,7 +188,7 @@ describe("repair rounds", () => {
   it("stops early when a finding survives a rewrite, and commits rather than deleting the scene", async () => {
     const { index } = await freshIndex();
     // The writer changes the prose but not the offending claim.
-    const outcome = await runScene(request({ maxRepairs: 5 }), {
+    const outcome = await runScene(request({ allocation: allocate({ sceneIndex: 1, total: 1, pinnedRepairs: 5 }) }), {
       index,
       collaborators: scripted({ drafts: [contradicting, contradicting] }),
     });
@@ -228,7 +229,7 @@ describe("repair rounds", () => {
         ],
       },
     }));
-    const outcome = await runScene(request({ maxRepairs: 2 }), {
+    const outcome = await runScene(request({ allocation: allocate({ sceneIndex: 1, total: 1, pinnedRepairs: 2 }) }), {
       index,
       collaborators: scripted({ drafts }),
     });
