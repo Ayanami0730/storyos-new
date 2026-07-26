@@ -36,10 +36,25 @@ export interface ShellLimits {
  * thousand characters inline is competing with the material the scene actually
  * needs.
  */
+/**
+ * `maxCallsPerTransaction` was 40 and that number was chosen by nobody.
+ *
+ * The measurement that changed it: a turn re-sends its entire prompt once per
+ * tool call, so the bill for a turn is roughly context × calls. The
+ * context-builder spent 44, 18, 30 and 19 calls on four scenes and billed 1.2M,
+ * 0.95M, 3.6M and 3.6M tokens — 81% of the whole run — while producing packets
+ * of nine to sixteen items. Forty reads to choose ten items is not thoroughness
+ * being rewarded; it is the same growing transcript re-sent forty times.
+ *
+ * Sixteen is above what any scene has actually needed to produce its packet and
+ * far below what the builder will spend if nothing stops it. It is a starting
+ * point with a number behind it rather than a round figure, and the run records
+ * reads per scene so the next revision is also evidence.
+ */
 export const DEFAULT_SHELL_LIMITS: ShellLimits = {
   maxInlineChars: 8_000,
   timeoutMs: 30_000,
-  maxCallsPerTransaction: 40,
+  maxCallsPerTransaction: 16,
 };
 
 /**

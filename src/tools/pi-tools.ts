@@ -128,7 +128,10 @@ function adapt(tool: HarnessTool, env: NodeExecutionEnv): unknown {
  * budget reasons is indistinguishable in shape from a refusal for policy
  * reasons — an agent should not have to learn two failure vocabularies.
  */
-export function nativeTools(options: NativeToolOptions): unknown[] {
+export function nativeTools(options: NativeToolOptions): {
+  readonly tools: unknown[];
+  readonly spend: (label: string) => string | null;
+} {
   const limits: ShellLimits = { ...DEFAULT_SHELL_LIMITS, ...options.limits };
   const host = new NodeExecutionEnv({ cwd: options.projectRoot });
   /**
@@ -170,27 +173,58 @@ export function nativeTools(options: NativeToolOptions): unknown[] {
     : host;
   const used = new Map<string, number>();
 
+  /**
+   * One budget across every way of reading, not one per tool.
+   *
+   * Budgeting `bash` alone does not reduce anything — it relocates it. The
+   * context-builder has three ways to read the same tree (`bash`, `read`,
+   * `read_index`), and on the run where it consumed 81% of the tokens it used
+   * all three: 10 shell commands, 27 reads and 8 path reads in a single run.
+   * A cap that one of them respects is a cap.
+   */
+  const spend = (label: string): string | null => {
+    const key = options.budgetKey();
+    const spent = used.get(key) ?? 0;
+    if (spent >= limits.maxCallsPerTransaction) {
+      return (
+        `read budget exhausted for this scene (${limits.maxCallsPerTransaction} reads, ` +
+        `across bash, read and read_index together). Work with what you have, and say ` +
+        `plainly what you could not check rather than guessing at it.`
+      );
+    }
+    used.set(key, spent + 1);
+    options.onRead?.({ command: label, durationMs: 0 });
+    return null;
+  };
+
   const bash = createBashTool({
     prepare: (execution) => {
-      const key = options.budgetKey();
-      const spent = used.get(key) ?? 0;
       const reason = refusalFor(execution.command, limits);
+      // Policy before budget: a refused command should not cost a read, and the
+      // agent should hear why it was refused rather than that it is out of room.
       if (reason) throw new ShellRefused(reason);
-      if (spent >= limits.maxCallsPerTransaction) {
-        throw new ShellRefused(
-          `shell budget exhausted for this transaction (${limits.maxCallsPerTransaction} ` +
-            `calls). Work with what you have read, or say what you could not check.`,
-        );
-      }
-      used.set(key, spent + 1);
-      const started = Date.now();
-      // Recorded on entry rather than on completion: a command that hangs is
-      // exactly the one we want to see in the log.
-      options.onRead?.({ command: execution.command, durationMs: Date.now() - started });
+      const exhausted = spend(execution.command);
+      if (exhausted) throw new ShellRefused(exhausted);
     },
   }) as unknown as HarnessTool;
 
   const read = createReadTool() as unknown as HarnessTool;
+  const budgetedRead: HarnessTool = {
+    ...read,
+    execute: async (id, params, signal, onUpdate, context) => {
+      const target =
+        typeof params === "object" && params !== null && "path" in params
+          ? `read ${String((params as { path: unknown }).path)}`
+          : "read";
+      const exhausted = spend(target);
+      if (exhausted) throw new ShellRefused(exhausted);
+      return read.execute(id, params, signal, onUpdate, context);
+    },
+  };
 
-  return [adapt(bash, env), adapt(read, env)];
+  return {
+    tools: [adapt(bash, env), adapt(budgetedRead, env)],
+    /** Shared with `read_index` so one budget covers every way of reading. */
+    spend,
+  };
 }

@@ -441,6 +441,8 @@ describe("compaction", () => {
         thresholds: {
           contextWindow: 1_000,
           maxOutput: 200,
+          // High enough that these tests exercise the overflow trigger alone.
+          level1PayloadTokens: 1_000_000,
           level1Fraction: 0.7,
           level2Fraction: 0.85,
           level2Reserve: 130,
@@ -516,6 +518,8 @@ describe("compaction", () => {
         thresholds: {
           contextWindow: 1_000,
           maxOutput: 200,
+          // High enough that these tests exercise the overflow trigger alone.
+          level1PayloadTokens: 1_000_000,
           level1Fraction: 0.7,
           level2Fraction: 0.85,
           level2Reserve: 130,

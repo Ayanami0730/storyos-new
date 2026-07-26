@@ -24,6 +24,7 @@ import {
   compactLevel1,
   compactLevel2,
   estimateTokens,
+  evictablePayloadTokens,
   levelFor,
 } from "./compaction.ts";
 import type { AgentRole } from "../transaction/types.ts";
@@ -598,8 +599,22 @@ export class ResidentAgents {
     // never reached, which is exactly how a latent infinite loop survives.
     if (this.#compacting.has(role)) return;
     const used = entry.contextTokens;
-    const level = levelFor(used, this.#compaction.thresholds);
-    if (level === "none") return;
+    let level = levelFor(used, this.#compaction.thresholds);
+
+    if (level === "none") {
+      // The overflow thresholds ask whether this session will run out of room.
+      // Cost asks a different question and answers it much sooner: a turn
+      // re-sends its whole prompt once per tool call, so stale payload is paid
+      // for tens of times over before anything is close to full. The
+      // context-builder was 81% of a run's tokens while never crossing the
+      // overflow trigger. Level 1 is lossless, so there is nothing to weigh.
+      const bulk = evictablePayloadTokens(
+        agent.state.messages.map((m, i) => toCompactable(m, i)),
+        this.#compaction.thresholds,
+      );
+      if (bulk < this.#compaction.thresholds.level1PayloadTokens) return;
+      level = "level1";
+    }
 
     this.#compacting.add(role);
     try {

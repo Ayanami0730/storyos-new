@@ -282,7 +282,8 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
               }),
             ]
           : [
-              ...nativeTools({
+              ...(() => {
+                const native = nativeTools({
                 projectRoot,
                 ...(options.sandbox && options.sandbox.id !== "none"
                   ? { shell: options.sandbox.shell }
@@ -295,8 +296,15 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
                   reads.push({ role, scene: scene(), ...entry });
                   if (role === "context-builder") builderBus.noteRead();
                 },
-              }),
-              readIndexTool({ read: (relPath) => index.read(relPath) }),
+                });
+                return [
+                  ...native.tools,
+                  readIndexTool({
+                    read: (relPath) => index.read(relPath),
+                    spend: native.spend,
+                  }),
+                ];
+              })(),
             ]),
         // Novelty 2's consumption path. The relation records are being written;
         // without this the reader can only `cat` a YAML file and gets the raw

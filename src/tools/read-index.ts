@@ -14,6 +14,15 @@ export function readIndexTool(options: {
   readonly read: (relPath: string) => Promise<string>;
   /** Hard cap, because a whole chapter pasted into a transcript is a compaction. */
   readonly maxChars?: number;
+  /**
+   * Charge one read against the shared budget, returning a refusal if there is
+   * none left.
+   *
+   * Shared with `bash` and `read` rather than counted separately: three ways to
+   * read the same tree with one budget each is three budgets, and the agent
+   * that was over-reading used all three.
+   */
+  readonly spend?: (label: string) => string | null;
 }): unknown {
   const maxChars = options.maxChars ?? 20_000;
   return {
@@ -27,6 +36,8 @@ export function readIndexTool(options: {
       purpose: Type.String(),
     }),
     execute: async (_id: string, args: { path: string }) => {
+      const exhausted = options.spend?.(`read_index ${args.path}`);
+      if (exhausted) return { content: [{ type: "text", text: exhausted }] };
       try {
         const text = await options.read(args.path);
         return { content: [{ type: "text", text: text.slice(0, maxChars) }] };

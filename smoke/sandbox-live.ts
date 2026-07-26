@@ -48,7 +48,7 @@ try {
     projectRoot,
     budgetKey: () => "tx-1",
     ...(sandbox.id !== "none" ? { shell: sandbox.shell } : {}),
-  }) as Tool[];
+  }).tools as Tool[];
   const bash = tools.find((t) => t.name === "bash")!;
   const say = (r: { content: { text?: string }[] }) =>
     r.content.map((c) => c.text ?? "").join("\n");

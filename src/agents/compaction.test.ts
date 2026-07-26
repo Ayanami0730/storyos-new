@@ -9,11 +9,16 @@ import {
   compactLevel2,
   effectiveBudget,
   estimateTokens,
+  evictablePayloadTokens,
   levelFor,
   summaryPrompt,
+  thresholdsFor,
 } from "./compaction.ts";
 
 const T: CompactionThresholds = { ...DEFAULT_THRESHOLDS };
+
+/** The `generous` profile's shape, which is what the live runs use. */
+const GENEROUS_LIKE = { inputCeiling: 256_000, maxCompletionTokens: 64_000 };
 
 function msg(over: Partial<CompactableMessage> = {}): CompactableMessage {
   return {
@@ -54,6 +59,42 @@ describe("thresholds", () => {
   it("blocks before the window is actually full, not after", () => {
     // The point of blocking early is that a turn needs room to answer in.
     assert.equal(levelFor(effectiveBudget(T) - T.blockReserve, T), "block");
+  });
+});
+
+describe("the cost trigger, which asks a different question than headroom", () => {
+  const bulky = (n: number, tokens: number) => [
+    msg({ kind: "user", text: "build the packet", pinned: true }),
+    ...Array.from({ length: n }, (_, i) => ({ ...toolResult(i), tokens })),
+  ];
+
+  it("counts only what level 1 would actually evict", () => {
+    // The recent tail is kept, so it is not a saving and must not be counted as
+    // one. Fifteen results at 2k with a tail of ten leaves five evictable.
+    const bulk = evictablePayloadTokens(bulky(15, 2_000), T);
+    assert.equal(bulk, 5 * 2_000);
+  });
+
+  it("counts nothing when everything is inside the kept tail", () => {
+    assert.equal(evictablePayloadTokens(bulky(T.keepRecentToolResults, 9_000), T), 0);
+  });
+
+  it("never counts a pinned message", () => {
+    const history = bulky(15, 2_000).map((m, i) =>
+      i === 1 ? { ...m, pinned: true } : m,
+    );
+    assert.equal(evictablePayloadTokens(history, T), 4 * 2_000);
+  });
+
+  it("sees the cost that the overflow thresholds are blind to", () => {
+    // The measurement behind this: the context-builder's transcript reached
+    // 154k against a 165k overflow trigger — so "no compaction needed" — while
+    // that turn made 30 tool calls and billed 3.6M tokens, because every call
+    // re-sends the whole prompt. Headroom said fine; the bill said 81% of the
+    // run. The two questions are different and only one of them was being asked.
+    const history = bulky(40, 4_000);
+    assert.equal(levelFor(154_000, thresholdsFor(GENEROUS_LIKE)), "none");
+    assert.ok(evictablePayloadTokens(history, T) > T.level1PayloadTokens);
   });
 });
 

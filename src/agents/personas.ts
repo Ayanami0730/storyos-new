@@ -82,7 +82,7 @@ export const PERSONAS: readonly PersonaSpec[] = [
   {
     role: "context-builder",
     model: "gpt-5-mini",
-    writeTools: ["add_context_item", "answer_writer"],
+    writeTools: ["add_context_item", "note_gap", "answer_writer"],
     mayDelegate: false,
   },
   {

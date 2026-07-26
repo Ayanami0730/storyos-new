@@ -5,6 +5,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 
 import { nativeTools } from "./pi-tools.ts";
+import { readIndexTool } from "./read-index.ts";
 import { DEFAULT_SHELL_LIMITS, refusalFor } from "./shell.ts";
 
 interface Tool {
@@ -22,7 +23,7 @@ async function project(limits?: { maxCallsPerTransaction?: number }) {
     budgetKey: () => key,
     ...(limits ? { limits } : {}),
     onRead: (entry) => reads.push(entry),
-  }) as Tool[];
+  }).tools as Tool[];
   return {
     root,
     reads,
@@ -106,6 +107,51 @@ describe("pi's bash, with our policy in its prepare hook", () => {
   });
 });
 
+describe("one read budget across every way of reading", () => {
+  /** All three read tools, sharing a counter. */
+  async function reader(maxCallsPerTransaction: number) {
+    const root = await mkdtemp(path.join(tmpdir(), "storyos-pitools-budget-"));
+    await writeFile(path.join(root, "note.md"), "a line\n", "utf8");
+    const native = nativeTools({
+      projectRoot: root,
+      budgetKey: () => "tx-1",
+      limits: { maxCallsPerTransaction },
+    });
+    const tools = native.tools as Tool[];
+    return {
+      root,
+      bash: tools.find((t) => t.name === "bash")!,
+      read: tools.find((t) => t.name === "read")!,
+      readIndex: readIndexTool({
+        read: async (rel) => (await import("node:fs/promises")).readFile(path.join(root, rel), "utf8"),
+        spend: native.spend,
+      }) as Tool,
+    };
+  }
+
+  it("charges bash, read and read_index against the same allowance", async () => {
+    const { root, bash, read, readIndex } = await reader(2);
+
+    await bash.execute("1", { command: "cat note.md" });
+    await read.execute("2", { path: path.join(root, "note.md") });
+    // Two reads spent through two different tools; the third must be refused
+    // whichever tool it comes through. A cap only one tool respects is not a cap
+    // — the agent that over-read used all three.
+    const third = await readIndex.execute("3", { path: "note.md", purpose: "one more" });
+    assert.match(text(third), /read budget exhausted/);
+  });
+
+  it("does not spend a read on a command the policy refused", async () => {
+    const { bash, read } = await reader(1);
+    await bash.execute("1", { command: "rm -rf ." });
+    // The refusal is about policy, so it should not also cost the agent its
+    // remaining budget — and it must hear why it was refused, not that it is
+    // out of room.
+    const allowed = await read.execute("2", { path: "note.md" });
+    assert.doesNotMatch(text(allowed), /budget exhausted/);
+  });
+});
+
 describe("bash routed through a sandbox", () => {
   /** A stand-in backend that records what it was asked to run. */
   function recordingShell() {
@@ -127,7 +173,7 @@ describe("bash routed through a sandbox", () => {
       projectRoot: root,
       budgetKey: () => "tx-1",
       shell,
-    }) as Tool[];
+    }).tools as Tool[];
 
     const out = await tools
       .find((t) => t.name === "bash")!
@@ -146,7 +192,7 @@ describe("bash routed through a sandbox", () => {
       projectRoot: root,
       budgetKey: () => "tx-1",
       shell,
-    }) as Tool[];
+    }).tools as Tool[];
 
     const out = await tools
       .find((t) => t.name === "bash")!

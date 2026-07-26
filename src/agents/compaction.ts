@@ -54,6 +54,16 @@ export interface CompactionThresholds {
   readonly blockReserve: number;
   /** Most recent tool results kept verbatim through level 1. */
   readonly keepRecentToolResults: number;
+  /**
+   * Evictable tool payload above which level 1 runs regardless of headroom.
+   *
+   * Set where the arithmetic stops being marginal rather than by taste: a turn
+   * re-sends its whole prompt once per tool call, and a builder turn makes
+   * twenty to forty of them, so 20k of stale payload is 400k–800k tokens of
+   * re-sending. Level 1 is lossless, so the only cost of dropping it early is a
+   * re-read that mostly never happens.
+   */
+  readonly level1PayloadTokens: number;
   /** Most recent messages kept verbatim through level 2. */
   readonly keepRecentMessages: number;
 }
@@ -80,6 +90,7 @@ export function thresholdsFor(profile: {
     blockReserve: 3_000,
     keepRecentToolResults: 10,
     keepRecentMessages: 12,
+    level1PayloadTokens: 20_000,
   };
 }
 
@@ -87,6 +98,38 @@ export const DEFAULT_THRESHOLDS: CompactionThresholds = thresholdsFor(DEFAULT_PR
 
 export function effectiveBudget(t: CompactionThresholds): number {
   return t.contextWindow - Math.min(t.maxOutput, 20_000);
+}
+
+/**
+ * Evictable tool payload currently sitting in a transcript.
+ *
+ * Separate from the overflow thresholds because it answers a different
+ * question, and the difference is the single largest cost in the system.
+ *
+ * The overflow thresholds ask *will this session run out of room*. The measured
+ * bill does not work that way: a turn's cost is roughly its context size
+ * multiplied by the number of tool calls in it, because every tool call is
+ * another model call that re-sends the whole prompt. On the run that made this
+ * obvious, the context-builder's transcript grew 37k → 55k → 154k → 190k across
+ * four scenes while it made 44, 18, 30 and 19 tool calls — and billed 1.2M,
+ * 0.95M, 3.6M and 3.6M tokens. It was **81% of the entire run** and never came
+ * close to the 165k overflow trigger until the very end.
+ *
+ * So carrying 25k of stale grep output is not "25k of headroom used". It is 25k
+ * re-sent twenty or thirty more times before the turn ends. Level 1 is lossless
+ * — handles and digests stay, and everything an agent read is in the index and
+ * re-readable — so there is no reason to wait for pressure before dropping it.
+ */
+export function evictablePayloadTokens(
+  messages: readonly CompactableMessage[],
+  t: CompactionThresholds,
+): number {
+  const toolIndices = messages.flatMap((m, i) => (m.kind === "toolResult" ? [i] : []));
+  const keepFrom = toolIndices.length - t.keepRecentToolResults;
+  return toolIndices
+    .slice(0, Math.max(0, keepFrom))
+    .filter((i) => !messages[i]!.pinned)
+    .reduce((n, i) => n + messages[i]!.tokens, 0);
 }
 
 export type CompactionLevel = "none" | "level1" | "level2" | "block";
