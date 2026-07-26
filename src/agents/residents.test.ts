@@ -254,8 +254,19 @@ describe("a provider call that fails", () => {
     assert.ok(isRetryableTurnError("429: channel:model_rate_limited"));
     assert.ok(isRetryableTurnError("503 Service Unavailable"));
     assert.ok(isRetryableTurnError("Resource exhausted. Please try again later."));
+    // These are the provider's actual words, and the first version of this
+    // pattern matched "timeout" but not "timed out" — so a verifier that
+    // reported `Request timed out.` was treated as permanently broken and
+    // never retried once. The strings come from real failures, not from
+    // imagining what a failure might say.
+    assert.ok(isRetryableTurnError("Request timed out."));
+    assert.ok(isRetryableTurnError("terminated"));
+    assert.ok(isRetryableTurnError("socket hang up"));
     assert.ok(!isRetryableTurnError("400: invalid request: unknown field"));
     assert.ok(!isRetryableTurnError("404: model_not_found"));
+    // A content filter is a decision about the request, not a transient fault;
+    // retrying it spends the budget to be refused again in the same words.
+    assert.ok(!isRetryableTurnError("Provider finish_reason: content_filter"));
   });
 
   it("raises rather than returning an empty turn that reads as success", async () => {
