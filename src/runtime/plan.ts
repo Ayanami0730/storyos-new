@@ -40,11 +40,49 @@ export interface StoryPlan {
   readonly scenes: readonly SceneCard[];
 }
 
+/**
+ * Below this, a "scene" is not a scene.
+ *
+ * Measured on `lbw029`, a 500-word task. `max(4, …)` gave it four scenes of 125
+ * words, each with its own packet, writer turn, verifier pass and commit — and the
+ * frozen judge put us seventh of nine on it: the best length score in the table
+ * (99.4, 509 words against 500) and the *worst* quality, 3.83 against raw
+ * `gpt-5-mini`'s 4.67 on the same backbone. Bare long-context beat us by 5.8
+ * points. Nothing was broken; the story was simply cut into four fragments that
+ * each had to open and close, and coherence, breadth and clarity all paid for it.
+ *
+ * So the floor of four is a floor on *architecture*, and it has to yield to a
+ * floor on prose. 500 words is one scene. This changes nothing at 2,000 and above,
+ * which is deliberate: those lengths have already been scored and a silent change
+ * to their scene counts would invalidate the comparison.
+ */
+const MIN_WORDS_PER_SCENE = 500;
+
+/**
+ * How many scenes a target length gets.
+ *
+ * Derived rather than left to the model: asked for "a plan for 40,000 words" a
+ * model reliably proposes a dozen scenes and then has to write 3,000 words each,
+ * which is where single-call length limits bite.
+ */
 export function sceneCountFor(targetWords: number, wordsPerScene = 1_200): number {
-  return Math.max(4, Math.round(targetWords / wordsPerScene));
+  const preferred = Math.max(4, Math.round(targetWords / wordsPerScene));
+  const affordable = Math.floor(targetWords / MIN_WORDS_PER_SCENE);
+  return Math.max(1, Math.min(preferred, affordable));
 }
 
-export function planTool(sink: { plan?: StoryPlan }, sceneCount: number): unknown {
+export function planTool(
+  sink: { plan?: StoryPlan },
+  sceneCount: number,
+  /**
+   * The task's whole target, so the tool can refuse a plan that slices it too
+   * thinly. Deriving the scene count is not enough on its own: the model is only
+   * *asked* for about `sceneCount` scenes, and on a short task the difference
+   * between one scene and four is the difference between a story and four
+   * fragments.
+   */
+  targetWords: number,
+): unknown {
   return {
     label: "Submit plan",
     name: "submit_plan",
@@ -80,6 +118,17 @@ export function planTool(sink: { plan?: StoryPlan }, sceneCount: number): unknow
           `rejected: ${scenes.length} scenes is too few for the target. Propose about ` +
             `${sceneCount}. Each scene is written by a separate call, so a short plan does ` +
             `not shorten the work — it makes each scene carry more words than one call writes well.`,
+        );
+      }
+      const perScene = Math.floor(targetWords / Math.max(1, scenes.length));
+      if (scenes.length > sceneCount && perScene < MIN_WORDS_PER_SCENE) {
+        return toolText(
+          `rejected: ${scenes.length} scenes for ${targetWords} words is ${perScene} words ` +
+            `each, and a ${perScene}-word scene is not a scene — it has to open and close ` +
+            `with no room to do anything in between. Propose about ${sceneCount}. This was ` +
+            `measured: a 500-word task written as four 125-word scenes scored the best ` +
+            `length compliance in its table and the worst quality in it, below a single ` +
+            `unstructured call to the same model.`,
         );
       }
       const ids = new Set((args.entities ?? []).map((e) => e.id));

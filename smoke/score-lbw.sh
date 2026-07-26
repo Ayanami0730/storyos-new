@@ -35,6 +35,10 @@ cd "$LBW"
 # the worktree's own score_full.sh does.
 REPO_ROOT="$(cd ../.. && pwd)"
 export PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}"
+# The judge is a model call, so it needs the key too. Exported here rather than
+# inherited, because the caller may have passed it only to the generation step —
+# which is exactly how a finished run ended up with an empty score file.
+export YS_KEY="${YS_KEY:-$(cat ~/.config/ys/key)}"
 python3 score_lbw.py \
   --systems "$SYSTEM" \
   --tasks "$TASK_ID" \

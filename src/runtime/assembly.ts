@@ -285,7 +285,7 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
         ...bus.toolsFor(role),
         ...(role === "orchestrator"
           ? [
-              planTool(planState, sceneCountFor(options.targetWords)),
+              planTool(planState, sceneCountFor(options.targetWords), options.targetWords),
               updatePlanTool(planState),
               ...orchestratorTools(stage),
             ]
