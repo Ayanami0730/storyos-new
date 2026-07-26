@@ -440,6 +440,42 @@ export async function initialiseProject(
   return { created };
 }
 
+/**
+ * Scenes actually on disk, read from the chapter tree.
+ *
+ * Lives here rather than in the entry point because it has to agree with
+ * `paths.scene`, and the first version did not: it still listed a flat
+ * `manuscript/` directory that the tree had replaced, returned nothing, and the
+ * reference check then reported every state entry as pointing at a nonexistent
+ * scene — 53 "broken" references over an index that was intact. A checker that
+ * cries wolf is worse than no checker, because the next real break is noise.
+ */
+export async function committedScenes(
+  root: string,
+): Promise<readonly { readonly sceneId: string; readonly relPath: string }[]> {
+  const out: { sceneId: string; relPath: string }[] = [];
+  let chapters: string[];
+  try {
+    chapters = (await readdir(path.join(root, "novel/chapters"), { withFileTypes: true }))
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name);
+  } catch {
+    return [];
+  }
+  for (const chapter of chapters.sort()) {
+    let files: string[];
+    try {
+      files = await readdir(path.join(root, "novel/chapters", chapter, "scenes"));
+    } catch {
+      continue;
+    }
+    for (const file of files.filter((f) => f.endsWith(".md")).sort()) {
+      out.push({ sceneId: file.replace(/\.md$/, ""), relPath: paths.scene(chapter, file.replace(/\.md$/, "")) });
+    }
+  }
+  return out.sort((a, b) => sceneIndexOf(a.sceneId) - sceneIndexOf(b.sceneId));
+}
+
 /** Every partition directory that exists, for an audit of what a run produced. */
 export async function partitionReport(
   root: string,

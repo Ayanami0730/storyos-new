@@ -65,12 +65,23 @@ export class BuilderBus {
   #followUps: { question: string; answer: string }[] = [];
   #reads = 0;
   #sceneId = "s-000";
+  #taken: ReadonlySet<string> = new Set();
 
-  open(sceneId: string): void {
+  /**
+   * Begin a scene, told which ids the skeleton already occupies.
+   *
+   * Without this the builder can collide with the skeleton and the packet build
+   * throws — which is what happened on the first tree run: it chose the id
+   * `story-so-far`, already used by the P3 beat list, and the whole
+   * contribution for that scene was discarded with a one-line warning. A
+   * collision is a naming accident, not a reason to lose the work.
+   */
+  open(sceneId: string, takenIds: Iterable<string> = []): void {
     this.#sceneId = sceneId;
     this.#items = [];
     this.#followUps = [];
     this.#reads = 0;
+    this.#taken = new Set(takenIds);
   }
 
   get sceneId(): string {
@@ -134,13 +145,29 @@ export class BuilderBus {
                 "fact came from, and so does the verifier when it disagrees.",
             );
           }
+          // Collisions are renamed, not refused. The id is a label for the
+          // writer's benefit; losing a piece of researched context over it —
+          // or losing the whole contribution, as the first run did — trades
+          // something that matters for something that does not.
+          let id = args.id;
+          if (bus.#taken.has(id) || bus.#items.some((i) => i.id === id)) {
+            let n = 2;
+            while (bus.#taken.has(`${args.id}-${n}`) || bus.#items.some((i) => i.id === `${args.id}-${n}`)) {
+              n += 1;
+            }
+            id = `${args.id}-${n}`;
+          }
           bus.#items.push({
-            id: args.id,
+            id,
             priority: args.priority as Priority,
             source: args.source,
             content: args.content,
           });
-          return toolText(`added ${args.id} at ${args.priority}.`);
+          return toolText(
+            id === args.id
+              ? `added ${id} at ${args.priority}.`
+              : `added as ${id} at ${args.priority} (${args.id} was already taken).`,
+          );
         },
       },
       {

@@ -17,6 +17,7 @@ import { Type } from "typebox";
 
 import type { ContextItem } from "../context/types.ts";
 import type { CanonicalIndex } from "../index/commit.ts";
+import { chapterFor, paths, sceneIndexOf } from "../index/tree.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
 import type { ResidentAgents } from "../agents/residents.ts";
@@ -112,6 +113,35 @@ export function planTool(sink: { plan?: StoryPlan }, sceneCount: number): unknow
         return toolText(
           `rejected: scenes reference entities that are not in your entity list: ` +
             `${[...new Set(unknown)].join(", ")}. Add them or fix the ids.`,
+        );
+      }
+
+      // An intent that names a character the scene does not list as present is
+      // an instruction the writer cannot follow safely. It happened on the first
+      // run with the tree: scene 1's intent said "Elias meets Mira at the
+      // Watchhouse" while `present` listed neither, so the writer invented what
+      // it had not been given and the scene was rejected three times over
+      // entities that were in the plan all along.
+      const missing = scenes.flatMap((s, i) => {
+        const present = new Set(s.present ?? []);
+        const named = [...ids].filter(
+          (id) =>
+            !present.has(id) &&
+            // Match on the distinctive part of the id, so `char-elias-warden`
+            // is found in prose that says "Elias".
+            new RegExp(`\\b${id.replace(/^(char|loc|obj|fac)-/, "").split("-")[0]}\\b`, "i").test(
+              s.intent ?? "",
+            ),
+        );
+        return named.map((id) => `scene ${i + 1} (${s.intent?.slice(0, 40)}…) names ${id}`);
+      });
+      if (missing.length > 0) {
+        return toolText(
+          `rejected: ${missing.length} scene(s) describe an entity they do not list as ` +
+            `present:\n- ${missing.join("\n- ")}\nThe writer only receives state and ` +
+            `beliefs for entities in \`present\`, so an intent that requires one which is ` +
+            `absent asks the writer to invent it. Add them to \`present\` or rewrite the ` +
+            `intent.`,
         );
       }
       sink.plan = {
@@ -245,7 +275,11 @@ export function contextFor(input: {
     {
       id: "scene-card",
       priority: "P0",
-      source: `index/story/structure/scenes/${card.id}.yaml`,
+      // Real paths in the tree. The first version cited `index/story/bible/...`,
+      // which no longer exists, and the cost was not cosmetic: the verifier read
+      // the citation, grepped it, found nothing, and spent nine further reads
+      // working out the layout by hand before it could check anything.
+      source: paths.chapterCard(chapterFor(sceneIndexOf(card.id))),
       content:
         `Scene ${card.id}. Intent: ${card.intent}\n` +
         `Present: ${card.presentEntities.join(", ") || "none stated"}\n` +
@@ -254,8 +288,24 @@ export function contextFor(input: {
     {
       id: "logline",
       priority: "P0",
-      source: "index/story/logline.md",
+      source: paths.logline(),
       content: plan.logline,
+    },
+    {
+      // The cast list, at P0, because omitting it produced a whole class of
+      // failure. The scene card's intent named Elias and the Watchhouse while
+      // `present` omitted them, so the writer was told to feature two entities
+      // it had been given nothing about — and then the verifier, seeing them in
+      // the delta but not in the packet, ruled they did not exist and rejected
+      // the scene three times. Eleven ids and a line each is a rounding error
+      // against that.
+      id: "entity-roster",
+      priority: "P0",
+      source: "characters/, locations/, objects/",
+      content:
+        `Every entity that exists in this story. Only these ids may be used; if you need ` +
+        `someone or something that is not here, say so rather than inventing an id.\n` +
+        plan.entities.map((e) => `- ${e.id}: ${e.sketch}`).join("\n"),
     },
   ];
 
@@ -272,7 +322,7 @@ export function contextFor(input: {
     items.push({
       id: "world-rules",
       priority: "P0",
-      source: "index/story/bible/world-rules.yaml",
+      source: paths.worldRules(),
       content:
         `These govern what is TRUE. They do not say what anyone KNOWS.\n` +
         `A character knows a rule only where canon says so; otherwise they may be ` +
@@ -292,7 +342,11 @@ export function contextFor(input: {
     items.push({
       id: `entity-${entityId}`,
       priority: "P1",
-      source: `index/story/bible/${entityId}.yaml`,
+      source: entityId.startsWith("char-")
+        ? paths.profile(entityId)
+        : entityId.startsWith("loc-")
+          ? paths.location(entityId)
+          : paths.object(entityId),
       content:
         `${entityId}: ${sketch}\n` +
         (facts.length > 0
@@ -316,7 +370,7 @@ export function contextFor(input: {
     items.push({
       id: "story-so-far",
       priority: "P3",
-      source: "index/story/structure/beats.yaml",
+      source: paths.beats(),
       content: earlierIntents.map((s, i) => `${i + 1}. ${s}`).join("\n"),
     });
   }

@@ -26,7 +26,14 @@ import { skillTools } from "../agents/skill-tools.ts";
 import { SkillLibrary, installStarterSkills, skillsSection } from "../agents/skills.ts";
 import { PartitionWriter } from "../index/backfill.ts";
 import { CanonicalIndex } from "../index/commit.ts";
-import { initialiseProject, chapterFor, partitionReport, paths, sceneIndexOf } from "../index/tree.ts";
+import {
+  chapterFor,
+  committedScenes,
+  initialiseProject,
+  partitionReport,
+  paths,
+  sceneIndexOf,
+} from "../index/tree.ts";
 import { TokenBudget, profileById, taskBudgetFor } from "../runtime/budget.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import { SceneToolBus } from "../runtime/collaborators.ts";
@@ -161,6 +168,15 @@ const FOLLOW_UP_ROUNDS = 3;
 let partitionWriter: PartitionWriter | null = null;
 
 /**
+ * Every shell read, with who ran it and why.
+ *
+ * The point of giving agents a shell is that they can find material a template
+ * would not have included. Whether they actually do is measurable, and this is
+ * the measurement: reads per scene per role, and what each was for.
+ */
+const reads: Record<string, unknown>[] = [];
+
+/**
  * Memory lives under the run's project directory unless told otherwise, so two
  * runs of the same premise start from the same blank slate. Sharing it across
  * runs is a real capability — an agent that has written ten stories should be
@@ -259,7 +275,13 @@ const residents = new ResidentAgents({
       shellTool({
         projectRoot,
         budgetKey: () => `${role}:${storyState.scenes.at(-1) ?? "plan"}`,
-        onRead: () => builderBus.noteRead(),
+        // Attributed per role. One shared counter would credit the builder with
+        // the writer's and verifier's reads too, and "was the grep worth it" is a
+        // question about the builder specifically.
+        onRead: (entry) => {
+          reads.push({ role, scene: storyState.scenes.at(-1) ?? "plan", ...entry });
+          if (role === "context-builder") builderBus.noteRead();
+        },
       }),
       ...(role === "index-manager" ? indexManagerTools(() => partitionWriter!) : []),
       ...(role === "context-builder" ? builderBus.tools() : []),
@@ -331,9 +353,12 @@ async function askContextBuilder(question: string): Promise<string> {
 /** Build P2–P4 for a scene by asking the resident builder to search the index. */
 async function buildContext(input: {
   readonly sceneId: string;
-  readonly skeleton: { readonly rendered: string };
+  readonly skeleton: { readonly rendered: string; readonly items: readonly { id: string }[] };
 }) {
-  builderBus.open(input.sceneId);
+  builderBus.open(
+    input.sceneId,
+    input.skeleton.items.map((i) => i.id),
+  );
   const card = planState.plan?.scenes.find((s) => s.id === input.sceneId);
   await residents.invoke(
     "context-builder",
@@ -475,18 +500,18 @@ const ledger = residents.ledger();
  * directory is full is worse than one that reports nothing.
  */
 async function committedOnDisk(): Promise<{ scenes: string[]; words: number }> {
-  try {
-    const { readdir } = await import("node:fs/promises");
-    const dir = path.join(outDir, "project", "manuscript");
-    const files = (await readdir(dir)).filter((f) => f.endsWith(".md")).sort();
-    let words = 0;
-    for (const f of files) {
-      words += (await readFile(path.join(dir, f), "utf8")).split(/\s+/).filter(Boolean).length;
+  const scenes = await committedScenes(projectRoot);
+  let words = 0;
+  for (const scene of scenes) {
+    try {
+      words += (await readFile(path.join(projectRoot, scene.relPath), "utf8"))
+        .split(/\s+/)
+        .filter(Boolean).length;
+    } catch {
+      // A scene listed but unreadable is worth zero words and worth not crashing.
     }
-    return { scenes: files.map((f) => f.replace(/\.md$/, "")), words };
-  } catch {
-    return { scenes: [], words: 0 };
   }
+  return { scenes: scenes.map((s) => s.sceneId), words };
 }
 
 const onDisk = await committedOnDisk();
@@ -585,6 +610,12 @@ const summary = {
    * character files, no relations and no timeline at all.
    */
   index: {
+    reads: reads.length,
+    reads_by_role: reads.reduce<Record<string, number>>((acc, r) => {
+      const role = String(r.role);
+      acc[role] = (acc[role] ?? 0) + 1;
+      return acc;
+    }, {}),
     partitions: await partitionReport(projectRoot),
     references: referenceReport.counts,
     dangling: referenceReport.dangling,

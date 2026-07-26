@@ -126,6 +126,39 @@ describe("character state", () => {
     );
   });
 
+  it("refuses a location that is a sentence rather than a place", async () => {
+    // Observed: `location: "in the Watchhouse, reading the wardens' ledger"`.
+    // It merges place with activity, cannot be compared with the next scene's
+    // value, and cannot be checked against the location files — so "where is
+    // she" stops being answerable by anything except reading the prose.
+    const { writer } = await writerFor("s-002");
+    await assert.rejects(
+      () =>
+        writer.appendState("char-mira", [
+          {
+            attribute: "location",
+            value: "in the Watchhouse, reading the wardens' ledger",
+            quote: "She sat with the book on her knees and read.",
+          },
+        ]),
+      /is a sentence, not a place/,
+    );
+  });
+
+  it("accepts a location id or a short place name", async () => {
+    const { writer } = await writerFor("s-002");
+    await writer.appendState("char-mira", [
+      { attribute: "location", value: "loc-watchhouse", quote: "q" },
+    ]);
+    await writer.appendState("char-mira", [
+      { attribute: "location", value: "the lighthouse stair", quote: "q" },
+    ]);
+    assert.equal(
+      parseJsonl<StateEntry>(content(writer.writes(), paths.state("char-mira"))).length,
+      2,
+    );
+  });
+
   it("sees its own earlier writes within one scene", async () => {
     const { writer } = await writerFor("s-001");
     await writer.appendState("char-araine", [
@@ -186,6 +219,45 @@ describe("relation phases — novelty 2's artefact", () => {
       record.phases.map((p) => p.toScene),
       ["s-004", "s-004", null],
     );
+  });
+
+  it("refuses to open a parallel phase with a new label while one is still open", async () => {
+    // The first run produced four open phases for one pair, two with the same
+    // label, which reads as "these two are simultaneously four things" and loses
+    // the ordering that a phase sequence exists for.
+    const { writer } = await writerFor("s-004");
+    await writer.recordRelationPhase({
+      participants: ["char-a", "char-b"],
+      relation: "observer/observed",
+      transition: "she watched him work at night",
+      span: "L1-L20",
+    });
+    await assert.rejects(
+      () =>
+        writer.recordRelationPhase({
+          participants: ["char-a", "char-b"],
+          relation: "partners",
+          transition: "he asked for her help",
+          span: "L30-L40",
+        }),
+      /closes_previous/,
+    );
+  });
+
+  it("allows continuing the same relation, and genuine simultaneity via that route", async () => {
+    const { writer } = await writerFor("s-004");
+    for (const span of ["L1-L20", "L30-L40"]) {
+      await writer.recordRelationPhase({
+        participants: ["char-a", "char-b"],
+        relation: "colleagues",
+        transition: `deepened at ${span}`,
+        span,
+      });
+    }
+    const record = fromYaml(
+      content(writer.writes(), paths.relation("char-a--char-b")),
+    ) as RelationRecord;
+    assert.equal(record.phases.length, 2);
   });
 
   it("rejects an invalid record instead of writing it", async () => {

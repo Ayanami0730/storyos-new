@@ -83,7 +83,7 @@ describe("contextFor", () => {
     { id: "f2", entity: "char-warden", attribute: "location", value: "the tower", source: "s-002" },
   ];
 
-  it("puts the scene card, logline and world rules in P0", () => {
+  it("puts the scene card, logline, roster and world rules in P0", () => {
     const items = contextFor({
       card: plan.scenes[0]!,
       plan,
@@ -92,7 +92,43 @@ describe("contextFor", () => {
       earlierIntents: [],
     });
     const p0 = items.filter((i) => i.priority === "P0").map((i) => i.id);
-    assert.deepEqual(p0, ["scene-card", "logline", "world-rules"]);
+    assert.deepEqual(p0, ["scene-card", "logline", "entity-roster", "world-rules"]);
+  });
+
+  it("names every entity that exists, not only the ones in this scene", () => {
+    // Without the roster the writer is told to feature a character it has been
+    // given nothing about — scene 1's intent said Elias met Mira while `present`
+    // listed neither — so it invents an id and the verifier rejects the scene
+    // for entities that were in the plan all along.
+    const roster = contextFor({
+      card: plan.scenes[0]!,
+      plan,
+      canon: [],
+      previousProse: null,
+      earlierIntents: [],
+    }).find((i) => i.id === "entity-roster")!;
+    for (const entity of plan.entities) assert.match(roster.content, new RegExp(entity.id));
+    assert.match(roster.content, /rather than inventing an id/);
+  });
+
+  it("cites paths that exist in the tree", () => {
+    // Provenance that cannot be opened is worse than none: the verifier greps
+    // the citation, finds nothing, and spends its budget rediscovering the
+    // layout before it can check anything.
+    const items = contextFor({
+      card: plan.scenes[0]!,
+      plan,
+      canon,
+      previousProse: null,
+      earlierIntents: [],
+    });
+    for (const item of items) {
+      assert.doesNotMatch(item.source, /^index\/story\//, `${item.id} cites a removed path`);
+    }
+    assert.equal(
+      items.find((i) => i.id === "entity-char-mira")!.source,
+      "characters/char-mira/profile.yaml",
+    );
   });
 
   it("gives P1 the current facts of present entities, and only those entities", () => {

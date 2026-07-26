@@ -224,6 +224,19 @@ export class PartitionWriter {
         );
         return;
       }
+      // A location has to be somewhere, not a sentence about being somewhere.
+      // The first run recorded `location: "in the Watchhouse, reading the
+      // wardens' ledger"`, which merges place with activity, cannot be compared
+      // with the next scene's value, and cannot be checked against the location
+      // files — so "where is she" stops being answerable by anything but reading.
+      if (attribute === "location" && !/^(loc-[a-z0-9-]+|[^,.]{0,40})$/.test(e.value.trim())) {
+        problems.push(
+          `entries[${i}].value "${e.value.slice(0, 60)}…" is a sentence, not a place. Use the ` +
+            `location id (loc-…) when one exists, or a short phrase naming the place. What she ` +
+            `is doing there is an event; the prose already says it.`,
+        );
+        return;
+      }
       normalised.push({
         scene: this.#sceneId,
         attribute: attribute as StateAttribute,
@@ -306,6 +319,27 @@ export class PartitionWriter {
           phases: [],
           openQuestions: [],
         };
+
+    // A pair whose relation has changed but whose previous phase was left open
+    // accumulates parallel open phases instead of a progression. The first run
+    // produced four, all open, two of them with the same label — which reads as
+    // "these two are simultaneously four things" and loses the ordering that is
+    // the entire point of a phase sequence. Overlap is legal, so this is a
+    // question rather than a rule: same label continuing is fine, a new label
+    // over an open one almost never is.
+    const openWithOtherLabel = record.phases.filter(
+      (p) => p.toScene === null && p.relation !== input.relation,
+    );
+    if (openWithOtherLabel.length > 0 && !input.closesPrevious && input.supersedes === undefined) {
+      throw new BackfillError([
+        `this pair already has ${openWithOtherLabel.length} open phase(s) with a different ` +
+          `relation (${openWithOtherLabel.map((p) => `${p.index}: ${p.relation}`).join(", ")}). ` +
+          `If they have moved on from that, pass closes_previous. If both are true at once — ` +
+          `colleagues and rivals, say — call again with the same relation label to continue ` +
+          `the existing phase instead of opening a parallel one. If you are correcting an ` +
+          `earlier phase, pass supersedes.`,
+      ]);
+    }
 
     let phases: RelationPhase[] = record.phases.map((p) => ({ ...p }));
     if (input.closesPrevious) {
