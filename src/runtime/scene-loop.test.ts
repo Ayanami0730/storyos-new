@@ -211,9 +211,22 @@ describe("repair rounds", () => {
     assert.match(await index.read("continuity/unresolved/s-011.json"), /eye_colour|green/);
   });
 
-  it("commits with the defect recorded once the budget runs out on new findings each round", async () => {
+  /**
+   * A writer varying its wording around one unfixed defect.
+   *
+   * This test used to assert that the loop spent its whole repair budget here,
+   * because each round's finding quotes different prose and so carries a
+   * different id — nothing "persists" by id-equality. That expectation was the
+   * livelock written down as intended behaviour, and it is what `lbw081` s-001
+   * did for three rounds and five findings before its scene was dropped.
+   *
+   * The stall detector now stops it one round earlier, on the signal the id
+   * comparison cannot see: the same subtype back after a rewrite with no fewer
+   * blocking findings than before.
+   */
+  it("stops as soon as a rewrite fails to reduce the same defect class", async () => {
     const { index } = await freshIndex();
-    // Each attempt contradicts canon at a different quote, so nothing persists.
+    // Each attempt contradicts canon at a different quote, so no finding id repeats.
     const drafts = ["green", "blue", "amber"].map((colour) => ({
       prose: `Her ${colour} eyes narrowed.`,
       delta: {
@@ -240,7 +253,10 @@ describe("repair rounds", () => {
       warnings: readonly string[];
     };
     assert.equal(committed.unresolvedFindings.length, 1);
-    assert.match(committed.warnings.join(" "), /repair budget of 2 round\(s\) ran out/);
+    assert.match(committed.warnings.join(" "), /no fewer blocking findings than before/);
+    // Two attempts, not three: the round the old behaviour spent here bought a
+    // third draft with the same defect in a third colour.
+    assert.equal(outcome.attempts, 2);
   });
 
   it("does not call the model verifier while a deterministic contradiction stands", async () => {

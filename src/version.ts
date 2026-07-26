@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.5.0";
+export const VERSION = "0.5.1";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -41,6 +41,23 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.5.1",
+    note:
+      "two repair-loop defects, both found by running 0.5.0 and both changing how much of " +
+      "a manuscript survives. (1) A writer turn that failed outright — a provider content " +
+      "filter, on the measured case — aborted the whole scene on the first failure with its " +
+      "repair allowance unspent, and the orchestrator's sensible retry was then refused " +
+      "because the transaction no longer existed; a failed turn now costs an attempt and " +
+      "leaves the scene draftable, bounded by the scene's own allowance. (2) The livelock " +
+      "detector compared finding *ids*, which are subtype plus quoted spans, so a writer " +
+      "that rewrote the passage without fixing the defect produced a new id every round and " +
+      "looked like progress: lbw081 s-001 spent three rounds on five findings that were all " +
+      "the same causal-logic defect about one door. It now also stops when a blocking " +
+      "subtype recurs after a rewrite without the blocking count falling. The second fix is " +
+      "a precondition for 0.5.0's wider endgame ceiling — five repair rounds multiply the " +
+      "cost of an undetected livelock by two and a half",
+  },
   {
     version: "0.5.0",
     note:

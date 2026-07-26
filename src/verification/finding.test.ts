@@ -5,7 +5,9 @@ import {
   FindingError,
   blocking,
   makeFinding,
+  recurringSubtypes,
   renderRepairBrief,
+  stalled,
   unchangedAcrossRound,
 } from "./finding.ts";
 import { SUBTYPES, isBlockingSubtype, subtypeSpec, subtypesForTier } from "./taxonomy.ts";
@@ -127,9 +129,78 @@ describe("repair loop signals", () => {
       0,
     );
   });
+
+  /**
+   * The failure the id comparison above cannot see, taken from the run where it
+   * happened. `lbw081` s-001 produced five blocking findings over three rounds,
+   * all `causal_logic_violations` about one door and one key, with five different
+   * ids because the writer rewrote the passage each time. Id-matching saw three
+   * unrelated defects and paid for every round.
+   */
+  it("detects the same defect class surviving a rewrite, when the quote moved", () => {
+    const round1 = [
+      makeFinding({ ...pair, evidence: { quote: "the key sat in the lock", source: "s-001" } }),
+      makeFinding({ ...pair, evidence: { quote: "cold to the touch", source: "s-001" } }),
+    ];
+    const round2 = [
+      makeFinding({ ...pair, evidence: { quote: "Hale produced a key", source: "s-001" } }),
+      makeFinding({ ...pair, evidence: { quote: "the bolt was thrown", source: "s-001" } }),
+    ];
+
+    assert.equal(unchangedAcrossRound(round1, round2).length, 0, "no id survives — that is the trap");
+    assert.deepEqual(recurringSubtypes(round1, round2), ["appearance_mismatches"]);
+    assert.equal(stalled(round1, round2).stalled, true);
+  });
+
+  it("does not call it stalled while the blocking count is falling", () => {
+    // Three findings down to one is a writer converging, and the survivor is
+    // often what the next round fixes. Stopping there would spend the detector's
+    // credibility on the case it is meant to allow.
+    const round1 = ["a", "b", "c"].map((q) =>
+      makeFinding({ ...pair, evidence: { quote: `quote ${q}`, source: "s-001" } }),
+    );
+    const round2 = [makeFinding({ ...pair, evidence: { quote: "quote d", source: "s-001" } })];
+
+    assert.deepEqual(recurringSubtypes(round1, round2), ["appearance_mismatches"]);
+    assert.equal(stalled(round1, round2).stalled, false);
+  });
+
+  it("is not stalled on the first round, when there is nothing to compare against", () => {
+    assert.equal(stalled([], [makeFinding(pair)]).stalled, false);
+  });
+
+  it("ignores warnings, which never blocked and so cannot have failed to clear", () => {
+    const warning = makeFinding({
+      subtype: "style_shifts",
+      validator: "llm",
+      severity: "warning",
+      reasoning: "register drift",
+      evidence: { quote: "subject exhibited distress", source: "s-011" },
+      editLocus: { kind: "draft", quote: "subject exhibited distress" },
+    });
+    assert.deepEqual(recurringSubtypes([warning], [warning]), []);
+    assert.equal(stalled([warning], [warning]).stalled, false);
+  });
 });
 
 describe("renderRepairBrief", () => {
+  it("tells the writer when its previous fix failed on the same defect class", () => {
+    // Without this the writer cannot tell a third attempt at one problem from a
+    // first attempt at a third problem, and it answers by varying the fix that
+    // already failed.
+    const brief = renderRepairBrief([makeFinding(pair)], {
+      recurring: ["causal_logic_violations"],
+    });
+    assert.match(brief, /previous round raised causal_logic_violations/);
+    assert.match(brief, /not produce another variation/);
+    // And it is given the one legitimate way out: say the fix needs a decision.
+    assert.match(brief, /state what needs deciding/);
+  });
+
+  it("says nothing about recurrence on a first round", () => {
+    assert.doesNotMatch(renderRepairBrief([makeFinding(pair)]), /previous round/);
+  });
+
   it("gives the writer both sides and the place to edit", () => {
     const brief = renderRepairBrief([makeFinding(pair)]);
     assert.match(brief, /in your draft: "her green eyes narrowed"  <s-011 L4-L4>/);

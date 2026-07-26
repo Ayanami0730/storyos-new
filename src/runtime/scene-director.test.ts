@@ -24,6 +24,7 @@ import { ArtifactStore, artifactPaths } from "./artifacts.ts";
 import type { ContextGap } from "./packet-builder.ts";
 import { SceneStage, driveScene, orchestratorTools } from "./orchestration.ts";
 import { SceneDirector } from "./scene-director.ts";
+import { runScene } from "./scene-loop.ts";
 import {
   type Draft,
   type SceneCollaborators,
@@ -646,5 +647,91 @@ describe("the engine finishes what the orchestrator leaves", () => {
       (run.outcome as { reason: string }).reason,
       /premise does not support this scene/,
     );
+  });
+});
+
+/**
+ * A writer turn that produced nothing at all, as opposed to one that produced
+ * something defective.
+ *
+ * Measured on `lbw103`: the writer's opening call hit a provider content filter,
+ * the director aborted the transaction on that first failure, and when the
+ * orchestrator sensibly called `call_writer` again it was refused because the
+ * transaction it was retrying into no longer existed. A quarter of that
+ * manuscript was lost to one refused turn with the scene's whole repair
+ * allowance unspent.
+ */
+describe("a failed writer turn costs an attempt, not the scene", () => {
+  function flaky(failures: number): SceneCollaborators {
+    let calls = 0;
+    return {
+      async draft() {
+        calls += 1;
+        if (calls <= failures) {
+          throw new Error("400 content_filter: the request was refused by the provider");
+        }
+        return goodDraft();
+      },
+      async review() {
+        return [];
+      },
+    };
+  }
+
+  it("leaves the scene draftable and says how many attempts are left", async () => {
+    const { index, artifacts } = await freshIndex();
+    const director = new SceneDirector(
+      request({ allocation: allocate({ sceneIndex: 1, total: 1, pinnedRepairs: 2 }) }),
+      { index, artifacts, collaborators: flaky(1) },
+    );
+    await director.buildContext();
+
+    const failed = await director.draft();
+    assert.equal(failed.ok, false);
+    assert.equal(director.isTerminal(), false, "the scene must survive a refused turn");
+    // The state has to still admit the retry, or "call_writer is legal again" is
+    // a claim the next call disproves.
+    assert.equal(director.state, "CONTEXT_BUILT");
+    assert.equal(director.nextStep(), "call_writer");
+    assert.match(failed.text, /NOT lost/);
+    assert.match(failed.text, /attempt 1 of 3/);
+    // And the advice is specific to the failure class, because retrying a content
+    // filter with the same request fails the same way.
+    assert.match(failed.text, /content filter|change what you ask/i);
+
+    const second = await director.draft();
+    assert.equal(second.ok, true, "the retry goes through");
+    assert.equal(director.state, "STATE_DELTA_PROPOSED");
+  });
+
+  it("aborts once the failures have used the scene's whole allowance", async () => {
+    const { index, artifacts } = await freshIndex();
+    const director = new SceneDirector(
+      // One repair round means two writer attempts in total, so the third failure
+      // is the one that ends it. A writer that produces nothing gets exactly as
+      // many chances as a writer that produces something defective.
+      request({ allocation: allocate({ sceneIndex: 1, total: 1, pinnedRepairs: 1 }) }),
+      { index, artifacts, collaborators: flaky(99) },
+    );
+    await director.buildContext();
+
+    assert.equal((await director.draft()).ok, false);
+    assert.equal(director.isTerminal(), false);
+    const last = await director.draft();
+    assert.equal(last.ok, false);
+    assert.equal(director.isTerminal(), true);
+    assert.match((director.outcome() as { reason: string }).reason, /whole allowance/);
+  });
+
+  it("the deterministic driver retries too, rather than giving up on a live scene", async () => {
+    const { index, artifacts } = await freshIndex();
+    // The engine fallback must not be strictly worse than the orchestrator at
+    // this: a rescue that abandons a retryable failure would turn a transient
+    // provider refusal into a lost scene whenever the orchestrator stopped early.
+    const outcome = await runScene(
+      request({ allocation: allocate({ sceneIndex: 1, total: 1, pinnedRepairs: 2 }) }),
+      { index, artifacts, collaborators: flaky(2) },
+    );
+    assert.equal(outcome.status, "COMMITTED");
   });
 });

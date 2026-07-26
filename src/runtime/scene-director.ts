@@ -46,7 +46,13 @@ import {
 import { SceneTransaction } from "../transaction/machine.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
 import { verifyDeterministic } from "../verification/deterministic.ts";
-import { blocking, renderRepairBrief, unchangedAcrossRound } from "../verification/finding.ts";
+import {
+  blocking,
+  recurringSubtypes,
+  renderRepairBrief,
+  stalled,
+  unchangedAcrossRound,
+} from "../verification/finding.ts";
 import { type ArtifactStore, artifactPaths, renderAudit } from "./artifacts.ts";
 import { BudgetExhausted } from "./budget.ts";
 import { type ContextGap, renderGaps } from "./packet-builder.ts";
@@ -114,6 +120,12 @@ export class SceneDirector {
    * attempt 0 during every repair round.
    */
   #attempt = 0;
+  /**
+   * Writer turns that produced nothing at all, as opposed to producing something
+   * defective. Counted separately because a failed turn does not advance the
+   * transaction, so the machine's own attempt counter never sees it.
+   */
+  #draftFailures = 0;
   #derived: readonly FileWrite[] = [];
   #commit: CommitResult | null = null;
   #terminal: { status: "REJECTED" | "ABORTED"; reason: string } | null = null;
@@ -316,13 +328,53 @@ export class SceneDirector {
       // it as an aborted scene is what let a run continue past its own hard
       // stop and turn a 2% overrun into 50%.
       if (error instanceof BudgetExhausted) throw error;
-      // A collaborator that never produced an artefact ends this scene, not the
-      // run. Recorded like a rejection: the failure rate is a result we want,
-      // and a harness that halts on the first misbehaving turn produces none.
       const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-      this.#tx.transition("ABORTED", "orchestrator");
-      this.#terminal = { status: "ABORTED", reason: message };
-      return report("draft", this.state, message, [], false);
+      this.#draftFailures += 1;
+
+      /**
+       * A writer turn that failed is not a scene that must fail.
+       *
+       * This used to abort the transaction on the first failure, and the cost was
+       * measured on `lbw103`: the writer's opening call hit a provider content
+       * filter, the scene went terminal, and when the orchestrator sensibly
+       * called `call_writer` again it was refused because the transaction it was
+       * retrying into no longer existed. A quarter of that manuscript was lost to
+       * one refused turn with the scene's entire repair allowance unspent, and the
+       * orchestrator spent its remaining turns writing options for a human who
+       * was not there.
+       *
+       * A failed turn is a retryable condition of the same kind as a 429: the
+       * same request phrased differently may well go through. So the state is left
+       * exactly where it was — `CONTEXT_BUILT` or `REPAIR_REQUIRED`, both of which
+       * make `call_writer` legal — and the failure is reported with what is left.
+       * No transition happens before the call, so there is nothing to roll back.
+       *
+       * The bound is the scene's own allowance rather than a new number: a writer
+       * that cannot produce anything gets as many chances as a writer that
+       * produces something defective, and no more.
+       */
+      const attemptsAllowed = this.#request.allocation.repairRounds + 1;
+      if (this.#draftFailures >= attemptsAllowed) {
+        this.#tx.transition("ABORTED", "orchestrator");
+        this.#terminal = {
+          status: "ABORTED",
+          reason:
+            `the writer failed to produce a draft ${this.#draftFailures} time(s), which is ` +
+            `this scene's whole allowance. Last failure: ${message}`,
+        };
+        return report("draft", this.state, this.#terminal.reason, [], false);
+      }
+      return report(
+        "draft",
+        this.state,
+        `the writer's turn failed and produced nothing: ${message}\n` +
+          `The scene is NOT lost — it is still in ${this.state} and call_writer is legal ` +
+          `again. This was attempt ${this.#draftFailures} of ${attemptsAllowed}. If the ` +
+          `failure names a content filter or a provider refusal, change what you ask for ` +
+          `rather than repeating it: the same request will fail the same way.`,
+        [],
+        false,
+      );
     }
 
     this.#lastDraft = draft;
@@ -468,13 +520,24 @@ export class SceneDirector {
      * the outcome exactly as `unverified` does.
      */
     const persistent = unchangedAcrossRound(this.#previousFindings, blockers);
+    /**
+     * The same defect class surviving a rewrite, which the id comparison above
+     * cannot see: when the writer rewrites the passage the quote moves, the id
+     * changes, and three attempts at one problem look like three problems.
+     */
+    const stall = stalled(this.#previousFindings, blockers);
     const outOfRounds = this.#tx.repairBudgetRemaining <= 0;
-    if (persistent.length > 0 || outOfRounds) {
+    if (persistent.length > 0 || stall.stalled || outOfRounds) {
       this.#unresolved = blockers;
       this.#defectNote = persistent.length > 0
         ? `${persistent.length} finding(s) survived a rewrite unchanged ` +
           `(${persistent.map((f) => f.id).join(", ")}), so another round would buy the ` +
           `same draft again`
+        : stall.stalled
+        ? `${stall.subtypes.join(", ")} came back after a rewrite with no fewer blocking ` +
+          `findings than before (${blocking(this.#previousFindings).length} then ` +
+          `${blockers.length} now), so the writer is producing variations of a fix that ` +
+          `does not work rather than converging`
         : `the repair budget of ${this.#request.allocation.repairRounds} round(s) ran out ` +
           `with ${blockers.length} blocking finding(s) outstanding (this scene is in the ` +
           `${this.#request.allocation.tier} tier at position ` +
@@ -494,8 +557,11 @@ export class SceneDirector {
     }
 
     this.#tx.transition("REPAIR_REQUIRED", "verifier", { findings });
+    // The recurring classes are computed against the round that is ending, so
+    // they have to be read before `#previousFindings` is replaced.
+    const recurring = recurringSubtypes(this.#previousFindings, blockers);
     this.#previousFindings = blockers;
-    this.#repairBrief = renderRepairBrief(findings);
+    this.#repairBrief = renderRepairBrief(findings, { recurring });
     this.#attempt += 1;
     return report(
       "verify",

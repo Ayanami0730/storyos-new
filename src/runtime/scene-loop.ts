@@ -261,7 +261,15 @@ export async function runScene(
   await director.buildContext();
   while (!director.isTerminal() && director.state !== "APPROVED") {
     const drafted = await director.draft();
-    if (!drafted.ok) break;
+    if (!drafted.ok) {
+      // A writer turn that failed outright leaves the scene draftable on purpose,
+      // so that a content filter or a dropped connection costs an attempt rather
+      // than the scene. The director aborts once the allowance is spent, and that
+      // is what ends this loop — breaking here instead would throw away the
+      // allowance the retry exists to spend.
+      if (director.isTerminal()) break;
+      continue;
+    }
     const verified = await director.verify();
     if (!verified.ok) break;
   }

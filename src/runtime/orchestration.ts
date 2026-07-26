@@ -358,7 +358,15 @@ export async function driveScene(options: {
     if (state === "OPEN" || state === "STALE_BASE") {
       if (!(await director.buildContext()).ok) break;
     } else if (state === "CONTEXT_BUILT" || state === "REPAIR_REQUIRED") {
-      if (!(await director.draft()).ok) break;
+      // A failed writer turn deliberately leaves the state unchanged so the
+      // attempt can be retried, which means the "state did not move" guard below
+      // would read it as a stuck loop. The director's own failure count bounds
+      // this, and it ends the scene by going terminal.
+      if (!(await director.draft()).ok) {
+        if (director.isTerminal()) break;
+        rescuedSteps += 1;
+        continue;
+      }
     } else if (state === "DRAFTED" || state === "STATE_DELTA_PROPOSED") {
       if (!(await director.verify()).ok) break;
     } else if (state === "APPROVED") {

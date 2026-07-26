@@ -183,6 +183,55 @@ export function unchangedAcrossRound(
 }
 
 /**
+ * The same *class* of defect surviving a round, even though the quote moved.
+ *
+ * `unchangedAcrossRound` compares finding ids, and an id is the subtype plus the
+ * quoted spans. That catches a writer who changed nothing and misses the failure
+ * that actually happens: the writer rewrites the passage, the defect stays, and
+ * the verifier quotes the new wording — so the id changes and a livelock looks
+ * like progress.
+ *
+ * Measured on the one scene this system has dropped. `lbw081` s-001 produced
+ * five blocking findings over three rounds, every one of them
+ * `causal_logic_violations` about the same door and the same key, with five
+ * different ids because the prose moved each time. The verifier could see it and
+ * said so in round two — *"the writer failed to address the previous finding's
+ * instruction"* — while the code saw three unrelated defects and kept paying.
+ *
+ * This matters more now than it did then. Raising the endgame repair allowance to
+ * five rounds multiplies the cost of an undetected livelock by two and a half, so
+ * the wider ceiling is only affordable alongside a detector that can see this.
+ */
+export function recurringSubtypes(
+  before: readonly Finding[],
+  after: readonly Finding[],
+): readonly string[] {
+  const previous = new Set(blocking(before).map((f) => f.subtype));
+  return [...new Set(blocking(after).map((f) => f.subtype))].filter((s) => previous.has(s));
+}
+
+/**
+ * Whether the last round bought anything.
+ *
+ * Recurrence alone is not enough to stop: a writer that takes three blocking
+ * findings down to one is converging, and the surviving one may well be the next
+ * round's fix. What says the loop is stuck is recurrence *without* the count
+ * falling — the same class of problem, no fewer of them, after a rewrite.
+ */
+export function stalled(
+  before: readonly Finding[],
+  after: readonly Finding[],
+): { readonly stalled: boolean; readonly subtypes: readonly string[] } {
+  const subtypes = recurringSubtypes(before, after);
+  const wasBlocking = blocking(before).length;
+  const isBlocking = blocking(after).length;
+  return {
+    stalled: subtypes.length > 0 && wasBlocking > 0 && isBlocking >= wasBlocking,
+    subtypes,
+  };
+}
+
+/**
  * The repair brief the writer actually receives.
  *
  * Ordered by severity then category so the writer fixes hard contradictions
@@ -190,7 +239,20 @@ export function unchangedAcrossRound(
  * finding whose locus is canon is deliberately included and marked: the writer
  * must know not to bend the prose around a fact that is itself being corrected.
  */
-export function renderRepairBrief(findings: readonly Finding[]): string {
+export function renderRepairBrief(
+  findings: readonly Finding[],
+  options: {
+    /**
+     * Defect classes the previous round also raised.
+     *
+     * Said out loud because the writer has no way to know it: each repair round
+     * arrives as a fresh brief, so a writer on its third attempt at one problem
+     * cannot tell that from a first attempt at a third problem, and it responds
+     * by producing another variation on the fix that already failed.
+     */
+    readonly recurring?: readonly string[];
+  } = {},
+): string {
   if (findings.length === 0) return "No findings.";
   const rank: Record<Severity, number> = { fatal: 0, error: 1, warning: 2 };
   const ordered = [...findings].sort(
@@ -198,6 +260,18 @@ export function renderRepairBrief(findings: readonly Finding[]): string {
   );
 
   const lines: string[] = [];
+  if (options.recurring && options.recurring.length > 0) {
+    lines.push(
+      `The previous round raised ${options.recurring.join(", ")} as well, and your rewrite did ` +
+        `not clear it. Do not produce another variation of the same fix — that is the failure ` +
+        `mode, and it has cost this system a whole scene before.`,
+      `If making this consistent requires a fact nobody has established — how a mechanism ` +
+        `works, what was really agreed, which of two accounts is true — then it is not a ` +
+        `prose defect and you cannot fix it by rewriting. Say so plainly in your reply and ` +
+        `state what needs deciding. That is a useful answer; a third guess is not.`,
+      "",
+    );
+  }
   for (const f of ordered) {
     lines.push(`[${f.severity}] ${f.subtype}  (${f.id}, found by ${f.validator})`);
     lines.push(`  why: ${f.reasoning}`);
