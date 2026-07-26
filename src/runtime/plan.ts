@@ -43,18 +43,40 @@ export interface StoryPlan {
 /**
  * Below this, a "scene" is not a scene.
  *
- * Measured on `lbw029`, a 500-word task. `max(4, …)` gave it four scenes of 125
- * words, each with its own packet, writer turn, verifier pass and commit — and the
- * frozen judge put us seventh of nine on it: the best length score in the table
- * (99.4, 509 words against 500) and the *worst* quality, 3.83 against raw
- * `gpt-5-mini`'s 4.67 on the same backbone. Bare long-context beat us by 5.8
- * points. Nothing was broken; the story was simply cut into four fragments that
- * each had to open and close, and coherence, breadth and clarity all paid for it.
+ * ## Why the floor of four had to yield
  *
- * So the floor of four is a floor on *architecture*, and it has to yield to a
- * floor on prose. 500 words is one scene. This changes nothing at 2,000 and above,
- * which is deliberate: those lengths have already been scored and a silent change
- * to their scene counts would invalidate the comparison.
+ * `lbw029` is a 500-word task, and `max(4, …)` gave it four scenes of 125 words,
+ * each with its own packet, writer turn, verifier pass and commit. A scene that
+ * has to open and close inside 125 words is not a scene, and the frozen judge put
+ * that run seventh of nine systems: the best length score in the table (99.4) and
+ * the worst quality in it (3.83, against raw `gpt-5-mini`'s 4.67 on the same
+ * backbone).
+ *
+ * ## And why this constant is not validated by that score
+ *
+ * Rerunning the same task as **one** scene scored *lower*: 82.0 against 88.0, with
+ * S_q falling 3.83 → 3.33 (coherence and reading experience each dropping a
+ * point) and only length improving marginally. So the one measurement available
+ * points against this change, and it is kept anyway for a reason that has to be
+ * stated plainly rather than buried:
+ *
+ *  - n = 1 per configuration, on a 500-word story, scored on a 1–5 integer scale
+ *    where a single point of S_q moves S̄ by ten. That cannot separate a real
+ *    effect from judge variance, and the two runs produced entirely different
+ *    stories rather than the same story cut differently.
+ *  - Both configurations lose to a raw single call on the same backbone (92.6).
+ *    The finding that survives is not "one scene or four" but **the harness does
+ *    not repay its overhead below roughly 2,000 words**, and neither setting fixes
+ *    that. Splitting a 500-word story into four scenes is the more expensive way
+ *    to lose.
+ *
+ * Treat the 500 as a structural floor with an argument behind it and no score
+ * behind it. If short tasks ever matter to a result, this needs several samples
+ * per arm, not one.
+ *
+ * Nothing at 2,000 words and above changes, which is deliberate: those lengths
+ * have been scored, and silently altering their scene counts would invalidate
+ * every comparison in the table while looking like an improvement.
  */
 const MIN_WORDS_PER_SCENE = 500;
 

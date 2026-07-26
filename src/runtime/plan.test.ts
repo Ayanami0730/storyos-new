@@ -12,10 +12,15 @@ describe("scene count", () => {
   /**
    * The floor of four is a floor on architecture, and prose outranks it.
    *
-   * `lbw029` is where this was measured: 500 words as four 125-word scenes scored
-   * the best length compliance of nine systems and the worst quality of them,
-   * below a single unstructured call to the same model. A scene that has to open
-   * and close inside 125 words is not a scene.
+   * `lbw029` at 500 words as four 125-word scenes scored the best length
+   * compliance of nine systems and the worst quality of them, below a single
+   * unstructured call to the same model. A scene that has to open and close inside
+   * 125 words is not a scene.
+   *
+   * This pins the structure, not a score: rerunning that task as one scene scored
+   * *lower* (82.0 against 88.0). See `MIN_WORDS_PER_SCENE` — one sample per arm on
+   * a 1–5 quality scale cannot settle it, and the finding that does survive is
+   * that neither arm repays the harness's overhead at 500 words.
    */
   it("yields the four-scene floor rather than slicing a short task into fragments", () => {
     assert.equal(sceneCountFor(500), 1);
