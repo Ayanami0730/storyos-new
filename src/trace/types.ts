@@ -65,6 +65,61 @@ export interface TraceArtifact {
   readonly body: Bilingual;
 }
 
+/**
+ * One block of what actually moved between an agent and its model.
+ *
+ * The per-call totals in `TraceCall` say a turn happened and what it cost; they
+ * do not say what was asked or what came back, which is the only thing that
+ * explains *why* a scene went the way it did. Reading a case previously meant
+ * opening `runtime/transcripts/<role>/<run>.jsonl` by hand.
+ */
+export interface TraceMessage {
+  /**
+   * `prompt` is what the agent was given, `text` what it said, `toolCall` a tool
+   * it invoked with its arguments, `toolResult` what came back. Kept as separate
+   * kinds rather than one blob because the interesting failures are specifically
+   * a tool called with bad arguments, or a refusal in a tool result that the
+   * agent then ignored.
+   */
+  readonly kind: "prompt" | "text" | "toolCall" | "toolResult";
+  readonly at: string;
+  readonly toolName?: string;
+  /** JSON arguments, for a `toolCall`. */
+  readonly arguments?: string;
+  readonly isError?: boolean;
+  readonly body: Bilingual;
+}
+
+/**
+ * One model round-trip, with everything that went in and came out of it.
+ *
+ * A round-trip is not the same unit as a *turn*. One `invoke` — one row in
+ * `ledger.jsonl`, one entry in `TraceScene.calls` — runs a tool loop, and every
+ * pass through that loop is another request to the provider. A four-scene run has
+ * 29 turns and 315 round-trips, and both numbers are correct; the turn is what
+ * cost accounting is grouped by, and the round-trip is what you read to see what
+ * actually happened.
+ */
+export interface TraceStep {
+  readonly index: number;
+  readonly role: string;
+  readonly model: string;
+  readonly at: string;
+  /** Wall time from the previous message in this agent's session to this reply. */
+  readonly durationMs: number;
+  readonly usage: {
+    readonly input: number;
+    readonly output: number;
+    readonly cacheRead: number;
+    readonly reasoning: number;
+    readonly billable: number;
+  };
+  readonly stopReason?: string;
+  /** Which tools this turn called, in order, for a one-line summary of the step. */
+  readonly toolsCalled: readonly string[];
+  readonly messages: readonly TraceMessage[];
+}
+
 export interface TraceScene {
   readonly sceneId: string;
   readonly txid: string;
@@ -96,6 +151,15 @@ export interface TraceScene {
   readonly stepsRescuedByEngine: number;
   readonly wallMs: number;
   readonly calls: readonly TraceCall[];
+  /**
+   * Every model call in this scene with its full input and output, in the order
+   * they happened across all five roles.
+   *
+   * Empty unless the run was ingested with `--deep`: the bodies are the bulk of a
+   * bundle and translating them costs real money, so a reader who wants one case
+   * in full asks for that case in full.
+   */
+  readonly steps?: readonly TraceStep[];
   readonly tools: readonly ToolTally[];
   readonly artifacts: readonly TraceArtifact[];
   /** Every finding raised against this scene, blocking or not. */

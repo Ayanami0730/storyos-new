@@ -199,6 +199,98 @@ async function translateOne(
   }
 }
 
+/**
+ * Longest text sent in one request.
+ *
+ * Measured rather than chosen: on a deep ingest of `lbw081`, blocks in the
+ * 3,000–8,000 character band came back with a median 57% CJK ratio and one
+ * failure in 47, while blocks above 8,000 characters failed 8 times in 33 — the
+ * model stops translating and starts echoing its input, sometimes reordered. The
+ * failure is silent, and a block of English sitting under a 中文 label is worse
+ * than an untranslated block that says so.
+ */
+const MAX_CHARS_PER_REQUEST = 2_500;
+
+/**
+ * Split on paragraph boundaries, never mid-sentence.
+ *
+ * A translation joined back together from arbitrary cuts reads as a translation
+ * joined back together from arbitrary cuts. Paragraphs are the smallest unit that
+ * survives being translated independently.
+ */
+export function chunkForTranslation(text: string, limit = MAX_CHARS_PER_REQUEST): string[] {
+  if (text.length <= limit) return [text];
+  const chunks: string[] = [];
+  let current = "";
+  // Keeping the separators means the rejoined text has the original shape.
+  for (const paragraph of text.split(/(?<=\n\n)/)) {
+    if (current && current.length + paragraph.length > limit) {
+      chunks.push(current);
+      current = "";
+    }
+    if (paragraph.length > limit) {
+      // A single paragraph over the limit — fall back to lines, which is still a
+      // boundary a reader would recognise.
+      for (const line of paragraph.split(/(?<=\n)/)) {
+        if (current && current.length + line.length > limit) {
+          chunks.push(current);
+          current = "";
+        }
+        current += line;
+      }
+      continue;
+    }
+    current += paragraph;
+  }
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+/**
+ * Whether a reply is a translation at all, as opposed to the source echoed back.
+ *
+ * Only applied where the answer is unambiguous: a source with real prose in it
+ * (200+ Latin letters) whose "translation" is almost free of Chinese characters
+ * did not get translated. Short technical strings — a path, a JSON fragment, an
+ * id — legitimately contain almost no Chinese and are left alone, because a check
+ * that fires on those would reject correct output.
+ */
+function looksTranslated(source: string, candidate: string): boolean {
+  const latin = (source.match(/[A-Za-z]/g) ?? []).length;
+  if (latin < 200) return true;
+  const cjk = (candidate.match(/[\u4e00-\u9fff]/g) ?? []).length;
+  return cjk / Math.max(1, candidate.length) >= 0.1;
+}
+
+/**
+ * Translate one field, chunking it if it is long and refusing an untranslated
+ * reply.
+ *
+ * A chunk that cannot be translated keeps its English, so a partial failure
+ * degrades to a partially English block rather than losing the whole field.
+ */
+async function translateText(
+  text: string,
+  options: TranslateOptions,
+  glossary: string,
+): Promise<string | null> {
+  const chunks = chunkForTranslation(text);
+  const out: string[] = [];
+  let translatedAny = false;
+
+  for (const chunk of chunks) {
+    const zh = await translateOne(chunk, options, 1, glossary);
+    if (zh && looksTranslated(chunk, zh)) {
+      out.push(zh);
+      translatedAny = true;
+    } else {
+      out.push(chunk);
+    }
+  }
+
+  return translatedAny ? out.join("") : null;
+}
+
 /** Every prose field in the bundle, as a flat list of units to fill in. */
 function unitsOf(bundle: TraceBundle): Unit[] {
   const units: Unit[] = [];
@@ -228,6 +320,11 @@ function unitsOf(bundle: TraceBundle): Unit[] {
     scene.findings.forEach((f) => add(f.reasoning));
     scene.gaps.forEach((g) => add(g.need));
     scene.artifacts.forEach((a) => add(a.body));
+    // Present only on a deep ingest, and then it is the bulk of the work: the
+    // prompts and replies of every model call in the scene.
+    for (const step of scene.steps ?? []) {
+      for (const message of step.messages) add(message.body);
+    }
   }
   bundle.memory.forEach((m) => add(m.body));
   add(bundle.manuscript);
@@ -263,7 +360,7 @@ export async function translateBundle(
       const mine = index++;
       if (mine >= units.length) return;
       const unit = units[mine]!;
-      const zh = await translateOne(unit.text, options, 1, glossary);
+      const zh = await translateText(unit.text, options, glossary);
       if (zh) unit.apply(zh);
       options.onProgress?.(++done, units.length);
     }

@@ -51,7 +51,26 @@ let bundle = await buildBundle({
   ...(flag("task") ? { taskFile: path.resolve(flag("task")!) } : {}),
   ...(flag("judgement") ? { judgementFile: path.resolve(flag("judgement")!) } : {}),
   baselineJudgements: await baselineFiles(flag("baselines")),
+  // Every model call's full input and output. Opt-in: it is most of the bundle
+  // size and most of the translation cost, and it is what you want for the one
+  // case you are actually studying.
+  deep: has("deep"),
 });
+
+if (has("deep")) {
+  const steps = bundle.scenes.reduce((n, s) => n + (s.steps?.length ?? 0), 0);
+  const chars = bundle.scenes.reduce(
+    (n, s) => n + (s.steps ?? []).reduce((m, st) => m + st.messages.reduce((k, msg) => k + msg.body.en.length, 0), 0),
+    0,
+  );
+  // "round-trip", not "call": one turn runs a tool loop and each pass through it
+  // is another request, so this number is legitimately an order larger than the
+  // turn count in `calls` and should not read as a contradiction.
+  say(
+    `deep: ${steps} model round-trip(s) with full input/output, ` +
+      `${chars.toLocaleString()} characters`,
+  );
+}
 
 /**
  * Stamp a version onto a run that predates the stamp — explicitly, and saying so.

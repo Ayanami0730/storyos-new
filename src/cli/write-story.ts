@@ -19,6 +19,7 @@
  * on the unhappy path.
  */
 
+import { unlinkSync } from "node:fs";
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -124,6 +125,49 @@ const args = await parseArgs(process.argv.slice(2));
 const outDir = path.resolve(args.out);
 await mkdir(outDir, { recursive: true });
 
+/**
+ * One run per output directory, enforced by the filesystem.
+ *
+ * The write gate confines what *agents* may write; it says nothing about two
+ * harness processes pointed at the same `--out`. That gap produced the worst kind
+ * of bad data this project has had: two runs shared `runs/lbw029-0.5.1`,
+ * interleaved their commits into one index, spliced one another's log, and
+ * produced two judgements — so a score was reported for a manuscript that no
+ * longer existed on disk. Nothing failed loudly; the run looked finished.
+ *
+ * `wx` is the whole mechanism: it fails if the file exists, atomically, so the
+ * second process cannot win the race by checking first. The lock records who
+ * holds it, because the useful question when this fires is "is that still
+ * running or did something die".
+ */
+const lockPath = path.join(outDir, "run.lock");
+try {
+  await writeFile(
+    lockPath,
+    JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString(), argv: process.argv.slice(2) }, null, 2) + "\n",
+    { encoding: "utf8", flag: "wx" },
+  );
+} catch (error) {
+  if ((error as { code?: string }).code !== "EEXIST") throw error;
+  const held = await readFile(lockPath, "utf8").catch(() => "(unreadable)");
+  throw new Error(
+    `${outDir} is already in use by another run — refusing to start.\n${held}\n` +
+      `Two runs sharing an output directory interleave their commits into one index and ` +
+      `produce a manuscript that matches neither, which is not detectable afterwards. ` +
+      `If that process is gone, delete ${lockPath}.`,
+  );
+}
+// Released on the way out, including the unhappy paths, so a finished run does
+// not leave a directory that refuses to be rerun.
+const releaseLock = () => {
+  try {
+    unlinkSync(lockPath);
+  } catch {
+    // Already gone is the desired state.
+  }
+};
+process.once("exit", releaseLock);
+
 /** Progress on stderr, so a run that prints nothing for an hour is distinguishable from a hung one. */
 const say = (line: string) =>
   console.error(`[${new Date().toISOString().slice(11, 19)}] ${line}`);
@@ -175,7 +219,10 @@ if (selection.fellBackFrom) {
  */
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
   process.once(signal, () => {
-    void sandbox.dispose().finally(() => process.exit(130));
+    void sandbox.dispose().finally(() => {
+      releaseLock();
+      process.exit(130);
+    });
   });
 }
 

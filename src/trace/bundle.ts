@@ -13,7 +13,17 @@ import path from "node:path";
 
 import { chapterFor, sceneIndexOf } from "../index/tree.ts";
 import { costOf } from "../runtime/rates.ts";
-import type { Bilingual, TraceArtifact, TraceBundle, TraceCall, TraceMemory, TraceScene, ToolTally } from "./types.ts";
+import type {
+  Bilingual,
+  TraceArtifact,
+  TraceBundle,
+  TraceCall,
+  TraceMemory,
+  TraceMessage,
+  TraceScene,
+  TraceStep,
+  ToolTally,
+} from "./types.ts";
 
 const en = (text: string): Bilingual => ({ en: text });
 
@@ -33,6 +43,138 @@ async function readJson<T>(p: string): Promise<T | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * Every model call of a run, reconstructed from the raw transcripts.
+ *
+ * The rule for splitting a session into calls is that an **assistant row is a
+ * call**: it is the only row type that carries `usage` and a `stopReason`, so it
+ * marks the moment a model answered. Everything queued before it — the prompt
+ * that opened the turn, and the tool results from the previous round — is that
+ * call's input. This reconstruction is why a reader can see a tool being called
+ * with the wrong arguments, or a refusal in a tool result that the agent then
+ * ignored, neither of which is visible in per-call totals.
+ */
+async function stepsByTx(project: string): Promise<Map<string, TraceStep[]>> {
+  const root = path.join(project, "runtime/transcripts");
+  const byTx = new Map<string, TraceStep[]>();
+  let roles: string[] = [];
+  try {
+    roles = (await readdir(root, { withFileTypes: true }))
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name);
+  } catch {
+    return byTx;
+  }
+
+  for (const role of roles) {
+    for (const file of await readdir(path.join(root, role)).catch(() => [])) {
+      const text = await readMaybe(path.join(root, role, file));
+      if (!text) continue;
+
+      let pending: TraceMessage[] = [];
+      let previousAt = 0;
+      for (const line of text.split("\n")) {
+        if (!line.trim()) continue;
+        let row: {
+          txid?: string;
+          role?: string;
+          content?: unknown;
+          usage?: Record<string, number>;
+          model?: string;
+          stopReason?: string;
+          timestamp?: string;
+          toolName?: string;
+          isError?: string | boolean;
+          at?: string;
+        };
+        try {
+          row = JSON.parse(line);
+        } catch {
+          continue;
+        }
+        const blocks = Array.isArray(row.content) ? (row.content as Record<string, unknown>[]) : [];
+        const at = Number(row.timestamp ?? 0);
+
+        if (row.role === "user" || row.role === "toolResult") {
+          for (const block of blocks) {
+            const body = typeof block.text === "string" ? block.text : "";
+            if (!body.trim()) continue;
+            pending.push({
+              kind: row.role === "user" ? "prompt" : "toolResult",
+              at: row.at ?? "",
+              body: en(body),
+              ...(row.toolName ? { toolName: row.toolName } : {}),
+              // The sink writes booleans through `String()`, so both shapes occur.
+              ...(row.isError === true || row.isError === "true" ? { isError: true } : {}),
+            });
+          }
+          if (previousAt === 0) previousAt = at;
+          continue;
+        }
+        if (row.role !== "assistant") continue;
+
+        const produced: TraceMessage[] = [];
+        const toolsCalled: string[] = [];
+        for (const block of blocks) {
+          if (block.type === "toolCall") {
+            const name = String(block.name ?? "unknown");
+            toolsCalled.push(name);
+            produced.push({
+              kind: "toolCall",
+              at: row.at ?? "",
+              toolName: name,
+              arguments:
+                typeof block.arguments === "string"
+                  ? block.arguments
+                  : JSON.stringify(block.arguments ?? {}),
+              // The arguments are the body for a tool call; there is no prose.
+              body: en(""),
+            });
+          } else if (typeof block.text === "string" && block.text.trim()) {
+            produced.push({ kind: "text", at: row.at ?? "", body: en(block.text) });
+          }
+        }
+
+        const usage = row.usage ?? {};
+        const txid = row.txid ?? "tx-unknown";
+        const list = byTx.get(txid) ?? [];
+        list.push({
+          index: list.length + 1,
+          role,
+          model: String(row.model ?? "unknown"),
+          at: row.at ?? "",
+          durationMs: previousAt > 0 && at > previousAt ? at - previousAt : 0,
+          usage: {
+            input: usage.input ?? 0,
+            output: usage.output ?? 0,
+            cacheRead: usage.cacheRead ?? 0,
+            reasoning: usage.reasoning ?? 0,
+            billable: (usage.input ?? 0) + (usage.output ?? 0),
+          },
+          ...(row.stopReason ? { stopReason: row.stopReason } : {}),
+          toolsCalled,
+          messages: [...pending, ...produced],
+        });
+        byTx.set(txid, list);
+        pending = [];
+        previousAt = at;
+      }
+    }
+  }
+
+  // Chronological across roles, because the orchestrator's turn *contains* the
+  // specialists' turns and the question a reader has is "what happened next",
+  // not "what did each role do separately".
+  for (const [txid, list] of byTx) {
+    list.sort((a, b) => a.at.localeCompare(b.at) || a.index - b.index);
+    byTx.set(
+      txid,
+      list.map((s, i) => ({ ...s, index: i + 1 })),
+    );
+  }
+  return byTx;
 }
 
 /** Tool calls per transaction, per role, from the transcripts. */
@@ -152,6 +294,16 @@ export interface BundleOptions {
   readonly judgementFile?: string;
   /** The same task's rows for other systems, for context. */
   readonly baselineJudgements?: readonly { readonly system: string; readonly file: string }[];
+  /**
+   * Include every model call's full input and output, reconstructed from the
+   * transcripts.
+   *
+   * Off by default because it is the difference between a 400KB bundle and a
+   * multi-megabyte one, and because translating those bodies is most of the cost
+   * of an ingest — measured at 5.2M characters across six runs, of which
+   * deduplication recovers only 4%. A reader studying one case asks for that case.
+   */
+  readonly deep?: boolean;
 }
 
 export async function buildBundle(options: BundleOptions): Promise<TraceBundle> {
@@ -172,6 +324,8 @@ export async function buildBundle(options: BundleOptions): Promise<TraceBundle> 
     .map((l) => l.trim());
 
   const tools = await tallyTools(project);
+  // Only read when asked: on a five-scene run this is several megabytes of prose.
+  const deepSteps = options.deep ? await stepsByTx(project) : new Map<string, TraceStep[]>();
 
   const call = (e: Record<string, any>): TraceCall => ({
     role: e.role,
@@ -265,6 +419,7 @@ export async function buildBundle(options: BundleOptions): Promise<TraceBundle> 
       stepsRescuedByEngine: 0,
       wallMs,
       calls,
+      ...(options.deep ? { steps: deepSteps.get(txid) ?? [] } : {}),
       tools: tools.get(txid) ?? [],
       artifacts,
       findings: (rejected?.findings ?? []).map((f: any) => ({
