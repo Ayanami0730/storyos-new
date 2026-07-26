@@ -274,17 +274,26 @@ const residents = new ResidentAgents({
       // shell over the same tree, and the difference between roles is only what
       // they may write.
       // pi's own bash and read, with our refusal policy in bash's prepare hook.
-      ...nativeTools({
-        projectRoot,
-        budgetKey: () => `${role}:${storyState.scenes.at(-1) ?? "plan"}`,
-        // Attributed per role. One shared counter would credit the builder with
-        // the writer's and verifier's reads too, and "was the grep worth it" is a
-        // question about the builder specifically.
-        onRead: (entry) => {
-          reads.push({ role, scene: storyState.scenes.at(-1) ?? "plan", ...entry });
-          if (role === "context-builder") builderBus.noteRead();
-        },
-      }),
+      //
+      // Not for the writer. Its job is the prose, and the measured behaviour
+      // says the shell does not help it: across a whole run the writer ran four
+      // commands to the context-builder's forty-eight, and asked the builder
+      // nothing at all. Giving one agent both a research tool it barely uses and
+      // a question it never asks produces neither. The packet plus
+      // `ask_context_builder` is its whole input surface now.
+      ...(role === "writer"
+        ? []
+        : nativeTools({
+            projectRoot,
+            budgetKey: () => `${role}:${storyState.scenes.at(-1) ?? "plan"}`,
+            // Attributed per role. One shared counter would credit the builder
+            // with the verifier's reads too, and "was the grep worth it" is a
+            // question about the builder specifically.
+            onRead: (entry) => {
+              reads.push({ role, scene: storyState.scenes.at(-1) ?? "plan", ...entry });
+              if (role === "context-builder") builderBus.noteRead();
+            },
+          })),
       // Novelty 2's consumption path. The relation records are finally being
       // written; without this the writer can only `cat` a YAML file and gets the
       // raw structure instead of the narrative view `renderHistory` produces —

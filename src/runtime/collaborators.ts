@@ -239,8 +239,48 @@ function verifierTools(live: () => Capture, sceneId: () => string): unknown[] {
   ];
 }
 
+/**
+ * What the verifier is told to do, and how.
+ *
+ * The instruction to "read the index" was already here and produced three shell
+ * reads across a whole nineteen-scene run, against the context-builder's
+ * forty-eight. An instruction to be thorough is not a procedure. So the brief
+ * now names the five categories, and for each one says *which files answer it* —
+ * because a check whose evidence source is unstated is a check performed from
+ * memory, and memory is the thing being audited.
+ */
+const CATEGORY_CHECKLIST = [
+  "**Factual detail** — appearance, names, counts, objects. Compare against",
+  "  `characters/<id>/profile.yaml` (identity, where a change is a retcon) and the",
+  "  earlier scenes under `novel/chapters/`. `grep -rn \"<name>\" novel/chapters/` finds",
+  "  every prior mention.",
+  "**Timeline and plot logic** — order, duration, simultaneity, cause. Compare against",
+  "  `events/timeline.jsonl` and the promise ledger `continuity/plot-contracts.jsonl`.",
+  "  This is ConStory's largest category and the easiest to miss by reading only the",
+  "  draft.",
+  "**Characterization** — motivation, ability, voice, and above all knowledge. Read",
+  "  `characters/<id>/beliefs.jsonl`: a character using something they have not learnt",
+  "  is the single most common defect in generated fiction, and it is invisible unless",
+  "  you check what they knew as of this scene.",
+  "**World building and setting** — rules, geography, technology. `world/rules.yaml`",
+  "  says what is true; it does not say who knows it. `locations/<id>.yaml` and prior",
+  "  scenes say what a place is like.",
+  "**Narrative style** — voice, tense, register drift. `novel/style/voice.md` and the",
+  "  previous scene are the comparison.",
+].join("\n");
+
 const VERIFIER_BRIEF = [
-  "Check this scene against canon and the scene card.",
+  "Check this scene against the index and the scene card.",
+  "",
+  "Read before you judge. You have `bash` and `read` over the whole project, and a",
+  "finding that quotes the actual earlier scene is one the writer can act on rather",
+  "than argue with. Work through the five categories, using the files named:",
+  "",
+  CATEGORY_CHECKLIST,
+  "",
+  "For a pair of characters, `read_relation_history` gives their history as narrative —",
+  "what they were to each other at each stage and what changed it. Reading the YAML",
+  "gives you the structure instead.",
   "",
   "Report a defect with write_findings, one call per defect. Call nothing if it looks fine —",
   "an empty finding list is a normal result and manufacturing a finding to appear useful",

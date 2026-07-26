@@ -25,6 +25,19 @@ function toolText(text: string) {
   return { content: [{ type: "text", text }] };
 }
 
+/**
+ * These tools must not run concurrently with each other.
+ *
+ * pi executes a batch of tool calls in parallel by default
+ * (`toolExecution ?? "parallel"`), and every tool here is a read-modify-write
+ * against the same pending-writes map. Two `append_state` calls issued in one
+ * assistant message would both read the same base and the second would overwrite
+ * the first — losing a state entry silently, in a step whose entire purpose is
+ * not to lose anything. The index-manager is also the role most likely to emit a
+ * batch, because folding a scene means touching six partitions at once.
+ */
+const SEQUENTIAL = "sequential" as const;
+
 /** Turn a thrown validation error back into feedback rather than a dead turn. */
 async function reporting(work: () => Promise<string>): Promise<{ content: { type: string; text: string }[] }> {
   try {
@@ -46,6 +59,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Upsert character",
       name: "upsert_character",
+      executionMode: SEQUENTIAL,
       description:
         "Create a character file or add identity attributes to one. Identity means what " +
         "does not vary with the plot. Anything that changes as the story moves goes to " +
@@ -84,6 +98,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Append state",
       name: "append_state",
+      executionMode: SEQUENTIAL,
       description:
         `Record what is now true of a character after this scene. Attributes: ` +
         `${STATE_ATTRIBUTES.join(", ")}. Append-only — the newest entry wins, so moving a ` +
@@ -110,6 +125,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Append beliefs",
       name: "append_beliefs",
+      executionMode: SEQUENTIAL,
       description:
         "Record what a character now knows, suspects, is wrong about, or is still ignorant " +
         "of. This is the boundary that decides whether their next line is a revelation or " +
@@ -136,6 +152,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Record relation phase",
       name: "record_relation_phase",
+      executionMode: SEQUENTIAL,
       description:
         "Open, close or revise a phase in one pair's relationship. Use it when this scene " +
         "changed what these two are to each other. `transition` must say how and why the " +
@@ -186,6 +203,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Append event",
       name: "append_event",
+      executionMode: SEQUENTIAL,
       description:
         "Record something that happened, in story time. Events are not properties: 'she " +
         "crossed the quay' belongs here, not on her file.",
@@ -212,6 +230,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Record rhythm",
       name: "record_rhythm",
+      executionMode: SEQUENTIAL,
       description:
         "Where this scene sits in the story's rise and fall. Target is what the plan wanted " +
         "here; actual is what the prose delivered. A gap is not a defect to fix now — it is " +
@@ -239,6 +258,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Register promise",
       name: "register_promise",
+      executionMode: SEQUENTIAL,
       description:
         "Record a promise this scene made to the reader. Registered when made, never " +
         "reconstructed later — an abandoned thread is invisible at the end precisely " +
@@ -266,6 +286,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Pay off promise",
       name: "pay_off_promise",
+      executionMode: SEQUENTIAL,
       description:
         "Mark a registered promise as answered by this scene, quoting the prose that " +
         "answers it.",
@@ -282,6 +303,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Record retcon",
       name: "record_retcon",
+      executionMode: SEQUENTIAL,
       description:
         "Change an identity attribute that was already established, on purpose. The old " +
         "value stays readable in the retcon log so a later reader can tell a decision from " +
@@ -305,6 +327,7 @@ export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
     {
       label: "Upsert entity",
       name: "upsert_entity",
+      executionMode: SEQUENTIAL,
       description: "Create or annotate a location, object or faction.",
       parameters: Type.Object({
         kind: Type.String({ description: "location | object | faction" }),
