@@ -123,6 +123,20 @@ if (selection.fellBackFrom) {
       `running with ${sandbox.id} enforcement instead`,
   );
 }
+/**
+ * Hand the tree back even when the run is killed.
+ *
+ * `local` locks the canonical partitions to 0o555, and `dispose` is what
+ * unlocks them. Without this, Ctrl-C or a `kill` leaves a run directory its
+ * owner cannot delete — which is a small thing that happens at exactly the
+ * moment somebody is already annoyed.
+ */
+for (const signal of ["SIGINT", "SIGTERM"] as const) {
+  process.once(signal, () => {
+    void sandbox.dispose().finally(() => process.exit(130));
+  });
+}
+
 const gate = await sandbox.probe();
 say(
   `write gate: ${sandbox.id} (${sandbox.enforcement}) — ` +
