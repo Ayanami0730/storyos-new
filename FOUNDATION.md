@@ -170,17 +170,52 @@ Redis URL with password, and MySQL credentials in plaintext in
 
 ## What pi gives us vs what we must build
 
-Out of the box: the tool loop, native function calling against a custom
-gateway, TypeBox schemas with validation, `read/write/edit/bash/grep/find/ls`,
-per-agent system prompt + model + tool allowlist, JSONL sessions with
-fork/resume, automatic compaction with overflow retry, and `SKILL.md`
-discovery.
+**Read this section before writing anything that sounds like infrastructure.**
+It was already here, and it was already right, and four things got rebuilt
+anyway (2026-07-26). The reason is worth knowing because it will recur: the
+built-ins live under `harness/`, take an extra `context` argument, and are typed
+for `AgentHarness`. We use the bare `Agent`, so none of them appear in
+autocomplete and nothing about them says "one adapter away". Choosing `Agent`
+over `AgentHarness` was never a recorded decision — it is simply how the first
+smoke test was written, and everything since has been built on that default.
 
-We must build: the five-persona registry of long-lived sessions,
-agent-to-agent tools that route into that registry (pi's `subagent` example
-spawns throwaway processes with `--no-session`, which is the opposite of
-resident agents), the shared filesystem index with locking and versioning, the
-`memory/` convention and its injection rules, the percentage-based two-tier
-compaction policy (pi compacts on `contextTokens > contextWindow -
-reserveTokens`, not at a configurable 80% mark), and novel-aware compaction
-summaries that preserve canon, open promises, and character state.
+Verified against `@earendil-works/pi-agent-core@0.82.0`, all exported from the
+package root:
+
+| Exported | Where | We now |
+|---|---|---|
+| `createBashTool`, `createReadTool`, `createEditTool`, `createWriteTool` | `harness/tools/` | use bash and read via `src/tools/pi-tools.ts` |
+| `loadSkills`, `Skill`, `formatSkillsForSystemPrompt` (agentskills.io) | `harness/skills.ts` | still on our own format — should adopt |
+| `shouldCompact`, `findCutPoint`, `generateSummary`, `getLastAssistantUsage`, `calculateContextTokens`, `estimateTokens` | `harness/compaction/` | partly duplicated; see below |
+| JSONL session storage with fork/resume | `harness/session/` | our own `transcriptSink` |
+| `AgentHarness` tying the above together | `harness/agent-harness.ts` | not used |
+
+`NodeExecutionEnv` from `@earendil-works/pi-agent-core/node` supplies the
+`ExecutionEnv` the built-in tools need, so the adapter is: construct one with
+`cwd`, bind it, drop the extra argument.
+
+`createBashTool` takes a `prepare(execution, context)` hook called before
+execution that may throw. That is the seam for a policy layer — our refusal list
+and per-transaction budget live there, and pi keeps the execution, truncation
+and output spilling. pi has no opinion on what a novel-writing agent may run,
+correctly; the policy is the part that is ours.
+
+Two behaviours must be re-added around the built-ins, both learnt the hard way:
+a refusal has to come back as tool *text* rather than a thrown error (throwing
+ends the turn; answering lets the agent try something else in the same turn),
+and a missing file has to read as "it may not have been written yet — that is a
+real answer, not a reason to invent its contents" rather than as `FileError`.
+
+**What is genuinely ours to build**: the five-persona registry of long-lived
+sessions; agent-to-agent tools routing into it (pi's `subagent` example spawns
+throwaway processes with `--no-session`, the opposite of resident agents); the
+canonical filesystem index, its partitions and its atomic commit; the scene
+transaction and the three verification layers; the `memory/` convention; and
+**level 1 of compaction** — evicting re-fetchable tool payloads while keeping
+their handles, which pi does not do. pi's compaction is a single summarisation
+tier, but it has two things ours lacks and they are the better half:
+`findCutPoint` respects turn boundaries so a tool call is never split from its
+result, and `generateSummary` takes a `previousSummary` for iterative updates
+rather than re-summarising from scratch. Both operate on `SessionTreeEntry[]`,
+which we do not have without the session model — so adopting them means
+adopting the session, and that decision is still open.
