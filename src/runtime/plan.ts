@@ -227,10 +227,26 @@ export async function planStory(options: {
   );
 
   if (!sink.plan) throw new Error("the orchestrator produced no plan");
-  return {
+  /**
+   * Write the finished plan back into the sink, not just return it.
+   *
+   * `submit_plan` cannot know the per-scene word target — it is derived from the
+   * task's target and the scene count — so the plan the tool stores has
+   * `targetWords: 0` on every card. Returning a corrected copy while leaving the
+   * sink uncorrected worked only for as long as nobody read the sink.
+   *
+   * Then the scene loop started re-reading it each iteration, so that
+   * `update_plan` could revise the scenes ahead, and every card it read carried
+   * the zero. The writer was told **"Target length: about 0 words"** on every
+   * scene of every run, and the effect was exactly what it sounds like: a
+   * 2,800-word task delivered 2,056. One object, one truth.
+   */
+  const resolved: StoryPlan = {
     ...sink.plan,
     scenes: sink.plan.scenes.map((s) => ({ ...s, targetWords: perScene })),
   };
+  sink.plan = resolved;
+  return resolved;
 }
 
 /**
