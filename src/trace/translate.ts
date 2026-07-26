@@ -219,6 +219,11 @@ function unitsOf(bundle: TraceBundle): Unit[] {
   bundle.plan.entities.forEach((e) => add(e.sketch));
   for (const scene of bundle.scenes) {
     add(scene.intent);
+    // The allowance's reason, which is the same sentence on every scene of a tier
+    // — the translator's cache does not know that, so it is a handful of repeated
+    // units per run rather than one. Cheap enough to leave, and cutting it would
+    // mean the reason renders in English on a page set to Chinese.
+    if (scene.allocation) add(scene.allocation.rationale);
     if (scene.failureReason) add(scene.failureReason);
     scene.findings.forEach((f) => add(f.reasoning));
     scene.gaps.forEach((g) => add(g.need));
