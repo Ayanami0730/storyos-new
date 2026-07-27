@@ -10,3 +10,8 @@
 {"scene":"s-006","attribute":"location","value":"loc-long-walk","quote":"She stood for a moment with the castle beyond her shoulder, looking at the familiar stone with a look that was, in its plainness, almost private."}
 {"scene":"s-006","attribute":"mood","value":"contemplative_private","quote":"She stood for a moment with the castle beyond her shoulder, looking at the familiar stone with a look that was, in its plainness, almost private."}
 {"scene":"s-006","attribute":"holds","value":"folded paper script from a new film","quote":"In that bag she carried a folded paper script from a new film, the same domestic weight of paper the actress had been known to arrange in private."}
+{"scene":"s-008","attribute":"location","value":"loc-town-high-street","quote":"For that hour, the town could be what she wanted it to be: ordinary, the way bread and tea are ordinary, and not a stage that measured her every breath."}
+{"scene":"s-008","attribute":"mood","value":"guarded","quote":"The actress smiled along a thin line."}
+{"scene":"s-008","attribute":"condition","value":"avoids_attention","quote":"She did not move to meet anyone’s eye."}
+{"scene":"s-008","attribute":"goal","value":"have_an_ordinary_hour_at_window_table","quote":"For that hour, the town could be what she wanted it to be: ordinary, the way bread and tea are ordinary, and not a stage that measured her every breath."}
+{"scene":"s-008","attribute":"mood","value":"guarded","quote":"The actress smiled along a thin line."}

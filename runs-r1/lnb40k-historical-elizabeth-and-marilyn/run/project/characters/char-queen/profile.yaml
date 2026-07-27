@@ -4,5 +4,9 @@ sketch: "The reigning monarch, early thirties in 1956: composed, duty-bound,
   private beneath the ceremonial surface."
 identity:
   profession: Monarch
+  habit: writes in longhand
+  habit_storage_preference: keeps journal habitually in top drawer of the writing table by the window
 provenance:
   profession: s-001
+  habit: s-009
+  habit_storage_preference: s-009

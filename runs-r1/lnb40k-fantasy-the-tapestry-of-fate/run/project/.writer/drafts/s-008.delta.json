@@ -1,0 +1,90 @@
+{
+  "sceneId": "s-008",
+  "claims": [
+    {
+      "entity": "locations/loc-island-qarrah",
+      "attribute": "shore_visuals",
+      "quote": "Black, contorted trees crouched along the shore; pale roots clung to the bank like fingers, and a crown of low stonework rimmed the island's throat.",
+      "value": "black contorted trees; pale roots like fingers; crown of low stonework"
+    },
+    {
+      "entity": "locations/loc-island-qarrah",
+      "attribute": "fog_behavior",
+      "quote": "The fog that wrapped Qarrah was thick and clinging, smelling of damp peat and iron; it clung to cloth like breath.",
+      "value": "thick, clinging, smells of damp peat and iron; clings to cloth like breath"
+    },
+    {
+      "entity": "factions/faction-witches-qarrah",
+      "attribute": "shore_signal",
+      "quote": "From the crown of stones a green, petal-thin smoke drifted up—a green smoke-petal that unfurled like a moth and hovered over the tide.",
+      "value": "green smoke-petal"
+    },
+    {
+      "entity": "characters/char-laila",
+      "attribute": "performed_ritual",
+      "quote": "Halfway to the island Laila moved along the rail and palmed a pinch of the ship's salt. She did it without fanfare—small hands were better at ceremonies than loud ones—and said the old name so low only the wood could hear it. \"Salt-keep,\" she said, and the syllables were an intention as much as a charm.",
+      "value": "salt-keep"
+    },
+    {
+      "entity": "ship-simorgh",
+      "attribute": "approach_hazard_shoals_rearrange",
+      "quote": "Shoals lay around Qarrah like a jaw. They did not sit still; the sand breathed. The shoals breathed; sandbars lipped and shifted under the keel, and an eddy caught the Simorgh and shoved her sideways before Ibrahim could steady the wheel.",
+      "value": "shoals rearrange; sandbars shift under keel"
+    },
+    {
+      "entity": "ship-simorgh",
+      "attribute": "approach_hazard_tidal_eddies_push_sideways",
+      "quote": "Where the chart had marked a shallow channel the water curled into a small, hungry whirl and pushed them one boat-length toward a rocky lip.",
+      "value": "tidal eddies can push ships sideways"
+    },
+    {
+      "entity": "ship-simorgh",
+      "attribute": "approach_hazard_compass_drift",
+      "quote": "Ibrahim's compass trembled; its needle wavered and seemed to point at something inland, and the map's lines went grey beneath Amina's thumb as if soot had been rubbed across them.",
+      "value": "compass drift; map-lines dim near island"
+    },
+    {
+      "entity": "char-amina-ghost",
+      "attribute": "private_ghost_phrase",
+      "quote": "\"Hold the line, Mina,\" the voice said, and in the words the old night returned: the lemon peel, the wash of seawater, the slow breath of someone who had been patient with dying.",
+      "value": "Hold the line, Mina"
+    },
+    {
+      "entity": "char-ibrahim",
+      "attribute": "hums_to_steady_until_landing",
+      "quote": "Ibrahim hummed under his breath until the wheel slowed its nervous song;",
+      "value": "hummed to steady himself during approach"
+    },
+    {
+      "entity": "ship-simorgh",
+      "attribute": "map_eshra_thread_warms_then_dims",
+      "quote": "She had felt the map warm at the beginning of the voyage; now it cooled and dimmed where her thumb had rested.",
+      "value": "Eshra's Thread map warmed then cooled and dimmed under touch"
+    },
+    {
+      "entity": "ship-simorgh",
+      "attribute": "landing_accepted_by_island_via_small_mercies",
+      "quote": "Their landing was accepted on a transaction of tiny mercies: Laila's salt, the boat-hooks, a precise measure of courage.",
+      "value": "landing accepted conditionally by island when ritual and measures are met"
+    }
+  ],
+  "presentEntities": [
+    "ship-simorgh",
+    "loc-island-qarrah",
+    "char-amina",
+    "char-laila",
+    "char-ibrahim",
+    "char-nasir",
+    "char-tariq",
+    "char-amina-ghost"
+  ],
+  "promises": [
+    {
+      "id": "promise-amina-goes-qarrah",
+      "promise": "Amina will go to Qarrah and accept the Peri's terms on behalf of the Simorgh and her crew.",
+      "quote": "She would go to Qarrah. She would take what they demanded. She would hold the line.",
+      "dueByScene": null
+    }
+  ],
+  "paysOff": []
+}

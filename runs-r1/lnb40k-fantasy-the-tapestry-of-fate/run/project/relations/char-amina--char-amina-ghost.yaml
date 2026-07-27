@@ -1,0 +1,27 @@
+pairId: char-amina--char-amina-ghost
+participants:
+  - char-amina
+  - char-amina-ghost
+phases:
+  - index: 1
+    relation: manifestation
+    fromScene: s-007
+    toScene: null
+    transition: A ghost appears that is private to Amina, speaking her sibling's
+      words and influencing her internally; others on deck do not perceive it.
+      Scene s-007.
+    asymmetry: Amina perceives the ghost; others on deck do not.
+    source:
+      scene: s-007
+      span: L21-L32
+  - index: 2
+    relation: manifestation
+    fromScene: s-007
+    toScene: null
+    transition: A ghost appears that is private to Amina, using a sibling's words
+      and prompting an internal response. Scene s-007.
+    asymmetry: Amina perceives the ghost; others on deck do not.
+    source:
+      scene: s-007
+      span: L21-L32
+openQuestions: []

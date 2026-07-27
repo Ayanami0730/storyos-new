@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "One state observation in a character's timeline",
+  "description": "Append-only. The current value of an attribute is the last entry for it, so ordinary change needs no retcon — which is the whole point: a character walking to another room is not a continuity error.",
+  "type": "object",
+  "required": [
+    "scene",
+    "attribute",
+    "value",
+    "quote"
+  ],
+  "properties": {
+    "scene": {
+      "type": "string",
+      "pattern": "^s-\\d{3,}$"
+    },
+    "attribute": {
+      "type": "string",
+      "description": "From the controlled vocabulary (location, holds, mood, condition, companions, goal). Free-form names produce one attribute per event and a canon that never supersedes anything."
+    },
+    "value": {
+      "type": "string"
+    },
+    "quote": {
+      "type": "string",
+      "description": "Verbatim prose that establishes it"
+    }
+  }
+}

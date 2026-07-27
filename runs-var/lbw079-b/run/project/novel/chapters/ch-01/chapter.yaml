@@ -1,0 +1,76 @@
+chapter: ch-01
+scenes:
+  - id: s-001
+    intent: "Establish atmosphere, Mara's practical, grieving voice, and the house
+      as a character. Have Mara force open the attic, discover the walnut mirror
+      and a trunk with the brass locket and the faded photo. End with the first
+      impossible thing: the mirror's reflection shows a second figure — a girl
+      at the far end of the attic — when no one else is present. The scene
+      should make the reader feel unease and plausibility (drafts, memory, grief
+      as explanation) while leaving the apparition unresolved."
+    present:
+      - char-mara
+      - loc-ashford-house
+      - loc-attic
+      - obj-walnut-mirror
+      - obj-brass-locket
+      - obj-faded-photo
+  - id: s-002
+    intent: "Escalate the logic of the haunting. Mara runs tests: covers the mirror,
+      looks into other reflective surfaces, notes timing and consistency. The
+      mirror's reflection behaves differently (it remembers the house as it was;
+      the girl's clothing doesn't match present-day). Mara opens the locket,
+      reads the name 'Evie' on the back of the larger photo, and hears a child's
+      voice through the mirror — not quite a sound, more like a
+      thought-pressing. She tries to record it, to get proof, and something in
+      the house reacts physically (a chair shifts, a cold imprint on the
+      drywall). End with Mara deciding to talk to Noah — there is a problem that
+      is at least historical and traceable."
+    present:
+      - char-mara
+      - char-evie
+      - char-noah
+      - obj-walnut-mirror
+      - obj-brass-locket
+      - obj-faded-photo
+      - loc-attic
+      - loc-ashford-house
+  - id: s-003
+    intent: "Mara visits Noah to get facts that anchor the ghost to a real person
+      and a time. Noah confirms an Evie Ashford vanished/drowned decades
+      earlier; he gives a fragmentary memory that suggests jealousy, the marsh,
+      and a small funeral. This scene supplies the ghost's plausible motive
+      (wanting to be remembered/named) and a concrete place (the low tide
+      mudflats where the photo was taken) to which a tether might be returned.
+      Mara returns to the house with a plan: either bury the locket where Evie
+      drowned, or smash the mirror — the choices both follow from the world
+      rules. This scene must keep the logic tight: Noah supplies one verifiable
+      archival detail (newspaper clipping, name on old gravestone, or a date)
+      that Mara can check."
+    present:
+      - char-mara
+      - char-noah
+      - char-evie
+      - loc-ashford-house
+      - obj-brass-locket
+      - obj-faded-photo
+  - id: s-004
+    intent: "Climax and payoff. Mara sets out to perform the chosen test (return the
+      locket to the shore at low tide and speak the name aloud while the
+      reflection watches, or confront the mirror and shatter it). The ghost
+      escalates: reflections elsewhere show Mara's family watching; the house
+      tries to keep her. The scene ends with a logically consistent, terrifying
+      outcome — not a cheap twist. Two plausible, internally consistent
+      resolutions are foreshadowed so that whichever the writer chooses
+      (liberation at cost, or Mara becoming the new tether), the scene will feel
+      earned. The scene should be visceral: marsh mud, salt-stiff hair, the
+      sound of glass underfoot, and the mirror's last image burning itself into
+      Mara's mind."
+    present:
+      - char-mara
+      - char-evie
+      - obj-walnut-mirror
+      - obj-brass-locket
+      - obj-faded-photo
+      - loc-ashford-house
+      - loc-attic

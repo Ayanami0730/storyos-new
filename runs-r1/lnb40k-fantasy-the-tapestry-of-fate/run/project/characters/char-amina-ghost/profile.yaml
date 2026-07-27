@@ -8,6 +8,8 @@ identity:
     a thumb on a string. Hold the line, Mina, the voice said as plainly as a
     hand on her shoulder."'
   memory_ghost_phrase_repeated: Hold the line, Mina.
+  visibility_to_others: private_to_amina_only
 provenance:
   nature: s-002
   memory_ghost_phrase_repeated: s-003
+  visibility_to_others: s-007

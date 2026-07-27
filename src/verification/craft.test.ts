@@ -403,3 +403,65 @@ describe("the dossier", () => {
     assert.match(text, /Do not re-report these/);
   });
 });
+
+describe("a value that is a sentence", () => {
+  /**
+   * Measured on `runs-r1/lbw079`, and the third false positive of this family.
+   *
+   * Canon held `char-narrator.keeps_written_records = "timestamps and records events
+   * in notebook"`; the scene declared `"records timestamps and findings in
+   * notebook"`. The same fact, reworded — and this check reported it as a blocking
+   * `quantitative_mismatches`, a subtype about counts, reached only because the
+   * attribute matched no pattern and that is the fallback.
+   *
+   * The taxonomy's comparisons are built for *atomic* facts, where two strings
+   * really are two claims. A phrase describing behaviour has no canonical wording,
+   * so restating it diffs on every scene it appears in, and the writer cannot spend
+   * a repair round usefully on it: it has no way to know which phrasing canon
+   * prefers.
+   */
+  const canon = [
+    {
+      id: "fact-habit",
+      entity: "char-narrator",
+      attribute: "keeps_written_records",
+      value: "timestamps and records events in notebook",
+      source: "s-001",
+    },
+    { id: "fact-eyes", entity: "char-narrator", attribute: "eye_colour", value: "grey", source: "s-001" },
+  ];
+
+  const check = (attribute: string, value: string) =>
+    verifyDeterministic({
+      delta: {
+        sceneId: "s-002",
+        claims: [{ entity: "char-narrator", attribute, value, quote: "q" }],
+        presentEntities: ["char-narrator"],
+      },
+      canon,
+      knownEntities: new Set(["char-narrator"]),
+    }).findings;
+
+  it("warns instead of blocking when both sides are phrases", () => {
+    const [f] = check("keeps_written_records", "records timestamps and findings in notebook");
+    assert.ok(f);
+    assert.equal(f!.severity, "warning");
+    assert.match(f!.reasoning, /same fact reworded/);
+  });
+
+  it("still blocks when the value is atomic", () => {
+    // An eye colour has a canonical wording, so two strings are two claims.
+    const [f] = check("eye_colour", "brown");
+    assert.ok(f);
+    assert.equal(f!.severity, "error");
+  });
+
+  it("hands the judgement to the verifier rather than dropping it", () => {
+    // Degraded, not discarded: the meaning may genuinely have moved, and only a
+    // reader can tell. What it must not do is cost a repair round automatically.
+    const [f] = check("keeps_written_records", "no longer keeps any notebook at all");
+    assert.ok(f, "a phrase-valued change is still reported");
+    assert.equal(f!.severity, "warning");
+    assert.ok(f!.contradicts, "both sides are quoted so the verifier can compare them");
+  });
+});

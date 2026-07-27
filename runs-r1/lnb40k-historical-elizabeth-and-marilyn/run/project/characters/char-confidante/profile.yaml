@@ -5,6 +5,12 @@ sketch: "The actress's confidante and manager: protective, commercially minded,
 identity:
   appearance: plain, well-cut suit
   profession: confidante/manager-type
+  keeps_catalogue: "true"
+  keeps_notebook: "true"
+  catalogue_location: in_coat_pocket
 provenance:
   appearance: s-002
   profession: s-003
+  keeps_catalogue: s-008
+  keeps_notebook: s-008
+  catalogue_location: s-008

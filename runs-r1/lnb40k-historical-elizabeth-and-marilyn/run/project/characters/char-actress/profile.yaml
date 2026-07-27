@@ -6,6 +6,8 @@ identity:
   appearance: tilted chin; dark tailored coat; small hat fastened at one side;
     gloves; neat leather bag
   profession: actress
+  public_visibility_preference: seeks_anonymity
 provenance:
   appearance: s-002
   profession: s-002
+  public_visibility_preference: s-008

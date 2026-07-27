@@ -238,12 +238,47 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
       continue;
     }
 
+    /**
+     * A value that is a sentence cannot be compared by string equality.
+     *
+     * Measured on `runs-r1/lbw079`. Canon held
+     * `char-narrator.keeps_written_records = "timestamps and records events in
+     * notebook"`; the scene declared `"records timestamps and findings in
+     * notebook"`. Those are the same fact in different words, and this check
+     * reported it as a blocking `quantitative_mismatches` — a subtype about counts,
+     * reached only because the attribute matched none of the patterns and that is
+     * the fallback.
+     *
+     * The distinction that matters is not which subtype but what kind of value it
+     * is. The checks ConStory's taxonomy is built around compare *atomic* facts —
+     * an eye colour, an age, a count, a place — where two different strings really
+     * are two different claims. A value that is a phrase describing behaviour has
+     * no canonical wording, so the writer restating it produces a diff on every
+     * scene it appears in, and each one costs a repair round the writer cannot
+     * usefully spend: it has no way to know which phrasing canon prefers.
+     *
+     * So a prose-shaped value degrades to a warning and is handed to the verifier,
+     * which can read both and say whether the *meaning* moved. Atomic values keep
+     * their teeth. The boundary is deliberately crude — four words — because the
+     * cost of being wrong is asymmetric: too strict spends a repair round on a
+     * synonym, too loose lets one factual change through to a layer that is still
+     * looking at it.
+     */
+    const proseShaped =
+      existing.value.trim().split(/\s+/).length >= 4 ||
+      claim.value.trim().split(/\s+/).length >= 4;
+
     findings.push(
       makeFinding({
         subtype: subtypeForAttribute(claim.attribute),
         validator: "continuity",
-        severity: "error",
-        reasoning: `${claim.entity}'s ${claim.attribute} was established as "${existing.value}" and this scene asserts "${claim.value}" without declaring the change deliberate`,
+        severity: proseShaped ? "warning" : "error",
+        reasoning: proseShaped
+          ? `${claim.entity}'s ${claim.attribute} reads "${existing.value}" in canon and ` +
+            `"${claim.value}" here. Both are phrases rather than atomic values, so this may ` +
+            `be the same fact reworded rather than a change — read them and say which. If ` +
+            `the meaning is the same, nothing needs repairing and the wording in canon stands`
+          : `${claim.entity}'s ${claim.attribute} was established as "${existing.value}" and this scene asserts "${claim.value}" without declaring the change deliberate`,
         evidence: { quote: claim.quote, source: delta.sceneId },
         contradicts: asEvidence(existing),
         // Deliberately "unresolved": the machine knows the two disagree, it

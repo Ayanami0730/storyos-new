@@ -5,4 +5,7 @@ notes:
   - Described as a single room of pale curtains, a brass kettle, and a row of
     shoes.
   - Scene s-004 places the Queen here receiving a private tray.
+  - Contains a narrow writing table whose top drawer habitually holds the
+    Queen's journal; the room held the queen, the lady, the journal
+    (obj-journal) and the script (obj-script) in this scene.
 first_seen: s-001

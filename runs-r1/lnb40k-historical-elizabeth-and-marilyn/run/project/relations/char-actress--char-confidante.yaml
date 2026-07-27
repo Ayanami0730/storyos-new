@@ -13,4 +13,14 @@ phases:
     source:
       scene: s-002
       span: L10-L28
+  - index: 2
+    relation: manager
+    fromScene: s-008
+    toScene: null
+    transition: The scene reinforces the confidante's managerial role, showing her
+      cataloguing meetups, directing the actress to keep to a window table, and
+      caring for practical privacy in public.
+    source:
+      scene: s-008
+      span: L1-L120
 openQuestions: []

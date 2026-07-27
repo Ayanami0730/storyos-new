@@ -5,6 +5,8 @@ sketch: "A local Windsor neighbor: middle-class, rooted in the town's rhythms,
 identity:
   habit: regular at the teashop, habitually sits at the window table each morning
   profession: local townsman
+  interaction_style: polite_non_intrusive_greeting
 provenance:
   habit: s-003
   profession: s-003
+  interaction_style: s-008

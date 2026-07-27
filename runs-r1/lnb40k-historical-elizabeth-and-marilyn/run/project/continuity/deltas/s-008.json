@@ -1,0 +1,73 @@
+{
+  "sceneId": "s-008",
+  "claims": [
+    {
+      "entity": "char-actress",
+      "attribute": "public_visibility_preference",
+      "quote": "The actress's preference: she seeks anonymity and the small comforts of ordinary life rather than performing to passersby.",
+      "value": "seeks_anonymity"
+    },
+    {
+      "entity": "char-confidante",
+      "attribute": "keeps_catalogue",
+      "quote": "She watched the street not for scenery but for opportunity and hazard: where a pressman might place himself, which shutter might conceal a lens, which alley gave a view of the Long Walk. Her voice was dry by habit, the sort of voice that had learned to turn intimacy into fact.",
+      "value": "true"
+    },
+    {
+      "entity": "char-confidante",
+      "attribute": "catalogue_location",
+      "quote": "The confidante did not make the catalogue into a spectacle. She tucked the book back into her coat as if tucking in a fault.",
+      "value": "in_coat_pocket"
+    },
+    {
+      "entity": "char-confidante",
+      "attribute": "departure_time_plan",
+      "quote": "\"I'll be back in an hour,\" she said, noting the time on a small, sensible wristwatch.",
+      "value": "in_one_hour"
+    },
+    {
+      "entity": "loc-town-high-street",
+      "attribute": "atmosphere_in_scene",
+      "quote": "They moved past the teashop window where the aroma of scalded milk and lemon polish clung to the morning.",
+      "value": "teashop_smell_scales_and_lemon_polish"
+    },
+    {
+      "entity": "char-neighbor",
+      "attribute": "interaction_style",
+      "quote": "He tipped his hat. \"Good morning, ladies—fine day for the castle,\" he said, and his voice was all small-town largesse. He nodded once at the actress as if passing a compliment and nothing more.",
+      "value": "polite_non_intrusive_greeting"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "loc",
+      "quote": "For that hour, the town could be what she wanted it to be: ordinary, the way bread and tea are ordinary, and not a stage that measured her every breath.",
+      "value": "loc-town-high-street"
+    },
+    {
+      "entity": "char-confidante",
+      "attribute": "keeps_notebook",
+      "quote": "She spoke of it as a tool: not paranoia, she said, but business. If a single flash could make a night, a single list could unmake a story.",
+      "value": "true"
+    },
+    {
+      "entity": "loc-town-high-street",
+      "attribute": "press_presence",
+      "quote": "Press presence on the high street: no photographers were visible in the open; the confidante remains alert to the possibility of one in an alley.",
+      "value": "no_visible_photographers"
+    },
+    {
+      "entity": "char-confidante",
+      "attribute": "watched_alley_due_to_photographer_risk",
+      "quote": "The confidante's gaze snagged on a shadow inside an alley two doors down—a shape of a man partly folded into darkness as if he had been folded into the day's composition.",
+      "value": "true"
+    }
+  ],
+  "presentEntities": [
+    "char-actress",
+    "char-confidante",
+    "char-neighbor",
+    "loc-town-high-street"
+  ],
+  "promises": [],
+  "paysOff": []
+}

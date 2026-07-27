@@ -6,3 +6,6 @@
 {"scene":"s-006","attribute":"location","value":"loc-long-walk","quote":"The lady-in-waiting walked on just a little ahead, not to hurry the sovereign but to make propriety of the path;"}
 {"scene":"s-006","attribute":"mood","value":"attentive_discreet","quote":"\"Shall I move on, Ma'am?\" she asked, scarcely louder than the scrape of the gravel."}
 {"scene":"s-007","attribute":"companions","value":"present","quote":"The lady‑in‑waiting followed, pencil tucked behind her ear, the posture of someone trained to make small dramas disappear. She did not come as a sensation but as a measured presence. Together they made a small audience for the liaison's rehearsal."}
+{"scene":"s-009","attribute":"location","value":"loc-queen-apartment","quote":"She had been at it for ten minutes when the lady entered: the soft, known tread of someone made for houses that are polite and implacable in equal measure."}
+{"scene":"s-009","attribute":"holds","value":"folded paper (holding the household's prepared wording)","quote":"The lady carried a folded paper in one hand, the household’s new habit—an economy of words for an economy of dangers."}
+{"scene":"s-009","attribute":"mood","value":"practical, dutiful","quote":"Her voice rearranged itself into a smaller, practical shape."}

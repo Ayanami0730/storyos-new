@@ -9,7 +9,9 @@ identity:
   clothing_description: Laila was on the quarterdeck when Amina climbed the short
     companionway, patched canvas trousers tucked to the calf, a dark waistcoat
     that had seen too many storms, and a faded kerchief knotted at her throat.
+  performed_ritual: salt-keep
 provenance:
   mannerism_count_ropes_by_twos: s-001
   trusts_amina: s-001
   clothing_description: s-004
+  performed_ritual: s-008

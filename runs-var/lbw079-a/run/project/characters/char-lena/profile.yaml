@@ -1,0 +1,11 @@
+id: char-lena
+name: lena
+sketch: Narrator; early thirties, a careful, practical restorer of photographs
+  and small antiques who inherits an old house from an aunt. Skeptical by
+  profession but emotionally raw from recent losses.
+identity:
+  speech: first-person, pragmatic, methodical
+  profession: cataloguer
+provenance:
+  speech: s-001
+  profession: s-001

@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.8.2";
+export const VERSION = "0.8.3";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,24 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.8.3",
+    note:
+      "a value that is a sentence stopped being compared by string equality. Measured on " +
+      "`runs-r1/lbw079`: canon held `char-narrator.keeps_written_records = \"timestamps and " +
+      "records events in notebook\"` and the scene declared `\"records timestamps and " +
+      "findings in notebook\"` — the same fact reworded — and the continuity check reported it " +
+      "as a **blocking** `quantitative_mismatches`, a subtype about counts, reached only " +
+      "because the attribute matched no pattern and that is the fallback. This is the third " +
+      "false positive of the family, after absences-as-contradictions and characters walking " +
+      "somewhere. The taxonomy\'s comparisons are built for atomic facts, where two strings " +
+      "really are two claims; a phrase describing behaviour has no canonical wording, so " +
+      "restating it diffs on every scene it appears in and the writer cannot spend a repair " +
+      "round usefully on it — it has no way to know which phrasing canon prefers. A " +
+      "prose-shaped value (four words or more on either side) now degrades to a warning and " +
+      "is handed to the verifier, which can read both and say whether the meaning moved. " +
+      "Atomic values keep their teeth.",
+  },
   {
     version: "0.8.2",
     note:

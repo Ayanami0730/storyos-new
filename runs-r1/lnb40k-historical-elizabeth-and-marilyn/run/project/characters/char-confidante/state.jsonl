@@ -5,3 +5,5 @@
 {"scene":"s-005","attribute":"location","value":"loc-guest-cottage","quote":"The confidante hovered in the doorway and then drew up an easy chair as if to keep the map of herself visible but small."}
 {"scene":"s-005","attribute":"companions","value":"char-actress","quote":"The actress folded the script back into its flap, put it in the neat leather bag at her feet, and for a moment the two women sat with the same small, unsent things between them: the glass, the folded paper, the knowledge that some performances belonged to no audience."}
 {"scene":"s-005","attribute":"goal","value":"leave for an hour, then return to hear the end","quote":"\"I'll leave you an hour,\" she said, quick as a small trade. \"Then I'll come back and I'll want to hear the end.\""}
+{"scene":"s-008","attribute":"holds","value":"notebook (in inner coat pocket)","quote":"She tucked the book back into her coat as if tucking in a fault."}
+{"scene":"s-008","attribute":"goal","value":"return_in_one_hour","quote":"\"I'll be back in an hour,\" she said, noting the time on a small, sensible wristwatch."}
