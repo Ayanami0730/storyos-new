@@ -63,6 +63,7 @@ export interface SummaryInput {
     readonly backbone: string | null;
     readonly pinnedRepairs: number | null;
     readonly freshEachScene: readonly string[];
+    readonly verifierModel: string | null;
     readonly memoryDir: string | null;
   };
   readonly projectRoot: string;
@@ -124,6 +125,13 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
      * different values here are not comparable on cost.
      */
     fresh_each_scene: args.freshEachScene,
+    /**
+     * Which model checked the prose. Recorded because it changes what every other
+     * number means: a cross-family verifier is a stronger model in one role than
+     * any baseline uses, and a same-family one removes that confound and costs
+     * differently.
+     */
+    verifier_model: args.verifierModel ?? "gemini-3.1-pro-preview (default, cross-family)",
     allocation: allocationReport(input),
     elapsed_ms: input.elapsedMs,
     fatal: input.fatal,

@@ -85,6 +85,15 @@ interface Args {
    * run's money on 11% of its round-trips.
    */
   freshEachScene: readonly AgentRole[];
+  /**
+   * Override the verifier's model.
+   *
+   * Two uses, both real. It is the ablation that separates our architectural gain
+   * from the fact that one role runs a stronger model than every baseline uses; and
+   * it is the escape when the cross-family channel is out of quota, which otherwise
+   * commits every scene unverified.
+   */
+  verifierModel: ModelId | null;
 }
 
 /**
@@ -129,6 +138,7 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     sandbox: (get("--sandbox") as SandboxId | undefined) ?? "none",
     enforceBudget: has("--enforce-budget"),
     freshEachScene: has("--resident-all") ? [] : (["verifier"] as const),
+    verifierModel: (get("--verifier-model") as ModelId | undefined) ?? null,
   };
 }
 
@@ -277,6 +287,7 @@ const harness = await assembleHarness({
   budget,
   targetWords: args.target,
   backbone: args.backbone,
+  verifierModel: args.verifierModel,
   memoryRoot: args.memoryDir ? path.resolve(args.memoryDir) : projectRoot,
   runId,
   sandbox,

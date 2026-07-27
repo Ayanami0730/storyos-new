@@ -204,3 +204,31 @@ export function withBackbone(backbone: ModelId): readonly PersonaSpec[] {
     p.role === "verifier" ? p : { ...p, model: backbone },
   );
 }
+
+/**
+ * Point the verifier at a different model, deliberately and on the record.
+ *
+ * This is the one knob that changes what a result *means*, so it is separate from
+ * `withBackbone` and never implied by it. Two reasons it has to exist:
+ *
+ * The cross-family verifier is a real confound in every comparison published so
+ * far. Our rows run `gpt-5-mini` everywhere except the verifier, while the
+ * baselines run `gpt-5-mini` throughout — so "we beat them by 11.8" mixes an
+ * architectural effect with a stronger model in one role, and the only way to
+ * separate the two is to run the same harness with a same-family verifier.
+ *
+ * And it is the practical escape when the cross-family channel is unusable. The
+ * `gemini-3.1-pro-preview` plan quota ran out mid-validation and every verifier
+ * call failed, which does not merely slow a run down — it commits scenes
+ * unverified and makes the run useless for measuring the verifier at all.
+ *
+ * Whatever it is set to is recorded in the summary, because a cost or quality row
+ * from a same-family verifier is not comparable with one from a cross-family
+ * verifier.
+ */
+export function withVerifier(
+  personas: readonly PersonaSpec[],
+  model: ModelId,
+): readonly PersonaSpec[] {
+  return personas.map((p) => (p.role === "verifier" ? { ...p, model } : p));
+}

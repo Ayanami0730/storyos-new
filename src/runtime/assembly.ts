@@ -43,6 +43,7 @@ import {
   type PersonaSpec,
   allowlistMismatch,
   withBackbone,
+  withVerifier,
 } from "../agents/personas.ts";
 import { type AgentLike, ResidentAgents } from "../agents/residents.ts";
 import { skillTools } from "../agents/skill-tools.ts";
@@ -90,6 +91,8 @@ export interface AssemblyOptions {
   readonly budget: TokenBudget;
   readonly targetWords: number;
   readonly backbone: ModelId | null;
+  /** Override the verifier's model. Recorded in the summary; see `withVerifier`. */
+  readonly verifierModel?: ModelId | null;
   /** Run-scoped by default; a shared directory accumulates craft across stories. */
   readonly memoryRoot: string;
   /** One id per run, so transcripts from separate runs never interleave. */
@@ -165,9 +168,14 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
    * time. The story loop opens it per scene; nothing here decides it.
    */
   const allocation = new AllocationState();
-  const personas: readonly PersonaSpec[] = options.backbone
+  const base: readonly PersonaSpec[] = options.backbone
     ? withBackbone(options.backbone)
     : PERSONAS;
+  // Applied after the backbone override, never by it: which model checks the prose
+  // changes what a result means, so it is always an explicit choice.
+  const personas: readonly PersonaSpec[] = options.verifierModel
+    ? withVerifier(base, options.verifierModel)
+    : base;
 
   // One object, two readers: the plan tool writes it, update_plan revises it,
   // and the story loop reads whatever it currently says.
