@@ -1,0 +1,129 @@
+chapter: ch-08
+scenes:
+  - id: s-029
+    intent: "A turning point: the Queen writes—or decides against writing—a private
+      obj-handwritten-letter as a means to keep the secret alive or to mark the
+      change in herself; the actress faces a career decision that echoes the
+      same dilemma."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-030
+    intent: "Confrontation of loyalty and discretion among staff: char-royal-butler
+      and char-publicist each weigh their oaths and livelihoods; a near-breach
+      tests their characters and underscores the stakes of keeping the meeting
+      secret."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-031
+    intent: A quiet, late-summer evening where both women separately walk the same
+      path—broad-walk, twilight—and recall the meeting; the shared memory is a
+      private tether across class, geography and responsibility.
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-032
+    intent: "Resolution: each woman makes a definitive, small public gesture that
+      signals an internal change—nothing sensational, but enough that those who
+      look closely perceive a new openness to humanity in their faces or
+      actions."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph

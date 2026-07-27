@@ -1,0 +1,104 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "loc-ship-qitaf",
+      "attribute": "location",
+      "value": "Port Aden",
+      "quote": "I was on the Qitaf, tied to Port Aden's eastern quay."
+    },
+    {
+      "entity": "char-rasim",
+      "attribute": "location",
+      "value": "loc-ship-qitaf",
+      "quote": "Rasim, who never quite believed the sea would swallow him, was on the helm like a prayer, hands grafted to the tiller."
+    },
+    {
+      "entity": "char-yusuf",
+      "attribute": "location",
+      "value": "loc-ship-qitaf",
+      "quote": "Yusuf moved through the deck with the slow certainty of an old watch spring—checking lines, looking at faces."
+    },
+    {
+      "entity": "obj-ship-log-wreck",
+      "attribute": "provenance",
+      "value": "recovered from a wreck near Isle Jarrah",
+      "quote": "He said, simply, that they had been pulled from a wreck near Isle Jarrah, that they told of a loom at the island's heart and a thing that turns threads into fate."
+    },
+    {
+      "entity": "obj-folio-map",
+      "attribute": "provenance",
+      "value": "associated with wreck near Isle Jarrah",
+      "quote": "He said, simply, that they had been pulled from a wreck near Isle Jarrah, that they told of a loom at the island's heart and a thing that turns threads into fate."
+    },
+    {
+      "entity": "char-peri-envoy-azraq",
+      "attribute": "authority",
+      "value": "sent by the Peri Council as their envoy",
+      "quote": "\"I am Azraq,\" he said... \"The Peri Council sent me.\""
+    },
+    {
+      "entity": "obj-peri-amulet",
+      "attribute": "affixed_to",
+      "value": "char-amina",
+      "quote": "He closed the amulet at my throat."
+    },
+    {
+      "entity": "obj-peri-amulet",
+      "attribute": "effect_on_wearer",
+      "value": "enforces compliance and causes pain when resisting",
+      "quote": "When I tried to wrench it free, a hot spike flared under my ribs and something deep and old drew a line through my head. The pain was a command in another language."
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "bound_mission",
+      "value": "steal the spindle from Isle Jarrah",
+      "quote": "He named my task: \"steal the spindle from Isle Jarrah.\""
+    },
+    {
+      "entity": "obj-ship-log-wreck",
+      "attribute": "content_summary",
+      "value": "suggests a loom at Isle Jarrah's heart and the centrality of a fate-loom",
+      "quote": "He said, simply, that they had been pulled from a wreck near Isle Jarrah, that they told of a loom at the island's heart and a thing that turns threads into fate."
+    },
+    {
+      "entity": "obj-folio-map",
+      "attribute": "content_summary",
+      "value": "marginalia and coastline notes concerning Isle Jarrah and hazards",
+      "quote": "The map sat folded like a sleeping thing: margins full of notes in different hands, a coastline recast and rescored."
+    },
+    {
+      "entity": "char-yusuf",
+      "attribute": "position",
+      "value": "first mate and moral counterweight",
+      "quote": "Yusuf moved through the deck with the slow certainty of an old watch spring—checking lines, looking at faces."
+    },
+    {
+      "entity": "loc-port-aden",
+      "attribute": "condition_after_raid",
+      "value": "recently raided; crew counting spoils and losses",
+      "quote": "We had come in on a tide that rinsed the docks with blood-salty water and the taste of copper still clung to my tongue; the raid's clatter had not yet left my bones."
+    }
+  ],
+  "presentEntities": [
+    "char-amina",
+    "loc-port-aden",
+    "loc-ship-qitaf",
+    "char-yusuf",
+    "faction-peri-council",
+    "char-peri-envoy-azraq",
+    "obj-peri-amulet",
+    "obj-ship-log-wreck",
+    "obj-folio-map",
+    "obj-spindle"
+  ],
+  "promises": [
+    {
+      "id": "promise-spindle-mission",
+      "promise": "Amina is to steal the spindle from Isle Jarrah as commissioned by the Peri Council via Azraq",
+      "quote": "He named my task: \"steal the spindle from Isle Jarrah.\"",
+      "dueByScene": ""
+    }
+  ],
+  "paysOff": []
+}

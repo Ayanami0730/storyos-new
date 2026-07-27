@@ -1,0 +1,453 @@
+scenes:
+  - id: s-001
+    chapter: ch-01
+    intent: "Open on Amina at Port Aden after a raid; introduce her life, ship the
+      Qitaf and crew; the Peri Council's envoy Azraq appears and forces Amina
+      into a bargain by fastening the peri binding amulet and naming the
+      mission: steal the spindle from Isle Jarrah. Azraq produces a fragment of
+      a wreck log and a folio map as proof."
+    present:
+      - char-amina
+      - loc-port-aden
+      - loc-ship-qitaf
+      - char-yusuf
+      - faction-peri-council
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+      - obj-ship-log-wreck
+      - obj-folio-map
+      - obj-spindle
+    target_words: 1212
+  - id: s-002
+    chapter: ch-01
+    intent: Azraq explains the Peri Council's demand and the penalties for refusal;
+      the spindle's existence and Isle Jarrah are named. Amina learns that the
+      Peri's motives are opaque but urgent; the amulet enforces compliance.
+    present:
+      - char-amina
+      - char-peri-envoy-azraq
+      - faction-peri-council
+      - obj-peri-amulet
+      - obj-spindle
+      - loc-port-aden
+      - obj-ship-log-wreck
+    target_words: 1212
+  - id: s-003
+    chapter: ch-01
+    intent: Amina debates the mission with Yusuf and the crew, weighing personal
+      freedom, crew safety and the amulet's threat. She accepts the mission
+      under coercion and prepares the Qitaf to depart.
+    present:
+      - char-amina
+      - char-yusuf
+      - faction-crew-qitaf
+      - loc-ship-qitaf
+      - obj-peri-amulet
+      - obj-folio-map
+    target_words: 1212
+  - id: s-004
+    chapter: ch-01
+    intent: Gathering of supplies and skimming the folio map and wreck lore; the
+      crew reveals fragmentary legends about Isle Jarrah and its witches. The
+      map and wreck log hint that leaving the island may be impossible; they
+      point to the island by name and by map marks.
+    present:
+      - char-amina
+      - char-yusuf
+      - faction-crew-qitaf
+      - loc-port-aden
+      - obj-folio-map
+      - obj-ship-log-wreck
+      - loc-island-jarrah
+    target_words: 1212
+  - id: s-005
+    chapter: ch-02
+    intent: The Qitaf departs. Amina narrates the sea journey, the amulet's thrum as
+      Azraq keeps watch via satellite-like sightings, and the crew's nervousness
+      as they approach the island's known coordinates. The island's name hangs
+      in the fog long before sighting.
+    present:
+      - char-amina
+      - loc-ship-qitaf
+      - char-yusuf
+      - char-rasim
+      - faction-peri-council
+      - loc-island-jarrah
+      - obj-peri-amulet
+    target_words: 1212
+  - id: s-006
+    chapter: ch-02
+    intent: "First strange weather: the sea folds wrong and navigation instruments
+      fail. Amina recognizes patterns like those in the wreck log; the island's
+      enchantment reaches for the ship even before they sight land. The folio
+      map's marginalia echoes what they experience."
+    present:
+      - char-amina
+      - char-rasim
+      - loc-ship-qitaf
+      - obj-ship-log-wreck
+      - obj-folio-map
+      - loc-island-jarrah
+    target_words: 1212
+  - id: s-007
+    chapter: ch-02
+    intent: They salvage a drifting lifeboat and a tattered log from a wreck; the
+      journal's last entries describe a coastline that rearranged itself and a
+      woman who 'learned to listen' to the island — planting the seed that the
+      witches reweave paths.
+    present:
+      - char-amina
+      - loc-ship-qitaf
+      - obj-ship-log-wreck
+      - loc-island-jarrah
+      - obj-folio-map
+    target_words: 1212
+  - id: s-008
+    chapter: ch-02
+    intent: "Azraq reasserts the Peri Council's control: he demonstrates the
+      amulet's bite on Amina when she balks and describes the council's interest
+      in the spindle — subtly implying motives that will later matter. Stakes
+      are sharpened."
+    present:
+      - char-amina
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+      - loc-ship-qitaf
+      - faction-peri-council
+      - obj-spindle
+    target_words: 1212
+  - id: s-009
+    chapter: ch-03
+    intent: "The Qitaf reaches the island perimeter: a living fog and a ring of
+      black shore. Boats that approach are turned away or return altered. The
+      crew witnesses a skiff row out and come back empty; panic sets in."
+    present:
+      - char-amina
+      - char-yusuf
+      - char-rasim
+      - loc-ship-qitaf
+      - loc-island-jarrah
+      - obj-folio-map
+    target_words: 1212
+  - id: s-010
+    chapter: ch-03
+    intent: "An initial landing attempt goes wrong: a party goes ashore and returns
+      confused or not at all. The island's influence is shown to be immediate
+      and dangerous: paths close and memories slip. The wreck log's warnings
+      prove literal."
+    present:
+      - char-amina
+      - char-yusuf
+      - loc-island-jarrah
+      - loc-ship-qitaf
+      - faction-witches-island
+      - obj-ship-log-wreck
+    target_words: 1212
+  - id: s-011
+    chapter: ch-03
+    intent: To spare the crew, Amina decides she will go ashore alone. She prepares
+      and steels herself, improvising a plan based on the folio and wreck notes,
+      while Yusuf resists but relents — he will hold the ship near the mists.
+    present:
+      - char-amina
+      - char-yusuf
+      - loc-ship-qitaf
+      - loc-island-jarrah
+      - obj-peri-amulet
+      - obj-folio-map
+      - obj-ship-log-wreck
+    target_words: 1212
+  - id: s-012
+    chapter: ch-03
+    intent: "Amina makes landfall. The island interior is strange: trees that
+      whisper, paths that seem to rearrange. She experiences first-person
+      disorientation; the witches' presence is felt as patterns rather than
+      bodies."
+    present:
+      - char-amina
+      - loc-island-jarrah
+      - faction-witches-island
+      - obj-folio-map
+    target_words: 1212
+  - id: s-013
+    chapter: ch-04
+    intent: Amina meets Lailah unexpectedly at a weir of stitched reeds. Lailah is
+      polite, curious, and probes Amina's motives. She warns that the island
+      takes as much as it gives and mentions the Heart-loom and the spindle, but
+      offers ambiguous aid.
+    present:
+      - char-amina
+      - char-witch-lailah
+      - loc-island-jarrah
+      - obj-spindle
+      - faction-witches-island
+    target_words: 1212
+  - id: s-014
+    chapter: ch-04
+    intent: "Lailah tests Amina with riddles and small trials meant to read her
+      intentions. Through their dialogue, the island's rule is made clear: those
+      who try to take without understanding become trapped for life; bargains
+      are the witches' law."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - faction-witches-island
+      - loc-island-jarrah
+      - obj-spindle
+    target_words: 1212
+  - id: s-015
+    chapter: ch-04
+    intent: "Amina introspects in a quiet moment, telling a memory of why freedom
+      matters to her: losses at sea, a brother gone. This scene deepens her
+      inner stakes and explains why she will risk so much."
+    present:
+      - char-amina
+    target_words: 1212
+  - id: s-016
+    chapter: ch-04
+    intent: "Lailah reveals more: the spindle sits in the Heart-loom at the island's
+      center and is guarded by concentric 'circles' of enchantment that exact a
+      price for passage. Amina begins to understand the structural obstacles she
+      must navigate."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - loc-island-jarrah
+      - obj-spindle
+    target_words: 1212
+  - id: s-017
+    chapter: ch-05
+    intent: "Back aboard the Qitaf, Yusuf struggles with crew morale while Azraq
+      presses the peri's demands via the amulet's tether: the Peri Council's
+      interest is clarified — the spindle could unbind some cosmic limit the
+      peri chafe against."
+    present:
+      - char-yusuf
+      - char-peri-envoy-azraq
+      - faction-peri-council
+      - loc-ship-qitaf
+      - obj-peri-amulet
+      - obj-spindle
+    target_words: 1212
+  - id: s-018
+    chapter: ch-05
+    intent: "Amina navigates the first circle: an enchantment that offers illusions
+      of deepest desire. She must refuse a seductive vision to proceed; her
+      choice costs her something small but meaningful (a memory or a token)."
+    present:
+      - char-amina
+      - loc-island-jarrah
+      - obj-peri-amulet
+      - obj-spindle
+      - obj-folio-map
+    target_words: 1212
+  - id: s-019
+    chapter: ch-05
+    intent: After the test, the island exacts a price — Amina loses a memory
+      fragment (or a personal talisman) that complicates her identity. This
+      heightens the cost of her mission and gives the island agency.
+    present:
+      - char-amina
+      - loc-island-jarrah
+      - faction-witches-island
+      - obj-folio-map
+    target_words: 1212
+  - id: s-020
+    chapter: ch-05
+    intent: Azraq tightens the Peri Council's threats when Amina stalls. He reveals,
+      in veiled terms, the peri plan to use the spindle to rewrite the balance
+      between immortal peri and mortals. Yusuf confronts Azraq and nearly fights
+      him aboard the Qitaf.
+    present:
+      - char-amina
+      - char-peri-envoy-azraq
+      - char-yusuf
+      - faction-peri-council
+      - loc-ship-qitaf
+      - obj-peri-amulet
+      - obj-spindle
+    target_words: 1212
+  - id: s-021
+    chapter: ch-06
+    intent: Amina probes deeper into the island, encountering time loops and paths
+      that return her to altered versions of earlier moments. The wreck log's
+      diagrams prove helpful. She inches toward the Heart-loom but at risk of
+      losing more of herself.
+    present:
+      - char-amina
+      - obj-ship-log-wreck
+      - loc-island-jarrah
+      - obj-folio-map
+    target_words: 1212
+  - id: s-022
+    chapter: ch-06
+    intent: "Amina reaches the threshold of the Heart-loom where several
+      witches—including Lailah—await. They explain the spindle's mechanics: it
+      can unpick or re-stitch a single mortal fate thread at a time, but every
+      stitch demands an equivalent unthreading elsewhere — a precise
+      metaphysical cost."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - faction-witches-island
+      - obj-spindle
+      - loc-island-jarrah
+    target_words: 1212
+  - id: s-023
+    chapter: ch-06
+    intent: "Moral negotiation: Lailah offers a bargain — the witches will lend
+      Amina knowledge to use the spindle correctly if she agrees to a price; the
+      Peri Council's claimed intentions are revealed as self-serving, making
+      Amina question whom to trust."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - obj-spindle
+      - faction-peri-council
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+    target_words: 1212
+  - id: s-024
+    chapter: ch-06
+    intent: "At the same time, the binding amulet flares as the Peri Council
+      attempts remote compulsion. Amina resists. A skirmish of wills unfolds:
+      peri coercion versus witches' pattern-sorcery. The balance of power is
+      uncertain."
+    present:
+      - char-amina
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+      - char-witch-lailah
+      - obj-spindle
+      - faction-witches-island
+    target_words: 1212
+  - id: s-025
+    chapter: ch-07
+    intent: Onboard the Qitaf, a crew member (Rasim) succumbs to the island's call
+      and is taken or altered. Yusuf fights to save him, drawing the peri's
+      anger. The crew's peril becomes a pressing, immediate cost that pushes
+      Amina toward a decision.
+    present:
+      - char-yusuf
+      - char-rasim
+      - char-amina
+      - char-peri-envoy-azraq
+      - loc-ship-qitaf
+      - loc-island-jarrah
+      - faction-peri-council
+      - obj-peri-amulet
+    target_words: 1212
+  - id: s-026
+    chapter: ch-07
+    intent: "Amina realizes she cannot simply steal and hand over the spindle. She
+      plots a set of moves: seize the spindle, use it in a way that disrupts the
+      peri's leverage, and bargain for her crew's safety — a high-risk gamble
+      requiring cunning and sacrifice."
+    present:
+      - char-amina
+      - obj-spindle
+      - char-witch-lailah
+      - faction-peri-council
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+    target_words: 1212
+  - id: s-027
+    chapter: ch-07
+    intent: "The heist: Amina attempts to take the spindle from the Heart-loom.
+      Alarmed witches and shifting corridors force her into desperate choices;
+      she must rely on guile and what she has learned of the island's bargains
+      to seize the spindle."
+    present:
+      - char-amina
+      - obj-spindle
+      - faction-witches-island
+      - loc-island-jarrah
+      - obj-peri-amulet
+      - char-witch-lailah
+    target_words: 1212
+  - id: s-028
+    chapter: ch-07
+    intent: "Amina steals the spindle, but the island's inescapability triggers: the
+      loom's unthreading starts to pull at the island's fabric and the
+      shorelines. The island constricts and reality quivers; escape seems
+      impossible and the Peri Council demands the spindle immediately."
+    present:
+      - char-amina
+      - obj-spindle
+      - loc-island-jarrah
+      - faction-witches-island
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+    target_words: 1212
+  - id: s-029
+    chapter: ch-08
+    intent: "Amina bargains with Azraq via the amulet: she offers to use the
+      spindle, but on conditions that the peri must accept. She intends to use
+      the spindle in a way that will break the amulet's hold or free her crew,
+      scheming to outmaneuver both factions."
+    present:
+      - char-amina
+      - faction-peri-council
+      - char-peri-envoy-azraq
+      - obj-spindle
+      - obj-peri-amulet
+      - char-yusuf
+    target_words: 1212
+  - id: s-030
+    chapter: ch-08
+    intent: "Climax: witches and peri clash as Amina turns the spindle. She rewrites
+      a fate-line to free her crew and sever the amulet's hold, but every
+      spindle stitch exacts a cost. The exchange is painful and unexpected —
+      someone pays with memory, identity, or a life altered."
+    present:
+      - char-amina
+      - faction-witches-island
+      - faction-peri-council
+      - obj-spindle
+      - char-yusuf
+      - char-witch-lailah
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+    target_words: 1212
+  - id: s-031
+    chapter: ch-08
+    intent: "Aftermath: the island's enchantments loosen in part; escape becomes
+      possible though not without change. Amina faces the cost of her choice
+      (lost memory, altered future, or a sacrifice) and reconciles what she has
+      given with what she has saved."
+    present:
+      - char-amina
+      - char-yusuf
+      - loc-ship-qitaf
+      - obj-spindle
+      - loc-island-jarrah
+      - faction-witches-island
+    target_words: 1212
+  - id: s-032
+    chapter: ch-08
+    intent: "Amina confronts the Peri Council one last time at sea: she refuses to
+      hand over the spindle intact, forces a bargain that curtails the peri's
+      interventionist designs, or else hides/damages the spindle. The peri's
+      fate is shifted; Amina secures her crew's safety at a cost."
+    present:
+      - char-amina
+      - faction-peri-council
+      - obj-spindle
+      - char-peri-envoy-azraq
+      - char-yusuf
+      - obj-peri-amulet
+    target_words: 1212
+  - id: s-033
+    chapter: ch-09
+    intent: "Resolution and epilogue: the witches reclaim or reweave the spindle
+      into a safeguard, or Amina hides it; she sails away changed — freer in one
+      sense, altered in another. The novel closes with Amina reflecting on what
+      fate means and what price freedom demands."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - faction-witches-island
+      - faction-peri-council
+      - obj-spindle
+      - loc-ship-qitaf
+    target_words: 1212

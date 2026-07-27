@@ -1,0 +1,76 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "char-peri-envoy-azraq",
+      "attribute": "stated_mission",
+      "quote": "\"The Council wants one thing,\" he said. \"A single spindle.\"",
+      "value": "require Amina to steal the spindle from Isle Jarrah"
+    },
+    {
+      "entity": "obj-spindle",
+      "attribute": "location_named",
+      "quote": "\"The Spindle,\" I repeated, because names were the handles you used on troubles. \"From Isle Jarrah.\"",
+      "value": "Isle Jarrah"
+    },
+    {
+      "entity": "faction-peri-council",
+      "attribute": "motives_character",
+      "quote": "\"Our reasons are not for your keeping,\" he said. \"They are urgent. You must understand urgency without understanding why.\"",
+      "value": "opaque but urgent"
+    },
+    {
+      "entity": "obj-peri-amulet",
+      "attribute": "effect_on_wearer_detailed",
+      "quote": "When I thought about prying it loose, a quick, hot thing stabbed under my ribs as if someone had found the seam of me and slackened it.",
+      "value": "causes sharp pain when resisting and enforces compliance"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "bound_by_amulet",
+      "quote": "\"It is binding,\" he said. \"It enforces compliance. Resistance is costly.\"",
+      "value": "true"
+    },
+    {
+      "entity": "obj-peri-amulet",
+      "attribute": "not_absolute",
+      "quote": "\"Not none. Not absolute. The instrument we affix is a law, not a god. It can be resisted by a strong mortal will, it can be countered by the witches' craft, and it can be made irrelevant by what you seek—the Spindle—if used under the island's terms.\"",
+      "value": "can be resisted by strong will, countered by witches' craft, or made irrelevant by using the Spindle under island's terms"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "accepted_mission",
+      "quote": "\"You want me to go,\" I said. Saying it made the word solid. \"You want the Spindle from Isle Jarrah. You have bound me to that task. I will go.\"",
+      "value": "accepted mission to steal the spindle from Isle Jarrah aboard the Qitaf"
+    },
+    {
+      "entity": "loc-port-aden",
+      "attribute": "present_artifact",
+      "quote": "The map looked like someone else's dying hope, a thing neither dead nor alive. Azraq folded the folio back into itself and let it go.",
+      "value": "folio map and wreck log fragment remain aboard the Qitaf"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "keeps_command",
+      "quote": "\"But I go to keep my crew. I keep my command. Your enforcement stays on my throat, but your hands stay out of my ship while she is mine.\"",
+      "value": "intends to keep command of the Qitaf and crew while undertaking the mission"
+    }
+  ],
+  "presentEntities": [
+    "char-amina",
+    "char-peri-envoy-azraq",
+    "obj-peri-amulet",
+    "obj-spindle",
+    "loc-port-aden",
+    "obj-ship-log-wreck"
+  ],
+  "promises": [
+    {
+      "id": "promise-council-hands-off",
+      "promise": "Azraq's departure and Amina's insistence that the Peri Council's agents will not interfere with her crew while she retains command is a conditional promise; the Council must keep its hands off the Qitaf while she is in command.",
+      "quote": "\"But I go to keep my crew. I keep my command. Your enforcement stays on my throat, but your hands stay out of my ship while she is mine.\"",
+      "dueByScene": ""
+    }
+  ],
+  "paysOff": []
+}

@@ -1,0 +1,64 @@
+chapter: ch-01
+scenes:
+  - id: s-001
+    intent: "Open on the locked-room: establish atmosphere, the impossible seal, and
+      the key physical clues (stopped mantel clock, letter-opener in victim,
+      handkerchief with odd monogram, and the secret pulley on the sill). Set up
+      tension between the inspector who wants a tidy case and the narrator who
+      notices misfits in the evidence."
+    present:
+      - char-august-crowe
+      - char-inspector-milne
+      - char-lena-harrow
+      - loc-harrow-library
+      - obj-antique-clock
+      - obj-letter-opener
+      - obj-bloodied-handkerchief
+      - obj-secret-pulley
+  - id: s-002
+    intent: "Interview the household: establish motives and alibis through tight,
+      revealing exchanges with Henry, Mary and Oliver. Crowe inventories the
+      folio and notices a missing page and a fresh oil smear by the sill; Milne
+      grows impatient. Introduce the ashtray and the argument over the folio's
+      contents."
+    present:
+      - char-august-crowe
+      - char-henry-harrow
+      - char-mary-rowan
+      - char-oliver-dane
+      - char-inspector-milne
+      - loc-harrow-manor
+      - obj-harrow-folio
+      - obj-ashtray
+      - obj-secret-pulley
+  - id: s-003
+    intent: "Crowe experiments at night with the clock and the pulley: he
+      reconstructs how a mechanism or outside operator could have stabbed the
+      victim and resealed the room, testing physics and timing. Tension rises
+      when someone notices him on the sill — a near-violent interruption that
+      proves someone wanted the truth concealed."
+    present:
+      - char-august-crowe
+      - loc-harrow-library
+      - obj-antique-clock
+      - obj-secret-pulley
+      - obj-letter-opener
+      - char-oliver-dane
+  - id: s-004
+    intent: "The reveal: Crowe stages a demonstration for Milne and the household to
+      expose the method and the murderer. Logical deductions from the folio, the
+      monogram, ash, and the pulley point to Henry; a final confrontation forces
+      a confession and explains motive and method, with Milne and the household
+      watching."
+    present:
+      - char-august-crowe
+      - char-inspector-milne
+      - char-henry-harrow
+      - char-mary-rowan
+      - char-oliver-dane
+      - loc-harrow-library
+      - obj-harrow-folio
+      - obj-bloodied-handkerchief
+      - obj-ashtray
+      - obj-secret-pulley
+      - obj-letter-opener

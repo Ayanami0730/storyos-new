@@ -1,0 +1,1 @@
+Coerced by an immortal peri council, pirate Amina al-Sirafi must sail to the inescapable Isle Jarrah and steal a single spindle that can rewrite fate — a theft that will force her to bargain with witches, test her loyalties, and pay a cost she can scarcely imagine.

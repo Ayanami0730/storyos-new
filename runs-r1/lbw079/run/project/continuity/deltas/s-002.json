@@ -1,0 +1,83 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "obj-newspaper-clipping",
+      "attribute": "bibliographic_citation",
+      "quote": "He pushed a small folder across his desk and said, as if reading from the edge of a map, \"Holloway Gazette, mid‑March 1972 — photograph of Holloway House. Box 4, Folder 12. Accession HA‑1972‑03.\"",
+      "value": "Holloway Gazette, March 14, 1972, Box 4 Folder 12, accession HA-1972-03"
+    },
+    {
+      "entity": "obj-newspaper-clipping",
+      "attribute": "caption",
+      "quote": "The caption beneath the grainy photograph named the day: March 14, 1972.",
+      "value": "Hannah Hale, last seen in Holloway House, March 14, 1972."
+    },
+    {
+      "entity": "obj-newspaper-clipping",
+      "attribute": "photo_shows",
+      "quote": "The picture showed the mantel and the mirror in the same shape I'd learned by touch: the hairline seam across the silvering, the tall east windows throwing a wedge of light onto the floor.",
+      "value": "mantel, Venetian mirror with hairline seam, tall east windows"
+    },
+    {
+      "entity": "char-mrs-haverford",
+      "attribute": "oral_warning",
+      "quote": "\"Hannah fussed with her glass,\" she said. \"She used to warn people about the seam — said you could feed a thing into it if you weren't careful. Mind the seam, love — and don't light it at noon.\"",
+      "value": "Mind the seam, love — and don't light it at noon."
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "entry_1972-03-09",
+      "quote": "One, headed March 9, 1972, said, \"At the seam the glass receives what the room offers; mark the joint and do not let the light strike the wrong edge.\"",
+      "value": "At the seam the glass receives what the room offers; mark the joint and do not let the light strike the wrong edge."
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "entry_1972-03-21",
+      "quote": "Another, dated March 21, 1972, read, \"Note the angle at the sill; when the light cuts the sill aright the seam answers and will not be denied.\"",
+      "value": "Note the angle at the sill; when the light cuts the sill aright the seam answers and will not be denied."
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "hypothesis",
+      "quote": "If the silvering included a seam that functioned like a channel, then a beam arriving at a particular declination could be the activating condition. That activation would obey optics, not omen: an aligned ray traveling to the seam, unbroken, might produce the reflection effects I had already noticed.",
+      "value": "Mirror activates under a precise light alignment hitting the seam in the silvering, consistent with reflection-conduction rules."
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "prediction_1",
+      "quote": "Prediction one: reproduce the March sun's angle with my oil lamp and the mirror will show the lagged echo again and an intensified shimmer at the seam. I set a tentative placement on the sketch — lamp six feet from the mantel, flame roughly eighteen inches above the hearth, and aligned seven inches left of the mirror's center mark.",
+      "value": "Place oil lamp six feet from the mantel, flame 18 inches above the hearth, aligned 7 inches left of mirror center to reproduce effect."
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "prediction_2",
+      "quote": "Prediction two: interrupting the reflective path by covering the seam with an opaque strip or placing a board across the sill will stop the lag and the shimmer, proving the effect needs an unobstructed reflective route.",
+      "value": "Covering the seam or interrupting the reflective path will prevent the mirror's lag/shimmer effects."
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "planned_test_setup",
+      "quote": "I measured the six feet with the cheap tape and made the mark seven inches left of centre in pencil on the envelope I kept with the diary. The protractor from my toolbox was ready; the oil lamp was already ordered online.",
+      "value": "Will measure and set lamp as noted: six feet from mantel, wick at 18 in., mark 7 in left of center; will use protractor and tape."
+    }
+  ],
+  "presentEntities": [
+    "char-lena",
+    "char-archivist",
+    "char-mrs-haverford",
+    "obj-newspaper-clipping",
+    "obj-diary",
+    "loc-town-archive",
+    "loc-holloway-house"
+  ],
+  "promises": [
+    {
+      "id": "promise-testmirror",
+      "promise": "Reader is owed a follow-up where Lena conducts controlled optical tests with measurements and lamp placement to investigate the reflection lag.",
+      "quote": "I made the hypothesis explicit and wrote down two simple, falsifiable predictions.",
+      "dueByScene": "s-005"
+    }
+  ],
+  "paysOff": []
+}

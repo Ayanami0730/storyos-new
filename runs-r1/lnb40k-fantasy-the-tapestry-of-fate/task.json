@@ -1,0 +1,9 @@
+{
+  "task_id": "lnb40k-fantasy-the-tapestry-of-fate",
+  "prompt": "Write a complete fantasy novel of about 40,000 words.\n\nPremise:\nAmina al-Sirafi, a pirate, is coerced by an immortal council of peri to sail to an island inhabited by witches from which no one can escape and to steal a single spindle that has the power to rewrite fate.\n\nCentral conflict:\nUnder threat from an immortal peri council, Amina must infiltrate an inescapable island of witches and steal a fate-rewriting spindle despite the island's supernatural dangers.\n\nCharacters:\n- Amina al-Sirafi — pirate (protagonist)\n- Peri Council — immortal peri who coerce the mission\n- Witches of the Island — inhabitants/guardians of the island\n- The Spindle — the artifact that can rewrite fate (objective)\n\nThe finished novel must contain all of the following:\n- The protagonist is the pirate Amina al-Sirafi.\n- An immortal peri council compels or coerces Amina to undertake the mission.\n- The mission destination is an island inhabited by witches from which no one can escape.\n- Amina's explicit objective is to steal a spindle capable of rewriting fate.\n\nWrite the novel itself — no outline, no commentary, no notes to the reader.",
+  "target_words": 40000,
+  "bench": "livenovelbench",
+  "bench_task_id": "task-fantasy-the-tapestry-of-fate",
+  "tier": "40k",
+  "flags": []
+}

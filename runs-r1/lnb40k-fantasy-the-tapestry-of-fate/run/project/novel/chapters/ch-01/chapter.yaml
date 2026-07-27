@@ -1,0 +1,55 @@
+chapter: ch-01
+scenes:
+  - id: s-001
+    intent: "Open on Amina at Port Aden after a raid; introduce her life, ship the
+      Qitaf and crew; the Peri Council's envoy Azraq appears and forces Amina
+      into a bargain by fastening the peri binding amulet and naming the
+      mission: steal the spindle from Isle Jarrah. Azraq produces a fragment of
+      a wreck log and a folio map as proof."
+    present:
+      - char-amina
+      - loc-port-aden
+      - loc-ship-qitaf
+      - char-yusuf
+      - faction-peri-council
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+      - obj-ship-log-wreck
+      - obj-folio-map
+      - obj-spindle
+  - id: s-002
+    intent: Azraq explains the Peri Council's demand and the penalties for refusal;
+      the spindle's existence and Isle Jarrah are named. Amina learns that the
+      Peri's motives are opaque but urgent; the amulet enforces compliance.
+    present:
+      - char-amina
+      - char-peri-envoy-azraq
+      - faction-peri-council
+      - obj-peri-amulet
+      - obj-spindle
+      - loc-port-aden
+      - obj-ship-log-wreck
+  - id: s-003
+    intent: Amina debates the mission with Yusuf and the crew, weighing personal
+      freedom, crew safety and the amulet's threat. She accepts the mission
+      under coercion and prepares the Qitaf to depart.
+    present:
+      - char-amina
+      - char-yusuf
+      - faction-crew-qitaf
+      - loc-ship-qitaf
+      - obj-peri-amulet
+      - obj-folio-map
+  - id: s-004
+    intent: Gathering of supplies and skimming the folio map and wreck lore; the
+      crew reveals fragmentary legends about Isle Jarrah and its witches. The
+      map and wreck log hint that leaving the island may be impossible; they
+      point to the island by name and by map marks.
+    present:
+      - char-amina
+      - char-yusuf
+      - faction-crew-qitaf
+      - loc-port-aden
+      - obj-folio-map
+      - obj-ship-log-wreck
+      - loc-island-jarrah

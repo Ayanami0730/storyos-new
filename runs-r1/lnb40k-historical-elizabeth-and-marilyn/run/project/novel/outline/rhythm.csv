@@ -1,0 +1,5 @@
+scene,chapter,beat,tension_target,tension_actual,note
+s-001,ch-01,"setup",3,2,"Establishes domestic morning: the household's small motions and readiness under calm sunlight; sets tone and operational normality for forthcoming visits."
+s-002,ch-01,"setup",3,3,"Arrival and staging: establishes the actress's choreography of presence and the publicist's press control; a low, gathering tension as publicity is arranged."
+s-003,ch-01,"setup",2,1,"Re-establishes Windsor high-street rhythms and local perspectives; domestic normality and small social rituals foreground public/professional arrivals. Verifier noted this scene restates prior material but was committed to avoid blocking progress (see commit context)."
+s-004,ch-01,"complication",4,3,"Negotiation of private vs public: household deciding whether to stage a controlled photograph and how to keep the Queen's private time protected; tension arises between publicity appetite and household discretion."

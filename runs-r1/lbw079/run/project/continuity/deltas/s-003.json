@@ -1,0 +1,114 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "entity": "obj-oil-lamp",
+      "attribute": "placement",
+      "quote": "I set the oil lamp six feet from the mantel and propped the wick so the flame rode roughly eighteen inches above the hearth.",
+      "value": "six feet from mantel; flame 18 in above hearth"
+    },
+    {
+      "entity": "loc-parlor",
+      "attribute": "floor_mark",
+      "quote": "I measured the six feet again because measuring was the part of this that felt like control, then I pencilled a small cross on the floor seven inches to the left of the mirror’s centre and taped a strip of envelope paper there to hold the mark.",
+      "value": "mark seven inches left of mirror centre on parlor floor"
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "observed_shimmer",
+      "quote": "The seam in the silvering caught it first and, for a heartbeat that was both longer and too short, the glass answered with an intensified shimmer along that hairline joint.",
+      "value": "intensified shimmer along hairline seam under lamp activation"
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "reflection_lag_observed",
+      "quote": "My hand in front of the glass registered a fraction of a second sooner than its reflection — the lag I'd written down as a prediction —",
+      "value": "reflection lag of fraction of a second between real movement and reflection"
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "impossible_reflection_description",
+      "quote": "The reflection was not the room I was sitting in. In the glass the narrow stair descended on the left while, behind me, the real stair rose on the right. Light in the mirror had a colder edge, a blue that did not belong to my lamp; the reflected banister cast a shadow where the real banister made none.",
+      "value": "reflected parlor shows stair descending on left (real stair rises on right) and bluish, colder light source in reflection"
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "ritual_entry_date",
+      "quote": "Tucked into the margin, dated March 24, 1972, were three short directives I read aloud, as if hearing them aloud would make them obey me as well as the paper:",
+      "value": "March 24, 1972"
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "ritual_step_1",
+      "quote": "\"Mark the seam.\"",
+      "value": "Mark the seam."
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "ritual_step_2",
+      "quote": "\"Place the flame where the sill is cut.\"",
+      "value": "Place the flame where the sill is cut."
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "ritual_step_3",
+      "quote": "\"Speak her name and give the leaving.\"",
+      "value": "Speak her name and give the leaving."
+    },
+    {
+      "entity": "obj-brass-key",
+      "attribute": "used_to_open",
+      "quote": "I took the brass key from the mantel—still dull where my thumb had warmed it earlier—and turned it in the attic hatch's rim lock.",
+      "value": "used to open attic hatch rim lock"
+    },
+    {
+      "entity": "loc-attic",
+      "attribute": "attic_slat_location",
+      "quote": "A single slat on the north rafter was split from edge to edge and left a vertical gap of about two inches. It sat two feet from the hatch and ten feet from the east-facing window, and when I knelt on the hatch lip a thin shaft of lamp-light threaded through the gap and struck the attic floor in a line that aimed back toward the mantel.",
+      "value": "split slat on north rafter, vertical 2-inch gap, located 2 ft from hatch, 10 ft from east window; admits shaft aimed toward mantel"
+    },
+    {
+      "entity": "loc-attic",
+      "attribute": "attic_characteristics",
+      "quote": "The stair to the attic was narrow and pitched; I climbed into a low, cedar-dark space where dust made the air taste like dry paper. The attic ceiling brushed my forearms; the roof slants made the room feel smaller than the house below.",
+      "value": "low cedar-dark attic, narrow pitched stair, low ceiling that brushes forearms"
+    },
+    {
+      "entity": "ghost-hannah",
+      "attribute": "communication_mode",
+      "quote": "Hannah came then — not a storm but a sequence: she tapped once, twice, three times along the inside of the frame; she did it in precise, patient counts, as if enumerating steps. Her mouth formed one slow word. I read it because there is no other polite thing to do with an apparition that mouths a syllable: \"light.\"",
+      "value": "communicates by tapping and mouthing single logical words (example: 'light')"
+    },
+    {
+      "entity": "ghost-hannah",
+      "attribute": "written_message_reflection_only",
+      "quote": "In the mirror's other side the dust seemed to part where her finger slid; in that reflected seam the darkened trail spelled a single word: \"free.\" The dust on my side of the frame did not move.",
+      "value": "the word 'free' appeared only in the mirror's reflected surface; no physical dust moved on Lena's side"
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "performed_ritual_step",
+      "quote": "I struck it, lifted the flame to the wick, and said, plainly, \"Hannah Hale.\" Then I read the diary line and spoke it aloud to the room, slow and deliberate: \"Speak her name and give the leaving.\"",
+      "value": "spoke Hannah Hale's name aloud and read 'Speak her name and give the leaving' while bringing the match flame to the wick"
+    }
+  ],
+  "presentEntities": [
+    "char-lena",
+    "loc-parlor",
+    "loc-attic",
+    "obj-venetian-mirror",
+    "obj-oil-lamp",
+    "obj-brass-key",
+    "obj-diary",
+    "ghost-hannah"
+  ],
+  "promises": [
+    {
+      "id": "promise-test-mirror",
+      "promise": "Reader owed a follow-up where Lena conducts controlled optical tests with measurements and lamp placement to investigate the reflection lag.",
+      "quote": "I set the oil lamp six feet from the mantel and propped the wick so the flame rode roughly eighteen inches above the hearth.",
+      "dueByScene": "s-005"
+    }
+  ],
+  "paysOff": []
+}

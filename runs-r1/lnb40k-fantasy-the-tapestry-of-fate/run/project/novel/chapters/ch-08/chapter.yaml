@@ -1,0 +1,52 @@
+chapter: ch-08
+scenes:
+  - id: s-029
+    intent: "Amina bargains with Azraq via the amulet: she offers to use the
+      spindle, but on conditions that the peri must accept. She intends to use
+      the spindle in a way that will break the amulet's hold or free her crew,
+      scheming to outmaneuver both factions."
+    present:
+      - char-amina
+      - faction-peri-council
+      - char-peri-envoy-azraq
+      - obj-spindle
+      - obj-peri-amulet
+      - char-yusuf
+  - id: s-030
+    intent: "Climax: witches and peri clash as Amina turns the spindle. She rewrites
+      a fate-line to free her crew and sever the amulet's hold, but every
+      spindle stitch exacts a cost. The exchange is painful and unexpected —
+      someone pays with memory, identity, or a life altered."
+    present:
+      - char-amina
+      - faction-witches-island
+      - faction-peri-council
+      - obj-spindle
+      - char-yusuf
+      - char-witch-lailah
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+  - id: s-031
+    intent: "Aftermath: the island's enchantments loosen in part; escape becomes
+      possible though not without change. Amina faces the cost of her choice
+      (lost memory, altered future, or a sacrifice) and reconciles what she has
+      given with what she has saved."
+    present:
+      - char-amina
+      - char-yusuf
+      - loc-ship-qitaf
+      - obj-spindle
+      - loc-island-jarrah
+      - faction-witches-island
+  - id: s-032
+    intent: "Amina confronts the Peri Council one last time at sea: she refuses to
+      hand over the spindle intact, forces a bargain that curtails the peri's
+      interventionist designs, or else hides/damages the spindle. The peri's
+      fate is shifted; Amina secures her crew's safety at a cost."
+    present:
+      - char-amina
+      - faction-peri-council
+      - obj-spindle
+      - char-peri-envoy-azraq
+      - char-yusuf
+      - obj-peri-amulet

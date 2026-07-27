@@ -1,0 +1,10 @@
+id: char-queen
+name: queen
+sketch: The reigning monarch, in residence at Windsor for a summer; outwardly
+  composed, privately curious and burdened by duty.
+identity:
+  profession: monarch, head of state
+  title: The Queen
+provenance:
+  profession: s-001
+  title: s-001

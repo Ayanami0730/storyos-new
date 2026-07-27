@@ -1,0 +1,59 @@
+{
+  "sceneId": "s-004",
+  "claims": [
+    {
+      "entity": "obj-diary",
+      "attribute": "entry_1972-03-25",
+      "quote": "The new entry I found tucked behind the others was dated March 25, 1972 and said, in Hannah's small, tight hand: \"March 25, 1972: A leaving asks a taking; the seam will not be satisfied without an offered place.\" I read it exactly as written: \"A leaving asks a taking; the seam will not be satisfied without an offered place.\"",
+      "value": "\"March 25, 1972: A leaving asks a taking; the seam will not be satisfied without an offered place.\""
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "activation_result",
+      "quote": "The seam caught the light and the glass answered the way the diary promised — not with whim but with geometry. The shimmer concentrated like a held breath along the hairline; the reflected stair folded wrong again, and the blue cold in the mirror sharpened to an edge. For a second my hand and its reflection were two different clocks: mine a fraction ahead, hers a fraction late. Then the seam was a midplane and the world tightened around it.",
+      "value": "Under the precise alignment (lamp six feet from mantel, flame 18 in above hearth, flame aligned 7 in left of mirror centre; attic slat providing beam), the seam acts as a reflective midplane producing intensified shimmer and mirrored geometry that separates reflected and reflecting phases."
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "status_location",
+      "quote": "There was a flutter, a tilt in the lungs, and then I was looking at the parlor from the wrong side of everything: from behind the glass where the light was colder and the stair went the other way. My hands were pale, pressed to the inside of the mirror; they were me and not-me, reaching out across a surface that would not yield.",
+      "value": "trapped_behind_mirror_in_reflected_space"
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "observation_of_swap",
+      "quote": "My reflection — my face, my hands — stopped matching mine and began to obey the other side. Where I lifted my hand she did not lift hers in time; instead she loosened her fingers and let them fall to her side, the small domestic motion of someone who was not astonished.",
+      "value": "Lena observed that her reflection ceased to synchronise and instead behaved as an independent agent corresponding to the other side's occupant."
+    },
+    {
+      "entity": "ghost-hannah",
+      "attribute": "new_host_body",
+      "quote": "On the room-side my body — my hands, my coat, my face — moved without the insistence of my will. Mrs. Haverford, who had come up the path and was in the doorway with her knitting basket, gave a small, sensible sound — a gasp... The woman in my body smiled, buttoned the cuff of my coat... and said, in my voice but not mine in intent, \"Thank you, dear. I can walk now.\"",
+      "value": "ghost-hannah occupied Lena's physical body and could control it to move and speak in the house."
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "mechanism_swap",
+      "quote": "Then the seam was a midplane and the world tightened around it.",
+      "value": "When the beam produced symmetric incidence at the seam the conduit performed a swap: the reflected subject's state exchanged with the reflecting subject's position, effecting an identity transfer consistent with world rule 6."
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "ritual_interpretation_warning",
+      "quote": "The seam had wanted symmetry, a place offered to receive what it would let go. It asked for a taking and the house, obeying its angles, provided one.",
+      "value": "The diary's March 25 line indicates the ritual requires an offered 'place' and that freeing someone via the seam requires a substitution of occupants; this is a binding interpretive fact established by Lena's reading and the ritual outcome."
+    }
+  ],
+  "presentEntities": [
+    "char-lena",
+    "ghost-hannah",
+    "obj-venetian-mirror",
+    "obj-diary",
+    "obj-oil-lamp",
+    "char-mrs-haverford",
+    "loc-parlor",
+    "loc-holloway-house"
+  ],
+  "promises": [],
+  "paysOff": []
+}

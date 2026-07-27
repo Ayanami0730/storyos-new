@@ -1,0 +1,1 @@
+When Lena inherits an old house, an antique Venetian mirror and a hidden diary draw her into a precise, daylight-angled ritual that promises to free the woman who vanished there — but the mirror obeys geometry not mercy, and what is freed is not what she expects.

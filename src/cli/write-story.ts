@@ -166,7 +166,45 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
      * `--resident-all` restores both, which is the ablation that says what residency
      * was worth.
      */
-    freshEachScene: has("--resident-all") ? [] : (["verifier", "writer"] as const),
+    /**
+     * The four specialists are per-scene workers. Only the orchestrator holds the
+     * book.
+     *
+     * That is a statement about the architecture and it was forced by measurement
+     * rather than chosen. Peak context on the completed 17-scene, 18,274-word run,
+     * with all five resident:
+     *
+     *   writer          200k   → died on the provider's message-token limit at s-016
+     *   context-builder 193k   → next
+     *   index-manager   109k
+     *   orchestrator     62k
+     *   verifier         37k   (already resetting per scene)
+     *
+     * Growth is linear in scenes, so the 34-scene 40,000-word tier — the one every
+     * LiveNovelBench baseline is scored at — puts the context-builder near 380k and
+     * the index-manager near 220k. Both die there, for the same reason and in the
+     * same place the writer did.
+     *
+     * Resetting them costs little because their work is per-scene by construction.
+     * The builder is handed a skeleton and searches the index; the index-manager is
+     * handed one scene to fold. Neither needs the previous scene's conversation —
+     * both are explicitly told never to rely on it, because `SHARED.md` makes the
+     * index the only record. What residency did carry was *role* knowledge, where
+     * things live and which mistakes to stop making, and that has its own durable
+     * home in `remember` / `read_memory`, which survives compaction and reset alike.
+     *
+     * The orchestrator stays resident because continuity is its job rather than an
+     * accident of implementation: it decides what happens next from what has already
+     * happened. At 62k over seventeen scenes it reaches roughly 124k at 34, which
+     * fits — and it is the one role for which a reset would be a design change
+     * rather than a cost saving.
+     *
+     * `--resident-all` restores all five, which is the ablation that says what
+     * residency was worth.
+     */
+    freshEachScene: has("--resident-all")
+      ? []
+      : (["verifier", "writer", "context-builder", "index-manager"] as const),
     verifierModel: (get("--verifier-model") as ModelId | undefined) ?? null,
   };
 }

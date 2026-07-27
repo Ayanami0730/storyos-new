@@ -1,0 +1,52 @@
+chapter: ch-07
+scenes:
+  - id: s-025
+    intent: Onboard the Qitaf, a crew member (Rasim) succumbs to the island's call
+      and is taken or altered. Yusuf fights to save him, drawing the peri's
+      anger. The crew's peril becomes a pressing, immediate cost that pushes
+      Amina toward a decision.
+    present:
+      - char-yusuf
+      - char-rasim
+      - char-amina
+      - char-peri-envoy-azraq
+      - loc-ship-qitaf
+      - loc-island-jarrah
+      - faction-peri-council
+      - obj-peri-amulet
+  - id: s-026
+    intent: "Amina realizes she cannot simply steal and hand over the spindle. She
+      plots a set of moves: seize the spindle, use it in a way that disrupts the
+      peri's leverage, and bargain for her crew's safety — a high-risk gamble
+      requiring cunning and sacrifice."
+    present:
+      - char-amina
+      - obj-spindle
+      - char-witch-lailah
+      - faction-peri-council
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+  - id: s-027
+    intent: "The heist: Amina attempts to take the spindle from the Heart-loom.
+      Alarmed witches and shifting corridors force her into desperate choices;
+      she must rely on guile and what she has learned of the island's bargains
+      to seize the spindle."
+    present:
+      - char-amina
+      - obj-spindle
+      - faction-witches-island
+      - loc-island-jarrah
+      - obj-peri-amulet
+      - char-witch-lailah
+  - id: s-028
+    intent: "Amina steals the spindle, but the island's inescapability triggers: the
+      loom's unthreading starts to pull at the island's fabric and the
+      shorelines. The island constricts and reality quivers; escape seems
+      impossible and the Peri Council demands the spindle immediately."
+    present:
+      - char-amina
+      - obj-spindle
+      - loc-island-jarrah
+      - faction-witches-island
+      - char-peri-envoy-azraq
+      - obj-peri-amulet

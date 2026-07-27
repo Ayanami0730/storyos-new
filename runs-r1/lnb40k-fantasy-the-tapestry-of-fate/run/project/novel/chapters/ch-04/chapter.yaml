@@ -1,0 +1,40 @@
+chapter: ch-04
+scenes:
+  - id: s-013
+    intent: Amina meets Lailah unexpectedly at a weir of stitched reeds. Lailah is
+      polite, curious, and probes Amina's motives. She warns that the island
+      takes as much as it gives and mentions the Heart-loom and the spindle, but
+      offers ambiguous aid.
+    present:
+      - char-amina
+      - char-witch-lailah
+      - loc-island-jarrah
+      - obj-spindle
+      - faction-witches-island
+  - id: s-014
+    intent: "Lailah tests Amina with riddles and small trials meant to read her
+      intentions. Through their dialogue, the island's rule is made clear: those
+      who try to take without understanding become trapped for life; bargains
+      are the witches' law."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - faction-witches-island
+      - loc-island-jarrah
+      - obj-spindle
+  - id: s-015
+    intent: "Amina introspects in a quiet moment, telling a memory of why freedom
+      matters to her: losses at sea, a brother gone. This scene deepens her
+      inner stakes and explains why she will risk so much."
+    present:
+      - char-amina
+  - id: s-016
+    intent: "Lailah reveals more: the spindle sits in the Heart-loom at the island's
+      center and is guarded by concentric 'circles' of enchantment that exact a
+      price for passage. Amina begins to understand the structural obstacles she
+      must navigate."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - loc-island-jarrah
+      - obj-spindle

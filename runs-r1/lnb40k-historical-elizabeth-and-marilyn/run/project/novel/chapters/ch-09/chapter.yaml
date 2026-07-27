@@ -1,0 +1,33 @@
+chapter: ch-09
+scenes:
+  - id: s-033
+    intent: "Epilogue: Windsor in late summer, a final image of the town and of the
+      local neighbor keeping the town's memory; a quiet inventory of what was
+      kept secret and what was given away by choice."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph

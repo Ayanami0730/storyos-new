@@ -1,0 +1,78 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "char-henry-harrow",
+      "quote": "\"I was in the smoking-room all evening,\" he said, short as a docket. \"Mrs Harrow and I argued, certainly. We argued about money and the will. But I did not go near the library after nine.\" His fingers found the rim of the armchair as if they needed the furniture for a witness.",
+      "attribute": "alibi",
+      "value": "claims_in_scene_he_was_in_smoking_room_all_evening_and_did_not_go_near_library_after_nine"
+    },
+    {
+      "entity": "char-henry-harrow",
+      "quote": "He had motive, which is not the same as guilt, and he had the look of a man who expected that to be sufficient.",
+      "attribute": "motive",
+      "value": "dispute_with_Lena_over_money_and_will"
+    },
+    {
+      "entity": "char-mary-rowan",
+      "quote": "\"I was downstairs, laying out the supper,\" she said. \"I heard nothing until Mr Dane came in shouting.\"",
+      "attribute": "alibi",
+      "value": "claims_in_scene_she_was_downstairs_laying_out_supper_and_heard_nothing_until_Oliver_arrived"
+    },
+    {
+      "entity": "char-mary-rowan",
+      "quote": "\"Lena kept lists,\" Mary said. \"Names, times, the sort of thing that keeps a house honest.\"",
+      "attribute": "belief_about_folio",
+      "value": "Lena_kept_lists_of_names_and_times_in_folio"
+    },
+    {
+      "entity": "char-oliver-dane",
+      "quote": "\"We had words about pay the week before,\" he admitted when pressed. \"But I was at the greenhouse most of the day — ask the men. I don't spend my nights in the library.\"",
+      "attribute": "alibi_and_dispute",
+      "value": "admits_argument_over_pay_recently_but_claims_to_have_been_at_greenhouse_most_of_day_and_not_in_library_at_night"
+    },
+    {
+      "entity": "char-oliver-dane",
+      "quote": "\"She writes down when people come, sir. She notes times.\"",
+      "attribute": "knowledge_about_folio",
+      "value": "folio_includes_entries_of_people_arriving_and_times"
+    },
+    {
+      "entity": "obj-harrow-folio",
+      "quote": "One page had been torn cleanly away.",
+      "attribute": "missing_page",
+      "value": "a_page_torn_cleanly_away"
+    },
+    {
+      "entity": "obj-harrow-folio",
+      "quote": "I ran a fingertip along the paper where the missing sheet had once lain and found, near the sill, a fresh smear of oil that caught the light the way a small lie catches the interlocutor's eye.",
+      "attribute": "oil_smear_near_sill",
+      "value": "fresh_oil_smear_near_folio_sill"
+    },
+    {
+      "entity": "obj-ashtray",
+      "quote": "On the sill sat the kitchen ashtray, a neat crescent of cigar ash in it.",
+      "attribute": "cigar_ash_present",
+      "value": "present"
+    },
+    {
+      "entity": "char-inspector-milne",
+      "quote": "\"We can finish this, Mr Crowe,\" he said, too loudly. \"There are enough reasons to call this tidy.\"",
+      "attribute": "insistence",
+      "value": "wants_tidy_case"
+    }
+  ],
+  "presentEntities": [
+    "char-august-crowe",
+    "char-henry-harrow",
+    "char-mary-rowan",
+    "char-oliver-dane",
+    "char-inspector-milne",
+    "loc-harrow-manor",
+    "obj-harrow-folio",
+    "obj-ashtray",
+    "obj-secret-pulley"
+  ],
+  "promises": [],
+  "paysOff": []
+}

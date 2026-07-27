@@ -1,0 +1,14 @@
+chapter: ch-09
+scenes:
+  - id: s-033
+    intent: "Resolution and epilogue: the witches reclaim or reweave the spindle
+      into a safeguard, or Amina hides it; she sails away changed — freer in one
+      sense, altered in another. The novel closes with Amina reflecting on what
+      fate means and what price freedom demands."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - faction-witches-island
+      - faction-peri-council
+      - obj-spindle
+      - loc-ship-qitaf

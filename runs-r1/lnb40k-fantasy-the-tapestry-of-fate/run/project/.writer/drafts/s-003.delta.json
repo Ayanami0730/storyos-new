@@ -1,0 +1,69 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "entity": "char-amina",
+      "attribute": "location",
+      "quote": "We cast off at a time that was not proud nor theatrical; there was no trumpeting. The Qitaf slid from the berth with the mild indignity of something who did the same thing every day and had learned to be graceful about it.",
+      "value": "loc-ship-qitaf"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "bound_by_amulet",
+      "quote": "The amulet at my throat hummed once against my skin and stung when I let my thoughts stray to walking away.",
+      "value": "true"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "accepted_mission",
+      "quote": "I had accepted the mission because the amulet made saying no a luxury I could not buy.",
+      "value": "accepted mission to steal the spindle from Isle Jarrah aboard the Qitaf"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "keeps_command",
+      "quote": "I told them plainly: I keep the Qitaf and my command. I will not send them to a death she did not need to take. I had told Azraq's envoy that his agents would keep their hands off the ship while she was mine. I meant it.",
+      "value": "intends to keep command of the Qitaf and crew while undertaking the mission"
+    },
+    {
+      "entity": "faction-crew-qitaf",
+      "attribute": "informed_of_mission",
+      "quote": "I called the crew up and told them what Azraq had said: we were bound to fetch the Spindle from Isle Jarrah.",
+      "value": "true"
+    },
+    {
+      "entity": "loc-ship-qitaf",
+      "attribute": "departure_status",
+      "quote": "We cast off at a time that was not proud nor theatrical; there was no trumpeting. The Qitaf slid from the berth with the mild indignity of something who did the same thing every day and had learned to be graceful about it.",
+      "value": "departed Port Aden"
+    },
+    {
+      "entity": "obj-peri-amulet",
+      "attribute": "effect_on_wearer_detailed",
+      "quote": "The amulet at my throat hummed once against my skin and stung when I let my thoughts stray to walking away.",
+      "value": "causes sharp pain when resisting and enforces compliance"
+    },
+    {
+      "entity": "obj-folio-map",
+      "attribute": "location",
+      "quote": "I had a crew who knew what they had signed up for and a binding at my throat that would remind me of the price of answering a Peri's call.",
+      "value": "loc-ship-qitaf"
+    },
+    {
+      "entity": "faction-crew-qitaf",
+      "attribute": "status_preparations",
+      "quote": "Preparations followed talk as obediently as tides follow the moon. We made the Qitaf ready to go: canvas lashed, lines checked, the hold stowed. Lanterns were trimmed and hung where they would not blow out, the bilge was run, the anchor's windlass oiled.",
+      "value": "made ready to depart"
+    }
+  ],
+  "presentEntities": [
+    "char-amina",
+    "char-yusuf",
+    "faction-crew-qitaf",
+    "loc-ship-qitaf",
+    "obj-peri-amulet",
+    "obj-folio-map"
+  ],
+  "promises": [],
+  "paysOff": []
+}

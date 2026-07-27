@@ -1,0 +1,127 @@
+chapter: ch-04
+scenes:
+  - id: s-013
+    intent: "The central private meeting: a long, quiet scene in which they speak
+      candidly—about duty, performance, loneliness, the cost of being always
+      seen—focused on interiority and the exchange rather than spectacle."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-014
+    intent: "Immediate aftermath: both women separate quickly. Entourages misread
+      the meeting as a chance glimpse; char-press-liaison and char-publicist see
+      risk and begin to triangulate possible narratives."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-015
+    intent: "Private reverberations: each returns to private rooms—loc-queen_study
+      and loc-actress_suite—to process the encounter alone;
+      obj-handwritten-letter and obj-photograph provide tangible residues of the
+      meeting."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-016
+    intent: "Staff circles: char-royal-butler and char-lady-in-waiting exchange what
+      they can and must suppress; the attendant hierarchy and sense of protocol
+      is shown in micro-decisions about disclosure."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph

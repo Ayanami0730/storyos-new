@@ -1,0 +1,1 @@
+Called to a seemingly impossible locked-room death in an old manor, a forensic-minded private detective picks apart small mechanical clues and human lies to expose a sibling's staged murder and the quiet, ingenious trick that made a room appear sealed from within.

@@ -1,0 +1,133 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "loc-queen-study",
+      "attribute": "light_and_temperature",
+      "quote": "Sun climbed over the parapets and fell in bands across the river-facing windows; stone warmed until it smelled faintly of dust and bees.",
+      "value": "summer morning light warming stone; river-facing windows with bands of sun; warmth carries scent of dust and bees"
+    },
+    {
+      "entity": "char-queen",
+      "attribute": "location",
+      "quote": "She sat at the desk as if she were keeping a polite vigil.",
+      "value": "loc-queen-study"
+    },
+    {
+      "entity": "obj-photograph",
+      "attribute": "physical_condition",
+      "quote": "a photograph with one corner thumbed by a real thumb, not a glove.",
+      "value": "small photograph with a thumbed corner, implying recent handling by a bare hand"
+    },
+    {
+      "entity": "obj-emerald-brooch",
+      "attribute": "location_and_handling",
+      "quote": "Her finger traced the cool oval of the emerald brooch set on its velvet pad, feeling the rise of the setting and the tiny points of metal that held the stone—a gesture between inspection and reassurance.",
+      "value": "on velvet pad in the Queen's study; handled by the Queen for inspection/reassurance"
+    },
+    {
+      "entity": "char-queen",
+      "attribute": "attire_morning",
+      "quote": "she wore instead a faded silk dressing gown whose small rose pattern looked younger than the stitching, slippers at her feet, and a thin chain at her throat on which a pendant caught the window light.",
+      "value": "informal morning clothing: faded silk dressing gown, slippers, thin chain with pendant"
+    },
+    {
+      "entity": "char-queen",
+      "attribute": "action_state",
+      "quote": "She made a brief pencil note at the bottom of one and folded it, as if to keep what she had put there safe enough for her to return to.",
+      "value": "engaged with dispatches; made pencil notes and folded a dispatch"
+    },
+    {
+      "entity": "char-prince-philip",
+      "attribute": "presence_and_departure",
+      "quote": "Prince Philip came and went like a punctuation. He crossed the tiled landing, cap in hand, offered a dry word ... and took his leave for the morning’s errands.",
+      "value": "briefly present in loc-queen-study; left for morning errands"
+    },
+    {
+      "entity": "char-royal-butler",
+      "attribute": "location_and_role",
+      "quote": "In the servant’s wing the royal butler moved with a long-schooled economy, a man who saw the house in parts and could tell from a footfall whether the day would be easy.",
+      "value": "operating in servant's wing; overseeing household order and details"
+    },
+    {
+      "entity": "char-lady-in-waiting",
+      "attribute": "preparing_sovereign",
+      "quote": "In a small, bright room that smelled of starch and lemon she laid out gloves white as bone, a starched blouse, and a blue day dress folded so that its shoulders held no creases.",
+      "value": "preparing the Queen's day attire; handling gloves, blouse, blue day dress; room smelled of starch and lemon"
+    },
+    {
+      "entity": "loc-the-stables",
+      "attribute": "activity_and_sensory",
+      "quote": "From the stables came the ordinary counterpoint to palace stillness: the smell of hay and warm horse, the low thud of iron on wood as harnesses were checked, a boy’s whistle ... Feed, tack, water—the sound of things being placed in order.",
+      "value": "stables active with feeding, tack checking, smells of hay and horse; sounds of harnessing and a boy whistling"
+    },
+    {
+      "entity": "char-royal-chauffeur",
+      "attribute": "location_and_prep",
+      "quote": "In the yard a pair of limousines waited, dark and patient. The royal chauffeur, cap brim perfectly rounded, ran a cloth across the chrome ... folded his gloved hand over the steering wheel and watched the morning like a man waiting for permission.",
+      "value": "royal chauffeur preparing limousines in the yard; polishing chrome; cars ready but stationary"
+    },
+    {
+      "entity": "loc-windsor-castle",
+      "attribute": "household_texture",
+      "quote": "The castle breathed: the stables, the polished cars, the servants’ small adjustments and the town’s easy currents.",
+      "value": "Windsor Castle as a functioning household with stables, vehicles, servants, and relationship to town life"
+    },
+    {
+      "entity": "char-press-liaison",
+      "attribute": "object_handling_and_role",
+      "quote": "The press liaison sat for a time in the antechamber with a small pile of cuttings and the photograph the Queen had set aside. His fingers worried at the edge of a column; his face contained both calculation and a habit of being ready to soothe.",
+      "value": "press liaison reviewing press cuttings and a photograph; preparing files labelled Windsor"
+    },
+    {
+      "entity": "obj-press-cuttings",
+      "attribute": "storage_and_label",
+      "quote": "He folded one clipping, making a deliberate crease, and slid it into a file labelled, without flourish, Windsor.",
+      "value": "press cuttings stored in a file labelled 'Windsor' by the press liaison"
+    },
+    {
+      "entity": "loc-river-quay",
+      "attribute": "morning_scene",
+      "quote": "On the river quay the Thames lay warm, its surface folded in lazy ripples. Willows leaned as if to listen; a small motor launch drifted beyond the moorings and a group of tourists shaded their eyes and watched the castle in a summer hush.",
+      "value": "Thames warm and rippled; presence of willows, a motor launch, and tourists watching the castle"
+    },
+    {
+      "entity": "loc-windsor-high-street",
+      "attribute": "morning_activities",
+      "quote": "the high street hummed with a softened business: a grocer sweeping his door, a boy selling cold bottles of lemonade, the distant rat-tat of a varnisher’s brush.",
+      "value": "high street activity includes grocer sweeping, lemonade seller, varnisher work; softened tourist season bustle"
+    },
+    {
+      "entity": "char-publicist",
+      "attribute": "presence_and_action",
+      "quote": "The actress’s publicist ... stood on the high street for a moment and adjusted the strap of her handbag ... threaded through the cafés and the newsagent with the quiet authority of someone who knew headlines before they were written.",
+      "value": "actress's publicist present in town, moving through high street and newsagent, monitoring reputation and headlines"
+    }
+  ],
+  "presentEntities": [
+    "char-queen",
+    "char-prince-philip",
+    "char-royal-butler",
+    "char-lady-in-waiting",
+    "char-royal-chauffeur",
+    "char-press-liaison",
+    "loc-queen-study",
+    "loc-the-stables",
+    "loc-windsor-castle",
+    "loc-river-quay",
+    "loc-windsor-high-street",
+    "char-publicist",
+    "obj-emerald-brooch",
+    "obj-photograph",
+    "obj-press-cuttings"
+  ],
+  "promises": [
+    {
+      "id": "promise-visit-question",
+      "promise": "If specific model(s) of royal/state limousines in service in 1956 and details of the Queen's informal morning wardrobe are required by future scenes, those must be provided; the context-builder was asked.",
+      "quote": "Word had travelled through Windsor by breakfast and by the polite signal of a telephone call: a famous actress was in the town, staying at the Castle View hotel.",
+      "dueByScene": null
+    }
+  ],
+  "paysOff": []
+}

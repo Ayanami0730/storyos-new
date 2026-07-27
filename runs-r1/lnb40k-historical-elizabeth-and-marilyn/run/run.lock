@@ -1,0 +1,16 @@
+{
+  "pid": 1479544,
+  "startedAt": "2026-07-27T16:10:28.860Z",
+  "argv": [
+    "--premise-file",
+    "/home/dumingxuan/storyos-v3/runs-r1/lnb40k-historical-elizabeth-and-marilyn/premise.txt",
+    "--target",
+    "40000",
+    "--out",
+    "/home/dumingxuan/storyos-v3/runs-r1/lnb40k-historical-elizabeth-and-marilyn/run",
+    "--profile",
+    "generous",
+    "--sandbox",
+    "docker"
+  ]
+}

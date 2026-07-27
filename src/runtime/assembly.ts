@@ -440,6 +440,24 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
       answered.at(-1)?.answer ??
       "the context-builder did not answer through answer_writer; treat the question as " +
         "unanswered rather than assuming a value";
+    /**
+     * A framework error is not an answer, and it used to reach the writer as one.
+     *
+     * `Agent is already processing a prompt` is what pi returns when a second
+     * `invoke` arrives mid-turn, which happened whenever the writer batched its
+     * questions. The writer has no way to recognise that string, so it read "the
+     * index has nothing" and wrote the scene accordingly. Sequential execution on
+     * the tool prevents the collision; this catches anything else that returns a
+     * machine message where a search result belongs.
+     */
+    if (/already processing a prompt|steer\(\)|followUp\(\)/i.test(answer)) {
+      const failed =
+        `the context-builder could not be reached for this question (${answer.slice(0, 80)}). ` +
+        `Treat it as unanswered: do not assume the index is silent on it, and say in your ` +
+        `reply that the question went unanswered if it changes what you can write.`;
+      say(`${scene} follow-up ${round}/${maxRounds} FAILED to reach the builder`);
+      return failed;
+    }
     followUps.push({ scene, round, question, tier: allocation.current.tier, allowed: maxRounds });
     await artifacts.append(
       artifactPaths.packet(scene),

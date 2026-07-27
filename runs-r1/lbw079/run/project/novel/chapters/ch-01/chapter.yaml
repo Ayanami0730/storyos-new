@@ -1,0 +1,68 @@
+chapter: ch-01
+scenes:
+  - id: s-001
+    intent: "Open in media res: Lena moves into Holloway House, establishes voice
+      (rational, observational), discovers the Venetian mirror over the mantel
+      and the diary tucked behind it, finds the brass key. Small, unnerving
+      phenomena begin (sounds, a reflection that lags). The scene must set the
+      house’s physical logic (angles, odd sightlines) and plant the principal
+      objects and the narrator’s investigative approach."
+    present:
+      - char-lena
+      - loc-holloway-house
+      - loc-parlor
+      - obj-venetian-mirror
+      - obj-diary
+      - obj-brass-key
+  - id: s-002
+    intent: "Lena researches Hannah Hale’s disappearance: a visit to the town
+      archive and a conversation with Mrs. Haverford. She assembles documentary
+      facts (the clipping, dates), reads diary entries that repeatedly note a
+      specific phrase about 'the seam' and 'the angle at the sill.' From these
+      facts she forms a testable hypothesis: the mirror acts like a receptacle
+      that activates when a specific light alignment occurs. Make the reasoning
+      explicit and plausible."
+    present:
+      - char-lena
+      - loc-town-archive
+      - char-archivist
+      - char-mrs-haverford
+      - obj-newspaper-clipping
+      - obj-diary
+      - loc-holloway-house
+  - id: s-003
+    intent: "The experiment: late evening, Lena recreates the conditions with the
+      oil lamp, positions the mirror and marks the floor, uses the brass key on
+      the attic, and watches. The mirror shows an impossible reflected room and
+      then a figure — Hannah — who communicates in small, logical increments.
+      The diary contains an outline of a ritual to 'free' her; Lena follows it
+      carefully. The scene escalates tension while preserving the causal chain;
+      leave a concrete decision for the narrator to make at the end."
+    present:
+      - char-lena
+      - loc-holloway-house
+      - loc-attic
+      - loc-parlor
+      - obj-venetian-mirror
+      - obj-oil-lamp
+      - obj-brass-key
+      - obj-diary
+      - ghost-hannah
+  - id: s-004
+    intent: "Payoff and twist: Lena performs what she believes is the freeing ritual
+      at the precise angle; the physical conditions obey the earlier logic but
+      the outcome is horrific — the mirror’s geometry allows a transfer that
+      Hannah intended but did not describe as a swap. The narrator discovers, in
+      the overlapping reflections and a last diary entry, the true bargain:
+      freeing Hannah requires a substitution. End with a final, terrifying image
+      that follows from the rules already established and leaves the reader with
+      a clear, horrific logical consequence."
+    present:
+      - char-lena
+      - loc-holloway-house
+      - loc-parlor
+      - obj-venetian-mirror
+      - obj-diary
+      - obj-oil-lamp
+      - ghost-hannah
+      - char-mrs-haverford

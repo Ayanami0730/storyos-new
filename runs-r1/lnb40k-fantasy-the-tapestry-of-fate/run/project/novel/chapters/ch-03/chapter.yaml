@@ -1,0 +1,47 @@
+chapter: ch-03
+scenes:
+  - id: s-009
+    intent: "The Qitaf reaches the island perimeter: a living fog and a ring of
+      black shore. Boats that approach are turned away or return altered. The
+      crew witnesses a skiff row out and come back empty; panic sets in."
+    present:
+      - char-amina
+      - char-yusuf
+      - char-rasim
+      - loc-ship-qitaf
+      - loc-island-jarrah
+      - obj-folio-map
+  - id: s-010
+    intent: "An initial landing attempt goes wrong: a party goes ashore and returns
+      confused or not at all. The island's influence is shown to be immediate
+      and dangerous: paths close and memories slip. The wreck log's warnings
+      prove literal."
+    present:
+      - char-amina
+      - char-yusuf
+      - loc-island-jarrah
+      - loc-ship-qitaf
+      - faction-witches-island
+      - obj-ship-log-wreck
+  - id: s-011
+    intent: To spare the crew, Amina decides she will go ashore alone. She prepares
+      and steels herself, improvising a plan based on the folio and wreck notes,
+      while Yusuf resists but relents — he will hold the ship near the mists.
+    present:
+      - char-amina
+      - char-yusuf
+      - loc-ship-qitaf
+      - loc-island-jarrah
+      - obj-peri-amulet
+      - obj-folio-map
+      - obj-ship-log-wreck
+  - id: s-012
+    intent: "Amina makes landfall. The island interior is strange: trees that
+      whisper, paths that seem to rearrange. She experiences first-person
+      disorientation; the witches' presence is felt as patterns rather than
+      bodies."
+    present:
+      - char-amina
+      - loc-island-jarrah
+      - faction-witches-island
+      - obj-folio-map

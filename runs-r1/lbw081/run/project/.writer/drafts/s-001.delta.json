@@ -1,0 +1,96 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "loc-harrow-library",
+      "attribute": "door_bolted_from_inside",
+      "quote": "Milne had shown me the bolt and said it had been turned from the inside.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-antique-clock",
+      "attribute": "stopped_time",
+      "quote": "I read later that the mechanism had stopped at 10:17; the note was dry and precise, the sort of entry made when someone decides it is better to have a measurement than a sense.",
+      "value": "10:17"
+    },
+    {
+      "entity": "obj-antique-clock",
+      "attribute": "stopped",
+      "quote": "The clock's face presented no work of time: its hands were rigid, arrested mid-gesture.",
+      "value": "true"
+    },
+    {
+      "entity": "char-lena-harrow",
+      "attribute": "position_at_discovery",
+      "quote": "She sat now with her upper body pitched forward as if in the middle of writing a sentence that never finished.",
+      "value": "seated_forward_at_desk"
+    },
+    {
+      "entity": "obj-bloodied-handkerchief",
+      "attribute": "presence",
+      "quote": "One arm lay across the blotter; the other clutched a small square of linen whose corners were stained a dark, thirsty red.",
+      "value": "clenched_in_lena_hand"
+    },
+    {
+      "entity": "obj-bloodied-handkerchief",
+      "attribute": "monogram",
+      "quote": "The handkerchief's initials were not listed on the slip — they were simply noted as present — and that absence kept the name inside the cloth like a secret.",
+      "value": "monogram: [missing]"
+    },
+    {
+      "entity": "obj-letter-opener",
+      "attribute": "embedded_in_body",
+      "quote": "Set deep into Lena's chest was a heavy brass letter-opener — the blunt, workmanlike kind kept for opening estate envelopes rather than as ornament.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-letter-opener",
+      "attribute": "oil_smear_on_haft",
+      "quote": "The haft carried no neat fingerprint to place an ordinary hand; there was, however, a thin smear of oil along the wood, the kind left by someone whose hands had been working on machinery rather than on paper.",
+      "value": "present"
+    },
+    {
+      "entity": "obj-secret-pulley",
+      "attribute": "location_description",
+      "quote": "On the outer sill, tucked into the ivy so it did not show, I found a short length of cord and a little loop of metal serving as a makeshift anchor.",
+      "value": "anchored_on_outer_sill_hidden_in_ivy"
+    },
+    {
+      "entity": "obj-ashtray",
+      "attribute": "cigar_ash_present",
+      "quote": "the faint crescent of cigar ash on the sill that did not match Lena's habits",
+      "value": "present"
+    },
+    {
+      "entity": "char-inspector-milne",
+      "attribute": "insistence",
+      "quote": "\"We lock it, we call it something neat,\" he said at one point, rubbing his jaw.",
+      "value": "wants_tidy_case"
+    },
+    {
+      "entity": "char-august-crowe",
+      "attribute": "initial_theory",
+      "quote": "Milne asked if I had a theory. I told him not yet — that is the moment when an open case becomes one worth solving.",
+      "value": "no_theory_yet"
+    }
+  ],
+  "presentEntities": [
+    "char-august-crowe",
+    "char-inspector-milne",
+    "char-lena-harrow",
+    "loc-harrow-library",
+    "obj-antique-clock",
+    "obj-letter-opener",
+    "obj-bloodied-handkerchief",
+    "obj-secret-pulley"
+  ],
+  "promises": [
+    {
+      "id": "p-001_locked_room_explanation",
+      "promise": "Explain how the room appeared sealed from within and who left the handkerchief with the unknown monogram.",
+      "quote": "I wanted to find the thread that would unravel the neatness.",
+      "dueByScene": null
+    }
+  ],
+  "paysOff": []
+}

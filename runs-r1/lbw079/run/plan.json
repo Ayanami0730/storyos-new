@@ -1,0 +1,129 @@
+{
+  "logline": "When Lena inherits an old house, an antique Venetian mirror and a hidden diary draw her into a precise, daylight-angled ritual that promises to free the woman who vanished there — but the mirror obeys geometry not mercy, and what is freed is not what she expects.",
+  "entities": [
+    {
+      "id": "char-lena",
+      "sketch": "Lena Ward, narrator, early thirties. A methodical, solitary woman (former library assistant) who inherits an old house and approaches the uncanny like a problem to be solved."
+    },
+    {
+      "id": "char-archivist",
+      "sketch": "Mr. Calder, the town archivist: patient, precise, mid-sixties. Knows the local records and is helpful but cautious about oral lore."
+    },
+    {
+      "id": "char-mrs-haverford",
+      "sketch": "Evelyn Haverford, next-door neighbor in her eighties. Knows house gossip and remembers the missing occupant. Gives warnings couched as small kindnesses."
+    },
+    {
+      "id": "ghost-hannah",
+      "sketch": "Hannah Hale (deceased), the presence bound to the Venetian mirror. Once vivacious, she vanished fifty years earlier; her diary survives. In life, she was meticulous about light and reflection; in death her behavior centers on mirrored surfaces and on repeating a missed final act."
+    },
+    {
+      "id": "loc-holloway-house",
+      "sketch": "Holloway House: a cramped, late-Victorian house on a hill outside a small town. It creaks with age and has odd sightlines inside — long mirrored parlor, tight attic, a tilted stairwell."
+    },
+    {
+      "id": "loc-parlor",
+      "sketch": "The front parlor on the ground floor of Holloway House. Large windows, faded wallpaper, and the antique Venetian mirror mounted above the mantel."
+    },
+    {
+      "id": "loc-attic",
+      "sketch": "A small, low-attic above the parlor reached by a narrow stair and locked with a brass key; it contains the house’s odd geometry — a shaft of light that can fall through a slat under certain angles."
+    },
+    {
+      "id": "loc-town-archive",
+      "sketch": "The county archive where Lena researches town records: a dim, smell-of-paper place with careful catalogs and one helpful archivist."
+    },
+    {
+      "id": "obj-venetian-mirror",
+      "sketch": "A large, old Venetian mirror above the parlor mantel. Its silvering has a faint, deliberate pattern — thin, almost hairline seams that are not damage but part of how it was made. It is the locus for the haunting."
+    },
+    {
+      "id": "obj-diary",
+      "sketch": "Hannah Hale’s small, habitually neat diary, written in a fine, cramped hand. Tucked behind the mirror. Contains dates, observations about angles of light, and a final ambiguous ritual outline."
+    },
+    {
+      "id": "obj-brass-key",
+      "sketch": "A small brass key found hidden under a loose floorboard in the parlor; it opens the attic door."
+    },
+    {
+      "id": "obj-newspaper-clipping",
+      "sketch": "A brittle newspaper clipping from 1972 about Hannah Hale’s disappearance; includes a photo showing the parlor and the mirror."
+    },
+    {
+      "id": "obj-oil-lamp",
+      "sketch": "An old oil lamp Lena buys for experiments in the parlor. Its flame is steadier and more yellow than modern lamps, used to reproduce the recorded light conditions."
+    }
+  ],
+  "worldRules": [
+    "1) The only supernatural mechanism in this story is reflection-conduction: certain mirrors, under specific geometric and lighting conditions, can act as conduits or repositories for a presence. No other ghost powers (telekinesis, omniscience) are allowed.",
+    "2) The Venetian mirror (obj-venetian-mirror) is special because of its silvering pattern; only it can hold Hannah's presence. Ordinary mirrors do not replicate the phenomena unless explicitly noted.",
+    "3) Light and angle matter. A precise alignment of light (time-of-day or a lamp placed at a marked position) must occur to 'activate' the conduit. The activation obeys ordinary geometric optics (lines of sight, reflection), and the narrator can calculate and reproduce it.",
+    "4) Physical objects obey normal physics. Breaking, moving or covering objects has immediate, ordinary consequences (shards, blocked sightlines). Breaking the mirror disperses the stored image/presence unpredictably but does not 'destroy' the metaphysical trace; the narrative must not show impossible physical outcomes.",
+    "5) Ritual language in the diary is ambiguous and fallible. It describes procedures that will produce an effect consistent with rules 1–4; it may omit moral cautions. Any consequences that follow must be deducible from the diary plus the mirror/light rules, not from arbitrary supernatural fiat.",
+    "6) Identity transfer is possible only through the mirror-conduit under the activation conditions. Such transfers are constrained: the conduit swaps or binds the reflected and reflecting subject according to the mirror’s geometry and cannot create or annihilate independent souls."
+  ],
+  "voice": {
+    "person": "first person, Lena",
+    "tense": "past"
+  },
+  "scenes": [
+    {
+      "id": "s-001",
+      "intent": "Open in media res: Lena moves into Holloway House, establishes voice (rational, observational), discovers the Venetian mirror over the mantel and the diary tucked behind it, finds the brass key. Small, unnerving phenomena begin (sounds, a reflection that lags). The scene must set the house’s physical logic (angles, odd sightlines) and plant the principal objects and the narrator’s investigative approach.",
+      "presentEntities": [
+        "char-lena",
+        "loc-holloway-house",
+        "loc-parlor",
+        "obj-venetian-mirror",
+        "obj-diary",
+        "obj-brass-key"
+      ],
+      "targetWords": 625
+    },
+    {
+      "id": "s-002",
+      "intent": "Lena researches Hannah Hale’s disappearance: a visit to the town archive and a conversation with Mrs. Haverford. She assembles documentary facts (the clipping, dates), reads diary entries that repeatedly note a specific phrase about 'the seam' and 'the angle at the sill.' From these facts she forms a testable hypothesis: the mirror acts like a receptacle that activates when a specific light alignment occurs. Make the reasoning explicit and plausible.",
+      "presentEntities": [
+        "char-lena",
+        "loc-town-archive",
+        "char-archivist",
+        "char-mrs-haverford",
+        "obj-newspaper-clipping",
+        "obj-diary",
+        "loc-holloway-house"
+      ],
+      "targetWords": 625
+    },
+    {
+      "id": "s-003",
+      "intent": "The experiment: late evening, Lena recreates the conditions with the oil lamp, positions the mirror and marks the floor, uses the brass key on the attic, and watches. The mirror shows an impossible reflected room and then a figure — Hannah — who communicates in small, logical increments. The diary contains an outline of a ritual to 'free' her; Lena follows it carefully. The scene escalates tension while preserving the causal chain; leave a concrete decision for the narrator to make at the end.",
+      "presentEntities": [
+        "char-lena",
+        "loc-holloway-house",
+        "loc-attic",
+        "loc-parlor",
+        "obj-venetian-mirror",
+        "obj-oil-lamp",
+        "obj-brass-key",
+        "obj-diary",
+        "ghost-hannah"
+      ],
+      "targetWords": 625
+    },
+    {
+      "id": "s-004",
+      "intent": "Payoff and twist: Lena performs what she believes is the freeing ritual at the precise angle; the physical conditions obey the earlier logic but the outcome is horrific — the mirror’s geometry allows a transfer that Hannah intended but did not describe as a swap. The narrator discovers, in the overlapping reflections and a last diary entry, the true bargain: freeing Hannah requires a substitution. End with a final, terrifying image that follows from the rules already established and leaves the reader with a clear, horrific logical consequence.",
+      "presentEntities": [
+        "char-lena",
+        "loc-holloway-house",
+        "loc-parlor",
+        "obj-venetian-mirror",
+        "obj-diary",
+        "obj-oil-lamp",
+        "ghost-hannah",
+        "char-mrs-haverford"
+      ],
+      "targetWords": 625
+    }
+  ]
+}

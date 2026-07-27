@@ -1,0 +1,1 @@
+In the summer of 1956, in Windsor, a private, unpublicized encounter between the reigning Queen and a Hollywood starlet reconfigures their understandings of duty and celebrity; each must decide whether secrecy or revelation will shape their private lives and public faces.

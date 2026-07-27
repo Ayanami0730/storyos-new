@@ -1,0 +1,126 @@
+chapter: ch-03
+scenes:
+  - id: s-009
+    intent: The actress insists on seeing Windsor Castle from the river; she hires
+      char-actress-driver to take a small boat at loc-river-quay, setting the
+      stage for proximity without fanfare.
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-010
+    intent: The Queen goes to loc-garden-pavilion to escape formality. The scene
+      emphasizes the hidden spatialities of the castle and the skill of
+      char-lady-in-waiting in protecting the sovereign's privacy.
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-011
+    intent: "A small collision of routes: the actress's boat moors near the garden
+      where the Queen strolls; a moment of recognition occurs before entourages
+      can arrange anything—eyes meet across water."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph
+  - id: s-012
+    intent: "An unscripted, private approach: the Queen steps down toward the quay
+      under a pretext; the actress disembarks. Both claim curiosity rather than
+      protocol. This is the tense before the private meeting."
+    present:
+      - char-queen
+      - char-prince-philip
+      - char-actress
+      - char-actress-confidante
+      - char-lady-in-waiting
+      - char-press-liaison
+      - char-royal-butler
+      - char-royal-chauffeur
+      - char-actress-driver
+      - char-publicist
+      - char-local-neighbor
+      - loc-windsor-castle
+      - loc-royal-lodge
+      - loc-windsor-high-street
+      - loc-river-quay
+      - loc-broad-walk
+      - loc-hotel-castle-view
+      - loc-the-stables
+      - loc-queen-study
+      - loc-actress-suite
+      - loc-garden-pavilion
+      - obj-emerald-brooch
+      - obj-cigarette-case
+      - obj-press-cuttings
+      - obj-handwritten-letter
+      - obj-photograph

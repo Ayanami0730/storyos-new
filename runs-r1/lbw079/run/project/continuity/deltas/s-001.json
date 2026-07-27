@@ -1,0 +1,112 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "loc-parlor",
+      "attribute": "mantel_height",
+      "quote": "The parlor took my boxes with the same measured indifference: a long room with tall windows, faded wallpaper, and a mantel that sat four feet off the floor.",
+      "value": "4 ft"
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "mirror_dimensions",
+      "quote": "The Venetian mirror above it was six feet wide by four feet tall; its lower edge began three feet above the mantel, so the glass started seven feet from the floor.",
+      "value": "6 ft × 4 ft"
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "mirror_bottom_height_above_mantel",
+      "quote": "The Venetian mirror above it was six feet wide by four feet tall; its lower edge began three feet above the mantel, so the glass started seven feet from the floor.",
+      "value": "3 ft above mantel"
+    },
+    {
+      "entity": "loc-parlor",
+      "attribute": "distance_mantel_to_window",
+      "quote": "The windows faced east; from the mantel to the nearest window opening it was thirteen feet, and the mantel’s right edge lay three feet from the east wall where the narrow stair rose.",
+      "value": "13 ft"
+    },
+    {
+      "entity": "loc-parlor",
+      "attribute": "mantel_right_edge_from_east_wall",
+      "quote": "The windows faced east; from the mantel to the nearest window opening it was thirteen feet, and the mantel’s right edge lay three feet from the east wall where the narrow stair rose.",
+      "value": "3 ft"
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "mounting_hardware",
+      "quote": "The mirror was nailed to the mantel with old iron brads.",
+      "value": "nailed with old iron brads"
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "location_found",
+      "quote": "Behind it, folded flat against the wall, was a small diary: neat, narrow...",
+      "value": "tucked behind the Venetian mirror, folded flat against the wall"
+    },
+    {
+      "entity": "obj-brass-key",
+      "attribute": "location_found",
+      "quote": "Two feet east of the hearth I found a plank that rode up under the heel when I stepped on it... under it lay a small brass key",
+      "value": "under a loose floorboard two feet east of the hearth"
+    },
+    {
+      "entity": "loc-parlor",
+      "attribute": "windows_orientation",
+      "quote": "The windows faced east; from the mantel to the nearest window opening it was thirteen feet...",
+      "value": "east-facing windows"
+    },
+    {
+      "entity": "loc-parlor",
+      "attribute": "distance_mantel_floor_to_mirror_bottom",
+      "quote": "The Venetian mirror above it was six feet wide by four feet tall; its lower edge began three feet above the mantel, so the glass started seven feet from the floor.",
+      "value": "7 ft above floor"
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "narration_voice",
+      "quote": "I arrived with the van half-empty and the house already choosing its sounds. The parlor took my boxes with the same measured indifference... I set down the last box, untied my tape, and drew the room on the back of an envelope...",
+      "value": "first person, observational, methodical voice"
+    },
+    {
+      "entity": "obj-diary",
+      "attribute": "diary_contents_summary",
+      "quote": "When I opened the book the handwriting ran on tight lines about angles and lamps and the way a slice of light would travel across the floor in March.",
+      "value": "contains observations about angles of light and lamp placement"
+    },
+    {
+      "entity": "loc-parlor",
+      "attribute": "unusual_sounds",
+      "quote": "There was a tapping then, very faint and regular, as if someone were turning a page behind the other side of the wall. It was not the settling that I’d expected; it had a rhythm — one-two, pause, one-two...",
+      "value": "faint rhythmic tapping behind wall (one-two, pause, one-two)"
+    },
+    {
+      "entity": "obj-venetian-mirror",
+      "attribute": "reflection_behavior_observed",
+      "quote": "The reflection followed, but not perfectly. For a fraction of a second the glass showed my hand a beat after my hand had moved, as if the mirror were watching my gesture through a slow feed.",
+      "value": "reflection lagged fractionally behind real movement"
+    },
+    {
+      "entity": "char-lena",
+      "attribute": "first_experiment_decision",
+      "quote": "I decided then to test the optics properly: precise measures, lamp angles, a repeatable note on where the lag happened.",
+      "value": "resolve to test mirror optics with precise measures and lamp angles"
+    }
+  ],
+  "presentEntities": [
+    "char-lena",
+    "loc-holloway-house",
+    "loc-parlor",
+    "obj-venetian-mirror",
+    "obj-diary",
+    "obj-brass-key"
+  ],
+  "promises": [
+    {
+      "id": "promise-test-mirror",
+      "promise": "The reader is owed a follow-up where Lena conducts controlled optical tests with measurements and lamp placement to investigate the reflection lag.",
+      "quote": "I decided then to test the optics properly: precise measures, lamp angles, a repeatable note on where the lag happened.",
+      "dueByScene": "s-005"
+    }
+  ],
+  "paysOff": []
+}

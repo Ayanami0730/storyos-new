@@ -1,0 +1,28 @@
+pairId: char-lena--obj-venetian-mirror
+participants:
+  - char-lena
+  - obj-venetian-mirror
+phases:
+  - index: 1
+    relation: researcher->object
+    fromScene: s-001
+    toScene: null
+    transition: "Lena's interaction with the mirror becomes investigatory: she
+      observes an optical lag and resolves to test the mirror's behavior; the
+      phase names the functional relation (researcher) rather than an
+      interpersonal one."
+    source:
+      scene: s-001
+      span: L44-L60
+  - index: 2
+    relation: researcher->object
+    fromScene: s-003
+    toScene: null
+    transition: "The mirror's status as a research object continues but the test
+      escalates: during Lena's controlled lamp placement it displayed anomalous
+      shimmer, delayed reflection, and impossible reflected geometry; this phase
+      records the continuation and escalation rather than a separate relation."
+    source:
+      scene: s-003
+      span: L1-L48
+openQuestions: []

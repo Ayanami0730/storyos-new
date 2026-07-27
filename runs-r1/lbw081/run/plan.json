@@ -1,0 +1,135 @@
+{
+  "logline": "Called to a seemingly impossible locked-room death in an old manor, a forensic-minded private detective picks apart small mechanical clues and human lies to expose a sibling's staged murder and the quiet, ingenious trick that made a room appear sealed from within.",
+  "entities": [
+    {
+      "id": "char-august-crowe",
+      "sketch": "The narrator and private detective, late thirties, forensic-minded, wry, methodical. Hired to consult on the locked-room case."
+    },
+    {
+      "id": "char-inspector-milne",
+      "sketch": "Local police inspector, by-the-book, keen to close the case quickly, respectful but uneasy about Crowe's methods."
+    },
+    {
+      "id": "char-lena-harrow",
+      "sketch": "The victim. A sixty-year-old wealthy recluse, owner of Harrow Manor, obsessive about clocks and order, estranged from her only brother."
+    },
+    {
+      "id": "char-henry-harrow",
+      "sketch": "Lena's younger brother and heir apparent, polished, impatient for control of the estate, with a public quarrel with Lena over money."
+    },
+    {
+      "id": "char-mary-rowan",
+      "sketch": "Housekeeper of Harrow Manor for decades, fiercely loyal to Lena, guarded about the house's eccentricities and its secrets."
+    },
+    {
+      "id": "char-oliver-dane",
+      "sketch": "Gardener and odd-job man at the manor, physically capable, quiet, knows the walls and window-sills better than anyone; had a recent argument about pay with Lena."
+    },
+    {
+      "id": "loc-harrow-manor",
+      "sketch": "The old brick manor on a windswept hill; many rooms, service passages, and an overlarge central library that held Lena's clocks and papers."
+    },
+    {
+      "id": "loc-harrow-library",
+      "sketch": "The locked-room: a ground-floor library within Harrow Manor with one exterior window (heavy latch), a heavy oak door that was bolted from the inside, a mantel with mantle clock, and a desk where Lena's body was found."
+    },
+    {
+      "id": "obj-antique-clock",
+      "sketch": "An ornate mantel clock on the library fireplace; its hands were stopped at the moment the investigators estimate the fatal wound was inflicted."
+    },
+    {
+      "id": "obj-letter-opener",
+      "sketch": "A heavy brass letter opener from Lena's desk, found embedded in her chest but with none of the obvious prints and with an oil smear on its haft."
+    },
+    {
+      "id": "obj-bloodied-handkerchief",
+      "sketch": "A small linen handkerchief with a monogram; found clutched in Lena's hand. The monogram does not match her own."
+    },
+    {
+      "id": "obj-secret-pulley",
+      "sketch": "An improvised pulley anchor and short length of cord attached to the outer window sill and hidden in the ivy — a possible device for manipulating the window latch or a line from outside."
+    },
+    {
+      "id": "obj-harrow-folio",
+      "sketch": "Lena's folio: a ledger of household accounts and a private notebook in which she annotated names and times. A page is torn out and missing."
+    },
+    {
+      "id": "obj-ashtray",
+      "sketch": "A kitchen-style ashtray found on the library sill with cigar ash; one cigar brand was favoured by Henry Harrow."
+    }
+  ],
+  "worldRules": [
+    "No supernatural explanations; every effect has a physical or human cause.",
+    "Physical actions (mechanical triggers, pulleys, climbs) must obey normal physics and the constraints of a late-20th/early-21st-century English manor house.",
+    "Forensic facts (stoppage of clock, blood spatter, fingerprints, cigar ash, monogram identification) are admissible and treated realistically — i.e., they can be partial and ambiguous but cannot be ignored without reason.",
+    "The narrator (Crowe) is fallible and does not have knowledge beyond what can be reasonably observed, deduced, or learned by questioning witnesses and examining physical evidence."
+  ],
+  "voice": {
+    "person": "first person, char-august-crowe",
+    "tense": "past"
+  },
+  "scenes": [
+    {
+      "id": "s-001",
+      "intent": "Open on the locked-room: establish atmosphere, the impossible seal, and the key physical clues (stopped mantel clock, letter-opener in victim, handkerchief with odd monogram, and the secret pulley on the sill). Set up tension between the inspector who wants a tidy case and the narrator who notices misfits in the evidence.",
+      "presentEntities": [
+        "char-august-crowe",
+        "char-inspector-milne",
+        "char-lena-harrow",
+        "loc-harrow-library",
+        "obj-antique-clock",
+        "obj-letter-opener",
+        "obj-bloodied-handkerchief",
+        "obj-secret-pulley"
+      ],
+      "targetWords": 700
+    },
+    {
+      "id": "s-002",
+      "intent": "Interview the household: establish motives and alibis through tight, revealing exchanges with Henry, Mary and Oliver. Crowe inventories the folio and notices a missing page and a fresh oil smear by the sill; Milne grows impatient. Introduce the ashtray and the argument over the folio's contents.",
+      "presentEntities": [
+        "char-august-crowe",
+        "char-henry-harrow",
+        "char-mary-rowan",
+        "char-oliver-dane",
+        "char-inspector-milne",
+        "loc-harrow-manor",
+        "obj-harrow-folio",
+        "obj-ashtray",
+        "obj-secret-pulley"
+      ],
+      "targetWords": 700
+    },
+    {
+      "id": "s-003",
+      "intent": "Crowe experiments at night with the clock and the pulley: he reconstructs how a mechanism or outside operator could have stabbed the victim and resealed the room, testing physics and timing. Tension rises when someone notices him on the sill — a near-violent interruption that proves someone wanted the truth concealed.",
+      "presentEntities": [
+        "char-august-crowe",
+        "loc-harrow-library",
+        "obj-antique-clock",
+        "obj-secret-pulley",
+        "obj-letter-opener",
+        "char-oliver-dane"
+      ],
+      "targetWords": 700
+    },
+    {
+      "id": "s-004",
+      "intent": "The reveal: Crowe stages a demonstration for Milne and the household to expose the method and the murderer. Logical deductions from the folio, the monogram, ash, and the pulley point to Henry; a final confrontation forces a confession and explains motive and method, with Milne and the household watching.",
+      "presentEntities": [
+        "char-august-crowe",
+        "char-inspector-milne",
+        "char-henry-harrow",
+        "char-mary-rowan",
+        "char-oliver-dane",
+        "loc-harrow-library",
+        "obj-harrow-folio",
+        "obj-bloodied-handkerchief",
+        "obj-ashtray",
+        "obj-secret-pulley",
+        "obj-letter-opener"
+      ],
+      "targetWords": 700
+    }
+  ]
+}

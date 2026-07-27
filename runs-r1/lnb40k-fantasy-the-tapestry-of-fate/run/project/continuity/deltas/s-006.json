@@ -1,0 +1,77 @@
+{
+  "sceneId": "s-006",
+  "claims": [
+    {
+      "entity": "loc-ship-qitaf",
+      "attribute": "current_sea_anomaly",
+      "quote": "The sea did something you could feel in your teeth before it gave you a sight to match it: a fold that was not a wave so much as a hinge in the water, a quick, obscene doubling where the Qitaf's bow met a second skin of sea and the two moved for a breath as if to replace one another.",
+      "value": "sea_fold_observed_near_Qitaf"
+    },
+    {
+      "entity": "obj-ship-log-wreck",
+      "attribute": "recognized_pattern",
+      "quote": "The jagged fold in the water matched the torn diagram I'd smoothed from the wreck log.",
+      "value": "worn_diagram_pattern_matches_sea_fold"
+    },
+    {
+      "entity": "obj-folio-map",
+      "attribute": "marginalia_alignment",
+      "quote": "When he did, the smudged crosses fell under our course like a second chart: the little dark Xs lined where the sea folded, exactly where my hands felt the deck dip.",
+      "value": "smudged_crosses_align_with_sea_folds"
+    },
+    {
+      "entity": "loc-ship-qitaf",
+      "attribute": "instrument_failures_observed",
+      "quote": "The compass needle spent a breath where it had been still, then trembled and wandered like a thirsty thing. Binnacle glass went white and then clear as if someone had exhaled between us and the world. The chronometer on the rail juddered; its second hand missed, caught, and then stuttered on as if time itself had hiccuped.",
+      "value": "compass_blink; binnacle_fogging; chronometer_stutter"
+    },
+    {
+      "entity": "char-rasim",
+      "attribute": "condition_change_observed",
+      "quote": "Rasim's cough cut into the moment like a small bell. He held the wheel with both hands until the veins stood in them; the cough took a bit more from him each time and left him paler around the mouth.",
+      "value": "cough_worsened"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "steering_measures_taken",
+      "quote": "I eased a sheet, shifted a coil of chain to starboard, and told Rasim to steer to the swell with his ear more than his eye.",
+      "value": "sail_trim_and_weight_shift_to_compensate"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "navigation_method_in_scene",
+      "quote": "We compensated with the only things that had never failed us: sail trim, weight, and the small human measures of seamanship.",
+      "value": "manual_seamanship_compensation_used"
+    },
+    {
+      "entity": "faction-peri-council",
+      "attribute": "amulet_response_quote",
+      "quote": "When he looked my way the amulet at my throat answered: a thin, precise thrum, the sort that sat under the skin and made the bone remember.",
+      "value": "amulet_thrum_on_Azraq_watch"
+    },
+    {
+      "entity": "loc-island-jarrah",
+      "attribute": "proximity_perception",
+      "quote": "The island was near enough now that the fog tasted of it, a metallic salt that could have been anything—iron, old promises, the witches' loom.",
+      "value": "island_near_by_fog_taste"
+    },
+    {
+      "entity": "loc-ship-qitaf",
+      "attribute": "flotsam_sighting",
+      "quote": "Then, a hand's-breadth of wood—salt-soft, heat-scrambled, flecked with old black tar—bobbled against our hull and scraped past.",
+      "value": "small_piece_of_wood_bobbled_past_hull"
+    }
+  ],
+  "presentEntities": [
+    "char-amina",
+    "char-rasim",
+    "char-yusuf",
+    "obj-ship-log-wreck",
+    "obj-folio-map",
+    "loc-ship-qitaf",
+    "loc-island-jarrah",
+    "faction-peri-council"
+  ],
+  "promises": [],
+  "paysOff": []
+}

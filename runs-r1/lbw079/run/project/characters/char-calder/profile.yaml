@@ -1,0 +1,10 @@
+id: char-calder
+name: Mr. Calder
+sketch: Archivist at the town archive; handles brittle documents with gloves and
+  routine care.
+identity:
+  profession: archivist
+  speech: procedural, patient
+provenance:
+  profession: s-002
+  speech: s-002

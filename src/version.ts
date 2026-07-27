@@ -48,6 +48,27 @@ export const VERSION_HISTORY: readonly {
   readonly note: string;
 }[] = [
   {
+    version: "0.8.1",
+    note:
+      "three defects the running 40k round would have hit. (1) **Batched follow-up questions " +
+      "were answered by a framework error.** pi runs a batch of tool calls in parallel and " +
+      "`ask_context_builder` never declared itself sequential, so the second question in one " +
+      "reply arrived while the builder was mid-turn and came back `Agent is already processing " +
+      "a prompt` — which the harness handed to the writer *as the answer*. Measured on " +
+      "`runs-r1/lbw081`: five questions in one reply, one answered, four framework errors, and " +
+      "the writer cannot tell the difference so it wrote the scene believing the index was " +
+      "silent. Partly ours: v0.7.5 had just told every role to batch. The tool is now " +
+      "sequential, `SHARED.md` carves delegation out of the batching advice, and a reply that " +
+      "looks like a machine message is surfaced as a failure. (2) **All four specialists now " +
+      "reset per scene.** Peak context at seventeen scenes: writer 200k (died), " +
+      "context-builder 193k, index-manager 109k, orchestrator 62k. Growth is linear in scenes, " +
+      "so at the 34-scene 40k tier the builder reaches ~380k and the index-manager ~220k and " +
+      "both die where the writer did. Their work is per-scene by construction; only the " +
+      "orchestrator holds the book. (3) The writer's prompt never named the verifier, the " +
+      "repair loop, or its freedom to invent in the space the index does not describe — it now " +
+      "does all three, and `SHARED.md` says which roles are cleared between scenes.",
+  },
+  {
     version: "0.8.0",
     note:
       "the first two findings from a 20,000-word manuscript, which is four times longer than " +

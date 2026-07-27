@@ -1,0 +1,41 @@
+pairId: char-amina--faction-peri-council
+participants:
+  - char-amina
+  - faction-peri-council
+phases:
+  - index: 1
+    relation: "binding: enforcer -> agent"
+    fromScene: s-001
+    toScene: null
+    transition: Azraq, envoy of the Peri Council, affixed a peri amulet to Amina
+      aboard the Qitaf in s-001; the amulet creates a binding relation that
+      enforces compliance and places the Council in an enforcing role over Amina
+      (caused by s-001).
+    source:
+      scene: s-001
+      span: L90-L110
+  - index: 2
+    relation: "binding: enforcer -> agent"
+    fromScene: s-002
+    toScene: null
+    transition: "s-002 records Azraq (Peri Council envoy) restating the Council's
+      demand for a single spindle, warning that refusal \"will be answered\"
+      (covenantal consequences), and naming limits and counters to the amulet;
+      this phase documents the Council's demand and the reinforcement of the
+      binding relation (provenance: s-002)."
+    source:
+      scene: s-002
+      span: L1-L120
+  - index: 3
+    relation: "binding: enforcer -> agent"
+    fromScene: s-003
+    toScene: null
+    transition: "In s-003 Amina accepts the Peri Council's commission under coercion
+      (the amulet) and asserts she will retain command of the Qitaf and protect
+      her crew; this reinforces the binding relation while recording Amina's
+      claim to ship autonomy and the Council's continuing enforcing role
+      (provenance: s-003)."
+    source:
+      scene: s-003
+      span: L1-L140
+openQuestions: []

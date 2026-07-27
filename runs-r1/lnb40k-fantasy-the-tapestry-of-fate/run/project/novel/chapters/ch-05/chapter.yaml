@@ -1,0 +1,46 @@
+chapter: ch-05
+scenes:
+  - id: s-017
+    intent: "Back aboard the Qitaf, Yusuf struggles with crew morale while Azraq
+      presses the peri's demands via the amulet's tether: the Peri Council's
+      interest is clarified — the spindle could unbind some cosmic limit the
+      peri chafe against."
+    present:
+      - char-yusuf
+      - char-peri-envoy-azraq
+      - faction-peri-council
+      - loc-ship-qitaf
+      - obj-peri-amulet
+      - obj-spindle
+  - id: s-018
+    intent: "Amina navigates the first circle: an enchantment that offers illusions
+      of deepest desire. She must refuse a seductive vision to proceed; her
+      choice costs her something small but meaningful (a memory or a token)."
+    present:
+      - char-amina
+      - loc-island-jarrah
+      - obj-peri-amulet
+      - obj-spindle
+      - obj-folio-map
+  - id: s-019
+    intent: After the test, the island exacts a price — Amina loses a memory
+      fragment (or a personal talisman) that complicates her identity. This
+      heightens the cost of her mission and gives the island agency.
+    present:
+      - char-amina
+      - loc-island-jarrah
+      - faction-witches-island
+      - obj-folio-map
+  - id: s-020
+    intent: Azraq tightens the Peri Council's threats when Amina stalls. He reveals,
+      in veiled terms, the peri plan to use the spindle to rewrite the balance
+      between immortal peri and mortals. Yusuf confronts Azraq and nearly fights
+      him aboard the Qitaf.
+    present:
+      - char-amina
+      - char-peri-envoy-azraq
+      - char-yusuf
+      - faction-peri-council
+      - loc-ship-qitaf
+      - obj-peri-amulet
+      - obj-spindle

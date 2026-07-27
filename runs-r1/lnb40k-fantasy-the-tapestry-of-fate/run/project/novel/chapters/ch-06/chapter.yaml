@@ -1,0 +1,48 @@
+chapter: ch-06
+scenes:
+  - id: s-021
+    intent: Amina probes deeper into the island, encountering time loops and paths
+      that return her to altered versions of earlier moments. The wreck log's
+      diagrams prove helpful. She inches toward the Heart-loom but at risk of
+      losing more of herself.
+    present:
+      - char-amina
+      - obj-ship-log-wreck
+      - loc-island-jarrah
+      - obj-folio-map
+  - id: s-022
+    intent: "Amina reaches the threshold of the Heart-loom where several
+      witches—including Lailah—await. They explain the spindle's mechanics: it
+      can unpick or re-stitch a single mortal fate thread at a time, but every
+      stitch demands an equivalent unthreading elsewhere — a precise
+      metaphysical cost."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - faction-witches-island
+      - obj-spindle
+      - loc-island-jarrah
+  - id: s-023
+    intent: "Moral negotiation: Lailah offers a bargain — the witches will lend
+      Amina knowledge to use the spindle correctly if she agrees to a price; the
+      Peri Council's claimed intentions are revealed as self-serving, making
+      Amina question whom to trust."
+    present:
+      - char-amina
+      - char-witch-lailah
+      - obj-spindle
+      - faction-peri-council
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+  - id: s-024
+    intent: "At the same time, the binding amulet flares as the Peri Council
+      attempts remote compulsion. Amina resists. A skirmish of wills unfolds:
+      peri coercion versus witches' pattern-sorcery. The balance of power is
+      uncertain."
+    present:
+      - char-amina
+      - char-peri-envoy-azraq
+      - obj-peri-amulet
+      - char-witch-lailah
+      - obj-spindle
+      - faction-witches-island

@@ -570,6 +570,28 @@ export function askBuilderTool(options: {
   return {
     label: "Ask context builder",
     name: "ask_context_builder",
+    /**
+     * Never concurrently with itself, because it delegates to another agent.
+     *
+     * pi executes a batch of tool calls in parallel by default, and this tool
+     * `invoke`s the resident context-builder. Two of them in one assistant message
+     * means the second arrives while the builder is mid-turn, and pi answers it with
+     * `Agent is already processing a prompt. Use steer() or followUp() to queue
+     * messages, or wait for completion.` — which the harness then handed to the
+     * writer *as the answer to its question*.
+     *
+     * Measured on `runs-r1/lbw081`, and partly caused by us: v0.7.5 added "ask for
+     * everything you already know you need, in one message" to `SHARED.md` to cut
+     * round-trips, and the writer did exactly that. Scene 3 asked five questions in
+     * one reply; **one** was answered and four came back with the framework's
+     * error. The writer cannot tell that string from a real answer, so it wrote the
+     * scene believing the index had nothing to say.
+     *
+     * Batching is right for file reads and wrong for delegation. Sequential
+     * execution makes each question wait for the previous answer, which is also what
+     * a follow-up *is*: the second question is usually shaped by the first reply.
+     */
+    executionMode: "sequential" as const,
     description:
       `Ask the context-builder for something the packet does not contain. It can search ` +
       `the whole index. How many questions you get depends on where the scene sits in the ` +
