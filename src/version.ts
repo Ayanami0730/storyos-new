@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.8.3";
+export const VERSION = "0.8.4";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,25 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.8.4",
+    note:
+      "a scene card may no longer hold the whole book. The 60,000-word stress test planned " +
+      "fifty-two scenes and declared the identical thirty-four ids — thirteen characters, " +
+      "thirteen locations, eight objects — present in every one of them, each scene being " +
+      "1,200 words. Two costs, both measured: P1 of the writer's packet is every present " +
+      "character's state and beliefs and cannot be evicted, so it ran **2,609 tokens against " +
+      "a median of ~700** in the two healthy 40k runs; and the writer was told on its card " +
+      "that thirteen characters and thirteen locations were in a 1,200-word opening. The " +
+      "cause was the guard on the other side: rejecting an intent that names an entity absent " +
+      "from `present` tells the planner to *add* entities, and across fifty-two scenes the " +
+      "cheapest way never to trip it again is to list everybody. So the check is now " +
+      "symmetric — at most five locations per scene, and for plans of eight or more scenes a " +
+      "median scene may not hold more than 70% of the entities the plan uses. Both thresholds " +
+      "come from the twenty plans already on disk, where the most locations any scene " +
+      "declared was four and long plans ran 17–33% cast share; replayed against all " +
+      "twenty-one, the guard rejects exactly the pathological one.",
+  },
   {
     version: "0.8.3",
     note:

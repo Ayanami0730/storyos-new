@@ -75,6 +75,41 @@ export interface StoryPlan {
 const MIN_WORDS_PER_SCENE = 500;
 
 /**
+ * A scene happens somewhere. Above this many locations it is a list of places.
+ *
+ * Measured rather than chosen: across twenty plans this harness has produced —
+ * 1 to 32 scenes, 500 to 40,000 words — the most locations any single scene
+ * declared present was **four**. The 60,000-word stress test declared
+ * **thirteen** in every one of its fifty-two scenes.
+ */
+const MAX_LOCATIONS_PER_SCENE = 5;
+
+/**
+ * Above this share of the whole cast per scene, the scene lists are a roster
+ * dump rather than a plan.
+ *
+ * Same measurement, and stated as coverage rather than as similarity between
+ * scenes on purpose: the defect is "every scene contains everybody", and
+ * similarity alone also flags a legitimate ten-scene story about one person,
+ * whose scenes are identical because its cast really is one character.
+ *
+ * Among plans long enough for a cast to move around (17, 32 and 52 scenes) the
+ * median scene listed 17%, 30%, 33% and 20% of the story's entities — against
+ * **100%** for the 60,000-word stress test. Short plans legitimately run much
+ * higher (a four-scene story does use its whole small cast, up to 81%), which
+ * is why this only applies once there are enough scenes for a cast to be
+ * somewhere else, and only to a roster big enough to choose from.
+ *
+ * The share is measured against the entities the plan actually *uses*, not the
+ * entities it declares. Against the declared list the check buys itself off:
+ * declare a hundred and put the same thirty-four in every scene, and the share
+ * reads 34%.
+ */
+const MAX_CAST_SHARE_PER_SCENE = 0.7;
+const CAST_SHARE_MIN_SCENES = 8;
+const CAST_SHARE_MIN_ENTITIES = 10;
+
+/**
  * How many scenes a target length gets.
  *
  * Derived rather than left to the model: asked for "a plan for 40,000 words" a
@@ -230,9 +265,60 @@ export function planTool(
           `rejected: ${missing.length} scene(s) describe an entity they do not list as ` +
             `present:\n- ${missing.join("\n- ")}\nThe writer only receives state and ` +
             `beliefs for entities in \`present\`, so an intent that requires one which is ` +
-            `absent asks the writer to invent it. Add them to \`present\` or rewrite the ` +
-            `intent.`,
+            `absent asks the writer to invent it. Add the ones that scene's intent needs, ` +
+            `or rewrite the intent. Do not pad \`present\` to be safe: it is the cast of ` +
+            `one scene, it is checked in both directions, and everything listed there is ` +
+            `carried into the writer's packet at a priority nothing can evict.`,
         );
+      }
+
+      // The other direction, and the one that cost a whole stress test.
+      //
+      // The rejection above tells the orchestrator to *add* entities, and across
+      // fifty-two scenes the cheapest way to never trip it again is to list
+      // every entity in every scene. That is what the 60k run did: the identical
+      // thirty-four ids — thirteen characters, thirteen locations, eight objects
+      // — in all fifty-two cards, in a story whose scenes are 1,200 words each.
+      //
+      // It is not a cosmetic defect. `present` drives P1 of the context packet
+      // (each present character's current state and beliefs), P1 cannot be
+      // evicted, and it measured 2,609 tokens against a median of ~700 in the
+      // two healthy 40k runs. The writer is also simply told, on its scene card,
+      // that thirteen characters are in a 1,200-word opening.
+      const locationHeavy = scenes.flatMap((s, i) => {
+        const locs = (s.present ?? []).filter((p) => p.startsWith("loc-"));
+        return locs.length > MAX_LOCATIONS_PER_SCENE
+          ? [`scene ${i + 1} lists ${locs.length}: ${locs.join(", ")}`]
+          : [];
+      });
+      if (locationHeavy.length > 0) {
+        return toolText(
+          `rejected: ${locationHeavy.length} scene(s) list more than ` +
+            `${MAX_LOCATIONS_PER_SCENE} locations as present:\n- ` +
+            `${locationHeavy.join("\n- ")}\nA scene happens somewhere; it can move once ` +
+            `or twice. List where this scene actually takes place, not everywhere it ` +
+            `refers to — a place a character mentions or remembers is not present, and ` +
+            `the writer reads this line as the setting it has to put on the page.`,
+        );
+      }
+
+      const used = new Set(scenes.flatMap((s) => s.present ?? []));
+      if (scenes.length >= CAST_SHARE_MIN_SCENES && used.size >= CAST_SHARE_MIN_ENTITIES) {
+        const shares = scenes
+          .map((s) => new Set(s.present ?? []).size / used.size)
+          .sort((a, b) => a - b);
+        const median = shares[Math.floor(shares.length / 2)] ?? 0;
+        if (median > MAX_CAST_SHARE_PER_SCENE) {
+          return toolText(
+            `rejected: the median scene lists ${(median * 100).toFixed(0)}% of the ` +
+              `${used.size} entities this plan uses as present. A plan whose every scene ` +
+              `contains everybody ` +
+              `has not decided anything: it cannot say who arrives, who is absent when the ` +
+              `news breaks, or who finds out last — and those are the decisions that make a ` +
+              `scene worth writing. Give each scene the cast that is in the room for it. For ` +
+              `reference, the plans that scored well at this length ran 17–33%.`,
+          );
+        }
       }
       sink.plan = {
         logline: args.logline,

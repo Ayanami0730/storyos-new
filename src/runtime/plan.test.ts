@@ -177,4 +177,88 @@ describe("planTool", () => {
     assert.equal(sink.plan, undefined);
     assert.match(reply.content[0]!.text, /char-ghost/);
   });
+
+  /**
+   * The shape of the 60,000-word stress test, which is where this came from: the
+   * identical thirty-four ids — thirteen characters, thirteen locations, eight
+   * objects — declared present in all fifty-two of its 1,200-word scenes.
+   *
+   * It reached scene one before anyone noticed, and it is not cosmetic. P1 of the
+   * writer's packet is each present character's state and beliefs, P1 cannot be
+   * evicted, and it measured 2,609 tokens against a median of ~700 in the two
+   * healthy 40k runs then in flight.
+   */
+  const stressTest = (() => {
+    const name = (i: number) => `${"abcdefghijklm"[i]}${"xyz"[i % 3]}or`;
+    const chars = Array.from({ length: 13 }, (_, i) => `char-${name(i)}`);
+    const locs = Array.from({ length: 13 }, (_, i) => `loc-${name(i)}vale`);
+    const objs = Array.from({ length: 8 }, (_, i) => `obj-${name(i)}key`);
+    const all = [...chars, ...locs, ...objs];
+    return {
+      logline: "A book-witch polices fictional worlds.",
+      entities: all.map((id) => ({ id, sketch: "someone or somewhere" })),
+      world_rules: [],
+      narrative_person: "third person limited, Mira",
+      tense: "past",
+      scenes: Array.from({ length: 52 }, (_, i) => ({
+        intent: `beat ${i + 1}`,
+        present: all,
+      })),
+    };
+  })();
+
+  it("rejects a scene that takes place in thirteen locations at once", async () => {
+    const { sink, run } = tool(52, 60_000);
+    const reply = await run(stressTest);
+    assert.equal(sink.plan, undefined);
+    assert.match(reply.content[0]!.text, /more than 5 locations/);
+    assert.match(reply.content[0]!.text, /A scene happens somewhere/);
+  });
+
+  it("rejects a plan whose every scene contains the whole cast", async () => {
+    // Locations trimmed to one, so only the cast-share check can fire and this
+    // test cannot pass for the wrong reason.
+    const { sink, run } = tool(52, 60_000);
+    const reply = await run({
+      ...stressTest,
+      scenes: stressTest.scenes.map((s) => ({
+        ...s,
+        present: s.present.filter((id) => !id.startsWith("loc-") || id.endsWith("axorvale")),
+      })),
+    });
+    assert.equal(sink.plan, undefined);
+    assert.match(reply.content[0]!.text, /median scene lists/);
+    assert.match(reply.content[0]!.text, /has not decided anything/);
+  });
+
+  /**
+   * The guard has to leave a small cast alone. A ten-scene story about one person
+   * has identical rosters in every scene because its cast really is one person,
+   * which is why this is stated as a share of the whole roster and floored on
+   * roster size rather than measured as similarity between scenes.
+   */
+  it("leaves a genuinely small cast alone", async () => {
+    const { sink, run } = tool();
+    await run(good);
+    assert.equal(sink.plan!.scenes.length, 10);
+  });
+
+  /**
+   * And it has to leave short plans alone at any share: a four-scene story
+   * legitimately used up to 81% of its roster per scene across every run scored
+   * so far, and those are the runs the table is built on.
+   */
+  it("leaves a four-scene plan alone even when every scene holds the whole cast", async () => {
+    const all = Array.from({ length: 12 }, (_, i) => `char-${"abcdefghijkl"[i]}quor`);
+    const { sink, run } = tool(4, 2_800);
+    await run({
+      logline: "A locked room.",
+      entities: all.map((id) => ({ id, sketch: "a suspect" })),
+      world_rules: [],
+      narrative_person: "third person limited, Holt",
+      tense: "past",
+      scenes: Array.from({ length: 4 }, (_, i) => ({ intent: `beat ${i + 1}`, present: all })),
+    });
+    assert.equal(sink.plan!.scenes.length, 4);
+  });
 });
