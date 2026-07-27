@@ -137,7 +137,36 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     memoryDir: get("--memory-dir") ?? null,
     sandbox: (get("--sandbox") as SandboxId | undefined) ?? "none",
     enforceBudget: has("--enforce-budget"),
-    freshEachScene: has("--resident-all") ? [] : (["verifier"] as const),
+    /**
+     * The writer joins the verifier here, because residency killed it at scale.
+     *
+     * Measured on the 17-scene, 20,000-word run
+     * `lnb20k-fantasy-the-girl-with-a-thousand-faces`: the writer's context grew
+     * from 9,689 tokens on its first round-trip to **209,891** by scene 15.
+     * Level-1 compaction fired three times — at 166k, 180k and 195k, evicting 39,
+     * 41 and 43 tool payloads — and lost the race each time, because what was
+     * growing was not tool payloads but the prose the writer had itself produced:
+     * a full scene per `write_staged_scene` call, fifteen of them, plus every
+     * packet. Level 2 has still never fired. Scenes 16 and 17 then failed with the
+     * provider's message-token limit and the orchestrator abandoned both, so the
+     * manuscript came in at 15/17 scenes and 87% of target.
+     *
+     * That is the specific thing standing between this harness and the 40,000-word
+     * tier every LiveNovelBench baseline is scored at: a 34-scene story dies around
+     * scene 16 for the same reason, and the tier is not reachable at all.
+     *
+     * What residency bought the writer was familiarity with the book — above all a
+     * consistent voice. That argument no longer holds, because the voice is now a
+     * declared P0 constraint carried in every packet rather than something the
+     * writer had to remember: the plan states the narrative person and tense, and
+     * `contextFor` makes it hard-required. So the writer's input is its packet, as
+     * its own prompt has always said, and a session that only accumulates the scenes
+     * it has already delivered is paying to eventually die.
+     *
+     * `--resident-all` restores both, which is the ablation that says what residency
+     * was worth.
+     */
+    freshEachScene: has("--resident-all") ? [] : (["verifier", "writer"] as const),
     verifierModel: (get("--verifier-model") as ModelId | undefined) ?? null,
   };
 }

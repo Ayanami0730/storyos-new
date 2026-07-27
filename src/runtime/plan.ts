@@ -37,6 +37,8 @@ export interface StoryPlan {
   readonly logline: string;
   readonly entities: readonly { readonly id: string; readonly sketch: string }[];
   readonly worldRules: readonly string[];
+  /** Who narrates, and in what tense. See `submit_plan` for why this is required. */
+  readonly voice: { readonly person: string; readonly tense: string };
   readonly scenes: readonly SceneCard[];
 }
 
@@ -110,6 +112,31 @@ export function planTool(
         }),
       ),
       world_rules: Type.Array(Type.String()),
+      /**
+       * Who tells the story, and in what tense.
+       *
+       * Added because it was the largest single defect in the first 20k-word
+       * manuscript this harness produced. LiveNovelBench's consistency audit found
+       * nine errors in 18,274 words, and **seven of them were
+       * `perspective_confusions`**: the narration drifts between a collective
+       * first person and close third on the protagonist, scene by scene —
+       * *"The list was already up when **we** came in"* against *"**Rue** walked
+       * toward the ferry"*, five more like it.
+       *
+       * Nothing in the system had ever decided. `novel/style/voice.md` was seeded
+       * with the placeholder *"(Established by the first committed scenes)"*, the
+       * plan had no field for it, and so seventeen scenes each chose for
+       * themselves. That is not a writer failing to hold a voice; it is a
+       * constraint that was never written down, and a constraint nobody records is
+       * the one the index cannot defend.
+       */
+      narrative_person: Type.String({
+        description:
+          "How the story is narrated, decided once and held: \"first person, Rue\" | " +
+          "\"third person limited, Rue\" | \"third person omniscient\" | \"first person plural, " +
+          "the Hundred\". Name the viewpoint character where there is one.",
+      }),
+      tense: Type.String({ description: "past | present" }),
       scenes: Type.Array(
         Type.Object({
           intent: Type.String({ description: "What this scene accomplishes" }),
@@ -123,10 +150,33 @@ export function planTool(
         logline: string;
         entities: { id: string; sketch: string }[];
         world_rules: string[];
+        narrative_person?: string;
+        tense?: string;
         scenes: { intent: string; present: string[] }[];
       },
     ) => {
       const scenes = args.scenes ?? [];
+      if (!args.narrative_person?.trim() || !args.tense?.trim()) {
+        return toolText(
+          "rejected: narrative_person and tense are both required. They are the one pair of " +
+            "constraints every scene needs and no scene can establish, because a voice is only " +
+            "consistent relative to a decision made before the first scene. Left undecided, the " +
+            "first 20,000-word manuscript this system wrote drifted between \"we\" and \"Rue\" " +
+            "across seventeen scenes, and seven of its nine measured consistency errors were " +
+            "that drift.",
+        );
+      }
+      if (!/\b(first|second|third)\b/i.test(args.narrative_person)) {
+        return toolText(
+          `rejected: narrative_person "${args.narrative_person}" does not say which person. ` +
+            `The writer has to be able to check a sentence against it, so it needs to name the ` +
+            `person and, where there is one, the viewpoint character — "third person limited, ` +
+            `Rue" is checkable and "intimate and lyrical" is not.`,
+        );
+      }
+      if (!/^(past|present)$/i.test(args.tense.trim())) {
+        return toolText(`rejected: tense must be "past" or "present"; got "${args.tense}".`);
+      }
       if (scenes.length < Math.floor(sceneCount * 0.6)) {
         return toolText(
           `rejected: ${scenes.length} scenes is too few for the target. Propose about ` +
@@ -188,6 +238,10 @@ export function planTool(
         logline: args.logline,
         entities: args.entities ?? [],
         worldRules: args.world_rules ?? [],
+        voice: {
+          person: args.narrative_person!.trim(),
+          tense: args.tense!.trim().toLowerCase(),
+        },
         scenes: scenes.map((s, i) => ({
           id: `s-${String(i + 1).padStart(3, "0")}`,
           intent: s.intent,

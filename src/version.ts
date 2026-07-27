@@ -25,7 +25,8 @@ export const VERSION = "0.7.5";
 export const VERSION_NOTE =
   "orchestrator-driven scene loop with per-scene compute allocated by position in " +
   "the story (2/3/5 repair rounds and follow-ups across the opening, middle and " +
-  "final 40%, with recall depth 1/2/3), path-addressed artefacts, OS-enforced " +
+  "final 40%, with recall depth 1/2/3), a narrative person and tense declared in the plan and "
+  "carried as a hard constraint in every packet, path-addressed artefacts, OS-enforced " +
   "write gate (docker read-only mount), cost-triggered level-1 compaction, " +
   "baseline-comparable token accounting (input+output, cache reads excluded), and a " +
   "per-scene verifier session; the verifier runs the same gpt-5-mini backbone as every " +
@@ -46,6 +47,29 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.8.0",
+    note:
+      "the first two findings from a 20,000-word manuscript, which is four times longer than " +
+      "anything this harness had written. (1) **The narrative person is now declared and " +
+      "carried.** LiveNovelBench\'s consistency audit found nine errors in 18,274 words and " +
+      "**seven were `perspective_confusions`**: the narration drifting between a collective " +
+      "first person and close third on the protagonist, scene by scene — *\"the list was " +
+      "already up when we came in\"* against *\"Rue walked toward the ferry\"*. Nothing had " +
+      "ever decided. `novel/style/voice.md` was seeded with *\"(Established by the first " +
+      "committed scenes)\"* and the plan had no field, so seventeen scenes each chose. " +
+      "`submit_plan` now requires `narrative_person` and `tense`, refuses a person it cannot " +
+      "check a sentence against, and the pair rides in every packet as hard-required P0. " +
+      "(2) **The writer\'s session resets per scene.** Its context grew 9,689 to 209,891 " +
+      "tokens across fifteen scenes; level-1 compaction fired at 166k, 180k and 195k and lost " +
+      "the race every time, because what grows is the prose the writer itself produced, not " +
+      "the tool payloads compaction evicts. Level 2 has still never fired. Scenes 16 and 17 " +
+      "died on the provider\'s message-token limit and were abandoned, so the run landed 15/17 " +
+      "at 87% of target — and a 34-scene 40k story, which is the tier every baseline is scored " +
+      "at, dies the same way around scene 16. Residency bought the writer a consistent voice, " +
+      "and that argument is spent now that the voice is a declared constraint in front of it. " +
+      "`--resident-all` restores both sessions as the ablation.",
+  },
   {
     version: "0.7.7",
     note:

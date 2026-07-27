@@ -59,6 +59,8 @@ describe("the per-scene word target", () => {
       logline: "a locked room",
       entities: [{ id: "char-holt", sketch: "the detective" }],
       world_rules: [],
+      narrative_person: "third person limited, Mira",
+      tense: "past",
       scenes: Array.from({ length: 4 }, () => ({
         intent: "something happens",
         present: ["char-holt"],
@@ -103,6 +105,8 @@ describe("planTool", () => {
       logline: "A young woman leaves a small town.",
       entities: [{ id: "char-sam", sketch: "the leaver" }],
       world_rules: [],
+      narrative_person: "third person limited, Mira",
+      tense: "past",
       scenes: Array.from({ length: 4 }, (_, i) => ({
         intent: `beat ${i + 1}`,
         present: ["char-sam"],
@@ -123,6 +127,8 @@ describe("planTool", () => {
       logline: "A cartographer maps a city that moves at night.",
       entities: [{ id: "char-mira", sketch: "the cartographer" }],
       world_rules: [],
+      narrative_person: "third person limited, Mira",
+      tense: "past",
       scenes: Array.from({ length: 8 }, (_, i) => ({
         intent: `beat ${i + 1}`,
         present: ["char-mira"],
@@ -138,6 +144,8 @@ describe("planTool", () => {
       { id: "char-warden", sketch: "the record keeper" },
     ],
     world_rules: ["the city only moves unobserved"],
+    narrative_person: "third person limited, Mira",
+    tense: "past",
     scenes: Array.from({ length: 10 }, (_, i) => ({
       intent: `beat ${i + 1}`,
       present: ["char-mira"],

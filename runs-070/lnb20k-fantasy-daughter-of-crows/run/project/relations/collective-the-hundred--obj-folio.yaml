@@ -1,0 +1,16 @@
+pairId: collective-the-hundred--obj-folio
+participants:
+  - collective-the-hundred
+  - obj-folio
+phases:
+  - index: 1
+    relation: pending_release_outcome
+    fromScene: s-017
+    toScene: null
+    transition: Eleven petitions provisionally approved under Pending Release; civic
+      pledge recorded and municipal notification requested; some petitions will
+      still require sponsor/municipal acknowledgment to finalize release.
+    source:
+      scene: s-017
+      span: L1-L12
+openQuestions: []

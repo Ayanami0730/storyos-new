@@ -12,6 +12,7 @@ const plan: StoryPlan = {
     { id: "char-warden", sketch: "keeps the harbour records" },
     { id: "loc-harbour", sketch: "where the ships do not move" },
   ],
+  voice: { person: "third person limited, Mira", tense: "past" },
   worldRules: ["the city only moves when nobody is watching"],
   scenes: [
     { id: "s-001", intent: "Mira notices the discrepancy", presentEntities: ["char-mira"], targetWords: 1200 },
@@ -24,7 +25,7 @@ describe("contextFor", () => {
     { id: "f2", entity: "char-warden", attribute: "location", value: "the tower", source: "s-002" },
   ];
 
-  it("puts the scene card, logline, roster and world rules in P0", () => {
+  it("puts the scene card, logline, roster, voice and world rules in P0", () => {
     const items = contextFor({
       card: plan.scenes[0]!,
       plan,
@@ -33,7 +34,29 @@ describe("contextFor", () => {
       earlierIntents: [],
     });
     const p0 = items.filter((i) => i.priority === "P0").map((i) => i.id);
-    assert.deepEqual(p0, ["scene-card", "logline", "entity-roster", "world-rules"]);
+    assert.deepEqual(p0, [
+      "scene-card",
+      "logline",
+      "entity-roster",
+      // A hard constraint since the first 20k-word manuscript, where seven of nine
+      // measured consistency errors were the narration drifting between a
+      // collective "we" and close third — because nothing carried the decision.
+      "narrative-voice",
+      "world-rules",
+    ]);
+  });
+
+  it("states the narrative person and tense as a rule, not a note", () => {
+    const voice = contextFor({
+      card: plan.scenes[0]!,
+      plan,
+      canon: [],
+      recentProse: [],
+      earlierIntents: [],
+    }).find((i) => i.id === "narrative-voice");
+    assert.ok(voice);
+    assert.match(voice!.content, /third person limited, Mira, past tense/);
+    assert.match(voice!.content, /does not change/);
   });
 
   it("names every entity that exists, not only the ones in this scene", () => {

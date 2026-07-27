@@ -146,6 +146,38 @@ export function contextFor(input: {
     },
   ];
 
+  /**
+   * The narrative person and tense, as a hard constraint in every packet.
+   *
+   * P0 rather than P4, and stated as a rule rather than as a note, because the
+   * measurement says it behaves like one. In the first 20,000-word manuscript this
+   * harness produced, LiveNovelBench's audit found nine consistency errors and
+   * **seven were `perspective_confusions`** — the narration alternating between a
+   * collective first person and close third on the protagonist, scene by scene.
+   * Nothing had decided: `voice.md` was a placeholder and the plan had no field, so
+   * seventeen writers each chose.
+   *
+   * A voice is the one constraint that cannot be inferred from the previous scene
+   * either, which is what makes the recall tail no substitute: a scene that reads
+   * one scene back sees a choice, not a decision, and half the time sees the wrong
+   * one.
+   */
+  items.push({
+    id: "narrative-voice",
+    priority: "P0",
+    source: paths.voice(),
+    content:
+      `Narration: ${plan.voice.person}, ${plan.voice.tense} tense. This was decided for the ` +
+      `whole book before any of it was written and does not change.\n` +
+      `Check your own sentences against it before you stage them. Mixing a collective "we" ` +
+      `into a third-person narration, or slipping into present tense for a scene that feels ` +
+      `immediate, is scored as a defect and is the most common one this system has produced: ` +
+      `seven of nine consistency errors in a measured 18,000-word manuscript were exactly ` +
+      `this.\n` +
+      `If you think the story genuinely needs a different voice, propose the deviation — do ` +
+      `not simply write it.`,
+  });
+
   if (plan.worldRules.length > 0) {
     // The framing is the load-bearing part, not the list.
     //
@@ -451,7 +483,11 @@ export async function writeStory(options: {
         packet: {
           sceneId: card.id,
           baseCommitId: await index.head(),
-          hardRequiredIds: ["scene-card", "logline"],
+          // `narrative-voice` is hard-required for the same reason the scene card
+          // is: a scene written without knowing who narrates it is not a scene of
+          // this book. Seven of the nine consistency errors in the first 20k-word
+          // manuscript were the voice drifting, because nothing carried it.
+          hardRequiredIds: ["scene-card", "logline", "narrative-voice"],
           budgetWords: 60_000,
         },
         available: contextFor({

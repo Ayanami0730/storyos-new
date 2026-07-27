@@ -1,0 +1,314 @@
+{
+  "logline": "Rue, who sold herself into the Mercy Academy, spends a lifetime inside the institution that annually accepts one hundred girls but returns almost none; when war reaches the Academy's gates in her old age, buried bargains and the Academy's true price are forced into daylight, and Rue must reckon with what she once bargained away.",
+  "entities": [
+    {
+      "id": "char-rue",
+      "sketch": "Rue — A woman who sold herself into the Mercy Academy as a young woman. Quiet, practical, and watchful, she spends decades inside the Academy and grows into its reluctant conscience."
+    },
+    {
+      "id": "collective-the-hundred",
+      "sketch": "The Hundred — The Academy's annual cohort: one hundred girls acquired each year and folded into its programs. They are both a number and a shifting constellation of friendships, rivalries and losses."
+    },
+    {
+      "id": "collective-the-three",
+      "sketch": "The Three — The near-mythic set of alumni who, historically, have left the Academy after ten years. They are spoken of like miracles and warnings at once."
+    },
+    {
+      "id": "char-headmistress",
+      "sketch": "Headmistress — The senior administrator and public face of the Mercy Academy. Polished, diplomatic and possessed of practical ruthlessness; she embodies the Academy's benevolent rhetoric and its hard edges."
+    },
+    {
+      "id": "char-war-envoy",
+      "sketch": "War Envoy — A representative of the approaching war: formal, implacable and strange. He/they arrive with offers and threats that make the Academy's hidden arrangements surface."
+    },
+    {
+      "id": "loc-mercy-academy",
+      "sketch": "Mercy Academy — A high, walled institution on an island quartered between harbor, rose gardens and glasshouses. It calls itself sanctuary and school; its walls hold more than classrooms."
+    },
+    {
+      "id": "loc-great-hall",
+      "sketch": "Great Hall — The Academy's ceremonial heart: where the Hundred are received, where names are read into the folio and where the Headmistress meets visitors."
+    },
+    {
+      "id": "loc-ink-room",
+      "sketch": "Ink Room — A locked room below the library where the Academy's ledgers and the binding inks are kept. Staffed by a small, generational guild of scribes."
+    },
+    {
+      "id": "obj-contract",
+      "sketch": "Contract — The ledger contract each recruit signs. On its face it promises education and safety in return for ten years; its margins hold clauses not printed for patrons."
+    },
+    {
+      "id": "obj-folio",
+      "sketch": "Folio — The Academy's ceremonial book that bears the names of every girl who entered and every name that was allowed to leave. It is heavy, stained and glossed with old inks."
+    },
+    {
+      "id": "obj-amber-bell",
+      "sketch": "Amber Bell — A small bell rung whenever a cohort is closed or when a departure is recorded in the folio. Its sound is both celebration and seal."
+    },
+    {
+      "id": "obj-binding-seal",
+      "sketch": "Binding Seal — A wax-and-ink sigil used in finalizing contracts; it carries a sorcerous tether that makes some of the Academy's claims enforceable."
+    },
+    {
+      "id": "char-aya",
+      "sketch": "Aya — A bright, quick-witted recruit in Rue's first cohort at the Academy; she becomes Rue's close friend and an emotional anchor early in Rue's life there."
+    },
+    {
+      "id": "char-loren",
+      "sketch": "Loren — An older instructor who teaches craft and discipline to the Hundred. Stern but humane, he mentors Rue across decades and becomes one of the few inside the walls whom she trusts."
+    },
+    {
+      "id": "char-elaine",
+      "sketch": "Elaine — One of the named individuals counted among the Three. She left the Academy years ago and lives beyond the city; she carries a scar the Academy never explains."
+    },
+    {
+      "id": "char-maris",
+      "sketch": "Maris — Another of the Three. She left under different circumstances and is used by the Academy as an example of success."
+    },
+    {
+      "id": "char-sal",
+      "sketch": "Sal — The third of the Three, quieter and more evasive; rumours say she left with secrets the Academy does not want repeated."
+    },
+    {
+      "id": "obj-archive-key",
+      "sketch": "Archive Key — A small iron key, stamped with the Academy's crest, used to open the deepest cabinets in the Ink Room and the library's sealed stacks."
+    }
+  ],
+  "worldRules": [
+    "The Academy accepts exactly one hundred girls into a cohort each year; this number is public and rigid in the story's social systems.",
+    "Historically, after a ten-year period inside the Academy, only three individuals have left and their departures are recorded in the Folio (this historical fact is established early and treated as canon unless explicitly changed by a scena-level event with provenance).",
+    "Contracts the recruits sign are legally and magically binding when sealed with the Binding Seal; the Seal enacts the Academy's claims but requires the Academy's own rituals to be maintained.",
+    "Magic has a cost: any enchantment that binds a person's freedom draws from the same ledger as the Folio and must be accounted for in the Academy's records; bargains cannot be silently created or negated without record.",
+    "The War Envoy represents external political/military forces; he may demand terms, levy burdens, or threaten force, but he cannot invent or erase Academy records — only expose and exploit them.",
+    "The Folio truthfully records entries and departures; it can be read and misread, hidden, or weaponised, but altering historical entries is itself an action with consequences and must be shown on-page when it happens.",
+    "The Headmistress is powerful within the Academy but not omnipotent; she must work within political constraints, her staff and the Academy's rituals.",
+    "No deus ex machina: solutions to the Academy's bindings must arise from revealed rules and the characters' established resources and relationships, not from unexplained new powers."
+  ],
+  "scenes": [
+    {
+      "id": "s-001",
+      "intent": "Open the novel on the transaction: Rue's decision to sell herself and sign the Contract. Establish the Mercy Academy's public face, the rule that it takes one hundred girls each year, and the notorious statistic that after ten years only three ever walk back out. Introduce the Contract, the Folio and the Headmistress as symbols.",
+      "presentEntities": [
+        "char-rue",
+        "loc-great-hall",
+        "loc-mercy-academy",
+        "obj-contract",
+        "obj-folio",
+        "obj-amber-bell",
+        "char-headmistress",
+        "collective-the-hundred"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-002",
+      "intent": "Show the Hundred's arrival: induction ritual in the Great Hall and first night. Rue meets Aya and senses the work the Academy does—education braided with discipline. The Folio is read; the Amber Bell is rung. The scene quietly suggests that the Academy gives girls skills but also takes something else.",
+      "presentEntities": [
+        "collective-the-hundred",
+        "loc-great-hall",
+        "char-rue",
+        "char-aya",
+        "obj-folio",
+        "obj-amber-bell",
+        "char-loren"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-003",
+      "intent": "Depict the early years of training: classrooms, gardens, the Ink Room glimpsed. Introduce the Ink Room as a strange repository and the Binding Seal in passing. Rue learns craft and learns to measure the Academy's quiet demands. The Three are invoked as stories told to keep girls in line.",
+      "presentEntities": [
+        "loc-ink-room",
+        "char-rue",
+        "char-loren",
+        "obj-binding-seal",
+        "collective-the-three",
+        "collective-the-hundred"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-004",
+      "intent": "Close-up on Rue's interior life and her bond with Aya. Show why Rue sold herself—family debt, a promise—and what she hoped the Academy would be. Record small kindnesses and micro-violences, establishing the Academy's ambiguous benevolence.",
+      "presentEntities": [
+        "char-rue",
+        "char-aya",
+        "collective-the-hundred",
+        "char-loren"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-005",
+      "intent": "A meeting with the Headmistress in which the Academy's public rhetoric—rescue, education, charity—is made explicit. The Headmistress is persuasive about duty and result; her language glosses the Contract's margins. Rue senses double speech and leaves with more questions.",
+      "presentEntities": [
+        "char-headmistress",
+        "char-rue",
+        "loc-great-hall",
+        "obj-contract",
+        "obj-amber-bell"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-006",
+      "intent": "A year marker: the Academy's patron ceremony and the closing of the cohort ledger for that year. The number of new entrants is reiterated and the myth of the Three is placed alongside official praise. Rue begins to take on apprentices and becomes part of the institution's machinery.",
+      "presentEntities": [
+        "collective-the-hundred",
+        "char-rue",
+        "char-loren",
+        "obj-folio",
+        "obj-amber-bell"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-007",
+      "intent": "Tension builds: Rue discovers a discrepancy in the Folio and asks questions; senior staff are evasive. The idea that the Academy does not merely shelter but binds people becomes firmer. The Ten-Year period is framed as a crucible whose exits are historically vanishingly rare.",
+      "presentEntities": [
+        "char-rue",
+        "loc-ink-room",
+        "obj-folio",
+        "obj-archive-key",
+        "char-headmistress"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-008",
+      "intent": "Rue finds a half-hidden clause in an old Contract that references a binding ritual and a tether. The Binding Seal's mechanics are hinted at—what it costs and how it ties people to the Academy's ledger. Rue's moral fog thickens; she remembers her younger self signing willingly.",
+      "presentEntities": [
+        "char-rue",
+        "obj-contract",
+        "obj-binding-seal",
+        "loc-ink-room",
+        "char-loren"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-009",
+      "intent": "Montage across decades: Rue ages, becomes an instructor and anchor. The narrative shows the Hundred as a cycle, friendships forming and dissolving, the three alumni used in different ways by the Academy (praise, warning, commodity). Time passes and the institution's scale becomes clear.",
+      "presentEntities": [
+        "char-rue",
+        "collective-the-hundred",
+        "char-loren",
+        "char-aya",
+        "char-elaine",
+        "char-maris",
+        "char-sal",
+        "obj-folio"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-010",
+      "intent": "First sign of the external war: a War Envoy arrives at the harbor to speak with the Headmistress. The envoy's language is formal but unmoving; he carries news that the conflict is swelling toward the island. The Academy's insulated life is threatened for the first time in Rue's memory.",
+      "presentEntities": [
+        "char-war-envoy",
+        "char-headmistress",
+        "loc-mercy-academy",
+        "loc-great-hall",
+        "char-rue"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-011",
+      "intent": "Envoy and Headmistress bartering: the Academy negotiates neutrality, offers shelter, and argues its civic usefulness. The envoy hints at demands—bonds, levies or recruits—that unsettle the Headmistress. Rue listens and realises the war will not be kept at bay by rhetoric.",
+      "presentEntities": [
+        "char-war-envoy",
+        "char-headmistress",
+        "char-rue",
+        "loc-great-hall",
+        "collective-the-hundred"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-012",
+      "intent": "One of the Three returns to the Academy with a story that complicates the Headmistress's narrative: Elaine (or Maris or Sal) brings news from the outside that hints at what the Academy extracts for itself, and why so few leave. Their presence fractures the ritual certainties inside the walls.",
+      "presentEntities": [
+        "char-elaine",
+        "char-maris",
+        "char-sal",
+        "char-headmistress",
+        "char-rue",
+        "loc-great-hall",
+        "collective-the-hundred"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-013",
+      "intent": "The Academy divides. Some staff and students insist on bargaining with the Envoy; others want to reinforce the gates or to free themselves. Rue is pulled between defending a place that preserved much of her life and acknowledging what it cost others. The Headmistress makes a choice that forces conflict.",
+      "presentEntities": [
+        "char-rue",
+        "char-headmistress",
+        "char-loren",
+        "collective-the-hundred",
+        "char-war-envoy",
+        "obj-folio"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-014",
+      "intent": "The siege begins. The war's instruments strike the island's approaches; the Academy's defenses—both mundane and those tied to the Binding Seal and Folio—are activated. The cost of the Academy's bargains is made physical; the Hundred pay in fear, history and sacrifice.",
+      "presentEntities": [
+        "loc-mercy-academy",
+        "loc-great-hall",
+        "collective-the-hundred",
+        "char-rue",
+        "char-war-envoy",
+        "obj-binding-seal",
+        "obj-amber-bell",
+        "obj-folio"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-015",
+      "intent": "The Folio reveals what the Binding Seal actually took: a ledgering of lives and a mechanism that prevented departure for most. The Three's exit had costs: names exchanged, bargains fulfilled elsewhere. The Academy's myth of rescue is stripped to its ledgered reality; Rue must confront the life she chose to sell.",
+      "presentEntities": [
+        "obj-folio",
+        "obj-binding-seal",
+        "char-rue",
+        "char-elaine",
+        "char-maris",
+        "char-sal",
+        "char-headmistress"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-016",
+      "intent": "Rue's reckoning and the final choice: negotiate with the War Envoy, use the Binding Seal, or break the Folio's hold. Rue executes a plan born of experience and sacrifice that alters who may leave. The scene resolves the personal arc—Rue owning the consequence of her sale—and sets the Academy's new trajectory.",
+      "presentEntities": [
+        "char-rue",
+        "char-war-envoy",
+        "char-headmistress",
+        "obj-binding-seal",
+        "obj-folio",
+        "collective-the-hundred",
+        "char-loren"
+      ],
+      "targetWords": 1176
+    },
+    {
+      "id": "s-017",
+      "intent": "Aftermath: show the new ledger of the Academy and its consequences for the survivors, Rue's last days and how the island changes. The ending is neither wholly punitive nor wholly redemptive; it asks what we owe ourselves and others when we sign contracts in desperation.",
+      "presentEntities": [
+        "char-rue",
+        "loc-mercy-academy",
+        "obj-folio",
+        "collective-the-hundred",
+        "collective-the-three",
+        "char-elaine",
+        "char-maris",
+        "char-sal"
+      ],
+      "targetWords": 1176
+    }
+  ]
+}

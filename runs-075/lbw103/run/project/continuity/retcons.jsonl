@@ -1,0 +1,2 @@
+{"scene":"s-004","entity":"obj-truck","attribute":"tank_fraction","from":"~0.25","to":"~0.20","reason":"Deliberate consumption during approach and maneuvers; updated estimate in s-004."}
+{"scene":"s-004","entity":"obj-shotgun","attribute":"ammo_count","from":"6","to":"2","reason":"Three shells fired in s-004 plus one earlier in ER; final count noted in s-004."}
