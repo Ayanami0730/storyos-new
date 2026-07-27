@@ -65,27 +65,41 @@ describe("allocate", () => {
     assert.ok(endgame.recentScenes > opening.recentScenes);
   });
 
-  it("matches the schedule from the brief: 1 / 3 / 5", () => {
+  it("matches the schedule as corrected by our own run data: 2 / 3 / 5", () => {
     assert.deepEqual(
       SCHEDULE.map((p) => p.followUpRounds),
-      [1, 3, 5],
+      [2, 3, 5],
     );
     assert.deepEqual(
       SCHEDULE.map((p) => p.repairRounds),
-      [1, 3, 5],
+      [2, 3, 5],
     );
   });
 
   /**
-   * The reallocation, pinned as a test because it is the part that looks like a
-   * regression when read alone. The opening tier gets *fewer* repair rounds than
-   * the old flat default of two, and that is the mechanism: rounds not spent
-   * where defects are rare are what pay for the tier where they are not.
+   * Why the opening tier is 2 and not the 1 the brief first specified.
+   *
+   * This test used to assert the opposite — that the opening spends *less* than the
+   * old flat default of two — and the summary's own falsifiability check reported
+   * against it: pooled over twenty scenes, all five opening scenes hit their ceiling
+   * and committed carrying an unresolved blocking finding, while none of the ten
+   * endgame scenes reached theirs. One round is not an allowance; it is a single
+   * attempt with the degradation path attached, and it fired every time.
+   *
+   * So what is pinned now is the shape rather than the direction against a constant:
+   * the opening is the smallest tier, and it is no longer *below* the uniform arm it
+   * is compared with, because a schedule whose tight end scores worse than the flat
+   * default everywhere is not reallocating anything.
    */
-  it("spends less than the old flat default early, which is what pays for the endgame", () => {
-    const OLD_FLAT_DEFAULT = 2;
-    assert.ok(allocate({ sceneIndex: 1, total: 10 }).repairRounds < OLD_FLAT_DEFAULT);
-    assert.ok(allocate({ sceneIndex: 10, total: 10 }).repairRounds > OLD_FLAT_DEFAULT);
+  it("keeps the opening smallest without dropping it below the uniform arm", () => {
+    const UNIFORM_ARM = 2;
+    const opening = allocate({ sceneIndex: 1, total: 10 });
+    assert.equal(opening.repairRounds, UNIFORM_ARM);
+    assert.ok(allocate({ sceneIndex: 10, total: 10 }).repairRounds > UNIFORM_ARM);
+    assert.equal(
+      Math.min(...SCHEDULE.map((p) => p.repairRounds)),
+      opening.repairRounds,
+    );
   });
 
   it("carries a reason, not only a number", () => {

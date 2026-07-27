@@ -269,6 +269,43 @@ export function sceneBrief(input: {
     "their own sessions and already know their jobs, so a brief that restates their role",
     "wastes a turn. Say what this scene needs that the last one did not.",
     "",
+    /**
+     * The last scene has to end the story, and saying so is not redundant.
+     *
+     * Measured on `lbw081`: the plan's final scene was "Reveal: confrontation", the
+     * writer produced a confrontation that named nobody and closed on *"Not yet.
+     * There is enough for a warrant"*, and the promise ledger recorded the central
+     * contradiction as **paid off** by that scene. Everything downstream agreed the
+     * story was finished: promises 3 declared / 0 unpaid, revision tasks 0. The
+     * frozen judge did not — Accuracy 2 on a locked-room mystery whose room is never
+     * explained.
+     *
+     * Nothing in the loop was positioned to catch it. The verifier checks a scene
+     * against the index, and an unresolved ending contradicts nothing. The promise
+     * ledger counts payoffs and cannot weigh them. The scene card said "reveal" and
+     * a reveal was, in form, delivered.
+     */
+    input.position.index === input.position.total
+      ? [
+          "",
+          "**This is the last scene, so it has to end the story.** Not gesture at an ending —",
+          "end it. If the premise poses a question, this scene answers it: who, how, and how the",
+          "impossibility was possible. A detective story that closes on \"there is enough for a",
+          "warrant\" has not finished; it has stopped.",
+          "",
+          "Two specific ways this has gone wrong here. The writer wrote a confrontation in which",
+          "nobody was named and every contradiction the story had carefully listed was left",
+          "standing — and then declared the promise paid off, so the ledger, the revision pass",
+          "and the finding count all agreed the book was complete. Say in the brief that the",
+          "answer must be *on the page*, in the prose, not implied by the arrangement of clues.",
+          "",
+          "And check it yourself before you commit. You can read the draft; read the last few",
+          "paragraphs and ask whether a reader who stopped there would know what happened. If",
+          "they would not, send it back — this is what your repair rounds are for, and it is the",
+          "one defect no later scene can fix.",
+        ].join("\n")
+      : "",
+    "",
     "Finish when the scene is committed or you have abandoned it. Then say in two or three",
     "sentences what happened: how many attempts, what the verifier objected to, where the",
     "artefacts are.",

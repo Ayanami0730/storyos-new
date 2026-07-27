@@ -36,12 +36,15 @@
  *
  * ## Why it is an allocation and not an increase
  *
- * The opening tier gets *less* than the old constants did: one repair round where
- * the flag defaulted to two. Spending the same everywhere means overpaying where
- * defects are rare to afford a ceiling that is too low where they are not, and
- * moving that spend is the whole point. A run that finishes with its endgame
- * allowance unspent has lost nothing; a run that ran out of rounds on scene 12 of
- * 14 has lost the ending.
+ * The opening tier gets the least and the endgame the most, rather than every tier
+ * getting more. Spending the same everywhere means overpaying where defects are
+ * rare to afford a ceiling that is too low where they are not, and moving that
+ * spend is the whole point. A run that finishes with its endgame allowance unspent
+ * has lost nothing; a run that ran out of rounds on scene 12 of 14 has lost the
+ * ending.
+ *
+ * The opening figure has already been corrected once by this repository's own data
+ * — see the note above `SCHEDULE`, which is the only reason the number moved.
  */
 
 /** Where in the story a scene sits, coarsely enough to act on. */
@@ -77,10 +80,34 @@ export interface TierPolicy {
  * same loop — ask, be told, draft, be checked, repair — so they scale as one.
  */
 export const SCHEDULE: readonly TierPolicy[] = [
-  { tier: "opening", until: 0.3, followUpRounds: 1, repairRounds: 1, recentScenes: 1 },
+  { tier: "opening", until: 0.3, followUpRounds: 2, repairRounds: 2, recentScenes: 1 },
   { tier: "middle", until: 0.6, followUpRounds: 3, repairRounds: 3, recentScenes: 2 },
   { tier: "endgame", until: Infinity, followUpRounds: 5, repairRounds: 5, recentScenes: 3 },
 ];
+
+/**
+ * Why the opening tier is 2 and not the 1 this schedule was first written with.
+ *
+ * The falsifiability check built into the summary reported against it. Pooled over
+ * twenty scenes in five runs: findings per scene were flat across the tiers (1.40
+ * opening, 1.20 middle, 1.40 endgame), **every one of the five opening scenes hit
+ * its ceiling** and committed carrying an unresolved blocking finding, and the
+ * endgame's five rounds were reached by **none** of its ten scenes — the livelock
+ * detector ended those loops at round two.
+ *
+ * So the tight end was the binding one and the wide end was never touched. One
+ * round is not an allowance; it is a single attempt with the repair loop's
+ * degradation path attached, and it fired every time. Two rounds is the minimum at
+ * which "send it back" is a real option, and it is what the flag defaulted to
+ * before the schedule existed, so the opening tier is no longer *below* the
+ * uniform arm it is being compared with.
+ *
+ * The endgame ceiling is left at 5 deliberately even though nothing reached it: it
+ * costs nothing unspent, and the runs that would exercise it — ten or more scenes,
+ * where the endgame tier holds four or five scenes instead of two — have not been
+ * run yet. Lowering it on evidence from four-scene stories would be reading a
+ * schedule about story position off runs that barely have positions.
+ */
 
 export interface SceneAllocation {
   readonly tier: AllocationTier;
@@ -157,9 +184,10 @@ export function allocate(input: {
 const RATIONALE: Readonly<Record<AllocationTier, string>> = {
   opening:
     "opening third: almost nothing has been established yet, so there is little for this " +
-    "scene to contradict and little for the writer to have to look up. The allowance is " +
-    "deliberately tight — rounds not spent here are what pay for the endgame, where the same " +
-    "round buys much more",
+    "scene to contradict and little for the writer to have to look up. The allowance is the " +
+    "smallest in the story — rounds not spent here are what pay for the endgame, where the " +
+    "same round buys much more — but it is two rather than one because every opening scene " +
+    "measured so far used its whole allowance and still committed carrying a defect",
   middle:
     "middle third: enough is on the page now that this scene has to agree with it, and the " +
     "material a contradiction would live in is no longer all in front of you. Ask before " +

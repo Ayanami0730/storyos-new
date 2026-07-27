@@ -412,6 +412,13 @@ export async function writeStory(options: {
         knownEntities,
         allocation,
         prosePath: options.prosePathFor?.(card.id) ?? `manuscript/${card.id}.md`,
+        // Both are on the card and the loop already, and both were nonetheless
+        // missing at the point they decide something: without the target the
+        // verifier cannot tell a short scene from a compressed one, and without the
+        // position no layer knew which scene was the last — which is how a
+        // manuscript that never resolved its premise passed every gate.
+        sceneTargetWords: card.targetWords,
+        position: { index: i + 1, total: (planSink.plan ?? plan).scenes.length },
       },
       { index, collaborators, artifacts: options.artifacts },
     );

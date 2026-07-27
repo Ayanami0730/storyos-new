@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.6.2";
+export const VERSION = "0.7.0";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -24,12 +24,15 @@ export const VERSION = "0.6.2";
  */
 export const VERSION_NOTE =
   "orchestrator-driven scene loop with per-scene compute allocated by position in " +
-  "the story (1/3/5 repair rounds and follow-ups across the opening, middle and " +
+  "the story (2/3/5 repair rounds and follow-ups across the opening, middle and " +
   "final 40%, with recall depth 1/2/3), path-addressed artefacts, OS-enforced " +
   "write gate (docker read-only mount), cost-triggered level-1 compaction, " +
   "baseline-comparable token accounting (input+output, cache reads excluded), and a " +
-  "per-scene verifier session; the verifier runs the same gpt-5-mini backbone as every\n" +
-  "other role and every baseline, with cross-family available as an ablation";
+  "per-scene verifier session; the verifier runs the same gpt-5-mini backbone as every " +
+  "other role and every baseline, with cross-family available as an ablation, and " +
+  "checks two axes — ConStory consistency subtypes and a craft axis distilled from the " +
+  "LongBench-Write and LongStoryEval rubrics — against a deterministically assembled " +
+  "claim-by-claim comparison with canon";
 
 /**
  * Behaviours that could move a measured number, and when they landed.
@@ -43,6 +46,29 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.7.0",
+    note:
+      "the verifier gets a second axis and the evidence to use the first one. Three changes, " +
+      "all of which move numbers. (1) A **craft axis**: findings for the defects the quality " +
+      "rubrics penalise and ConStory's nineteen subtypes cannot express, each check naming the " +
+      "graded dimension that penalises it — reported through a separate tool and counted in a " +
+      "separate column, because pooling them would inflate EID with something that is not an " +
+      "error in that taxonomy. Five checks may block, with checkable evidence required and a " +
+      "cap of two per round; the rest warn. Motivated by the two worst defects found by " +
+      "reading our own finished manuscripts, neither of which any layer could report: a story " +
+      "that stopped instead of ending, and scenes that restate each other. (2) A " +
+      "**deterministic dossier** in front of the verifier: every claim the draft makes against " +
+      "what canon holds for it, with first establishments labelled as normal. The brief has " +
+      "told the verifier to read the index since v0.1 and the measured result was three shell " +
+      "reads across a nineteen-scene run — and eleven findings whose contradicting side was an " +
+      "absence. It also finally passes the deterministic layer's findings, which the " +
+      "verifier's own standing instructions have always told it to read. (3) `canon_context` " +
+      "on a finding: the writer has no index access, so the verifier is the only participant " +
+      "that can put a fact in front of it. Also: the opening tier's repair allowance goes 1 → " +
+      "2, because the falsifiability check reported against the schedule — 5/5 opening scenes " +
+      "hit their ceiling and committed carrying a defect, 0/10 endgame scenes reached theirs.",
+  },
   {
     version: "0.6.2",
     note:

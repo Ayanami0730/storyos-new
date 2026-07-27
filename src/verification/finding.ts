@@ -16,6 +16,7 @@
  * change this scene or whether the canon is what is wrong.
  */
 
+import { type CraftCheck, MAX_BLOCKING_CRAFT, craftCheck } from "./craft.ts";
 import {
   type ErrorCategory,
   type EvidenceTier,
@@ -52,6 +53,18 @@ export type EditLocus =
 
 export type Severity = "warning" | "error" | "fatal";
 
+/**
+ * Which of the two things we are scored on this finding belongs to.
+ *
+ * Kept on the finding rather than inferred from the subtype because the two are
+ * counted differently and must never be pooled. `consistency` findings are
+ * ConStory subtypes and feed EID, the metric of record for Table 1's second
+ * column; a craft finding counted among them would inflate an error density with
+ * something that is not an error in that taxonomy. Everything that aggregates
+ * findings has to filter on this field.
+ */
+export type FindingAxis = "consistency" | "craft";
+
 export interface Finding {
   /**
    * Stable across rounds: same defect in the same place yields the same id, so
@@ -60,8 +73,9 @@ export interface Finding {
    */
   readonly id: string;
   readonly subtype: string;
-  readonly category: ErrorCategory;
-  readonly tier: EvidenceTier;
+  readonly axis: FindingAxis;
+  readonly category: ErrorCategory | "craft";
+  readonly tier: EvidenceTier | "craft";
   /** Which layer found it: "schema", "reference", "continuity", "llm", "global". */
   readonly validator: string;
   readonly severity: Severity;
@@ -82,6 +96,22 @@ export interface Finding {
    * scene this system has dropped.
    */
   readonly suggestion?: string;
+  /**
+   * The canonical facts the writer needs in order to carry out the repair.
+   *
+   * The writer has no shell, no index and no `read_index` — that exception is
+   * deliberate (measured: it issued four shell commands in a whole run and asked
+   * the builder nothing), and it means the verifier is the *only* participant that
+   * can put a fact in front of it. Until now the only channel was
+   * `contradicts.quote`, which carries the one passage being contradicted and
+   * nothing else, so a finding like "Kerr cannot know this yet" arrived without the
+   * one thing needed to fix it: what Kerr does know as of this scene, and where
+   * that is recorded.
+   *
+   * Quoted with its source, so the writer can put the corrected fact on the page
+   * without inventing it — the failure mode the whole index exists to prevent.
+   */
+  readonly canonContext?: string;
   readonly editLocus: EditLocus;
 }
 
@@ -104,6 +134,7 @@ export function makeFinding(input: {
   readonly evidence: Evidence;
   readonly contradicts?: Evidence;
   readonly suggestion?: string;
+  readonly canonContext?: string;
   readonly editLocus: EditLocus;
 }): Finding {
   const spec = subtypeSpec(input.subtype);
@@ -155,6 +186,7 @@ export function makeFinding(input: {
   return {
     id: findingId(input.subtype, input.evidence, input.contradicts),
     subtype: input.subtype,
+    axis: "consistency",
     category: spec.category,
     tier: spec.tier,
     validator: input.validator,
@@ -163,8 +195,139 @@ export function makeFinding(input: {
     evidence: input.evidence,
     ...(input.contradicts ? { contradicts: input.contradicts } : {}),
     ...(input.suggestion?.trim() ? { suggestion: input.suggestion.trim() } : {}),
+    ...(input.canonContext?.trim() ? { canonContext: input.canonContext.trim() } : {}),
     editLocus: input.editLocus,
   };
+}
+
+/**
+ * Build a craft finding, refusing the shapes that make one unfalsifiable.
+ *
+ * The refusals are the whole reason this is a separate constructor rather than a
+ * flag on the one above. A consistency finding is disciplined by its taxonomy: the
+ * subtype fixes what evidence is required and whether it may block. Craft has no
+ * such external discipline — a model asked to judge prose can always produce a
+ * sentence of disapproval — so the discipline has to be here:
+ *
+ *  - **`error` only for a check that may block.** The list is short and every
+ *    member of it is objective enough to be argued about with quotes.
+ *  - **A blocking craft finding must carry its evidence in the shape the check
+ *    demands.** `pair` means two verbatim quotes; `state-pair` means the scene's
+ *    opening state and closing state, or the question the premise poses and where
+ *    the draft answers it. Both are things a reader could check. "The prose is
+ *    flat" is not, which is exactly why `flat_diction` cannot block.
+ *  - **A suggestion is mandatory.** A craft warning with no instruction is a
+ *    complaint, and the writer's only options against one are to ignore it or to
+ *    damage the scene guessing at what was meant. The second is what cost this
+ *    project 8.4 points once already.
+ */
+export function makeCraftFinding(input: {
+  readonly checkId: string;
+  readonly severity: Severity;
+  readonly reasoning: string;
+  readonly evidence: Evidence;
+  /** The passage repeated or contradicted; required for `pair` checks. */
+  readonly contradicts?: Evidence;
+  /** For `state-pair` checks: "open: … / close: …" or "question: … / answer: …". */
+  readonly statePair?: { readonly before: string; readonly after: string };
+  readonly suggestion: string;
+  readonly canonContext?: string;
+}): Finding {
+  const check: CraftCheck = craftCheck(input.checkId);
+
+  if (!input.evidence.quote.trim()) {
+    throw new FindingError(`${check.id}: evidence.quote must be a verbatim passage, not empty`);
+  }
+  if (!input.reasoning.trim()) {
+    throw new FindingError(`${check.id}: reasoning must say why this is a defect`);
+  }
+  if (!input.suggestion.trim()) {
+    throw new FindingError(
+      `${check.id}: suggestion is required. The writer cannot look anything up, so a craft ` +
+        `finding without an instruction is a complaint it can only respond to by guessing — ` +
+        `and a guessed craft repair damages prose that was working.`,
+    );
+  }
+  if (input.severity !== "warning" && !check.canBlock) {
+    throw new FindingError(
+      `${check.id} may only be a warning. It is a judgement about quality that a reader ` +
+        `could reasonably disagree with, so it reaches the writer without costing a repair ` +
+        `round. The checks that may block are the ones whose evidence is checkable.`,
+    );
+  }
+  if (input.severity !== "warning" && check.evidence === "pair" && !input.contradicts?.quote.trim()) {
+    throw new FindingError(
+      `${check.id} blocks only with both sides quoted: this draft's passage and the earlier ` +
+        `passage it repeats or contradicts. Without the second quote the writer cannot tell ` +
+        `what to cut, and neither can a reader auditing this run.`,
+    );
+  }
+  if (
+    input.severity !== "warning" &&
+    check.evidence === "state-pair" &&
+    !(input.statePair?.before.trim() && input.statePair?.after.trim())
+  ) {
+    throw new FindingError(
+      `${check.id} blocks only with a named state pair — what is true when the scene opens ` +
+        `and what is true when it closes (or, for an ending, the question the premise poses ` +
+        `and where the draft answers it). If you cannot name both, you have an impression ` +
+        `rather than a finding: report it as a warning.`,
+    );
+  }
+
+  const statePair = input.statePair
+    ? `open/question: ${input.statePair.before.trim()} → close/answer: ${input.statePair.after.trim()}`
+    : "";
+
+  return {
+    // The state pair participates in identity so a rewrite that genuinely moves
+    // the scene produces a different finding, and one that does not produces the
+    // same id — which is what the livelock detector reads.
+    id: findingId(check.id, input.evidence, input.contradicts ?? (statePair ? { quote: statePair, source: "state" } : undefined)),
+    subtype: check.id,
+    axis: "craft",
+    category: "craft",
+    tier: "craft",
+    validator: "craft",
+    severity: input.severity,
+    reasoning: [input.reasoning.trim(), statePair].filter(Boolean).join("\n  "),
+    evidence: input.evidence,
+    ...(input.contradicts ? { contradicts: input.contradicts } : {}),
+    suggestion: input.suggestion.trim(),
+    ...(input.canonContext?.trim() ? { canonContext: input.canonContext.trim() } : {}),
+    editLocus: { kind: "draft", quote: input.evidence.quote },
+  };
+}
+
+/**
+ * Demote craft blockers beyond the cap to warnings, worst-first by report order.
+ *
+ * Applied where the findings leave the verifier rather than where they are built,
+ * because the cap is a property of a round: any one craft finding may legitimately
+ * block, and it is the third one in the same round that is the problem. A round
+ * spent on the third-most-important craft defect is a round not spent on a
+ * contradiction, and contradictions are counted against us by name.
+ *
+ * Demoted rather than dropped. The observation was still made, the writer still
+ * sees it, and the summary can still count how often the cap bound — which is the
+ * only way to find out whether the cap is set anywhere near right.
+ */
+export function capCraftBlockers(findings: readonly Finding[]): {
+  readonly findings: readonly Finding[];
+  readonly demoted: number;
+} {
+  let allowed = MAX_BLOCKING_CRAFT;
+  let demoted = 0;
+  const out = findings.map((f) => {
+    if (f.axis !== "craft" || f.severity === "warning") return f;
+    if (allowed > 0) {
+      allowed -= 1;
+      return f;
+    }
+    demoted += 1;
+    return { ...f, severity: "warning" as Severity };
+  });
+  return { findings: out, demoted };
 }
 
 /**
@@ -280,8 +443,16 @@ export function renderRepairBrief(
 ): string {
   if (findings.length === 0) return "No findings.";
   const rank: Record<Severity, number> = { fatal: 0, error: 1, warning: 2 };
+  // Consistency before craft at equal severity. Both are worth fixing, and only
+  // one of them is counted by name in a metric of record — so if the writer runs
+  // out of attention partway down the list, the cheaper thing to lose is the craft
+  // note.
+  const axisRank = (f: Finding) => (f.axis === "craft" ? 1 : 0);
   const ordered = [...findings].sort(
-    (a, b) => rank[a.severity] - rank[b.severity] || a.category.localeCompare(b.category),
+    (a, b) =>
+      rank[a.severity] - rank[b.severity] ||
+      axisRank(a) - axisRank(b) ||
+      a.category.localeCompare(b.category),
   );
 
   const lines: string[] = [];
@@ -298,15 +469,25 @@ export function renderRepairBrief(
     );
   }
   for (const f of ordered) {
-    lines.push(`[${f.severity}] ${f.subtype}  (${f.id}, found by ${f.validator})`);
+    lines.push(
+      `[${f.severity}] ${f.subtype}  (${f.id}, ${f.axis}, found by ${f.validator})`,
+    );
     lines.push(`  why: ${f.reasoning}`);
     lines.push(`  in your draft: "${f.evidence.quote}"  <${locate(f.evidence)}>`);
     if (f.contradicts) {
       lines.push(
-        `  contradicts: "${f.contradicts.quote}"  <${locate(f.contradicts)}>`,
+        `  ${f.axis === "craft" ? "already delivered here" : "contradicts"}: ` +
+          `"${f.contradicts.quote}"  <${locate(f.contradicts)}>`,
       );
     }
     if (f.suggestion) lines.push(`  do this: ${f.suggestion}`);
+    // The one channel through which a fact can reach the writer at all. Placed
+    // after the instruction because it is what makes the instruction performable:
+    // "say what Kerr actually knows" is only actionable next to what he knows.
+    if (f.canonContext) {
+      lines.push(`  what the index says (you cannot look this up yourself):`);
+      for (const line of f.canonContext.split("\n")) lines.push(`    ${line}`);
+    }
     switch (f.editLocus.kind) {
       case "draft":
         lines.push(`  fix here: "${f.editLocus.quote}"`);

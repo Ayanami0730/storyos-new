@@ -24,7 +24,8 @@ import {
   type SceneDelta,
   isEventShapedAttribute,
 } from "../verification/deterministic.ts";
-import { makeFinding } from "../verification/finding.ts";
+import { CRAFT_CHECKS, blockingCraftIds, renderCraftChecklist } from "../verification/craft.ts";
+import { makeCraftFinding, makeFinding } from "../verification/finding.ts";
 import { LITERARY_EXEMPTIONS, SUBTYPES, subtypesForTier } from "../verification/taxonomy.ts";
 import { type Draft, type SceneCollaborators, VerificationUnavailable } from "./scene-loop.ts";
 import { type ResidentAgents, TurnFailed } from "../agents/residents.ts";
@@ -198,6 +199,18 @@ function verifierTools(live: () => Capture, sceneId: () => string): unknown[] {
             "and 'move the key's discovery to after Hale opens the door, and cut the later " +
             "clause claiming it was already in the lock' is.",
         }),
+        canon_context: Type.Optional(
+          Type.String({
+            description:
+              "The facts from the index the writer needs to perform the fix, quoted with " +
+              "their source. You are the only participant that can put a fact in front of " +
+              "it — it has no shell and no index access — so a finding that says a character " +
+              "cannot know something must also say what they do know, and where that is " +
+              "recorded. Without it the writer's only options are to ignore you or to invent " +
+              "a fact, and an invented fact becomes canon with nothing recording that it was " +
+              "invented.",
+          }),
+        ),
         edit_locus: Type.String({
           description: "draft | canon | unresolved — where the fix belongs",
         }),
@@ -217,6 +230,7 @@ function verifierTools(live: () => Capture, sceneId: () => string): unknown[] {
               reasoning: args.reasoning ?? "",
               evidence: { quote: args.quote ?? "", source: sceneId() },
               ...(args.suggestion ? { suggestion: args.suggestion } : {}),
+              ...(args.canon_context ? { canonContext: args.canon_context } : {}),
               ...(args.contradicts_quote
                 ? {
                     contradicts: {
@@ -242,6 +256,107 @@ function verifierTools(live: () => Capture, sceneId: () => string): unknown[] {
           // The constructor's refusals are the useful feedback: a one-sided
           // contradiction pair, a negative inference asked to block, empty
           // evidence. Hand them straight back rather than dropping the finding.
+          return toolText(`rejected: ${String(error)}`);
+        }
+      },
+    },
+    /**
+     * The craft channel, separate from `write_findings` on purpose.
+     *
+     * One tool with a mode flag would let a craft judgement be filed as a ConStory
+     * subtype, and the two are counted into different columns of the results table:
+     * consistency findings feed EID, the metric of record, and a craft finding
+     * pooled into that number would inflate an error density with something that is
+     * not an error in that taxonomy. Two tools make the axis a choice the verifier
+     * has to make explicitly, and make it visible in the trace which one it reached
+     * for.
+     */
+    {
+      label: "Write craft finding",
+      name: "write_craft_finding",
+      description:
+        "Report a defect in the writing itself — something the graders penalise that is not " +
+        "a consistency error. One call per defect.",
+      parameters: Type.Object({
+        check: Type.String({
+          description: `One of: ${CRAFT_CHECKS.map((c) => c.id).join(", ")}`,
+        }),
+        severity: Type.String({
+          description:
+            `warning | error. Only these may be error, and only with their evidence: ` +
+            `${blockingCraftIds().join(", ")}. Everything else is a warning that reaches the ` +
+            `writer without costing it a repair round.`,
+        }),
+        reasoning: Type.String({ description: "Why this is a defect, in a sentence or two" }),
+        quote: Type.String({ description: "Verbatim offending passage from the draft" }),
+        contradicts_quote: Type.Optional(
+          Type.String({
+            description:
+              "For restates_prior_scene and internal_incoherence: the verbatim passage that " +
+              "already delivered this, or the half of the draft it contradicts. Required to " +
+              "block.",
+          }),
+        ),
+        contradicts_source: Type.Optional(
+          Type.String({ description: "Which scene or file that came from" }),
+        ),
+        state_before: Type.Optional(
+          Type.String({
+            description:
+              "For off_brief, nothing_changes and ending_not_delivered: what is true when " +
+              "the scene opens — or, for an ending, the question the premise poses. Required " +
+              "to block.",
+          }),
+        ),
+        state_after: Type.Optional(
+          Type.String({
+            description:
+              "The matching half: what is true when the scene closes, or where the draft " +
+              "answers the question. If you cannot name a difference, that is the finding.",
+          }),
+        ),
+        suggestion: Type.String({
+          description:
+            "What the writer should actually do, concretely enough to carry out — which " +
+            "paragraph to cut, which beat to dramatise instead of summarising, what the last " +
+            "line has to establish. Mandatory: a craft note with no instruction is a " +
+            "complaint, and a guessed craft repair damages prose that was working.",
+        }),
+        canon_context: Type.Optional(
+          Type.String({
+            description:
+              "Facts from the index the writer needs to carry out the fix, quoted with their " +
+              "source. It cannot look anything up.",
+          }),
+        ),
+      }),
+      execute: async (_id: string, args: Record<string, string>) => {
+        try {
+          live().findings.push(
+            makeCraftFinding({
+              checkId: args.check!,
+              severity: (args.severity === "error" ? "error" : "warning") as
+                | "warning"
+                | "error",
+              reasoning: args.reasoning ?? "",
+              evidence: { quote: args.quote ?? "", source: sceneId() },
+              ...(args.contradicts_quote
+                ? {
+                    contradicts: {
+                      quote: args.contradicts_quote,
+                      source: args.contradicts_source ?? "an earlier scene",
+                    },
+                  }
+                : {}),
+              ...(args.state_before && args.state_after
+                ? { statePair: { before: args.state_before, after: args.state_after } }
+                : {}),
+              suggestion: args.suggestion ?? "",
+              ...(args.canon_context ? { canonContext: args.canon_context } : {}),
+            }),
+          );
+          return toolText("recorded.");
+        } catch (error) {
           return toolText(`rejected: ${String(error)}`);
         }
       },
@@ -279,12 +394,82 @@ const CATEGORY_CHECKLIST = [
   "  previous scene are the comparison.",
 ].join("\n");
 
-const VERIFIER_BRIEF = [
+/**
+ * The craft half of the brief, stating where the checks come from.
+ *
+ * The provenance is load-bearing rather than decorative. A verifier told to judge
+ * quality will report what it dislikes, and taste is unbounded — so the axis is
+ * presented as what it is: a finite list derived from the two rubrics this system
+ * is actually scored by, with each item naming the dimension that penalises it.
+ * That bounds the axis in the only way that survives an eager model, and it tells
+ * the verifier why a check exists, which is what decides whether it is applied
+ * where it matters or ticked off.
+ */
+function craftBrief(finalScene: boolean): string {
+  return [
+    "## Second axis: the writing itself",
+    "",
+    "The nineteen subtypes above are consistency errors, and they are one of the two numbers",
+    "this system is scored on. The other is quality, judged on rubrics that penalise things no",
+    "consistency subtype can express — and that is where our deficit actually is: measured on",
+    "the same task, our length score was the best in the field and our quality score was 0.5 to",
+    "0.8 points below the frontier on a five-point scale, where one point of quality is worth",
+    "ten points of the mean.",
+    "",
+    "Two of the worst defects found by reading our finished manuscripts were invisible to a",
+    "consistency gate by construction. The story **had no ending** — the final scene was a",
+    'confrontation that named nobody and closed on "Not yet. There is enough for a warrant" —',
+    "and an unresolved ending contradicts nothing, so there was no subtype to report it as. And",
+    "the scenes **restate each other**: same content, different words, so no textual comparison",
+    "sees it, and it is not a contradiction. It is what makes a long story feel padded.",
+    "",
+    "So report those with `write_craft_finding`. The checks, each naming the scored dimension",
+    "that penalises it:",
+    "",
+    renderCraftChecklist({ finalScene }),
+    "",
+    "Two rules, both enforced by the tool rather than left to your judgement:",
+    "",
+    `Only these may be **error** and therefore cost the writer a round: ${blockingCraftIds().join(", ")}.`,
+    "Everything else is a warning — it reaches the writer and costs nothing. That asymmetry is",
+    "deliberate: a craft judgement a reader could reasonably disagree with must not be able to",
+    "hold up a scene.",
+    "",
+    "And a blocking craft finding needs **checkable evidence**, in the shape the check names.",
+    "Either two verbatim quotes (this draft, and the earlier passage it repeats or the half of",
+    "itself it contradicts), or a named state pair — what is true when the scene opens and what",
+    "is true when it closes. `nothing_changes` is precisely the claim that you cannot name a",
+    "difference, so name both halves and let the pair be the evidence. If you cannot produce",
+    "the evidence, you have an impression: report it as a warning, which is a perfectly useful",
+    "thing to do.",
+    "",
+    "`suggestion` is mandatory on every craft finding, warnings included. The writer cannot see",
+    "the manuscript, the index or the rubric. A craft note without an instruction is a complaint",
+    "it can only answer by guessing, and a guessed craft repair damages prose that was working —",
+    "which is not hypothetical: a run whose findings the writer could not act on scored 8.4",
+    "points below one with fewer, better ones.",
+    "",
+    "At most two craft findings can block one round, whatever you report. Consistency comes",
+    "first when both are present: it is counted by name and craft is not. So if you have three",
+    "craft blockers, the third is a warning — pick the two that most damage the scene.",
+  ].join("\n");
+}
+
+const VERIFIER_BRIEF_HEAD = [
   "Check this scene against the index and the scene card.",
   "",
-  "Read before you judge. You have `bash` and `read` over the whole project, and a",
-  "finding that quotes the actual earlier scene is one the writer can act on rather",
-  "than argue with. Work through the five categories, using the files named:",
+  "**Start with the computed evidence below.** The claim-by-claim comparison against canon is",
+  "assembled for you before you are called, so you do not have to recall what a file says: it",
+  "names every claim this draft makes, what canon holds for it, and whether that is a conflict,",
+  "a declared change, an agreement, or a first establishment. A finding about any of those",
+  "should quote from there. That block exists because the previous version of this brief told",
+  "you to read the index and the measured result was three shell reads across a nineteen-scene",
+  "run — and eleven findings whose contradicting side was an absence, because a model asked",
+  "what a file says without being shown it produces a plausible answer rather than a blank.",
+  "",
+  "Then read what the comparison cannot settle. You have `bash` and `read` over the whole",
+  "project, and a finding that quotes the actual earlier scene is one the writer can act on",
+  "rather than argue with. Work through the five categories, using the files named:",
   "",
   CATEGORY_CHECKLIST,
   "",
@@ -304,6 +489,14 @@ const VERIFIER_BRIEF = [
   "claiming it was already in the lock` can be carried out. A scene that cannot be repaired",
   "in the rounds available is committed with your finding attached to it, so a vague",
   "suggestion becomes a permanent defect in the book rather than a lost round.",
+  "",
+  "And use `canon_context` whenever the fix depends on a fact. You are the only participant",
+  "who can put one in front of the writer — it has no shell and no index — so a finding that",
+  "says a character cannot know something yet has to also say what they *do* know as of this",
+  "scene, quoted, with the file it came from. Without that the writer has two options and both",
+  "are bad: ignore you, or invent the fact. An invented fact reaches the page with nothing",
+  "anywhere recording that it was invented, which is the failure the whole index exists to",
+  "prevent. The same applies to a timeline, a distance, a name, a piece of history: quote it.",
   "",
   "These are not defects:",
   ...LITERARY_EXEMPTIONS.map((e) => `  - ${e}`),
@@ -335,9 +528,15 @@ const VERIFIER_BRIEF = [
   "query that returned nothing, you do not have a contradiction — you have a scene doing its",
   "job. Report nothing.",
   "",
-  "Nor is an unmet request a defect. The orchestrator's brief may ask for things; if the",
-  "draft does not deliver one, that is between it and the orchestrator. Your findings are",
-  "about the prose contradicting the world, not about instructions being followed.",
+  "Nor is an unmet request a *consistency* defect. The orchestrator's brief may ask for things",
+  "it invented on the spot; a draft that declines one is not contradicting the world, and no",
+  "subtype fits. Do not file that with `write_findings`.",
+  "",
+  "The scene card is different, and the distinction matters now that there are two channels. A",
+  "card is the plan's account of what this scene is for, so a scene that does something else",
+  "belongs on the craft axis as `off_brief` — not because an instruction was disobeyed, but",
+  "because the task's own requirements are what the Relevance dimension is scored against. A",
+  "brief invented mid-run is not; if the two disagree, the card wins.",
   "",
   "Why this is stated so heavily: a run where the verifier raised eleven findings of this",
   "shape scored *worse* than one that raised five real ones. The writer cannot tell a",
@@ -351,6 +550,10 @@ const VERIFIER_BRIEF = [
   "given, not the limit of what you may consult, and a finding that quotes the actual",
   "earlier scene is one the writer can act on rather than argue with.",
 ].join("\n");
+
+function verifierBrief(finalScene: boolean): string {
+  return `${VERIFIER_BRIEF_HEAD}\n\n${craftBrief(finalScene)}`;
+}
 
 
 /**
@@ -573,11 +776,13 @@ export function residentCollaborators(options: {
         return { prose: capture.prose, delta: capture.delta };
       },
 
-      async review({ packet, draft, note }) {
+      async review({ packet, draft, note, dossier, finalScene }) {
         capture.findings = [];
         const task = [
-          VERIFIER_BRIEF,
+          verifierBrief(finalScene),
           orchestratorNote(note),
+          "",
+          dossier,
           "",
           `## Context the writer was given\n\n${packet.rendered}`,
           "",

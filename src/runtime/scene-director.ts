@@ -46,8 +46,11 @@ import {
 import { SceneTransaction } from "../transaction/machine.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
 import { verifyDeterministic } from "../verification/deterministic.ts";
+import { MAX_BLOCKING_CRAFT } from "../verification/craft.ts";
+import { renderDossier } from "../verification/dossier.ts";
 import {
   blocking,
+  capCraftBlockers,
   recurringSubtypes,
   renderRepairBrief,
   stalled,
@@ -140,6 +143,8 @@ export class SceneDirector {
   #unresolved: readonly Finding[] = [];
   /** Why the loop stopped trying, in words the orchestrator can repeat. */
   #defectNote: string | null = null;
+  /** Craft blockers demoted to warnings by the per-round cap, across the scene. */
+  #craftDemoted = 0;
 
   constructor(request: SceneRequest, deps: DirectorDeps) {
     this.#request = request;
@@ -444,14 +449,36 @@ export class SceneDirector {
     let unavailable: string | null = null;
     if (blocking(findings).length === 0) {
       try {
-        findings = [
-          ...findings,
-          ...(await this.#deps.collaborators.review({
-            packet: this.#packet!,
-            draft: this.#lastDraft!,
-            ...(note ? { note } : {}),
-          })),
-        ];
+        const reviewed = await this.#deps.collaborators.review({
+          packet: this.#packet!,
+          draft: this.#lastDraft!,
+          ...(note ? { note } : {}),
+          dossier: renderDossier({
+            delta: this.#lastDraft!.delta,
+            canon: this.#request.canon,
+            knownEntities: this.#request.knownEntities,
+            deterministic: deterministic.findings,
+            words: {
+              draft: this.#lastDraft!.prose.split(/\s+/).filter(Boolean).length,
+              sceneTarget: this.#request.sceneTargetWords ?? null,
+            },
+          }),
+          finalScene:
+            this.#request.position !== undefined &&
+            this.#request.position.index === this.#request.position.total,
+        });
+        /**
+         * The craft cap is applied here, where a round's findings are complete.
+         *
+         * Any single craft blocker may be legitimate; three of them in one round
+         * displace the consistency repairs that a metric of record counts by name.
+         * Demoting rather than dropping keeps the observation in front of the writer
+         * and keeps the count in the summary, which is the only way to learn whether
+         * the cap is set anywhere near right.
+         */
+        const capped = capCraftBlockers(reviewed);
+        this.#craftDemoted += capped.demoted;
+        findings = [...findings, ...capped.findings];
       } catch (error) {
         if (!(error instanceof VerificationUnavailable)) throw error;
         // The scene still commits: the deterministic layer ran, and discarding
@@ -556,6 +583,7 @@ export class SceneDirector {
       );
     }
 
+    const craftBlockers = blockers.filter((f) => f.axis === "craft").length;
     this.#tx.transition("REPAIR_REQUIRED", "verifier", { findings });
     // The recurring classes are computed against the round that is ending, so
     // they have to be read before `#previousFindings` is replaced.
@@ -566,7 +594,8 @@ export class SceneDirector {
     return report(
       "verify",
       this.state,
-      `${this.#request.sceneId} needs repair: ${blockers.length} blocking finding(s), ` +
+      `${this.#request.sceneId} needs repair: ${blockers.length} blocking finding(s) ` +
+        `(${blockers.length - craftBlockers} consistency, ${craftBlockers} craft), ` +
         `${warnings} warning(s).` +
         (this.#lastAuditPath ? ` Audit written to ${this.#lastAuditPath}.` : "") +
         ` ${this.#tx.repairBudgetRemaining} repair round(s) left. Call call_writer to repair.`,
@@ -712,6 +741,12 @@ export class SceneDirector {
         derivedPaths: this.#derived.map((d) => d.relPath),
         warnings: [
           ...this.#warnings,
+          ...(this.#craftDemoted > 0
+            ? [
+                `${this.#craftDemoted} craft finding(s) were demoted to warnings by the ` +
+                  `per-round cap of ${MAX_BLOCKING_CRAFT}`,
+              ]
+            : []),
           ...(this.#defectNote
             ? [`committed with ${this.#unresolved.length} unresolved finding(s): ${this.#defectNote}`]
             : []),

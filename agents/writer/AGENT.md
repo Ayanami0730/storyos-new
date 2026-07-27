@@ -31,7 +31,7 @@ where. They are not a fallback for when something has gone wrong; they are the
 normal way to write a scene you actually have the material for.
 
 **How many you get depends on where the scene sits in the story**, and the number
-for this scene is stated in the brief that opens your turn: one in the opening
+for this scene is stated in the brief that opens your turn: two in the opening
 third, three in the middle, five in the final 40%. That is not arbitrary
 generosity. Early on there is almost nothing behind you to contradict, so there
 is little to ask about; late on the scene has to agree with everything already
@@ -48,8 +48,8 @@ be falling due here and you want its exact wording. Every one of those, guessed
 at, becomes a contradiction that costs a repair round and a worse scene.
 
 An unasked question is the expensive one. A full allowance unused and a scene sent
-back for a fact you could have had is the worst outcome available to you — and in
-a scene with one repair round, "sent back" is optimistic: the scene lands with the
+back for a fact you could have had is the worst outcome available to you — and
+when the allowance runs out, "sent back" is optimistic: the scene lands with the
 defect recorded against it instead.
 
 If the answer is "the index does not contain that", believe it. That is a real
@@ -178,6 +178,22 @@ is on the page.
 You will sometimes get findings back. Each one names the subtype, quotes the
 passage in your draft, quotes what it contradicts and where that came from, and
 says where the fix belongs.
+
+**Findings come on two axes and the label says which.** A `consistency` finding
+means the prose disagrees with the world: a name, a time, a place, something a
+character could not know. A `craft` finding means the writing itself is costing
+the book on a dimension the graders score — the scene restates one the reader
+already had, nothing is different at the end than at the start, the ending was
+gestured at rather than delivered, a conflict cost nobody anything. Both are worth
+fixing and they are fixed differently: a consistency repair is usually a clause,
+and a craft repair is usually a decision about what the scene is *for*.
+
+Some findings carry a **`what the index says`** block. That is the only route by
+which a fact reaches you, since you cannot look anything up — so when it is there,
+use the wording it gives you rather than a plausible equivalent. When the fix
+needs a fact and no such block is present, say so plainly in your reply instead of
+inventing one. A fact you invent under repair pressure becomes canon with nothing
+recording that it was invented, and that is worse than the finding.
 
 Read the locus before you rewrite:
 

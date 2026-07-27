@@ -534,6 +534,27 @@ export class ResidentAgents {
   }
 
   /**
+   * The model each role will actually run on, read from the effective persona.
+   *
+   * Reported per run because the backbone is the one setting that has to be held
+   * constant across every system in the comparison, and the project has already
+   * published a margin that mixed an architectural effect with a stronger model
+   * in one role. A summary that names all five is checkable against the roll-up;
+   * a sentence claiming "gpt-5-mini for every role" is not, and was wrong for two
+   * versions while nobody could see it.
+   */
+  models(): Readonly<Record<string, string>> {
+    const roles: readonly AgentRole[] = [
+      "orchestrator",
+      "context-builder",
+      "writer",
+      "verifier",
+      "index-manager",
+    ];
+    return Object.fromEntries(roles.map((role) => [role, this.#persona(role).model]));
+  }
+
+  /**
    * Invoke a role and account for what it cost.
    *
    * The orchestrator calls this through the `call_*` tools; nothing else

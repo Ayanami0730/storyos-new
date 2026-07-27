@@ -126,7 +126,19 @@ export const PERSONAS: readonly PersonaSpec[] = [
     // why the cross-family default was withdrawn. `--verifier-model` restores it as
     // an ablation.
     model: "gpt-5-mini",
-    writeTools: ["write_findings"],
+    /**
+     * Two report channels, not one.
+     *
+     * `write_findings` is ConStory's nineteen consistency subtypes and feeds EID,
+     * the metric of record for the results table's consistency column.
+     * `write_craft_finding` is the axis the graders' quality rubrics penalise and
+     * that taxonomy cannot express — a scene that repeats an earlier one, a story
+     * that stops instead of ending. They are separate tools rather than one tool
+     * with a flag because their findings are counted into different columns, and a
+     * craft judgement filed as a consistency subtype would inflate an error density
+     * with something that is not an error in it.
+     */
+    writeTools: ["write_findings", "write_craft_finding"],
     mayDelegate: false,
   },
   {

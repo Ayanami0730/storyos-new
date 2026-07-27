@@ -174,6 +174,23 @@ export interface SceneCollaborators {
     readonly packet: ContextPacket;
     readonly draft: Draft;
     readonly note?: string;
+    /**
+     * The claim-by-claim comparison against canon, computed deterministically.
+     *
+     * Passed rather than left to the verifier to go and find, because the version
+     * that left it to the verifier produced three shell reads in a nineteen-scene
+     * run and eleven findings whose contradicting side was an absence. See
+     * `verification/dossier.ts`.
+     */
+    readonly dossier: string;
+    /**
+     * Whether this is the last scene of the plan.
+     *
+     * The one craft check that only exists here — whether the story actually ends —
+     * is also the worst defect a finished manuscript of ours has carried, and it
+     * passed every layer because an unresolved ending contradicts nothing.
+     */
+    readonly finalScene: boolean;
   }): Promise<readonly Finding[]>;
 }
 
@@ -197,6 +214,18 @@ export interface SceneRequest {
   readonly prosePath: string;
   /** Where the declared delta lands. Defaults under `continuity/`. */
   readonly deltaPath?: string;
+  /**
+   * This scene's own word target, and where the scene sits in the plan.
+   *
+   * Both are already on the scene card and on the allocation, and both were
+   * nonetheless unavailable at the point they are needed: the verifier could not
+   * tell a short scene from a compressed one, and no layer knew which scene was the
+   * last — which is how a manuscript with no ending passed every gate. Optional
+   * because the deterministic unit tests construct requests without a plan around
+   * them.
+   */
+  readonly sceneTargetWords?: number;
+  readonly position?: { readonly index: number; readonly total: number };
 }
 
 export type SceneOutcome =

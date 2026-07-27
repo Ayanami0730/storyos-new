@@ -102,7 +102,18 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     harness_version_note: VERSION_NOTE,
     premise_words: args.premise.split(/\s+/).filter(Boolean).length,
     target_words: args.target,
-    backbone: args.backbone ?? "default (gpt-5-mini for every role)",
+    backbone: args.backbone ?? "default (no --backbone override)",
+    /**
+     * Every role's model, read from the personas this run actually built.
+     *
+     * Not a restatement of the flags. `backbone` said "gpt-5-mini for every role"
+     * as a literal string while the verifier ran on `gemini-3.1-pro-preview` for
+     * two versions, and the only reason that was ever caught was reading the
+     * roll-up by hand. The backbone must be identical across every system in the
+     * comparison, so the claim needs a field per role that a reader can check
+     * against `roll_up` rather than a sentence that cannot be wrong.
+     */
+    models: input.residents.models(),
     /**
      * How the per-scene allowance was decided, and what it bought.
      *
@@ -170,6 +181,33 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
         })) ?? [],
     repair_rounds: result?.scenes.reduce((n, s) => n + (s.outcome.attempts - 1), 0) ?? 0,
     findings_total: result?.scenes.reduce((n, s) => n + s.outcome.findings.length, 0) ?? 0,
+    /**
+     * The two axes, apart — because they are two columns of the results table.
+     *
+     * `consistency` findings are ConStory subtypes and feed EID, the metric of
+     * record. `craft` findings are the quality axis, which is where the measured
+     * deficit is and which no consistency subtype can express. Pooling them would
+     * make `findings_total` uninterpretable in both directions: an error density
+     * inflated by craft notes, and a craft axis whose effect is invisible.
+     *
+     * `craft_blocking` is the number that decides whether the axis is worth its
+     * risk. A craft finding that only ever warns costs nothing and changes nothing;
+     * one that blocks spends a repair round, and that round is the thing to
+     * justify against the score.
+     */
+    findings_by_axis: (() => {
+      const all = (result?.scenes ?? []).flatMap((s) => s.outcome.findings);
+      const craft = all.filter((f) => f.axis === "craft");
+      return {
+        consistency: all.length - craft.length,
+        craft: craft.length,
+        craft_blocking: craft.filter((f) => f.severity !== "warning").length,
+        craft_by_check: craft.reduce<Record<string, number>>((acc, f) => {
+          acc[f.subtype] = (acc[f.subtype] ?? 0) + 1;
+          return acc;
+        }, {}),
+      };
+    })(),
     /**
      * Scenes that committed without ever reaching the model verifier.
      *

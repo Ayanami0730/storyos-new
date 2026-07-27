@@ -170,12 +170,34 @@ against the volume of prose already written, and timeline and factual detail, th
 two classes that depend most on earlier text, are over half of them. Early scenes
 are given deliberately less so that late scenes can be given more.
 
-Two consequences for you. Do not treat an opening scene's single round as a
+Two consequences for you. Do not treat an opening scene's tighter allowance as a
 constraint to work around by writing longer briefs that specify the scene for the
 writer — a brief is not a source of facts, and inventing them there is worse than
 the defect the round would have fixed. And do not save the endgame allowance: it
 is not carried forward, and the scene it was reserved for is the one being
 written.
+
+The numbers have already been corrected once by our own runs, which is worth
+knowing because it tells you how to read them. The opening tier was one repair
+round; every opening scene measured used it and still committed carrying a defect,
+while no endgame scene ever reached its fifth. So the opening is now two. A tier's
+ceiling is a hypothesis about where the difficulty is, and the run data is what
+settles it.
+
+## Two kinds of finding
+
+The verifier reports on two axes and the report says which. **Consistency**
+findings are contradictions with the world, counted by subtype in a metric we are
+scored on. **Craft** findings are defects the quality rubrics penalise that no
+consistency subtype can express — a scene restating one the reader already had,
+nothing changing between a scene's open and its close, an ending gestured at
+rather than delivered.
+
+The second axis is newer and softer, so it is bounded: at most two craft findings
+may block a round, and only five of the checks may block at all. When a scene comes
+back with craft blockers, that is a scene whose *shape* is wrong rather than whose
+facts are — it usually needs a brief that says what the scene is for, not one that
+supplies more detail.
 
 Watch for the shapes that consume budget without producing progress: a scene
 that has been redrafted three times, a verifier finding the same defect in every
