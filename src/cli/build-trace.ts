@@ -40,10 +40,29 @@ const say = (line: string) => console.error(`[trace] ${line}`);
 async function baselineFiles(dir: string | undefined) {
   if (!dir) return [];
   const root = path.resolve(dir);
-  const files = await readdir(root).catch(() => []);
-  return files
-    .filter((f) => f.endsWith(".jsonl"))
-    .map((f) => ({ system: f.replace(/\.jsonl$/, ""), file: path.join(root, f) }));
+  /**
+   * A `--baselines` path that does not resolve is an error, not an empty list.
+   *
+   * It used to be swallowed, and the cost showed up immediately: the evaluation
+   * repo moved when the parallel lanes merged, every ingest afterwards reported
+   * "0 baseline row(s)", and the pages simply lost their comparison table with
+   * nothing anywhere saying why. A flag that was given and had no effect is worth
+   * stopping for — the caller asked for baselines and would otherwise publish a
+   * page that quietly has none.
+   */
+  const files = await readdir(root).catch((error: unknown) => {
+    throw new Error(
+      `--baselines ${dir} is not readable (${
+        error instanceof Error ? error.message : error
+      }). The longbench-write judgements moved to ~/storyos/experiments/longbench-write ` +
+        `when the lanes merged; pass the new path or drop the flag.`,
+    );
+  });
+  const jsonl = files.filter((f) => f.endsWith(".jsonl"));
+  if (jsonl.length === 0) {
+    throw new Error(`--baselines ${dir} contains no .jsonl judgement files`);
+  }
+  return jsonl.map((f) => ({ system: f.replace(/\.jsonl$/, ""), file: path.join(root, f) }));
 }
 
 let bundle = await buildBundle({

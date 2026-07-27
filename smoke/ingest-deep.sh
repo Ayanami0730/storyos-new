@@ -12,7 +12,7 @@
 set -uo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-LBW="$HOME/work/longbench/experiments/longbench-write"
+LBW="${LBW_ROOT:-$HOME/storyos/experiments/longbench-write}"
 export PATH="$HOME/bin/node22/bin:$PATH"
 export YS_KEY="${YS_KEY:-$(cat ~/.config/ys/key)}"
 

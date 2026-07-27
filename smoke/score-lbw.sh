@@ -16,7 +16,15 @@ set -euo pipefail
 
 RUN_DIR="${1:?usage: score-lbw.sh <run-dir> <task-id>}"
 TASK_ID="${2:?usage: score-lbw.sh <run-dir> <task-id>}"
-LBW="$HOME/work/longbench/experiments/longbench-write"
+# The evaluation repo moved when the parallel lanes merged: it used to be the
+# `~/work/longbench` worktree, and the LongBench-Write assets now live on `main`
+# in `~/storyos`. Overridable, and checked below rather than failing later with a
+# confusing Python traceback.
+LBW="${LBW_ROOT:-$HOME/storyos/experiments/longbench-write}"
+if [[ ! -f "$LBW/score_lbw.py" ]]; then
+  echo "no scorer at $LBW/score_lbw.py — set LBW_ROOT to the longbench-write directory" >&2
+  exit 1
+fi
 SYSTEM="storyos-v3"
 
 if [[ ! -f "$RUN_DIR/story.md" ]]; then

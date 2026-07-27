@@ -11,10 +11,13 @@ converged and a stray write there would put our row in somebody else's result.
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 import sys
 
-LBW = pathlib.Path.home() / "work/longbench/experiments/longbench-write"
+LBW = pathlib.Path(
+    os.environ.get("LBW_ROOT", pathlib.Path.home() / "storyos/experiments/longbench-write")
+)
 REPO = pathlib.Path(__file__).resolve().parent.parent
 BASELINE_JUDGEMENTS = LBW / "judgements/gpt-5.5"
 

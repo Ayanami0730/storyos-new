@@ -19,7 +19,8 @@ set -euo pipefail
 TASK_ID="${1:?usage: run-lbw.sh <task-id> [extra write-story flags]}"
 shift || true
 
-LBW="$HOME/work/longbench/experiments/longbench-write"
+# Moved when the parallel lanes merged; see smoke/score-lbw.sh.
+LBW="${LBW_ROOT:-$HOME/storyos/experiments/longbench-write}"
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export PATH="$HOME/bin/node22/bin:$PATH"
 
