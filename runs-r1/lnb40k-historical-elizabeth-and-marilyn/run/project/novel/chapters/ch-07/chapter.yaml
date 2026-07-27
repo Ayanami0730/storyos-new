@@ -1,126 +1,43 @@
 chapter: ch-07
 scenes:
   - id: s-025
-    intent: The actress visits the castle again—this time officially arranged—and
-      the ceremonial meeting is staged; the public spectacle contrasts with the
-      remembered intimacy of the unscripted meeting.
+    intent: "The actress faces studio pressure: a photographer's interest, a
+      studio's appetite for publicity, and the choice to protect the Queen or
+      profit from the story."
     present:
-      - char-queen
-      - char-prince-philip
       - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - char-confidante
+      - char-driver
+      - loc-guest-cottage
+      - char-queen
+      - loc-queen-apartment
   - id: s-026
-    intent: "After the ceremonial meeting, both women feel the weight of a doubled
-      truth: the public story and the private one. They each make choices—small,
-      personal changes that shape how they will appear in public thereafter."
+    intent: The neighbor observes unusual movement and delivers a small kindness to
+      a messenger; their perspective provides a grounding, local moral sense of
+      secrecy and neighbourliness.
     present:
-      - char-queen
-      - char-prince-philip
-      - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - char-neighbor
+      - loc-town-high-street
+      - char-assistant
+      - obj-press-telegrams
   - id: s-027
-    intent: "A scene showing the fallout over weeks: subtle shifts in the Queen's
-      attendance, a new softness in an appearance, the actress taking a role or
-      refusing one to avoid typecasting—their decisions ripple outward."
+    intent: An intimate domestic scene where the Queen's butler and lady-in-waiting
+      handle a mundane practicality that, in context, reveals the costs of
+      keeping a secret in a household machine.
     present:
+      - char-butler
+      - char-lady
+      - char-assistant
+      - loc-royal-kitchen
+      - loc-stable-yard
       - char-queen
-      - char-prince-philip
-      - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - loc-queen-apartment
   - id: s-028
-    intent: The local neighbor sees a quiet sign—perhaps the actress leaving a small
-      gift in a shop—that humanizes both women and suggests secret kindnesses
-      continuing after the summer, recorded in small town memory.
+    intent: "A crisis: a photographer managed to snatch a distant image that might
+      be interpreted; the press liaison considers a pre-emptive release and
+      tests language carefully."
     present:
-      - char-queen
-      - char-prince-philip
-      - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - char-press
+      - obj-polaroid-photo
+      - char-confidante
+      - obj-press-telegrams

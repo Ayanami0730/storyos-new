@@ -1,0 +1,11 @@
+id: char-laila
+name: laila
+sketch: "Laila, Amina's first mate and childhood friend: steady, quietly fierce,
+  and devoted to Amina. She trusts Amina's judgement but warns when lines are
+  crossed."
+identity:
+  mannerism_count_ropes_by_twos: "true"
+  trusts_amina: "true"
+provenance:
+  mannerism_count_ropes_by_twos: s-001
+  trusts_amina: s-001

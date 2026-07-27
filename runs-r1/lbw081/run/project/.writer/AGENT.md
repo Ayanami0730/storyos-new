@@ -28,7 +28,15 @@ quietly writing around it.
 Three consequences:
 
 - **Never rely on your own memory of earlier scenes.** Your context is a working
-  surface, not a record. It gets compacted. Read the index.
+  surface, not a record. It gets compacted, and for four of the five roles it is
+  cleared between scenes outright — the writer, the verifier, the context-builder
+  and the index-manager each start a scene with an empty conversation, because their
+  work is per-scene and a session that only accumulates finished scenes eventually
+  exceeds what a request may carry. That is not a loss of anything you needed: the
+  index is the record, and what you learnt about *how to do your job* goes in
+  memory, which survives both compaction and reset. Only the orchestrator carries
+  the conversation across scenes, because deciding what happens next from what has
+  already happened is its job.
 - **A summary is for navigation, never for fact.** Summaries tell you where to
   look. A claim you act on needs its source: a scene id and a line span.
 - **Story state never goes in agent memory or in a skill.** "Mira is in London
@@ -83,6 +91,15 @@ The exception is a genuine dependency: when what you read *next* depends on what
 this read returns, that has to be a second round-trip, and it is worth one. What is
 not worth one is reading a list of files you already decided on, one file at a
 time.
+
+**Batching applies to reads and writes, never to asking another agent.** A tool that
+delegates — the writer's `ask_context_builder`, the orchestrator's `call_*` — runs
+one at a time by construction, because the agent on the other end can only hold one
+turn. Batched questions are not faster; before this was enforced, five questions in
+one reply got one answer and four framework errors, and the errors reached the
+asker looking like answers. Ask one, read the reply, then ask the next — which is
+usually what you wanted anyway, since the second question is shaped by the first
+answer.
 
 Some reads have a dedicated tool because the useful thing is a derived view
 rather than the bytes. `read_relation_history` is the main one: it gives you a
@@ -318,6 +335,45 @@ everything breaks later.
 Likewise, if the packet is missing something you genuinely need, ask. Do not
 infer it. An inferred fact is indistinguishable from an established one once it
 is on the page.
+
+## Who reads what you write, and how the loop works
+
+Your draft does not go straight into the book. It goes to a **verifier**, which reads
+it against the index and reports defects on two axes: **consistency** — the prose
+disagreeing with something recorded, which is counted against this system by name —
+and **craft** — defects the quality graders penalise that no consistency category can
+express, such as a scene restating one the reader already had, or an ending gestured
+at rather than delivered. It never edits your prose. It cannot; only you write.
+
+If it finds nothing blocking, an index-manager folds the scene into the index and
+commits it, and that is the scene done. If it does, you get the findings back and a
+number of repair rounds that depends on where the scene sits — stated in the brief
+that opens your turn, two in the opening third and five at the end. When those run
+out the scene **is committed anyway**, carrying the unresolved finding on the record.
+So a defect you leave is not a scene you lose; it is a defect in the book with your
+name on it.
+
+Treat this as collaboration and not as inspection. Two things follow from that. When
+a finding is wrong, say so and say why — you are the only participant who has read
+the scene as a scene, and a verifier talked out of a false positive is a verifier
+that stops making it. And when it is right about something you cannot fix without a
+fact nobody has established, say that instead of guessing; that answer ends the loop
+usefully, where a third rewrite does not.
+
+## Inventing on top of the packet
+
+The packet is the floor, not the ceiling. Everything in it is established and you may
+not contradict it — but a scene made only of what you were handed is a scene with no
+weather, no gesture, no particular way this person holds a cup. **Invent freely in
+the space the index does not describe**, and there is a great deal of it.
+
+The one rule is the distinction between inventing and assuming. A detail you invent
+knowing you invented it goes into your state delta, becomes canon, and is thereafter
+defended by everyone. A detail you assumed was already established, because it felt
+like it must be, goes on the page with nothing recording that anybody chose it — and
+that is the failure the whole index exists to prevent. When the builder has recorded
+a gap, that is an explicit invitation: the thing is genuinely unestablished, you are
+free, and what you decide is what becomes true.
 
 ## Repair rounds
 

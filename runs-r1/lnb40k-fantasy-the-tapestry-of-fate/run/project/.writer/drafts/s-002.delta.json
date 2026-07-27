@@ -2,74 +2,92 @@
   "sceneId": "s-002",
   "claims": [
     {
-      "entity": "char-peri-envoy-azraq",
-      "attribute": "stated_mission",
-      "quote": "\"The Council wants one thing,\" he said. \"A single spindle.\"",
-      "value": "require Amina to steal the spindle from Isle Jarrah"
+      "scene": "s-002",
+      "entity": "loc-port-rahim",
+      "attribute": "market_spices_list",
+      "quote": "Stalls shipped stacks of saffron, sieves of sumac, strings of dried lime, and the familiar brown smell of cumin.",
+      "value": "saffron; sumac; dried lime; cumin"
     },
     {
-      "entity": "obj-spindle",
-      "attribute": "location_named",
-      "quote": "\"The Spindle,\" I repeated, because names were the handles you used on troubles. \"From Isle Jarrah.\"",
-      "value": "Isle Jarrah"
+      "scene": "s-002",
+      "entity": "loc-port-rahim",
+      "attribute": "market_cloth_colors",
+      "quote": "Cloths hung in a careless rainbow: indigo-dyed linen, saffron-yellow silk, and the coarse hemp burlap of sailors' sacks.",
+      "value": "indigo; saffron-yellow; coarse hemp burlap"
     },
     {
+      "scene": "s-002",
+      "entity": "loc-port-rahim",
+      "attribute": "hawker_cries_sample",
+      "quote": "A chorus of cries rose and fell: 'Dried lime! Maps and charts! Brass that remembers the sea!'",
+      "value": "Dried lime!; Maps and charts!; Brass that remembers the sea!"
+    },
+    {
+      "scene": "s-002",
+      "entity": "char-gul",
+      "attribute": "stall_setup",
+      "quote": "Gul's stall sat on the end of a row, the kind of neat jumble that read like an advertisement for careful hands. Under a patched blue awning his wares hung on hooks and lines above a low counter of crates. Gul's stall was a neat jumble of brass trinkets, sea-glass, folded maps, and jars of preserved lemons.",
+      "value": "patched blue awning; brass trinkets; sea-glass; folded maps; jars of preserved lemons; low counter of crates"
+    },
+    {
+      "scene": "s-002",
+      "entity": "char-gul",
+      "attribute": "relationship_with_amina",
+      "quote": "They had done business before—not much, a broken astrolabe traded for three jars of lemons—but familiarity, not friendship, sat between them.",
+      "value": "occasional small trades; traded astrolabe for preserved lemons; familiarity not friendship"
+    },
+    {
+      "scene": "s-002",
+      "entity": "char-gul",
+      "attribute": "reaction_to_peri_token",
+      "quote": "\"That's no ordinary coin—see the feathered cut,\" he said, and his voice fell like a sail. He leaned forward, palms flat on a crate, and looked her in the eye as if measuring tides.",
+      "value": "recognizes feather-engraved peri token; voice becomes grave; warns to keep promises and teeth"
+    },
+    {
+      "scene": "s-002",
       "entity": "faction-peri-council",
-      "attribute": "motives_character",
-      "quote": "\"Our reasons are not for your keeping,\" he said. \"They are urgent. You must understand urgency without understanding why.\"",
-      "value": "opaque but urgent"
+      "attribute": "local_gossip_presence",
+      "quote": "Around them the market's talk shifted: names dropped like small coins. Azad. Sahr. Men who sold fish and men who sold knots spoke the names quick and low, the syllables clipped as if the wind itself might carry them away.",
+      "value": "Azad and Sahr are whispered names in Port Rahim market; associated with caution"
     },
     {
-      "entity": "obj-peri-amulet",
-      "attribute": "effect_on_wearer_detailed",
-      "quote": "When I thought about prying it loose, a quick, hot thing stabbed under my ribs as if someone had found the seam of me and slackened it.",
-      "value": "causes sharp pain when resisting and enforces compliance"
+      "scene": "s-002",
+      "entity": "char-amina-ghost",
+      "attribute": "memory_ghost_phrase_repeated",
+      "quote": "The ghost in the marrow, a soft pressure at the back of her teeth like a thumb on a string. Hold the line, Mina, the voice said as plainly as a hand on her shoulder.",
+      "value": "\"Hold the line, Mina.\""
     },
     {
-      "entity": "char-amina",
-      "attribute": "bound_by_amulet",
-      "quote": "\"It is binding,\" he said. \"It enforces compliance. Resistance is costly.\"",
-      "value": "true"
+      "scene": "s-002",
+      "entity": "loc-port-rahim",
+      "attribute": "harbormaster_name",
+      "quote": "Above the bustle, a notice board showed the Harbormaster's seal; Rashid ibn Nuri's hand still made the rules here, by reputation if not always by law.",
+      "value": "Rashid ibn Nuri"
     },
     {
-      "entity": "obj-peri-amulet",
-      "attribute": "not_absolute",
-      "quote": "\"Not none. Not absolute. The instrument we affix is a law, not a god. It can be resisted by a strong mortal will, it can be countered by the witches' craft, and it can be made irrelevant by what you seek—the Spindle—if used under the island's terms.\"",
-      "value": "can be resisted by strong will, countered by witches' craft, or made irrelevant by using the Spindle under island's terms"
-    },
-    {
-      "entity": "char-amina",
-      "attribute": "accepted_mission",
-      "quote": "\"You want me to go,\" I said. Saying it made the word solid. \"You want the Spindle from Isle Jarrah. You have bound me to that task. I will go.\"",
-      "value": "accepted mission to steal the spindle from Isle Jarrah aboard the Qitaf"
-    },
-    {
-      "entity": "loc-port-aden",
-      "attribute": "present_artifact",
-      "quote": "The map looked like someone else's dying hope, a thing neither dead nor alive. Azraq folded the folio back into itself and let it go.",
-      "value": "folio map and wreck log fragment remain aboard the Qitaf"
-    },
-    {
-      "entity": "char-amina",
-      "attribute": "keeps_command",
-      "quote": "\"But I go to keep my crew. I keep my command. Your enforcement stays on my throat, but your hands stay out of my ship while she is mine.\"",
-      "value": "intends to keep command of the Qitaf and crew while undertaking the mission"
+      "scene": "s-002",
+      "entity": "char-gul",
+      "attribute": "peri_sighting_detail",
+      "quote": "\"A silver flash at dawn on the outer quay, like a gull with no shadow,\" he said.",
+      "value": "silver flash at dawn on the outer quay; gull with no shadow"
     }
   ],
   "presentEntities": [
     "char-amina",
-    "char-peri-envoy-azraq",
-    "obj-peri-amulet",
-    "obj-spindle",
-    "loc-port-aden",
-    "obj-ship-log-wreck"
+    "loc-port-rahim",
+    "char-gul",
+    "faction-peri-council",
+    "char-peri-azad",
+    "char-peri-sahr",
+    "obj-peri-token",
+    "char-amina-ghost"
   ],
   "promises": [
     {
-      "id": "promise-council-hands-off",
-      "promise": "Azraq's departure and Amina's insistence that the Peri Council's agents will not interfere with her crew while she retains command is a conditional promise; the Council must keep its hands off the Qitaf while she is in command.",
-      "quote": "\"But I go to keep my crew. I keep my command. Your enforcement stays on my throat, but your hands stay out of my ship while she is mine.\"",
-      "dueByScene": ""
+      "id": "pc-check-stated-paths",
+      "promise": "Verifier to check that the staged state-delta is present and that the target file paths (characters/char-gul/profile.yaml, locations/loc-port-rahim.yaml, characters/char-amina-ghost/profile.yaml, objects/faction-peri-council.yaml) are valid.",
+      "quote": "Now call propose_state_delta with everything this scene established.",
+      "dueByScene": null
     }
   ],
   "paysOff": []

@@ -2,113 +2,122 @@
   "sceneId": "s-002",
   "claims": [
     {
-      "entity": "loc-hotel-castle-view",
-      "attribute": "prestige_level",
-      "quote": "The limousine eased up under a shallow canopy of the Hotel Castle View and then stopped, long black like a beetle drawn close to the hotel's pale brick.",
-      "value": "comfortable"
+      "entity": "loc-railway-station",
+      "attribute": "atmosphere",
+      "quote": "The Windsor platform smelled of coal and varnish, the old station breathing steam like a living thing.",
+      "value": "coal and varnish; station breathing steam"
     },
     {
-      "entity": "loc-hotel-castle-view",
-      "attribute": "has_porte_cochere",
-      "quote": "The limousine eased up under a shallow canopy of the Hotel Castle View and then stopped",
-      "value": "implied"
-    },
-    {
-      "entity": "loc-actress-suite",
-      "attribute": "layout_features",
-      "quote": "The suite opened into a room that seemed to be built to take the act of being seen apart from the act of being alone. Lacquered furniture caught the light in thin, glossy stripes; a mirrored dressing table stood beneath a row of concealed bulbs that would, later tonight, make faces look as if lit from within. Script pages lay at an angle on a small writing desk, their corners weighted by a make-up case and a silver cigarette case that had been carried too often to be new.",
-      "value": "mirrored dressing table with concealed bulbs; lacquered furniture; writing desk; make-up case; separate seating area implied"
-    },
-    {
-      "entity": "obj-cigarette-case",
-      "attribute": "physical_condition_and_location",
-      "quote": "Script pages lay at an angle on a small writing desk, their corners weighted by a make-up case and a silver cigarette case that had been carried too often to be new.",
-      "value": "silver cigarette case on dressing table; hairline scratch near clasp; contains an arrival note"
-    },
-    {
-      "entity": "char-publicist",
-      "attribute": "behavior_on_arrival",
-      "quote": "The publicist touched the actress’s wrist once—a small, efficient adjustment of cuff and astringency—and then stepped back to the newsagent’s window where she bought today’s paper with the same quick attention she gave a contract. She did not read it in public. Instead she slid it to the newsagent with a folded finger, offered a tight smile, and whispered something that made the man tuck the paper into his counter drawer rather than display it on the rack.",
-      "value": "buys local paper and arranges with newsagent to suppress display; carries clippings; issues instructions about interviews and appearances"
+      "entity": "loc-railway-station",
+      "attribute": "time_of_arrival",
+      "quote": "It was late morning; a train from London had hissed into the bay",
+      "value": "late morning, arrival from London"
     },
     {
       "entity": "char-actress",
-      "attribute": "arrival_wardrobe_and_manner",
-      "quote": "She stepped out as if she had been practising it all her life: hat low enough to shade the face, gloves pale against her day dress, sunglasses lifted from her hair for the brief courtesy of the doorway.",
-      "value": "day dress; gloves; hat; sunglasses; practiced public manner"
-    },
-    {
-      "entity": "char-actress-driver",
-      "attribute": "behavior_on_arrival",
-      "quote": "Her driver, a steady man with white hair at the temples, took the suitcases with the half-manner of someone who had once been a valet. He did not loiter.",
-      "value": "acts as valet; handles suitcases discreetly"
-    },
-    {
-      "entity": "char-actress-confidante",
-      "attribute": "demeanor_and_actions",
-      "quote": "The confidante stood by the window, elbows on the sill, and offered an observation that availed itself of both wit and weariness. “You look at that roofline and tell me which of us has the better costume,” she said, voice dry.",
-      "value": "wry, pragmatic; observes and comforts; long acquaintance with actress"
-    },
-    {
-      "entity": "char-local-neighbor",
-      "attribute": "town_reaction",
-      "quote": "A camera-reflex would have loved her, but there were only a few late-morning strollers and a boy sweeping leaves; the presence around her was not a crowd but a sheen—an expectation that some spectacle might arrive if one only waited long enough.",
-      "value": "local onlookers small in number; general interest but not a crowd"
-    },
-    {
-      "entity": "obj-press-cuttings",
-      "attribute": "usage_and_handling",
-      "quote": "The publicist had what looked like a folder of clippings tucked under her elbow, a small, sensible stack that smelled faintly of citrus from a handkerchief. She spoke in low, pointed phrases: no interviews for the morning, meet the mayor after tea, no photographs on the balcony.",
-      "value": "clippings carried by publicist; used to plan and suppress publicity; armband of rules for appearances"
-    },
-    {
-      "entity": "loc-hotel-castle-view",
-      "attribute": "sensory_character",
-      "quote": "The hotel’s ground floor breathed of bottled shampoo, a polish for furniture and the faint iron of boiled eggs on the chef’s silver trolley.",
-      "value": "olfactory notes: shampoo, furniture polish, boiled eggs"
-    },
-    {
-      "entity": "loc-actress-suite",
-      "attribute": "view",
-      "quote": "Windsor folded itself in miniature beneath her—a scatter of slate roofs, a distant parapet, the river like a ribbon of pewter threading through the town. The castle’s roofline broke the horizon; she found herself looking at it with the same attention she gave a crew-chief’s instruction.",
-      "value": "view includes castle roofline, river, and slate roofs"
+      "attribute": "wardrobe",
+      "quote": "She arrived as an image: a tilted chin, a dark tailored coat, a small hat fastened at one side, gloves folded over the handle of a neat leather bag.",
+      "value": "dark tailored coat; small side-fastened hat; gloves; neat leather bag"
     },
     {
       "entity": "char-actress",
-      "attribute": "private_feeling_about_fame",
-      "quote": "For all its practiced glamour, she felt unexpectedly small, as if the glass between the hotel and the palace could not protect her from being seen in ways she had not practised.",
-      "value": "restless and vulnerable about being seen; private discomfort with fame"
+      "attribute": "state_of_mind",
+      "quote": "The smile was a prop that served as a border between the public and the private—and already, at the edge of that border, something inside her shifted impatiently.",
+      "value": "restless beneath public composure"
     },
     {
-      "entity": "char-publicist",
-      "attribute": "rules_given",
-      "quote": "She spoke in low, pointed phrases: no interviews for the morning, meet the mayor after tea, no photographs on the balcony.",
-      "value": "no interviews morning; meet mayor after tea; no balcony photos"
+      "entity": "char-confidante",
+      "attribute": "role",
+      "quote": "For the crowd she was simply the woman who called the tune: the actress’s manager, her confidante, the woman who would see the press made civil and the household told what to expect.",
+      "value": "manager/confidante responsible for press and household arrangements"
     },
     {
-      "entity": "loc-hotel-castle-view",
-      "attribute": "has_lift",
-      "quote": "A porter escorted them under the tawny sweep of the stairs to the lift; the lift rose with an obedient hum.",
-      "value": "lift present"
+      "entity": "char-confidante",
+      "attribute": "handled_objects",
+      "quote": "The telegrams were brief, machine-breathed questions and arrival notices—Fleet Street shorthand carried to the county by rail—and she folded them into her pocket as though they were part of the baggage.",
+      "value": "took possession of press-telegrams at the station"
+    },
+    {
+      "entity": "char-driver",
+      "attribute": "role",
+      "quote": "The driver, a wide-shouldered man in a dark uniform and soft cap, inclined his head once and moved the cases as if part of a machine’s routine.",
+      "value": "discreet chauffeur who handles luggage and manages press proximity"
+    },
+    {
+      "entity": "obj-press-telegrams",
+      "attribute": "presence_at_station",
+      "quote": "A clerk at the telegraph table had already been handing out a sheaf of press-telegrams; the manager took them, flicked through the paper...",
+      "value": "press-telegrams present and distributed at the station telegraph table"
+    },
+    {
+      "entity": "loc-guest-cottage",
+      "attribute": "booking_and_privacy",
+      "quote": "“The cottage makes sense—the cottagekeeper knows to keep guests private. We dine quietly. No unscheduled interviews.”",
+      "value": "guest cottage booked for privacy; cottagekeeper/proprietor responsible for privacy; no unscheduled interviews requested"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "carried_object",
+      "quote": "The actress’s hand touched the leather of her bag as if to find something firm there. Instead she found a paper script folded into the flap—a few pages from a new picture she had read on the train.",
+      "value": "carried a folded paper script from a new film in her bag"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "behavior_in_carriage",
+      "quote": "She tucked the script into her lap and folded her hands so nothing would leak from them.",
+      "value": "kept composed in carriage though restless; used the script to occupy hands"
+    },
+    {
+      "entity": "loc-railway-station",
+      "attribute": "press_and_public_reaction",
+      "quote": "Fans craned to see the face they had read about in glossy columns; someone called a name in a voice that might have been meant to be a cheer, but it came out small and unsure.",
+      "value": "press and some fans present, restrained applause and curiosity"
+    },
+    {
+      "entity": "char-confidante",
+      "attribute": "tactical_decision_making",
+      "quote": "“Leave the telegrams with me,” the manager said, in a voice that made arrangements seem inevitable. “We’ll answer from the cottage. Driver—straight to the guest cottage. No detours.”",
+      "value": "confidante directs immediate post-arrival movements and communications"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "arrival_gesture",
+      "quote": "The actress lifted a hand in a gesture that belonged on screen and let the manager shepherd them toward the motorcar.",
+      "value": "used a practiced gesture when leaving the platform"
+    },
+    {
+      "entity": "char-driver",
+      "attribute": "vehicle",
+      "quote": "The driver had the carriage waiting at the forecourt: a black saloon with curtains drawn at the rear windows, its engine soft and obedient.",
+      "value": "black saloon with rear curtains for privacy was used to transport them"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "desire",
+      "quote": "The actress, who had carried a thousand entrances as if each were a promise to someone else, carried inside her a restlessness like a private telegram she had not yet answered.",
+      "value": "desire for ordinary privacy; inner restlessness remains unresolved"
+    },
+    {
+      "entity": "loc-guest-cottage",
+      "attribute": "arrival_sign",
+      "quote": "On the lane to the cottage a sign said Windsor in a painted hand, its edges warmed by sun.",
+      "value": "guest cottage located on a lane with a Windsor sign at its approach"
     }
   ],
   "presentEntities": [
     "char-actress",
-    "char-actress-driver",
-    "char-publicist",
-    "char-actress-confidante",
-    "char-local-neighbor",
-    "loc-hotel-castle-view",
-    "loc-actress-suite",
-    "obj-cigarette-case",
-    "obj-press-cuttings"
+    "char-confidante",
+    "char-driver",
+    "loc-railway-station",
+    "loc-guest-cottage",
+    "obj-press-telegrams"
   ],
   "promises": [
     {
-      "id": "promise-press-plan",
-      "promise": "The publicist will stage controlled appearances and delay balcony photographs until a chosen paper is primed.",
-      "quote": "The publicist had what looked like a folder of clippings tucked under her elbow, a small, sensible stack that smelled faintly of citrus from a handkerchief. She spoke in low, pointed phrases: no interviews for the morning, meet the mayor after tea, no photographs on the balcony.",
-      "dueByScene": "s-006"
+      "id": "promise-privacy-at-cottage",
+      "promise": "No unscheduled interviews; privacy at the guest cottage",
+      "quote": "“The cottage makes sense—the cottagekeeper knows to keep guests private. We dine quietly. No unscheduled interviews.”",
+      "dueByScene": "s-003"
     }
   ],
   "paysOff": []

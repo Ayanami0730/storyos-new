@@ -1,0 +1,10 @@
+id: obj-ivory-revolver
+sketch: "A small antique single-shot revolver from Lucius's weapon display:
+  ivory grips, gilded barrel. At the start of the case its status
+  (in-place/missing/found) is a question to be resolved in the investigation."
+notes:
+  - .writer/drafts/s-001.md L40-L60
+  - "Observed in s-002: missing from display; one mount empty with brass plaque
+    reading IVORY REVOLVER; velvet where a grip had lain pressed down.
+    Provenance: .writer/drafts/s-002.md L10-L12"
+first_seen: s-001

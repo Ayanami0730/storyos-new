@@ -1,16 +1,25 @@
 note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
 rules:
-  - "No anachronistic technology or cultural references: 1956 period-appropriate
-    items only (no mobile phones, internet, social media, or modern slang)."
-  - Do not invent major historical events or alter recorded history in
-    consequential ways; the encounter is personal and private and must not
-    trigger real-world geopolitical changes.
-  - Royal protocol and chain-of-command in 1950s Britain may be dramatized but
-    should remain plausible; staff speak and act within plausible constraints of
-    loyalty and discretion.
-  - "Public reactions are constrained by 1950s press practices: newsreels, print
-    newspapers, wire services and gossip columns, not instant global
-    dissemination."
-  - Characters' ages and relationships to real historical figures must be
-    plausible for 1956 and must not attribute historically impossible actions to
-    real public figures beyond the contained fictional encounter.
+  - The story is set in the summer of 1956 in Windsor; period technology and
+    social institutions (no mobile phones, no internet, reliance on telegrams,
+    print press, radio) must be respected.
+  - The novel must avoid inventing major public actions or official events for
+    the Queen that contradict established historical fact for 1956; invented
+    private interactions and small domestic details are allowed.
+  - The private meeting between the Queen and the actress is fictional but must
+    be plausible within 1956 protocol and social norms; no implausible modern
+    behaviours or anachronistic speech.
+  - Any claim about press coverage, photographs, or public reaction must be
+    plausible for the pre-digital, 1950s British and international press
+    environment.
+  - Objects and entities listed in the plan are the canonical identifiers; later
+    scenes and state records must only refer to those ids and no new primary
+    characters, locations or significant objects may be introduced without
+    updating the plan.
+  - The narrative voice is third person omniscient and will occasionally enter
+    interiority but will not claim access to unverifiable private thoughts
+    beyond what characters plausibly guard.
+  - "Secrecy is to be treated seriously: no scene may present a public,
+    verifiable record of the private meeting; any physical proof (photograph,
+    object) must be ambiguous, contested, or carefully controlled within the
+    story."

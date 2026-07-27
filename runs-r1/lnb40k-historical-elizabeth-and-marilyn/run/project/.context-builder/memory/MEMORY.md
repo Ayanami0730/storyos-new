@@ -1,3 +1,4 @@
 # Memory index
 
-- [batch-reads-avoid-padding](batch-reads-avoid-padding.md) — Batch reads and avoid padding
+- [teashop-gossip-patterns](teashop-gossip-patterns.md) — local gossip phrasing and etiquette
+- [missing-protocols-note](missing-protocols-note.md) — Flag missing formal protocol files for the Queen's private routines

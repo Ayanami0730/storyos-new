@@ -1,10 +1,8 @@
 id: char-queen
 name: queen
-sketch: The reigning monarch, in residence at Windsor for a summer; outwardly
-  composed, privately curious and burdened by duty.
+sketch: "The reigning monarch, early thirties in 1956: composed, duty-bound,
+  private beneath the ceremonial surface."
 identity:
-  profession: monarch, head of state
-  title: The Queen
+  profession: Monarch
 provenance:
   profession: s-001
-  title: s-001

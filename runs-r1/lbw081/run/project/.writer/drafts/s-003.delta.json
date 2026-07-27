@@ -2,119 +2,52 @@
   "sceneId": "s-003",
   "claims": [
     {
-      "attribute": "location",
-      "entity": "char-august-crowe",
-      "quote": "It was close to midnight when I went back to the library.",
-      "value": "loc-harrow-library"
+      "entity": "obj-longcase-clock",
+      "attribute": "access_panel_tool_marks",
+      "quote": "The access panel at the back was a hair ajar; when I peered in the brass looked thumbed and raw where varnish had been rubbed away. There were fine, fresh scores around the latch—hairline marks that caught the light as if someone had used a slender tool to lever it open.",
+      "value": "fresh tool marks and hairline scores around latch"
     },
     {
-      "attribute": "location_description",
-      "entity": "obj-secret-pulley",
-      "quote": "Outside the window the little loop of metal and the short cord lay where Mary had said they were, tucked low in the ivy so you missed them if you were not looking for them.",
-      "value": "anchored_on_outer_sill_hidden_in_ivy"
+      "entity": "obj-longcase-clock",
+      "attribute": "thread_path_into_movement",
+      "quote": "At the base the black thread hung where I'd seen it: waxed, stiff, caught on a small screw. This time I followed its line with my gaze. It wasn't a loose scrap that had wandered into the case; the thread looped and ran up toward the movement, vanishing behind the plates.",
+      "value": "thread looped and ran up toward movement, vanishing behind plates"
     },
     {
-      "attribute": "no_recorded_dimensions_or_photographs_on_sill",
-      "entity": "loc-harrow-library",
-      "quote": "There were no measured dimensions, no forensic photographs I could consult; there was only what the hand could feel and the eye could test.",
-      "value": "true"
+      "entity": "char-thomas-reed",
+      "attribute": "admission_recent_servicing",
+      "quote": "\"I was in three days ago to wind it and I stripped the weight-gear to clean the pivots—it's delicate work, Ellis.\"",
+      "value": "admitted servicing clock three days ago to wind and strip weight-gear to clean pivots"
     },
     {
-      "attribute": "used_as_weight_on_cord",
-      "entity": "obj-letter-opener",
-      "quote": "I threaded a spare cord through the loop and tied it to the heft of the opener.",
-      "value": "true"
+      "entity": "obj-torn-note",
+      "attribute": "postmortem_placement_inference",
+      "quote": "The scrap, though, sat on that halo without a smear. If he'd clutched the paper in his last moments it would have been different—the fibres would have been pressed, ink and blood mingled into the edge. This looked staged.",
+      "value": "inference: torn note placed after death (fibres lying on top, no blood transfer)"
     },
     {
-      "attribute": "heft_description",
-      "entity": "obj-letter-opener",
-      "quote": "The letter-opener was the sort of blunt brass thing Lena kept for estate envelopes — heavy in a way that made it obedient to a short swing, as long as my palm and thick enough that the haft filled the hand.",
-      "value": "heavy_obedient_to_short_swing_haft_fills_hand"
+      "entity": "obj-envelope",
+      "attribute": "flap_partial_print_lift",
+      "quote": "\"We lifted a partial print from the flap's crease,\" he told me without flourish. \"Preliminary lift consistent with Iris Harben.\"",
+      "value": "partial latent print lifted from diagonal crease on flap; preliminary lift consistent with Iris Harben"
     },
     {
-      "attribute": "oil_smear_on_haft_observed",
-      "entity": "obj-letter-opener",
-      "quote": "It carried the same thin smear of oil along the haft that we had noted in the room; the oil caught the light like a small confession.",
-      "value": "present"
-    },
-    {
-      "attribute": "attached_to_cord_during_experiment",
-      "entity": "obj-letter-opener",
-      "quote": "Balancing the opener on a short tag of cord, I pushed the sash just enough to take the tiniest of gaps.",
-      "value": "true"
-    },
-    {
-      "attribute": "experiment_duration",
-      "entity": "loc-harrow-library",
-      "quote": "From sash to thrust to withdrawal and the final pull that set the glass neat again: less than a minute.",
-      "value": "less_than_a_minute"
-    },
-    {
-      "attribute": "simulated_test_used_cloth",
-      "entity": "obj-letter-opener",
-      "quote": "I ran the test twice, and on the second try I let the opener bite into a pad of cloth I had tucked against the sash to simulate flesh.",
-      "value": "true"
-    },
-    {
-      "attribute": "oil_transferred_to_cloth",
-      "entity": "obj-letter-opener",
-      "quote": "The oil on the haft smeared on the cloth in a way that looked right.",
-      "value": "true"
-    },
-    {
-      "attribute": "interrupted_on_outer_sill",
-      "entity": "char-oliver-dane",
-      "quote": "'You shouldn't be here,' Oliver said, hard enough that the name would have been the sort of thing you bark when you meant a threat.",
-      "value": "true"
-    },
-    {
-      "attribute": "gripped_crowe_wrist",
-      "entity": "char-oliver-dane",
-      "quote": "A hand closed on my wrist with a pressure that was not quite friendly;",
-      "value": "true"
-    },
-    {
-      "attribute": "smelled_of_earth_and_tobacco",
-      "entity": "char-oliver-dane",
-      "quote": "He smelled of cold earth and tobacco.",
-      "value": "true"
-    },
-    {
-      "attribute": "wound_cord_and_attempted_to_hide_device",
-      "entity": "char-oliver-dane",
-      "quote": "His other hand went for the loop and began to wind the cord away as if he meant to make the thing vanish while I still had fingers on it.",
-      "value": "true"
-    },
-    {
-      "attribute": "plans_to_bring_milne_and_stage_demonstration",
-      "entity": "char-august-crowe",
-      "quote": "I would bring Milne back before daylight and stage the thing properly.",
-      "value": "true"
-    },
-    {
-      "attribute": "locked_room_explanation_open",
-      "entity": "loc-harrow-library",
-      "quote": "The locked-room was not yet explained; it was something to be proved.",
-      "value": "true"
-    },
-    {
-      "attribute": "pulley_attachment_details_missing_from_index",
-      "entity": "loc-harrow-library",
-      "quote": "The loop's exact attachment — whether it had been tied to a screw, hooked, or simply tucked in — was not written in the file.",
-      "value": "true"
+      "entity": "char-iris-harben",
+      "attribute": "quotation_on_sale",
+      "quote": "\"If he sells it, we have nothing left but his arrogance.\"",
+      "value": "Iris said: If he sells it, we have nothing left but his arrogance."
     }
   ],
   "presentEntities": [
-    "char-august-crowe",
-    "char-oliver-dane"
+    "char-ellis-fletcher",
+    "char-thomas-reed",
+    "char-iris-harben",
+    "char-inspector-margot-lane",
+    "obj-longcase-clock",
+    "obj-black-thread",
+    "obj-torn-note",
+    "obj-envelope"
   ],
-  "promises": [
-    {
-      "id": "pc-stage-demonstration",
-      "promise": "Crowe will bring Inspector Milne back before daylight and stage the pulley-and-opener demonstration with notebook and camera present, to prove whether the mechanism could explain the locked-room appearance.",
-      "quote": "I would bring Milne back before daylight and stage the thing properly.",
-      "dueByScene": "s-004"
-    }
-  ],
+  "promises": [],
   "paysOff": []
 }

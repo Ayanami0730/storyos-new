@@ -1,4 +1,5 @@
-{"scene":"s-001","attribute":"location","value":"loc-castle-view-hotel","quote":"a famous actress was in the town, staying at the Castle View hotel."}
-{"scene":"s-002","attribute":"location","value":"loc-actress-suite","quote":"The suite opened into a room that seemed to be built to take the act of being seen apart from the act of being alone."}
-{"scene":"s-002","attribute":"holds","value":"obj-cigarette-case (on dressing table)","quote":"She set her valise down and let her fingers travel, once, over the cigarette case as if expecting the same steadiness from the metal."}
-{"scene":"s-002","attribute":"mood","value":"restless; vulnerable about being seen","quote":"For all its practiced glamour, she felt unexpectedly small, as if the glass between the hotel and the palace could not protect her from being seen in ways she had not practised."}
+{"scene":"s-002","attribute":"location","value":"loc-guest-cottage","quote":"She closed the door behind her and the manager took one last look around the front path, as if confirming that ordinary would be allowed."}
+{"scene":"s-002","attribute":"holds","value":"folded paper script (pages from a new picture)","quote":"Instead she found a paper script folded into the flap—a few pages from a new picture she had read on the train."}
+{"scene":"s-002","attribute":"mood","value":"restless beneath public composure","quote":"The smile was a prop that served as a border between the public and the private—and already, at the edge of that border, something inside her shifted impatiently."}
+{"scene":"s-002","attribute":"condition","value":"composed outwardly; uses script to occupy hands","quote":"She tucked the script into her lap and folded her hands so nothing would leak from them."}
+{"scene":"s-002","attribute":"companions","value":"char-confidante; char-driver","quote":"The actress lifted a hand in a gesture that belonged on screen and let the manager shepherd them toward the motorcar."}

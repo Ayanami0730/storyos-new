@@ -1,0 +1,8 @@
+id: char-lady
+name: lady
+sketch: "A senior lady-in-waiting: loyal, fluent in palace protocol, the
+  guardian of household intimacy and unwritten rules."
+identity:
+  profession: Lady-in-waiting
+provenance:
+  profession: s-001

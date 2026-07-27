@@ -1,0 +1,8 @@
+id: char-cottagekeeper
+name: the cottagekeeper
+sketch: The local cottagekeeper entrusted (by the manager) to keep guests
+  private and to manage household arrangements.
+identity:
+  profession: cottagekeeper/proprietor responsible for maintaining guest privacy
+provenance:
+  profession: s-002

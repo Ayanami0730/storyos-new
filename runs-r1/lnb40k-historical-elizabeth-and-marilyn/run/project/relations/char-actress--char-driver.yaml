@@ -1,0 +1,16 @@
+pairId: char-actress--char-driver
+participants:
+  - char-actress
+  - char-driver
+phases:
+  - index: 1
+    relation: chauffeur
+    fromScene: s-002
+    toScene: null
+    transition: The driver functions as the actress's chauffeur, providing discreet
+      transportation in a black saloon with curtains and managing luggage and
+      press proximity through practiced gestures.
+    source:
+      scene: s-002
+      span: L12-L36
+openQuestions: []

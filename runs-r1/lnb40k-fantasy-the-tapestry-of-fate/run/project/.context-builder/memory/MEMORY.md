@@ -1,3 +1,4 @@
 # Memory index
 
-- [record gaps visibly when index lacks textual proof](record-gaps-when-index-lacks-quotes.md) — record gaps when index lacks textual proof
+- [batch reads to reduce round-trips](context-builder-note-about-batching.md) — batch reads: ask for all index files you need at once
+- [context-builder-note-about-batching](batching.md) — Batch reads: ask for everything you need in one call

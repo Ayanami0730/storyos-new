@@ -2,112 +2,66 @@
   "sceneId": "s-003",
   "claims": [
     {
-      "entity": "obj-oil-lamp",
-      "attribute": "placement",
-      "quote": "I set the oil lamp six feet from the mantel and propped the wick so the flame rode roughly eighteen inches above the hearth.",
-      "value": "six feet from mantel; flame 18 in above hearth"
+      "entity": "obj-broken-clock",
+      "attribute": "stopped_time",
+      "quote": "11:18 a.m. — I held the camera over the face until the glass reflected too much light and, on the third take, caught the hands squared at four twenty-two.",
+      "value": "04:22"
     },
     {
-      "entity": "loc-parlor",
-      "attribute": "floor_mark",
-      "quote": "I measured the six feet again because measuring was the part of this that felt like control, then I pencilled a small cross on the floor seven inches to the left of the mirror’s centre and taped a strip of envelope paper there to hold the mark.",
-      "value": "mark seven inches left of mirror centre on parlor floor"
+      "entity": "obj-silver-locket",
+      "attribute": "initials_read",
+      "quote": "11:34 a.m. — I laid the locket beside the diary page I had photographed in the attic and took close-ups of the scratched letters on the silver. The initials were shallow and crude: E.L.",
+      "value": "E.L."
     },
     {
-      "entity": "obj-venetian-mirror",
-      "attribute": "observed_shimmer",
-      "quote": "The seam in the silvering caught it first and, for a heartbeat that was both longer and too short, the glass answered with an intensified shimmer along that hairline joint.",
-      "value": "intensified shimmer along hairline seam under lamp activation"
-    },
-    {
-      "entity": "obj-venetian-mirror",
-      "attribute": "reflection_lag_observed",
-      "quote": "My hand in front of the glass registered a fraction of a second sooner than its reflection — the lag I'd written down as a prediction —",
-      "value": "reflection lag of fraction of a second between real movement and reflection"
-    },
-    {
-      "entity": "obj-venetian-mirror",
-      "attribute": "impossible_reflection_description",
-      "quote": "The reflection was not the room I was sitting in. In the glass the narrow stair descended on the left while, behind me, the real stair rose on the right. Light in the mirror had a colder edge, a blue that did not belong to my lamp; the reflected banister cast a shadow where the real banister made none.",
-      "value": "reflected parlor shows stair descending on left (real stair rises on right) and bluish, colder light source in reflection"
+      "entity": "obj-sepia-photo",
+      "attribute": "back_date_read",
+      "quote": "11:27 a.m. — in my bedroom I set the cracked mirror on the bed and propped the sepia photograph against the glass. Under raking light the back was legible in a way it had not been when I first found it: faint, smeared ink resolved into a date. I read it aloud and wrote it down. \"Oct 12 1913,\" I said",
+      "value": "Oct 12 1913"
     },
     {
       "entity": "obj-diary",
-      "attribute": "ritual_entry_date",
-      "quote": "Tucked into the margin, dated March 24, 1972, were three short directives I read aloud, as if hearing them aloud would make them obey me as well as the paper:",
-      "value": "March 24, 1972"
+      "attribute": "torn_page_fragment",
+      "quote": "I sat on the attic joist and read the torn fragment aloud, just as I had the photograph. The words were small and sudden on the page: \"Oct 12 — tea and the clock. The clock stopped at four and twenty-two when Mam went for sugar. —spilt tea under the boards. Don't tell.\"",
+      "value": "\"Oct 12 — tea and the clock. The clock stopped at four and twenty-two when Mam went for sugar. —spilt tea under the boards. Don't tell.\""
     },
     {
-      "entity": "obj-diary",
-      "attribute": "ritual_step_1",
-      "quote": "\"Mark the seam.\"",
-      "value": "Mark the seam."
+      "entity": "obj-floorboard-plank",
+      "attribute": "stain_description_matches_diary",
+      "quote": "11:44 a.m. — The dark patch under the subfloor had the same stubborn, dry look as before; in the light it read as the colour of old tea, a bruised brown with speckled edges.",
+      "value": "bruise-brown, dry, speckled edges"
     },
     {
-      "entity": "obj-diary",
-      "attribute": "ritual_step_2",
-      "quote": "\"Place the flame where the sill is cut.\"",
-      "value": "Place the flame where the sill is cut."
+      "entity": "char-narrator",
+      "attribute": "keeps_written_records",
+      "quote": "12:17 p.m. — I wrote the new facts into my notebook the way you repair a leak by marking it. The locket's initials read E.L.; the sepia's back read \"Oct 12 1913\"; the torn diary page said, verbatim, \"—spilt tea under the boards. Don't tell.\"",
+      "value": "records timestamps and findings in notebook"
     },
     {
-      "entity": "obj-diary",
-      "attribute": "ritual_step_3",
-      "quote": "\"Speak her name and give the leaving.\"",
-      "value": "Speak her name and give the leaving."
-    },
-    {
-      "entity": "obj-brass-key",
-      "attribute": "used_to_open",
-      "quote": "I took the brass key from the mantel—still dull where my thumb had warmed it earlier—and turned it in the attic hatch's rim lock.",
-      "value": "used to open attic hatch rim lock"
-    },
-    {
-      "entity": "loc-attic",
-      "attribute": "attic_slat_location",
-      "quote": "A single slat on the north rafter was split from edge to edge and left a vertical gap of about two inches. It sat two feet from the hatch and ten feet from the east-facing window, and when I knelt on the hatch lip a thin shaft of lamp-light threaded through the gap and struck the attic floor in a line that aimed back toward the mantel.",
-      "value": "split slat on north rafter, vertical 2-inch gap, located 2 ft from hatch, 10 ft from east window; admits shaft aimed toward mantel"
-    },
-    {
-      "entity": "loc-attic",
-      "attribute": "attic_characteristics",
-      "quote": "The stair to the attic was narrow and pitched; I climbed into a low, cedar-dark space where dust made the air taste like dry paper. The attic ceiling brushed my forearms; the roof slants made the room feel smaller than the house below.",
-      "value": "low cedar-dark attic, narrow pitched stair, low ceiling that brushes forearms"
-    },
-    {
-      "entity": "ghost-hannah",
-      "attribute": "communication_mode",
-      "quote": "Hannah came then — not a storm but a sequence: she tapped once, twice, three times along the inside of the frame; she did it in precise, patient counts, as if enumerating steps. Her mouth formed one slow word. I read it because there is no other polite thing to do with an apparition that mouths a syllable: \"light.\"",
-      "value": "communicates by tapping and mouthing single logical words (example: 'light')"
-    },
-    {
-      "entity": "ghost-hannah",
-      "attribute": "written_message_reflection_only",
-      "quote": "In the mirror's other side the dust seemed to part where her finger slid; in that reflected seam the darkened trail spelled a single word: \"free.\" The dust on my side of the frame did not move.",
-      "value": "the word 'free' appeared only in the mirror's reflected surface; no physical dust moved on Lena's side"
-    },
-    {
-      "entity": "char-lena",
-      "attribute": "performed_ritual_step",
-      "quote": "I struck it, lifted the flame to the wick, and said, plainly, \"Hannah Hale.\" Then I read the diary line and spoke it aloud to the room, slow and deliberate: \"Speak her name and give the leaving.\"",
-      "value": "spoke Hannah Hale's name aloud and read 'Speak her name and give the leaving' while bringing the match flame to the wick"
+      "entity": "char-mrs-hollis",
+      "attribute": "response_to_questioning",
+      "quote": "\"Children left long ago,\" she said, clipped. She moved a jar of preserves between us as if it were a screen. \"This house has its ways. We don't keep much past what's necessary.\"",
+      "value": "evasions and deflection"
     }
   ],
   "presentEntities": [
-    "char-lena",
-    "loc-parlor",
-    "loc-attic",
-    "obj-venetian-mirror",
-    "obj-oil-lamp",
-    "obj-brass-key",
+    "char-narrator",
+    "char-mrs-hollis",
+    "loc-hallway",
+    "loc-kitchen",
+    "obj-broken-clock",
     "obj-diary",
-    "ghost-hannah"
+    "obj-silver-locket",
+    "obj-cracked-mirror",
+    "obj-sepia-photo",
+    "obj-floorboard-plank"
   ],
   "promises": [
     {
-      "id": "promise-test-mirror",
-      "promise": "Reader owed a follow-up where Lena conducts controlled optical tests with measurements and lamp placement to investigate the reflection lag.",
-      "quote": "I set the oil lamp six feet from the mantel and propped the wick so the flame rode roughly eighteen inches above the hearth.",
-      "dueByScene": "s-005"
+      "id": "pr-01-photograph-query",
+      "promise": "Reader is owed verification of the photograph's date and the full provenance of the sepia photo inside the locket (matching to obj-sepia-photo).",
+      "quote": "11:27 a.m. — in my bedroom I set the cracked mirror on the bed and propped the sepia photograph against the glass. Under raking light the back was legible in a way it had not been when I first found it: faint, smeared ink resolved into a date. I read it aloud and wrote it down. \"Oct 12 1913,\" I said",
+      "dueByScene": "null"
     }
   ],
   "paysOff": []

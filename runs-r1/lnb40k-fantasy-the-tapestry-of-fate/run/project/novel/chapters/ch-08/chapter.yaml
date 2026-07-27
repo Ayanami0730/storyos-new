@@ -1,52 +1,62 @@
 chapter: ch-08
 scenes:
   - id: s-029
-    intent: "Amina bargains with Azraq via the amulet: she offers to use the
-      spindle, but on conditions that the peri must accept. She intends to use
-      the spindle in a way that will break the amulet's hold or free her crew,
-      scheming to outmaneuver both factions."
+    intent: "The rewrite works partially: the token loosens but the island's weave
+      frays. Laila returns but altered: her memories are shuffled, and the crew
+      carry small losses. The peri are enraged and reveal they intended
+      sacrifice; Amina has changed the terms but not the balance."
     present:
+      - char-laila
       - char-amina
       - faction-peri-council
-      - char-peri-envoy-azraq
       - obj-spindle
-      - obj-peri-amulet
-      - char-yusuf
+      - char-peri-azad
+      - char-peri-sahr
+      - loc-island-qarrah
+      - obj-peri-token
+      - char-amina-ghost
   - id: s-030
-    intent: "Climax: witches and peri clash as Amina turns the spindle. She rewrites
-      a fate-line to free her crew and sever the amulet's hold, but every
-      spindle stitch exacts a cost. The exchange is painful and unexpected —
-      someone pays with memory, identity, or a life altered."
+    intent: "Climax: Amina confronts Azad and the Peri Council. In a final exchange
+      she uses the spindle in a creative, costly way—not to erase the Council
+      but to reweave the nature of bargains so that coercion loses its
+      immortality. The council pays a price."
     present:
       - char-amina
-      - faction-witches-island
+      - char-peri-azad
       - faction-peri-council
       - obj-spindle
-      - char-yusuf
-      - char-witch-lailah
-      - char-peri-envoy-azraq
-      - obj-peri-amulet
+      - char-peri-sahr
+      - obj-peri-token
+      - char-amina-ghost
   - id: s-031
-    intent: "Aftermath: the island's enchantments loosen in part; escape becomes
-      possible though not without change. Amina faces the cost of her choice
-      (lost memory, altered future, or a sacrifice) and reconciles what she has
-      given with what she has saved."
+    intent: "Aftermath: The island stabilizes as the witches reweave with Mother
+      Khayla's guidance; Elif helps restore what can be restored. Amina's crew
+      is free but altered. The peri are changed: their compulsion weakens, and
+      the token is neutralized but at a moral cost."
     present:
+      - faction-witches-qarrah
+      - char-mother-khayla
+      - char-elif
       - char-amina
-      - char-yusuf
-      - loc-ship-qitaf
+      - char-laila
       - obj-spindle
-      - loc-island-jarrah
-      - faction-witches-island
+      - char-peri-azad
+      - char-peri-sahr
+      - loc-island-qarrah
+      - obj-peri-token
+      - char-amina-ghost
   - id: s-032
-    intent: "Amina confronts the Peri Council one last time at sea: she refuses to
-      hand over the spindle intact, forces a bargain that curtails the peri's
-      interventionist designs, or else hides/damages the spindle. The peri's
-      fate is shifted; Amina secures her crew's safety at a cost."
+    intent: "Resolution: Back in Port Rahim, Amina contemplates what freedom now
+      means. She returns the spindle to the witches or leaves it in a guarded
+      place by agreement; she no longer serves the peri. Seeds of future tension
+      remain, but Amina is restored in a new, ambiguous freedom."
     present:
       - char-amina
+      - loc-port-rahim
+      - char-gul
       - faction-peri-council
+      - char-peri-azad
+      - char-peri-sahr
       - obj-spindle
-      - char-peri-envoy-azraq
-      - char-yusuf
-      - obj-peri-amulet
+      - obj-peri-token
+      - char-amina-ghost

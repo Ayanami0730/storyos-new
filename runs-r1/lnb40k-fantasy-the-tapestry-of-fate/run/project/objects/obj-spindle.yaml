@@ -1,10 +1,5 @@
 id: obj-spindle
-sketch: The Spindle — a single ancient spindle kept in the witches' Heart-loom.
-  It can rewrite individual strands of fate when used, but its power carries a
-  precise, unavoidable cost.
-notes:
-  - Named target of the Peri Council's commission as asserted by Azraq in s-002;
-    provenance s-002.
-  - Named target of the Peri Council's commission as asserted by Azraq in s-002;
-    provenance s-002.
-first_seen: s-002
+sketch: "The Spindle: a small, intricately wrought spindle of unknown metal and
+  thread that can twist and re-weave strands of fate. Its workings are
+  dangerous, precise, and morally fraught."
+first_seen: null

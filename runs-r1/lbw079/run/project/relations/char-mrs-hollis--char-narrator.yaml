@@ -1,0 +1,17 @@
+pairId: char-mrs-hollis--char-narrator
+participants:
+  - char-mrs-hollis
+  - char-narrator
+phases:
+  - index: 1
+    relation: landlord / tenant (landlady / occupant)
+    fromScene: s-001
+    toScene: null
+    transition: Mrs. Hollis met the narrator on the landing, produced a key on a
+      neat ribbon and recited house rules; this establishes the landlord/tenant
+      relationship (landlady has managerial authority; narrator is occupant/new
+      tenant).
+    source:
+      scene: s-001
+      span: L2-L9
+openQuestions: []

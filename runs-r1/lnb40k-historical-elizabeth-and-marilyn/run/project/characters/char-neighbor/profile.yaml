@@ -1,0 +1,10 @@
+id: char-neighbor
+name: neighbor
+sketch: "A local Windsor neighbor: middle-class, rooted in the town's rhythms,
+  observant of comings and goings and a foil to high drama."
+identity:
+  habit: regular at the teashop, habitually sits at the window table each morning
+  profession: local townsman
+provenance:
+  habit: s-003
+  profession: s-003

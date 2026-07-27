@@ -1,0 +1,16 @@
+pairId: char-confidante--char-cottagekeeper
+participants:
+  - char-confidante
+  - char-cottagekeeper
+phases:
+  - index: 1
+    relation: trust_for_privacy
+    fromScene: s-002
+    toScene: null
+    transition: The manager relies on the cottagekeeper to keep guests private—she
+      explicitly states the cottagekeeper 'knows to keep guests private' when
+      arranging accommodation and communications.
+    source:
+      scene: s-002
+      span: L22-L30
+openQuestions: []

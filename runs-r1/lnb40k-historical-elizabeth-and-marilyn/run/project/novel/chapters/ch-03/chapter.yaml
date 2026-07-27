@@ -1,126 +1,39 @@
 chapter: ch-03
 scenes:
   - id: s-009
-    intent: The actress insists on seeing Windsor Castle from the river; she hires
-      char-actress-driver to take a small boat at loc-river-quay, setting the
-      stage for proximity without fanfare.
+    intent: "An interior scene in the Queen's apartments: a private object
+      (obj-journal) introduced and a small moment of rebellion—a refusal of
+      duty's script."
     present:
       - char-queen
-      - char-prince-philip
-      - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - char-lady
+      - obj-journal
+      - loc-queen-apartment
+      - obj-script
   - id: s-010
-    intent: The Queen goes to loc-garden-pavilion to escape formality. The scene
-      emphasizes the hidden spatialities of the castle and the skill of
-      char-lady-in-waiting in protecting the sovereign's privacy.
+    intent: A minor household emergency in the royal kitchen exposes the butler's
+      competence and the human machinery behind ceremony.
     present:
-      - char-queen
-      - char-prince-philip
-      - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - char-butler
+      - char-gardener
+      - loc-royal-kitchen
+      - char-assistant
   - id: s-011
-    intent: "A small collision of routes: the actress's boat moors near the garden
-      where the Queen strolls; a moment of recognition occurs before entourages
-      can arrange anything—eyes meet across water."
+    intent: The actress slips away from her entourage to walk the riverside terrace
+      and encounters the castle's quieter flank; she almost meets a gardener who
+      notices her interest.
     present:
-      - char-queen
-      - char-prince-philip
       - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - loc-riverside-terrace
+      - char-gardener
+      - char-driver
   - id: s-012
-    intent: "An unscripted, private approach: the Queen steps down toward the quay
-      under a pretext; the actress disembarks. Both claim curiosity rather than
-      protocol. This is the tense before the private meeting."
+    intent: The Queen, restless, requests a walk with a lady-in-waiting; they pass
+      the pavilion and speak candidly about loneliness in roles not of their
+      choosing.
     present:
       - char-queen
-      - char-prince-philip
-      - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
+      - char-lady
       - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - loc-long-walk
+      - loc-queen-apartment

@@ -2,93 +2,133 @@
   "sceneId": "s-003",
   "claims": [
     {
-      "entity": "loc-windsor-high-street",
-      "attribute": "morning_scene",
-      "quote": "The high street of Windsor lay in a late-summer softness, heat going out of the stones as if the town were taking a deep, polite breath. Early shutters were open: a grocer’s awning striped white and green, a tear in a poster at the noticeboard for a repertory season, the tea-room’s windows steamed with fresh pots. A milkman in a white smock shouldered a crate, a varnisher knelt over a banister with a tin of gloss, and a boy pushed a tray of lemonade between the tourists’ legs like a steady, sunburned metronome. Hats and collars and the small commerce of mornings gave the street its rhythm.",
-      "value": "late-summer morning active high street with grocer awning, noticeboard poster, tea-room, milkman, varnisher, lemonade seller"
+      "entity": "loc-teashop",
+      "attribute": "description",
+      "quote": "The bell over the teashop door gave the same small, homely jangle it had given a hundred mornings, and the room smelled of scalded milk and lemon polish.",
+      "value": "A small high-street teashop with scuffed wooden tables, a radio on a shelf tuned to a county bulletin, and typical offerings such as Victoria sponge."
     },
     {
-      "entity": "char-local-neighbor",
-      "attribute": "location_and_occupation",
-      "quote": "Tom Harris had the best place to see it. He stood on the step of Harris & Sons, towel at his waist, one hand on the brass rail he’d polished that morning. He was a man who had learned to read the town in half a dozen gestures: the scuff of a brogue that suggested whether a man paid his rent on Friday or fancied himself a gentleman, the ink-stained thumb of the printer’s apprentice, the way a vicar removed his hat in the shop and set it on the counter like an offering. Tom had kept rooms above the shop for fifty years and could place a new arrival by the knock.",
-      "value": "shopkeeper/landlord of Harris & Sons with rooms above shop; observational, long-term resident"
+      "entity": "loc-teashop",
+      "attribute": "typical_smells",
+      "quote": "The bell over the teashop door gave the same small, homely jangle it had given a hundred mornings, and the room smelled of scalded milk and lemon polish.",
+      "value": "scalded milk and lemon polish"
     },
     {
-      "entity": "loc-windsor-high-street",
-      "attribute": "shops_and_points_of_interest",
-      "quote": "He nodded at the noticeboard where a poster for the theatre had curled; he flicked his finger at the newsagent’s window where a neat pile of cuttings had been set behind glass. The file of press cuttings—already familiar to the palace man—showed in the window now, and Tom noted the neat pile as proof the town read reputation like a ledger.",
-      "value": "noticeboard with theatre posters; Langley’s Newsagents (fictional name) maintains press cuttings in window"
+      "entity": "loc-teashop",
+      "attribute": "typical_foods",
+      "quote": "The bell over the teashop door gave the same small, homely jangle it had given a hundred mornings, and the room smelled of scalded milk and lemon polish.",
+      "value": "Victoria sponge and tea"
     },
     {
-      "entity": "obj-press-cuttings",
-      "attribute": "visibility_and_handling",
-      "quote": "Inside Langley’s Newsagents a publicist—small, efficient, orange silk handkerchief to the cheek—moved with the precise economy of someone used to making stories behave. She stood long enough to make a small sign; the newsman slid a paper behind the counter without a show of it. That was no secret here: the pile in the window did the talking for them. Tom watched the exchange like a man who had learned that reputation was traded in margins and margins were read aloud.",
-      "value": "press cuttings visible in newsagent window; publicist's presence and discreet handling noted"
+      "entity": "loc-teashop",
+      "attribute": "radio_presence",
+      "quote": "A radio on a high shelf—always tuned to the county bulletin—murmured a cricket score while the proprietor set out a teapot and a plate of sponge that had been sliced thick enough to look like a small, proper thing.",
+      "value": "radio on a high shelf tuned to the county bulletin"
     },
     {
-      "entity": "char-publicist",
-      "attribute": "appearance_and_action",
-      "quote": "Inside Langley’s Newsagents a publicist—small, efficient, orange silk handkerchief to the cheek—moved with the precise economy of someone used to making stories behave. She stood long enough to make a small sign; the newsman slid a paper behind the counter without a show of it.",
-      "value": "publicist noted in town; signals newsman discreetly"
+      "entity": "char-neighbor",
+      "attribute": "regular_seat",
+      "quote": "He was at his window table when the bell sounded: char-neighbor, the sort of man a street could count on to know what had happened the night before. He had his regular seat by the window, where the light found him like a habit; it was a sentence in the town’s daily life that needed no argument.",
+      "value": "window table by the teashop's front window"
     },
     {
-      "entity": "char-actress-driver",
-      "attribute": "behavior_and_presence",
-      "quote": "The actress’s driver steered his car down past the Crown Tea Rooms with the calm of someone who had learned to make grand entrances feel incidental. His uniform was neat, his hands steady on the wheel, and he carried a case of luggage like a man who had done this for years.",
-      "value": "actress driver driving calmly, handling luggage professionally"
+      "entity": "char-neighbor",
+      "attribute": "habit_of_visiting_teashop",
+      "quote": "He was at his window table when the bell sounded: char-neighbor, the sort of man a street could count on to know what had happened the night before.",
+      "value": "frequents loc-teashop in mornings to read the paper and observe town news"
     },
     {
-      "entity": "char-royal-chauffeur",
-      "attribute": "behavior_and_presence",
-      "quote": "Almost at the same moment the royal chauffeur came the other way, cap pulled low, limousines idling behind him in the castle yard like patient beasts. The two men passed in the street—two professional courtesies, a half-nod, a measuring look—and Tom paused with his broom, blade of it resting on the step, to watch them go.",
-      "value": "royal chauffeur present and passing the actress driver; limousines idling in castle yard; chauffeurs exchanged courtesies"
+      "entity": "char-confidante",
+      "attribute": "visited_teashop_briefly",
+      "quote": "The confidante—still carrying the flat, efficient air of someone who turned questions into actions—walked the length of the high street and paused outside the teashop. She did not come in at once; instead she checked her watch and glanced at the telegrams she kept folded in her hand.",
+      "value": "char-confidante paused outside loc-teashop and entered briefly to make enquiries"
     },
     {
-      "entity": "loc-hotel-castle-view",
-      "attribute": "privacy_action",
-      "quote": "Above, in the hotel that looked down at the slate roofs, someone drew the blinds for privacy and let the ordinary light go on with its business.",
-      "value": "hotel guests drawing blinds for privacy overlooking high street"
+      "entity": "loc-town-high-street",
+      "attribute": "atmosphere",
+      "quote": "Outside, the town looked like a film one frame at a time: the postman on his route, the newsboy arranging papers, the cinema’s poster rolled like a promise.",
+      "value": "high street with postman, newsboy, cinema poster and general summer-town film-like atmosphere"
     },
     {
-      "entity": "char-local-neighbor",
-      "attribute": "manner_and_voice",
-      "quote": "“Good morning,” he said to no one and everyone, sweeping the last grit off the door-mat. His voice was the mild, slightly ironic voice of someone who had watched generations of summer suits come and go.",
-      "value": "mild, slightly ironic voice; habit of addressing passersby"
+      "entity": "char-neighbor",
+      "attribute": "action_after_teashop",
+      "quote": "By the time he left, the neighbour had done what he always did with a thing he could not rest: he buttoned his overcoat and stepped out into the street with the intention of walking toward the castle gates.",
+      "value": "left loc-teashop and walked toward Windsor Castle gates to look for the actress"
     },
     {
-      "entity": "loc-windsor-high-street",
-      "attribute": "town_gaze_and_social_dynamics",
-      "quote": "The publicist moved out, a bright slash among the shopfronts, and the newsman slipped a paper behind the counter with a practiced hand. The whole business of the cuttings—the same sort the palace man kept in a folder labelled Windsor—had become visible to anyone who cared to look. Tom harrumphed softly, more to fill the silence than from surprise. He had seen stars before, actresses who believed every passerby was their audience and gentlemen who disliked being noticed at all. The town made distinctions that were not unkind: celebrity could be enjoyed from a distance, whereas the royal household was something to be particularly careful about. “We clap for the pictures, sir,” he told the boy sweeping leaves, “but we take off our hats for the house.”",
-      "value": "town distinguishes between celebrity and royalty; polite deference to royalty and amused distance for celebrity; local commentary recorded"
+      "entity": "loc-teashop",
+      "attribute": "owner_behaviour",
+      "quote": "The proprietor wiped a saucer and listened; she did not need to press for facts and did not offer them unless asked.",
+      "value": "proprietor listens and does not volunteer gossip"
     },
     {
-      "entity": "loc-windsor-high-street",
-      "attribute": "gossip_economy",
-      "quote": "The day had the pleasant, particular air of a town that expected to be admired and to ignore the admiration in measured turns. Windsor, Tom knew, had always been a place of carefully held attention: you noticed what mattered, you kept your ledger of whom you watched and why, and you kept most of your talk for the evening when the lids came down and the shutters closed. For now the high street kept to its rhythm—hovers of tourists, the precise commerce of shopkeepers, two chauffeurs passing on business the town would speak of over lemon tarts—and the noticeboard, with its curling poster, looked on like a patient neighbour.",
-      "value": "local gossip and evening privacy customs; high street rhythm and social habits"
+      "entity": "loc-teashop",
+      "attribute": "daily_routine",
+      "quote": "On the counter, a plate of Victoria sponge made the room feel as if nothing very strange had occurred at all.",
+      "value": "sets out Victoria sponge and keeps a radio for county news"
     },
     {
-      "entity": "char-local-neighbor",
-      "attribute": "social_knowledge",
-      "quote": "Tom had kept rooms above the shop for fifty years and could place a new arrival by the knock.",
-      "value": "local-neighbor knows arrivals pattern and identifies newcomers by knock"
+      "entity": "loc-teashop",
+      "attribute": "furniture",
+      "quote": "The tables were the kind that had gained character in the corners: scuffed wood, mismatched varnish, a sensible line of sugar bowls.",
+      "value": "scuffed wooden tables, mismatched varnish, sugar bowls"
     },
     {
-      "entity": "char-local-neighbor",
-      "attribute": "polite_customs_noted",
-      "quote": "When the actress’s driver stopped for a moment to let a bellboy wheel a case across the pavement, Tom tipped his hat with the old courtesy, not foolish but observational. He watched the glove as if it were the last word of a sentence. “Looks the part, don’t she,” he said in a tone that was not envy but appraisal; the woman at the tea-room smiled and nodded, then turned back to her pots.",
-      "value": "local-neighbor performs traditional courtesies and notes small sartorial details (hat tips, gloves)"
+      "entity": "loc-teashop",
+      "attribute": "opening_bell_sound",
+      "quote": "The bell over the teashop door gave the same small, homely jangle it had given a hundred mornings, and the room smelled of scalded milk and lemon polish.",
+      "value": "small homely jangle"
+    },
+    {
+      "entity": "char-neighbor",
+      "attribute": "knowledge_of_arrival_details",
+      "quote": "He had seen the black saloon with its curtains drawn; he had seen the driver close the door with that precise, indifferent care. He had seen the actress step from a carriage the way someone steps from a performance into a room that must be made ordinary.",
+      "value": "observed the black saloon with curtains drawn and driver closing the door; knows the actress arrived by black saloon"
+    },
+    {
+      "entity": "loc-teashop",
+      "attribute": "radio_bulletins_content",
+      "quote": "A radio on a high shelf—always tuned to the county bulletin—murmured a cricket score while the proprietor set out a teapot and a plate of sponge that had been sliced thick enough to look like a small, proper thing.",
+      "value": "cricket scores and county bulletins are listened to in the shop"
+    },
+    {
+      "entity": "char-confidante",
+      "attribute": "public_behaviour",
+      "quote": "The confidante—still carrying the flat, efficient air of someone who turned questions into actions—walked the length of the high street and paused outside the teashop. She did not come in at once; instead she checked her watch and glanced at the telegrams she kept folded in her hand.",
+      "value": "confidante behaves efficiently, checks telegrams and makes brief enquiries in public then leaves"
+    },
+    {
+      "entity": "char-neighbor",
+      "attribute": "tone_in_teashop_reports",
+      "quote": "He told them what he had seen, and the sentences landed in the room with the familiar gravity of a bell. “There was a black car,” he said. “Curtains at the back. Driver kept the bag like it was part of him.”",
+      "value": "reports observed arrival details to teashop patrons"
+    },
+    {
+      "entity": "loc-teashop",
+      "attribute": "role_in_town",
+      "quote": "It was the sort of place where townspeople arrived with the weather in their faces and their news in their pockets.",
+      "value": "gathering place for town gossip and local news"
+    },
+    {
+      "entity": "loc-teashop",
+      "attribute": "order_of_conversation",
+      "quote": "Gossip was a way to make the big small. They lined up their curiosities and then filed them: an admiring clause, a worried clause, a practical clause.",
+      "value": "conversation combines admiration, worry, and practicalities when discussing visitors"
     }
   ],
   "presentEntities": [
-    "char-local-neighbor",
-    "loc-windsor-high-street",
-    "obj-press-cuttings",
-    "char-publicist",
-    "char-actress-driver",
-    "char-royal-chauffeur",
-    "loc-hotel-castle-view"
+    "char-neighbor",
+    "loc-teashop",
+    "loc-town-high-street",
+    "char-confidante"
   ],
-  "promises": [],
+  "promises": [
+    {
+      "id": "promise-see-castle-gates",
+      "promise": "char-neighbor will go to the castle gates to look for the actress; this leaves an open next-beat about what he might see there.",
+      "quote": "By the time he left, the neighbour had done what he always did with a thing he could not rest: he buttoned his overcoat and stepped out into the street with the intention of walking toward the castle gates.",
+      "dueByScene": null
+    }
+  ],
   "paysOff": []
 }

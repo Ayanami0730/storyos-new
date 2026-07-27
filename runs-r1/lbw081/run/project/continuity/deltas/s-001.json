@@ -2,94 +2,121 @@
   "sceneId": "s-001",
   "claims": [
     {
-      "entity": "loc-harrow-library",
-      "attribute": "door_bolted_from_inside",
-      "quote": "Milne had shown me the bolt and said it had been turned from the inside.",
-      "value": "true"
+      "entity": "loc-harben-foyer",
+      "attribute": "police_presence",
+      "value": "Inspector Lane and one constable; foyer cordoned with tape",
+      "quote": "Inspector Lane stood in the small foyer with her collar up, a constable behind her, the hall already marked off with a strip of tape that had more dignity than utility."
     },
     {
-      "entity": "obj-antique-clock",
-      "attribute": "stopped_time",
-      "quote": "I read later that the mechanism had stopped at 10:17; the note was dry and precise, the sort of entry made when someone decides it is better to have a measurement than a sense.",
-      "value": "10:17"
+      "entity": "char-inspector-margot-lane",
+      "attribute": "instruction_to_ellis_arrival",
+      "value": "Don't touch anything until forensics are here, Ellis",
+      "quote": "“Don’t touch anything until forensics are here, Ellis,” she said when she saw me."
     },
     {
-      "entity": "obj-antique-clock",
-      "attribute": "stopped",
-      "quote": "The clock's face presented no work of time: its hands were rigid, arrested mid-gesture.",
-      "value": "true"
+      "entity": "char-anna-rowe",
+      "attribute": "found_body",
+      "value": "Anna Rowe found Lucius Harben at his desk and summoned the police",
+      "quote": "Anna Rowe met me at the study door. She had been the one to find him."
     },
     {
-      "entity": "char-lena-harrow",
+      "entity": "loc-harben-study",
+      "attribute": "door_state",
+      "value": "study door shut and locked from inside with brass key in lock",
+      "quote": "The study door was shut. A heavy brass key sat in its lock, the metal dulled by years of handling and scored along one edge."
+    },
+    {
+      "entity": "obj-brass-key",
+      "attribute": "location",
+      "value": "in the study door lock on the study side",
+      "quote": "A heavy brass key sat in its lock, the metal dulled by years of handling and scored along one edge."
+    },
+    {
+      "entity": "loc-harben-study",
+      "attribute": "smell",
+      "value": "oil, paper, and faint tang of metal",
+      "quote": "The room beyond smelled of oil and paper and a faint, sharp tang of metal."
+    },
+    {
+      "entity": "obj-longcase-clock",
+      "attribute": "position",
+      "value": "against the far wall of the study",
+      "quote": "The longcase clock took up the far wall, an upright thing of walnut and gilt that pulled the light toward it."
+    },
+    {
+      "entity": "obj-longcase-clock",
+      "attribute": "hands_state",
+      "value": "stopped at 11:17",
+      "quote": "Its hands were frozen at eleven seventeen; the pendulum hung motionless, a dark tongue."
+    },
+    {
+      "entity": "obj-longcase-clock",
+      "attribute": "access_panel_state",
+      "value": "rear access panel ajar with latch crooked",
+      "quote": "the access panel at the rear of the case was a hair ajar, a sliver of inner brass visible where the latch sat crooked."
+    },
+    {
+      "entity": "obj-ivory-revolver",
+      "attribute": "display_status",
+      "value": "missing from display; empty mount labelled 'IVORY REVOLVER'",
+      "quote": "One mount was empty. A little brass label under the gap read IVORY REVOLVER in neat type; the mounting beneath it showed the ghost of a shape, the crushed velvet where the grip had rested."
+    },
+    {
+      "entity": "char-lucius-harben",
       "attribute": "position_at_discovery",
-      "quote": "She sat now with her upper body pitched forward as if in the middle of writing a sentence that never finished.",
-      "value": "seated_forward_at_desk"
+      "value": "seated at his desk with shoulders folded forward, fingers curled over a torn scrap",
+      "quote": "Lucius Harben sat at his desk with his shoulders folded forward as if in sleep. The back of his head caught the light; his fingers curled over a torn scrap."
     },
     {
-      "entity": "obj-bloodied-handkerchief",
-      "attribute": "presence",
-      "quote": "One arm lay across the blotter; the other clutched a small square of linen whose corners were stained a dark, thirsty red.",
-      "value": "clenched_in_lena_hand"
+      "entity": "obj-torn-note",
+      "attribute": "visible_fragment_text",
+      "value": "do not wind",
+      "quote": "In his palm was a torn note, no larger than my thumb. The fragment I could see read, simply, do not wind."
     },
     {
-      "entity": "obj-bloodied-handkerchief",
-      "attribute": "monogram",
-      "quote": "The handkerchief's initials were not listed on the slip — they were simply noted as present — and that absence kept the name inside the cloth like a secret.",
-      "value": "monogram: [missing]"
+      "entity": "loc-harben-study",
+      "attribute": "desk_marking_near_body",
+      "value": "neat, round mark on the blotter beside his hand consistent with a single shot",
+      "quote": "A neat, round mark on the wood, the kind a single shot makes, stained the blotter beside his hand."
     },
     {
-      "entity": "obj-letter-opener",
-      "attribute": "embedded_in_body",
-      "quote": "Set deep into Lena's chest was a heavy brass letter-opener — the blunt, workmanlike kind kept for opening estate envelopes rather than as ornament.",
-      "value": "true"
+      "entity": "obj-black-thread",
+      "attribute": "location_found",
+      "value": "tangled at base of longcase clock",
+      "quote": "At the base of the clock, tangled in the carved scrollwork, a black thread hung, waxed and stiff."
     },
     {
-      "entity": "obj-letter-opener",
-      "attribute": "oil_smear_on_haft",
-      "quote": "The haft carried no neat fingerprint to place an ordinary hand; there was, however, a thin smear of oil along the wood, the kind left by someone whose hands had been working on machinery rather than on paper.",
-      "value": "present"
-    },
-    {
-      "entity": "obj-secret-pulley",
-      "attribute": "location_description",
-      "quote": "On the outer sill, tucked into the ivy so it did not show, I found a short length of cord and a little loop of metal serving as a makeshift anchor.",
-      "value": "anchored_on_outer_sill_hidden_in_ivy"
-    },
-    {
-      "entity": "obj-ashtray",
-      "attribute": "cigar_ash_present",
-      "quote": "the faint crescent of cigar ash on the sill that did not match Lena's habits",
-      "value": "present"
-    },
-    {
-      "entity": "char-inspector-milne",
-      "attribute": "insistence",
-      "quote": "\"We lock it, we call it something neat,\" he said at one point, rubbing his jaw.",
-      "value": "wants_tidy_case"
-    },
-    {
-      "entity": "char-august-crowe",
-      "attribute": "initial_theory",
-      "quote": "Milne asked if I had a theory. I told him not yet — that is the moment when an open case becomes one worth solving.",
-      "value": "no_theory_yet"
+      "entity": "loc-harben-study",
+      "attribute": "windows_state",
+      "value": "latched with unbroken glass",
+      "quote": "The windows were latched and the glass unbroken."
     }
   ],
   "presentEntities": [
-    "char-august-crowe",
-    "char-inspector-milne",
-    "char-lena-harrow",
-    "loc-harrow-library",
-    "obj-antique-clock",
-    "obj-letter-opener",
-    "obj-bloodied-handkerchief",
-    "obj-secret-pulley"
+    "char-ellis-fletcher",
+    "char-inspector-margot-lane",
+    "char-anna-rowe",
+    "char-lucius-harben",
+    "loc-harben-study",
+    "loc-harben-foyer",
+    "obj-longcase-clock",
+    "obj-ivory-revolver",
+    "obj-brass-key",
+    "obj-torn-note",
+    "obj-black-thread"
   ],
   "promises": [
     {
-      "id": "p-001_locked_room_explanation",
-      "promise": "Explain how the room appeared sealed from within and who left the handkerchief with the unknown monogram.",
-      "quote": "I wanted to find the thread that would unravel the neatness.",
-      "dueByScene": null
+      "id": "promise-investigate-ivory",
+      "promise": "Explain how the ivory revolver came to be absent from the display and whether its absence relates to Lucius Harben's death",
+      "quote": "One mount was empty. A little brass label under the gap read IVORY REVOLVER in neat type; the mounting beneath it showed the ghost of a shape, the crushed velvet where the grip had rested.",
+      "dueByScene": "s-010"
+    },
+    {
+      "id": "promise-note-origin",
+      "promise": "Determine the provenance and meaning of the torn note fragment 'do not wind' and whether it was written by Lucius or placed there",
+      "quote": "In his palm was a torn note, no larger than my thumb. The fragment I could see read, simply, do not wind.",
+      "dueByScene": "s-005"
     }
   ],
   "paysOff": []

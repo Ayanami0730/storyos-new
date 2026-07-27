@@ -28,7 +28,15 @@ quietly writing around it.
 Three consequences:
 
 - **Never rely on your own memory of earlier scenes.** Your context is a working
-  surface, not a record. It gets compacted. Read the index.
+  surface, not a record. It gets compacted, and for four of the five roles it is
+  cleared between scenes outright — the writer, the verifier, the context-builder
+  and the index-manager each start a scene with an empty conversation, because their
+  work is per-scene and a session that only accumulates finished scenes eventually
+  exceeds what a request may carry. That is not a loss of anything you needed: the
+  index is the record, and what you learnt about *how to do your job* goes in
+  memory, which survives both compaction and reset. Only the orchestrator carries
+  the conversation across scenes, because deciding what happens next from what has
+  already happened is its job.
 - **A summary is for navigation, never for fact.** Summaries tell you where to
   look. A claim you act on needs its source: a scene id and a line span.
 - **Story state never goes in agent memory or in a skill.** "Mira is in London
@@ -83,6 +91,15 @@ The exception is a genuine dependency: when what you read *next* depends on what
 this read returns, that has to be a second round-trip, and it is worth one. What is
 not worth one is reading a list of files you already decided on, one file at a
 time.
+
+**Batching applies to reads and writes, never to asking another agent.** A tool that
+delegates — the writer's `ask_context_builder`, the orchestrator's `call_*` — runs
+one at a time by construction, because the agent on the other end can only hold one
+turn. Batched questions are not faster; before this was enforced, five questions in
+one reply got one answer and four framework errors, and the errors reached the
+asker looking like answers. Ask one, read the reply, then ask the next — which is
+usually what you wanted anyway, since the second question is shaped by the first
+answer.
 
 Some reads have a dedicated tool because the useful thing is a derived view
 rather than the bytes. `read_relation_history` is the main one: it gives you a

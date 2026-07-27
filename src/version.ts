@@ -48,6 +48,24 @@ export const VERSION_HISTORY: readonly {
   readonly note: string;
 }[] = [
   {
+    version: "0.8.2",
+    note:
+      "the level-2 fold is told what *this* role cannot recover. One prompt served all five, " +
+      "which asks each of them to decide for itself what matters — the decision a summary is " +
+      "least able to make, because it is written under length pressure and under pressure a " +
+      "model compresses whatever is longest rather than whatever is load-bearing. What is " +
+      "load-bearing differs completely by role and none of it is inferable from a generic " +
+      "instruction: the context-builder\'s is the map it has built of where things live in " +
+      "this book\'s index and which searches came back empty, the verifier\'s is the list of " +
+      "false positives it was talked out of, the orchestrator\'s is why it revised the plan " +
+      "and which committed scenes carry known defects. `ROLE_RETENTION` pairs each with what " +
+      "the role may drop, and every `drop` names something re-readable from the index, which " +
+      "is the same argument the shared contract makes about memory. This matters most for the " +
+      "orchestrator now that the other four reset between scenes: it is resident by design, " +
+      "reached 62k over seventeen scenes, and is the one role for which the fold is on the " +
+      "critical path to a long book.",
+  },
+  {
     version: "0.8.1",
     note:
       "three defects the running 40k round would have hit. (1) **Batched follow-up questions " +

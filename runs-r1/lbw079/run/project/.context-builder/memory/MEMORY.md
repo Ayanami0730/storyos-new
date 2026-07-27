@@ -1,3 +1,3 @@
 # Memory index
 
-- [batch-index-reads](batch-reads.md) — batch index reads in one call
+- [report-missing-relations-early](missing-relations-early.md) — Record missing relation history between scene participants

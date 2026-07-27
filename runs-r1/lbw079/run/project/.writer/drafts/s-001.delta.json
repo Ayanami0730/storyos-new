@@ -2,110 +2,124 @@
   "sceneId": "s-001",
   "claims": [
     {
-      "entity": "loc-parlor",
-      "attribute": "mantel_height",
-      "quote": "The parlor took my boxes with the same measured indifference: a long room with tall windows, faded wallpaper, and a mantel that sat four feet off the floor.",
-      "value": "4 ft"
+      "entity": "loc-67-fairfax",
+      "attribute": "smell",
+      "quote": "I had parked the last box under the threadbare wardrobe and stood for a long minute in the doorway because 67 Fairfax folded around me like an old hand: the constant, faint smell of boiled tea and old paper",
+      "value": "faint smell of boiled tea and old paper"
     },
     {
-      "entity": "obj-venetian-mirror",
-      "attribute": "mirror_dimensions",
-      "quote": "The Venetian mirror above it was six feet wide by four feet tall; its lower edge began three feet above the mantel, so the glass started seven feet from the floor.",
-      "value": "6 ft × 4 ft"
+      "entity": "loc-67-fairfax",
+      "attribute": "acoustics",
+      "quote": "the stairs that complained in a different key with each step, and the thin walls that let the hall sound through as if it belonged to my room too",
+      "value": "creaky stairs; thin walls that transmit hall sounds"
     },
     {
-      "entity": "obj-venetian-mirror",
-      "attribute": "mirror_bottom_height_above_mantel",
-      "quote": "The Venetian mirror above it was six feet wide by four feet tall; its lower edge began three feet above the mantel, so the glass started seven feet from the floor.",
-      "value": "3 ft above mantel"
+      "entity": "char-mrs-hollis",
+      "attribute": "demeanor",
+      "quote": "She was exactly as you'd expect from her photographs in other people's mouths: small, precise, habit-bound. She inclined her head once, clipped the name from my lips, and ticked off rules in sentences that behaved like lists.",
+      "value": "small, precise, habit-bound, clipped manners"
     },
     {
-      "entity": "loc-parlor",
-      "attribute": "distance_mantel_to_window",
-      "quote": "The windows faced east; from the mantel to the nearest window opening it was thirteen feet, and the mantel’s right edge lay three feet from the east wall where the narrow stair rose.",
-      "value": "13 ft"
+      "entity": "char-mrs-hollis",
+      "attribute": "tenancy_rules_explained",
+      "quote": "\"No smoking in the house, please. No late visitors up past eleven. And don't be troubled by the hall clock — it's been stopped since before my time; there's nothing to be done about it.\"",
+      "value": "explained house rules and mentioned the stopped hall clock"
     },
     {
-      "entity": "loc-parlor",
-      "attribute": "mantel_right_edge_from_east_wall",
-      "quote": "The windows faced east; from the mantel to the nearest window opening it was thirteen feet, and the mantel’s right edge lay three feet from the east wall where the narrow stair rose.",
-      "value": "3 ft"
+      "entity": "char-narrator",
+      "attribute": "keeps_written_records",
+      "quote": "11:03 a.m. — I wrote the hour in my notebook as habit demanded, because writing things down made them smaller, manageable.",
+      "value": "timestamps and records events in notebook"
     },
     {
-      "entity": "obj-venetian-mirror",
-      "attribute": "mounting_hardware",
-      "quote": "The mirror was nailed to the mantel with old iron brads.",
-      "value": "nailed with old iron brads"
+      "entity": "obj-broken-clock",
+      "attribute": "mentioned_stopped_time_by_mrs_hollis",
+      "quote": "\"Don't worry about it; the clock's stopped at 4:22, it likes that time.\"",
+      "value": "stopped at 4:22 (reported by Mrs. Hollis)"
     },
     {
-      "entity": "obj-diary",
-      "attribute": "location_found",
-      "quote": "Behind it, folded flat against the wall, was a small diary: neat, narrow...",
-      "value": "tucked behind the Venetian mirror, folded flat against the wall"
+      "entity": "loc-bedroom-2",
+      "attribute": "furniture_and_features",
+      "quote": "My room was smaller than I expected: a single bed, a narrow wardrobe, a wall-hung mirror with a hairline crack low on its glass, and a strip of floral wallpaper behind the wardrobe where someone had made a patch.",
+      "value": "single bed; narrow wardrobe; wall-hung mirror with hairline crack; strip of floral wallpaper with a recent patch"
     },
     {
-      "entity": "obj-brass-key",
-      "attribute": "location_found",
-      "quote": "Two feet east of the hearth I found a plank that rode up under the heel when I stepped on it... under it lay a small brass key",
-      "value": "under a loose floorboard two feet east of the hearth"
+      "entity": "obj-wallpaper",
+      "attribute": "patch_location_and_age",
+      "quote": "The patch was fresher than the rest of the wall: its edge had the clean, un-aged line of a recent glue job. Behind the wardrobe, in the right-hand corner where the paper had been tucked and folded by a careful thumb, there was a narrow gap beneath the lining.",
+      "value": "recent patch; gap located behind wardrobe in right-hand corner beneath lining"
     },
     {
-      "entity": "loc-parlor",
-      "attribute": "windows_orientation",
-      "quote": "The windows faced east; from the mantel to the nearest window opening it was thirteen feet...",
-      "value": "east-facing windows"
+      "entity": "obj-silver-locket",
+      "attribute": "found_location",
+      "quote": "I shifted the wardrobe and my fingers went into that seam without thinking. It gave like a mouth and something small and silver slid against my knuckle — cold with dust.",
+      "value": "tucked into narrow gap behind wallpaper lining, right-hand corner, behind wardrobe"
     },
     {
-      "entity": "loc-parlor",
-      "attribute": "distance_mantel_floor_to_mirror_bottom",
-      "quote": "The Venetian mirror above it was six feet wide by four feet tall; its lower edge began three feet above the mantel, so the glass started seven feet from the floor.",
-      "value": "7 ft above floor"
+      "entity": "obj-silver-locket",
+      "attribute": "find_timestamp",
+      "quote": "11:07 a.m. — found silver locket.",
+      "value": "11:07 a.m., March 3"
     },
     {
-      "entity": "char-lena",
-      "attribute": "narration_voice",
-      "quote": "I arrived with the van half-empty and the house already choosing its sounds. The parlor took my boxes with the same measured indifference... I set down the last box, untied my tape, and drew the room on the back of an envelope...",
-      "value": "first person, observational, methodical voice"
+      "entity": "obj-silver-locket",
+      "attribute": "physical_description",
+      "quote": "The locket was dented on one side, its chain run through with the almost-absence of a loop. A smear ran along the rim, red-brown in the way rust leans and dark like dried mud, so I turned it over on the palm of my hand as if it might explain itself. The silver and the way it had been dented looked almost a century old — early twentieth century; the metal was worn thin at the edges in a way the chain, barely there, did not match.",
+      "value": "small dented silver locket; chain nearly absent; red-brown smear on rim (rust or dried mud); approximate age early twentieth century (metal worn thin at edges)"
     },
     {
-      "entity": "obj-diary",
-      "attribute": "diary_contents_summary",
-      "quote": "When I opened the book the handwriting ran on tight lines about angles and lamps and the way a slice of light would travel across the floor in March.",
-      "value": "contains observations about angles of light and lamp placement"
+      "entity": "obj-silver-locket",
+      "attribute": "interior_contents",
+      "quote": "When I prised it open the photograph inside was a faded sepia: a child with a broken toy held in both hands, the edges curled and soft. On the reverse, two letters had been scratched clumsily into the silver — E.L. — shallow enough that dust sat in the grooves.",
+      "value": "contains a faded sepia photograph of a child with a broken toy; reverse scratched with initials 'E.L.'"
     },
     {
-      "entity": "loc-parlor",
-      "attribute": "unusual_sounds",
-      "quote": "There was a tapping then, very faint and regular, as if someone were turning a page behind the other side of the wall. It was not the settling that I’d expected; it had a rhythm — one-two, pause, one-two...",
-      "value": "faint rhythmic tapping behind wall (one-two, pause, one-two)"
+      "entity": "obj-silver-locket",
+      "attribute": "residue_and_scent",
+      "quote": "The whole piece smelled faintly of old soap and a hint of lavender; a scatter of powder dusted the hinge.",
+      "value": "dust on hinge; faint scent of old soap and lavender"
     },
     {
-      "entity": "obj-venetian-mirror",
-      "attribute": "reflection_behavior_observed",
-      "quote": "The reflection followed, but not perfectly. For a fraction of a second the glass showed my hand a beat after my hand had moved, as if the mirror were watching my gesture through a slow feed.",
-      "value": "reflection lagged fractionally behind real movement"
+      "entity": "obj-cracked-mirror",
+      "attribute": "reflection_distortion",
+      "quote": "I held the locket up to the mirror. The hairline crack distorted the lower third of the reflection so the dented edge of the locket seemed doubled, as if two small mouths were making a secret of the photograph between them.",
+      "value": "hairline crack distorts lower third of reflection; causes dented edge to appear doubled"
     },
     {
-      "entity": "char-lena",
-      "attribute": "first_experiment_decision",
-      "quote": "I decided then to test the optics properly: precise measures, lamp angles, a repeatable note on where the lag happened.",
-      "value": "resolve to test mirror optics with precise measures and lamp angles"
+      "entity": "char-narrator",
+      "attribute": "keeps_object_in_pocket_and_records",
+      "quote": "I slipped the locket into my pocket and, without thinking, wrote a quick line in my notebook: \"11:07 — silver locket. E.L.\"",
+      "value": "narrator retains locket and records discovery in notebook"
     }
   ],
   "presentEntities": [
-    "char-lena",
-    "loc-holloway-house",
-    "loc-parlor",
-    "obj-venetian-mirror",
-    "obj-diary",
-    "obj-brass-key"
+    "char-narrator",
+    "char-mrs-hollis",
+    "loc-67-fairfax",
+    "loc-bedroom-2",
+    "obj-silver-locket",
+    "obj-cracked-mirror",
+    "obj-broken-clock",
+    "obj-wallpaper"
   ],
   "promises": [
     {
-      "id": "promise-test-mirror",
-      "promise": "The reader is owed a follow-up where Lena conducts controlled optical tests with measurements and lamp placement to investigate the reflection lag.",
-      "quote": "I decided then to test the optics properly: precise measures, lamp angles, a repeatable note on where the lag happened.",
-      "dueByScene": "s-005"
+      "id": "pr-01-photograph-query",
+      "promise": "Reader is owed verification of the photograph's date and the full provenance of the sepia photo inside the locket (matching to obj-sepia-photo).",
+      "quote": "When I prised it open the photograph inside was a faded sepia: a child with a broken toy held in both hands, the edges curled and soft.",
+      "dueByScene": null
+    },
+    {
+      "id": "pr-02-smear-analysis",
+      "promise": "Reader is owed explanation of the red-brown smear on the locket (rust or dried mud).",
+      "quote": "A smear ran along the rim, red-brown in the way rust leans and dark like dried mud",
+      "dueByScene": null
+    },
+    {
+      "id": "pr-03-clock-time-confirmation",
+      "promise": "Reader is owed confirmation of the hallway clock's stopped time and its significance.",
+      "quote": "\"Don't worry about it; the clock's stopped at 4:22, it likes that time.\"",
+      "dueByScene": null
     }
   ],
   "paysOff": []

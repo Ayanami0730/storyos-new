@@ -1,0 +1,8 @@
+id: char-inspector-margot-lane
+name: inspector-margot-lane
+sketch: Local police inspector assigned to the case. Respectful of Ellis but
+  protective of procedure; cautious about letting a private eye meddle.
+identity:
+  profession: inspector
+provenance:
+  profession: s-001

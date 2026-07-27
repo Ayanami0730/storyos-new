@@ -1,0 +1,15 @@
+id: char-narrator
+name: narrator
+sketch: I — the first-person narrator, late twenties, recently divorced, moved
+  into a cheap room to rebuild my life; cautious, curious, methodical, and
+  compelled to keep a written record.
+identity:
+  speech: first-person, observant; habitually timestamps events in a notebook
+  profession: not stated in scene
+  keeps_written_records: timestamps and notes in a small personal notebook, recorded habitually
+  habit: notes times of disturbances and writes short observational entries
+provenance:
+  speech: s-001
+  profession: s-001
+  keeps_written_records: s-002
+  habit: s-002

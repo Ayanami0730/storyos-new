@@ -1,5 +1,0 @@
-{"scene":"s-001","attribute":"location","value":"loc-antechamber","quote":"The press liaison sat for a time in the antechamber with a small pile of cuttings and the photograph the Queen had set aside."}
-{"scene":"s-001","attribute":"holds","value":"obj-press-cuttings","quote":"He folded one clipping, making a deliberate crease, and slid it into a file labelled, without flourish, Windsor."}
-{"scene":"s-004","attribute":"location","value":"loc-press-office","quote":"The palace press liaison set the bundle on the desk and smoothed the top clipping with a forefinger as if straightening a thought."}
-{"scene":"s-004","attribute":"holds","value":"obj-press-cuttings (file labelled 'Windsor')","quote":"He replaced the newspapers in the file labelled 'Windsor' and retied the brown string."}
-{"scene":"s-004","attribute":"goal","value":"keep the file of cuttings locked until decision","quote":"\"I will also have the file of cuttings kept under lock until we decide.\""}

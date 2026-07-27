@@ -1,26 +1,21 @@
 note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
 rules:
-  - "1) The only supernatural mechanism in this story is reflection-conduction:
-    certain mirrors, under specific geometric and lighting conditions, can act
-    as conduits or repositories for a presence. No other ghost powers
-    (telekinesis, omniscience) are allowed."
-  - 2) The Venetian mirror (obj-venetian-mirror) is special because of its
-    silvering pattern; only it can hold Hannah's presence. Ordinary mirrors do
-    not replicate the phenomena unless explicitly noted.
-  - 3) Light and angle matter. A precise alignment of light (time-of-day or a
-    lamp placed at a marked position) must occur to 'activate' the conduit. The
-    activation obeys ordinary geometric optics (lines of sight, reflection), and
-    the narrator can calculate and reproduce it.
-  - 4) Physical objects obey normal physics. Breaking, moving or covering
-    objects has immediate, ordinary consequences (shards, blocked sightlines).
-    Breaking the mirror disperses the stored image/presence unpredictably but
-    does not 'destroy' the metaphysical trace; the narrative must not show
-    impossible physical outcomes.
-  - 5) Ritual language in the diary is ambiguous and fallible. It describes
-    procedures that will produce an effect consistent with rules 1–4; it may
-    omit moral cautions. Any consequences that follow must be deducible from the
-    diary plus the mirror/light rules, not from arbitrary supernatural fiat.
-  - "6) Identity transfer is possible only through the mirror-conduit under the
-    activation conditions. Such transfers are constrained: the conduit swaps or
-    binds the reflected and reflecting subject according to the mirror’s
-    geometry and cannot create or annihilate independent souls."
+  - "Supernatural effects are bounded and leave physical, reproducible traces:
+    scratches, displaced objects, marks on surfaces, temperature changes
+    measurable by normal means."
+  - Ghosts in this story are anchored to people, objects, or places; they cannot
+    teleport away from their anchor or create new anchors ex nihilo.
+  - "No retroactive changes to recorded facts or documents: handwriting,
+    photographs and stains found in the house were placed there in the past and
+    cannot be altered by the ghost once discovered (the ghost can only reveal or
+    reproduce marks consistent with existing materials)."
+  - The narrator's perceptions are essentially reliable (senses, timestamps,
+    recordings are trustworthy) though psychological tension can bias
+    interpretation; contradictions must be resolvable by later, physical
+    evidence.
+  - No time travel, no resurrection of the dead as living persons, and no
+    physical impossibilities (e.g., objects do not pass through solid matter
+    unless a consistent mechanism is supplied).
+  - "Causality holds: every observed effect has a discoverable proximate cause
+    within the world (possibly including the ghost's agency), and the reader
+    should be able to follow the chain of reasoning from clue to conclusion."

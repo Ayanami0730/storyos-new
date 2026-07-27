@@ -1,0 +1,10 @@
+id: char-confidante
+name: confidante
+sketch: "The actress's confidante and manager: protective, commercially minded,
+  experienced with studios and tabloid hunger."
+identity:
+  appearance: plain, well-cut suit
+  profession: confidante/manager-type
+provenance:
+  appearance: s-002
+  profession: s-003

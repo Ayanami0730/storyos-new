@@ -1,7 +1,22 @@
 id: char-amina
 name: amina
-sketch: Amina al-Sirafi — a seasoned pirate and captain of the Qitaf. Clever,
-  pragmatic, haunted by losses, driven by a fierce appetite for freedom and an
-  uneasy moral code.
-identity: {}
-provenance: {}
+sketch: Amina al-Sirafi, a pragmatic, legendary pirate captain known for her
+  seamanship, sharp wit, and a private code of honor. She is fiercely
+  independent and haunted by past losses.
+identity:
+  carried_compass: "true"
+  wore_braided_hair_on_wrist: "true"
+  trimmed_mizzen_in_squall: "true"
+  has_memory_ghost_phrase: '"Hold the line, Mina"'
+  relationship_with_laila_childhood_shared: "true"
+  profession: "\"Captain (implied by address as 'Captain' in dialogue)\""
+  appearance: '"Carries a compass; moves between ship deck and market; keeps
+    gestures small and economical."'
+provenance:
+  carried_compass: s-001
+  wore_braided_hair_on_wrist: s-001
+  trimmed_mizzen_in_squall: s-001
+  has_memory_ghost_phrase: s-001
+  relationship_with_laila_childhood_shared: s-001
+  profession: s-002
+  appearance: s-002

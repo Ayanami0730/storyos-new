@@ -1,0 +1,10 @@
+id: char-nasir
+name: nasir
+sketch: Nasir, the ship's quartermaster and an old salt with a pragmatic streak.
+  He knows the sea's moods and keeps the crew's ledger and grudges.
+identity:
+  carries_ledger: "true"
+  scar_on_right_knuckle: "true"
+provenance:
+  carries_ledger: s-001
+  scar_on_right_knuckle: s-001

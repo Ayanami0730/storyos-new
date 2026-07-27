@@ -26,6 +26,7 @@
  * a hard block at `E - 3k`.
  */
 
+import type { AgentRole } from "../transaction/types.ts";
 import { DEFAULT_PROFILE } from "../runtime/budget.ts";
 
 export interface CompactionThresholds {
@@ -247,7 +248,110 @@ export interface StorySummaryInput {
   readonly canonDigest: string;
   readonly openPromises: readonly string[];
   readonly recentSceneIds: readonly string[];
+  /**
+   * Whose conversation this is, so the summary can be told what *this* role must
+   * not lose.
+   *
+   * One prompt for five roles was asking each of them to decide for itself what
+   * mattered, which is the decision a summary is least able to make: it is written
+   * under length pressure, and under pressure a model compresses whatever is
+   * longest rather than whatever is load-bearing. What is load-bearing differs
+   * completely by role — the context-builder's is a map of where things live in this
+   * book's index, the verifier's is the list of false positives it has been talked
+   * out of, the orchestrator's is why it revised the plan and which scenes are
+   * carrying known defects — and none of those is inferable from the generic
+   * instruction.
+   *
+   * Optional so the older call sites and the tests keep working; when absent the
+   * prompt is the generic one it always was.
+   */
+  readonly role?: AgentRole;
 }
+
+/**
+ * What each role must carry across a fold, and what it may drop.
+ *
+ * The pairing is the point. "Keep everything important" is not actionable under
+ * length pressure; "keep this, and the prose of committed scenes is in the
+ * manuscript so drop it" is. Every `drop` here names something the role can re-read
+ * from the index on demand, which is the same argument the shared contract makes
+ * about memory: the conversation is a working surface and the index is the record.
+ *
+ * This matters most for the orchestrator now, and that is not a reason to skip the
+ * rest. Four of the five roles reset between scenes, so their conversations rarely
+ * reach a fold at all — but the orchestrator is resident by design and its context
+ * grew to 62k over seventeen scenes, which is roughly 124k at the 34-scene tier and
+ * more than that at 80,000 words. It is the one role for which the fold is on the
+ * critical path to a long book. The other four still fold under `--resident-all`,
+ * which is the arm that measures what residency was worth.
+ */
+const ROLE_RETENTION: Readonly<Record<AgentRole, { keep: readonly string[]; drop: string }>> = {
+  orchestrator: {
+    keep: [
+      "every plan revision you made and the reason you made it — an unexplained change is " +
+        "indistinguishable from drift, and you are the only record of why",
+      "which committed scenes carry unresolved findings, and what the defect was: later " +
+        "scenes are being written against them",
+      "which scenes you abandoned and why",
+      "what you have already tried on a scene that is fighting you, so you do not spend a " +
+        "third round on a fix that failed twice",
+    ],
+    drop:
+      "the text of briefs you wrote and step reports you have already acted on. The " +
+      "artefacts they produced are on disk and the paths are in the reports.",
+  },
+  "context-builder": {
+    keep: [
+      "where things live in *this* book's index — which directories are populated, which " +
+        "entity files are thin, where the relation records actually are. That map is the " +
+        "most expensive thing you have built and it is not written down anywhere else",
+      "which searches came back empty, so you do not pay for them again and do not mistake " +
+        "a second empty result for new information",
+      "the item ids you have already used, since a collision costs a rename",
+    ],
+    drop:
+      "the contents of files you read and pasted. You can read them again, and a summary " +
+      "holding stale copies of index files is the second source of truth this system exists " +
+      "to avoid.",
+  },
+  writer: {
+    keep: [
+      "the voice decisions already made and the ones you were pulled up on — the narrative " +
+        "person and tense are declared in your packet, but the register, the sentence rhythm " +
+        "and the things this narrator does not say are yours and are nowhere else",
+      "the craft habits a checker has flagged more than once",
+      "any finding you disputed and the reason, so you argue it the same way twice",
+    ],
+    drop:
+      "the prose of scenes already committed. It is in the manuscript, the packet gives you " +
+      "the tail of it, and a remembered version that has drifted from the committed one is " +
+      "worse than not remembering it.",
+  },
+  verifier: {
+    keep: [
+      "every false positive you were talked out of, and what made it one. This is the single " +
+        "most valuable thing in your history: a run whose findings the writer could not act " +
+        "on scored below one with fewer, better ones",
+      "the subtypes you have caught yourself over-reporting on this book",
+      "which files answered which category well here, so the next check goes straight there",
+    ],
+    drop:
+      "the drafts you have already judged and the findings you already filed. The findings " +
+      "are in `continuity/findings.jsonl` and the drafts are committed prose.",
+  },
+  "index-manager": {
+    keep: [
+      "the attribute vocabulary this book has settled on, so the same property does not " +
+        "acquire two names and stop being comparable",
+      "which partitions a given kind of scene turns out to touch, and any convention you " +
+        "adopted for entity ids",
+      "anything a tool rejected and the shape it wanted instead",
+    ],
+    drop:
+      "the prose and the declared delta of scenes you have already folded. Both are " +
+      "committed and addressable by path.",
+  },
+};
 
 export type Summariser = (input: StorySummaryInput) => Promise<string> | string;
 
@@ -318,6 +422,23 @@ export async function compactLevel2(
  * *pointers into the index* rather than restated, so the summary cannot become
  * a competing source of truth.
  */
+/** What this role in particular must not lose, and what it can safely drop. */
+function roleSection(role: AgentRole | undefined): readonly string[] {
+  if (!role) return [];
+  const spec = ROLE_RETENTION[role];
+  return [
+    `## As the ${role}, these are the parts of your history that are not recoverable`,
+    "",
+    "Everything else in this conversation you can get back by reading the index. These you",
+    "cannot, so if room is short they are the last things to go:",
+    "",
+    ...spec.keep.map((k) => `- ${k}`),
+    "",
+    `Safe to drop: ${spec.drop}`,
+    "",
+  ];
+}
+
 export function summaryPrompt(input: StorySummaryInput): string {
   return [
     "Your conversation is about to be folded into a summary. This is the last turn in",
@@ -347,6 +468,7 @@ export function summaryPrompt(input: StorySummaryInput): string {
     "what you were part-way through doing. Those are the parts a summary exists for;",
     "everything else you can re-read.",
     "",
+    ...roleSection(input.role),
     `Canon currently in force: ${input.canonDigest}`,
     `Open promises: ${input.openPromises.join("; ") || "none recorded"}`,
     `Recent scenes: ${input.recentSceneIds.join(", ") || "none"}`,

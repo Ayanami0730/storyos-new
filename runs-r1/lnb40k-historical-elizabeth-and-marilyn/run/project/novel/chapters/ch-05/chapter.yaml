@@ -1,128 +1,41 @@
 chapter: ch-05
 scenes:
   - id: s-017
-    intent: The actress confides to her confidante; they debate whether the meeting
-      is a brand opportunity or a secret that must be preserved. The publicist
-      argues for controlled publicity; the confidante warns of risks.
+    intent: An evening when the actress wanders the castle fringe and, unseen by
+      staff, slips into the shadowed approach to the riverside terrace.
     present:
-      - char-queen
-      - char-prince-philip
       - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - loc-riverside-terrace
+      - char-gardener
+      - loc-queen-apartment
   - id: s-018
-    intent: "The press liaison runs damage-control scenarios: possible leaks,
-      black-and-white photographs, the notion of the royal image being
-      complicated by a celebrity friendship; the world of newspapers is
-      rendered."
+    intent: Simultaneously the Queen walks alone to the same riverside terrace,
+      seeking a rare conversation with a human unmediated by audiences; their
+      arrival is unannounced to each other.
     present:
       - char-queen
-      - char-prince-philip
-      - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - loc-riverside-terrace
+      - char-lady
+      - loc-queen-apartment
   - id: s-019
-    intent: "A local scene: char-local-neighbor observes movements—caravans,
-      limousines, unidentified men—and imagines a gossip story; this grounds the
-      novel in ordinary perception and shows how rumor germinates."
+    intent: "The private meeting: a carefully staged, unscripted exchange between
+      the Queen and the actress that focuses on honesty, fear, and the peculiar
+      burdens of being seen."
     present:
       - char-queen
-      - char-prince-philip
       - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
+      - loc-riverside-terrace
+      - obj-silk-handkerchief
       - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - loc-queen-apartment
   - id: s-020
-    intent: An intimate moment where the Queen plays with obj-emerald-brooch,
-      recalling private history, and contemplates the possibility of revealing
-      or preserving the encounter; the Queen's interior weighs political
-      prudence.
+    intent: "Immediate aftermath: both women return separately to their households;
+      the palace staff notices small things missing and wonders, while the
+      actress's confidante grows suspicious."
     present:
-      - char-queen
-      - char-prince-philip
+      - char-lady
+      - char-confidante
+      - char-butler
       - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - char-queen
+      - obj-silk-handkerchief

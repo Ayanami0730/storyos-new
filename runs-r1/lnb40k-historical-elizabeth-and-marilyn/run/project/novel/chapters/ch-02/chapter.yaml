@@ -1,126 +1,37 @@
 chapter: ch-02
 scenes:
   - id: s-005
-    intent: "The actress walks by the river: loc-river-quay described; she reflects
-      on how being famous narrows her life, the confidante listens and signs of
-      loneliness emerge."
+    intent: Contrast the actress's private evening—alone with a script and a glass
+      of something cold—with the bright, public rehearsals of her smile.
     present:
-      - char-queen
-      - char-prince-philip
       - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - loc-guest-cottage
+      - obj-script
+      - char-confidante
   - id: s-006
-    intent: "A chance movement: the Queen, seeking a private walk, takes broad-walk
-      in the park; the narrative shows her small rebellions against expectation
-      and her tactile relationship to obj-emerald-brooch."
+    intent: "A chance visual crossing on the Long Walk: the Queen and the actress
+      glimpse one another at a distance, curiosity awakened but unacted upon."
     present:
       - char-queen
-      - char-prince-philip
       - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - loc-long-walk
+      - char-driver
+      - char-lady
+      - loc-queen-apartment
   - id: s-007
-    intent: Entourages plan an official, ceremonial introduction later in the week.
-      Tension between choreographed protocol and the possibility of an
-      unscripted encounter is set up by char-publicist and char-press-liaison.
+    intent: The press liaison grows nervous at whispered press queries; the palace
+      staff rehearses an official introduction that is weeks away.
     present:
-      - char-queen
-      - char-prince-philip
-      - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
+      - char-press
+      - char-lady
+      - obj-press-telegrams
       - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
   - id: s-008
-    intent: A domestic-staff scene in loc-the-stables where servants notice the
-      crossover of famous visitors and how gossip circulates in service
-      corridors; char-royal-butler shows the limits of what staff will carry.
+    intent: The actress and her confidante inspect the town and exchange memories of
+      fame's loneliness; the confidante worries about photographers and
+      cataloguing meetings.
     present:
-      - char-queen
-      - char-prince-philip
       - char-actress
-      - char-actress-confidante
-      - char-lady-in-waiting
-      - char-press-liaison
-      - char-royal-butler
-      - char-royal-chauffeur
-      - char-actress-driver
-      - char-publicist
-      - char-local-neighbor
-      - loc-windsor-castle
-      - loc-royal-lodge
-      - loc-windsor-high-street
-      - loc-river-quay
-      - loc-broad-walk
-      - loc-hotel-castle-view
-      - loc-the-stables
-      - loc-queen-study
-      - loc-actress-suite
-      - loc-garden-pavilion
-      - obj-emerald-brooch
-      - obj-cigarette-case
-      - obj-press-cuttings
-      - obj-handwritten-letter
-      - obj-photograph
+      - char-confidante
+      - loc-town-high-street
+      - char-neighbor

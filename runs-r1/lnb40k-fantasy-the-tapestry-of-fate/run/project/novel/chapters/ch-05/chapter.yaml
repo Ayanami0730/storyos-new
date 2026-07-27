@@ -1,46 +1,57 @@
 chapter: ch-05
 scenes:
   - id: s-017
-    intent: "Back aboard the Qitaf, Yusuf struggles with crew morale while Azraq
-      presses the peri's demands via the amulet's tether: the Peri Council's
-      interest is clarified — the spindle could unbind some cosmic limit the
-      peri chafe against."
+    intent: "Discovery: Tariq locates the spindle's probable sanctum by reading
+      runes; he maps a route but warns that the island will punish direct theft.
+      They must adopt masks and songs from the witches to pass as supplicants."
     present:
-      - char-yusuf
-      - char-peri-envoy-azraq
-      - faction-peri-council
-      - loc-ship-qitaf
-      - obj-peri-amulet
+      - char-tariq
+      - char-amina
+      - obj-map-of-ways
+      - loc-witch-grove
+      - loc-island-qarrah
       - obj-spindle
+      - char-amina-ghost
   - id: s-018
-    intent: "Amina navigates the first circle: an enchantment that offers illusions
-      of deepest desire. She must refuse a seductive vision to proceed; her
-      choice costs her something small but meaningful (a memory or a token)."
+    intent: "Preparation montage: crew learns witch-songs, disguises, and rituals
+      with Elif's furtive coaching. Bonds form between Amina and Elif; Amina
+      glimpses the coven's humanity and the cost of removing the spindle."
     present:
       - char-amina
-      - loc-island-jarrah
-      - obj-peri-amulet
+      - char-elif
+      - char-laila
+      - char-ibrahim
+      - ship-simorgh
+      - loc-witch-grove
       - obj-spindle
-      - obj-folio-map
+      - obj-witch-lode
+      - char-amina-ghost
   - id: s-019
-    intent: After the test, the island exacts a price — Amina loses a memory
-      fragment (or a personal talisman) that complicates her identity. This
-      heightens the cost of her mission and gives the island agency.
+    intent: "The heist begins: Amina and a small team infiltrate the Grove at night,
+      dressed as supplicants. Tension rises as enchantments test their motives.
+      They reach the chamber but are confronted by a guardian—the island's
+      living pattern."
     present:
       - char-amina
-      - loc-island-jarrah
-      - faction-witches-island
-      - obj-folio-map
+      - char-laila
+      - char-ibrahim
+      - obj-witch-lode
+      - loc-witch-grove
+      - loc-island-qarrah
+      - char-amina-ghost
   - id: s-020
-    intent: Azraq tightens the Peri Council's threats when Amina stalls. He reveals,
-      in veiled terms, the peri plan to use the spindle to rewrite the balance
-      between immortal peri and mortals. Yusuf confronts Azraq and nearly fights
-      him aboard the Qitaf.
+    intent: "A confrontation with Mother Khayla: the coven wakes, and a public
+      parley ensues. Amina tries to explain the peri threat; Mother Khayla
+      reveals the spindle's origin and the terms under which the island resists
+      leaving."
     present:
+      - char-mother-khayla
       - char-amina
-      - char-peri-envoy-azraq
-      - char-yusuf
-      - faction-peri-council
-      - loc-ship-qitaf
-      - obj-peri-amulet
+      - faction-witches-qarrah
+      - loc-witch-grove
+      - char-peri-azad
+      - char-peri-sahr
       - obj-spindle
+      - obj-peri-token
+      - loc-island-qarrah
+      - char-amina-ghost

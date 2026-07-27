@@ -1,11 +1,11 @@
 id: char-actress
 name: actress
-sketch: "A famous Hollywood starlet staying near Windsor for the season:
-  glamorous, practiced in public persona, unexpectedly vulnerable away from set
-  and press."
+sketch: A Hollywood film starlet in her late twenties, glamorous, worldly,
+  accustomed to public performance but hungry for private truth.
 identity:
+  appearance: tilted chin; dark tailored coat; small hat fastened at one side;
+    gloves; neat leather bag
   profession: actress
-  public_profile: famous, unnamed in scene
 provenance:
-  profession: s-001
-  public_profile: s-001
+  appearance: s-002
+  profession: s-002

@@ -1,0 +1,17 @@
+pairId: faction-peri-council--loc-port-rahim
+participants:
+  - faction-peri-council
+  - loc-port-rahim
+phases:
+  - index: 1
+    relation: whispered presence / caution in market
+    fromScene: s-002
+    toScene: null
+    transition: "\"Around them the market's talk shifted: names dropped like small
+      coins. Azad. Sahr. Men who sold fish and men who sold knots spoke the
+      names quick and low, the syllables clipped as if the wind itself might
+      carry them away.\""
+    source:
+      scene: s-002
+      span: L24-L27
+openQuestions: []

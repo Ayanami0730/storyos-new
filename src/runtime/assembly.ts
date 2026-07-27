@@ -280,7 +280,9 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
       // this through the orchestrator would hand it the writer's session and ask
       // it to judge writing work it did not do.
       summarise: async (role, input) => {
-        const { text } = await residents.invoke(role, summaryPrompt(input), {
+        // The role travels with the input, so the fold can be told what *this*
+        // role cannot recover from the index. See `ROLE_RETENTION`.
+        const { text } = await residents.invoke(role, summaryPrompt({ ...input, role }), {
           txid: "tx-compaction",
           caller: "orchestrator",
           selfCall: role === "orchestrator",

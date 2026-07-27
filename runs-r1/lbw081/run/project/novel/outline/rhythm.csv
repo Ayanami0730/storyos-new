@@ -1,5 +1,3 @@
 scene,chapter,beat,tension_target,tension_actual,note
-s-001,ch-01,"setup",6,6,"Introduces a locked-room death and contrasts Milne's desire for a tidy resolution with the narrator's interest in irregularities; opens investigative thread."
-s-002,ch-01,"complication",6,5,"Introduces suspects, contested alibis, and a torn folio page with an oil smear — complicates the locked-room mystery rather than resolving it."
-s-003,ch-01,"turn",7,7,"Demonstration and near-violent interruption reveal a plausible mechanism for the locked-room and introduce a motive for concealment; shifts the investigation from tableau to demonstration."
-s-004,ch-01,"release",6,3,"Demonstration and Henry's confession resolve the locked-room mystery's how and why; the scene shifts the investigation from speculation to case closure for the investigators."
+s-001,ch-01,"setup",6,4,"Discovery-of-death opening: establishes the murder and key clues but delivers less dramatized forward motion than ideal; set-up for investigation scenes."
+s-002,ch-01,"turn",6,6,"Investigation turn: close observations (clock, thread, envelope) and alibi collection; inspector establishes procedural boundary. Scene raises tension by introducing physical clues and constrained access."

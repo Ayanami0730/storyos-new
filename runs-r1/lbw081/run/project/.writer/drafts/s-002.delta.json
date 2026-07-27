@@ -2,76 +2,102 @@
   "sceneId": "s-002",
   "claims": [
     {
-      "entity": "char-henry-harrow",
-      "quote": "\"I was in the smoking-room all evening,\" he said, short as a docket. \"Mrs Harrow and I argued, certainly. We argued about money and the will. But I did not go near the library after nine.\" His fingers found the rim of the armchair as if they needed the furniture for a witness.",
+      "entity": "obj-longcase-clock",
+      "attribute": "access_panel_state",
+      "quote": "The rear access panel was a hair ajar and the latch sat crooked where it should have been flush.",
+      "value": "rear access panel ajar with latch crooked"
+    },
+    {
+      "entity": "obj-longcase-clock",
+      "attribute": "hands_state",
+      "quote": "Its hands were frozen at eleven seventeen; the pendulum hung motionless.",
+      "value": "stopped at 11:17"
+    },
+    {
+      "entity": "obj-longcase-clock",
+      "attribute": "weights_position",
+      "quote": "At the base, tucked behind the inner brass and snagged on a small screw, a length of black thread hung, waxed and stiff.",
+      "value": "weights position not described in this scene"
+    },
+    {
+      "entity": "obj-black-thread",
+      "attribute": "location_found",
+      "quote": "At the base, tucked behind the inner brass and snagged on a small screw, a length of black thread hung, waxed and stiff.",
+      "value": "caught on inner bracket at clock base, threading up behind the movement; dust line present above thread and cleaner below"
+    },
+    {
+      "entity": "obj-envelope",
+      "attribute": "typed_threat_text",
+      "quote": "When I tilted it the typed line showed through the thin paper, blunt and plain: “DO NOT SELL THE IVORY REVOLVER. THIS IS YOUR LAST WARNING.”",
+      "value": "DO NOT SELL THE IVORY REVOLVER. THIS IS YOUR LAST WARNING."
+    },
+    {
+      "entity": "obj-envelope",
+      "attribute": "flap_crease",
+      "quote": "On Lucius Harben’s desk a sealed envelope sat with a shallow diagonal crease across the flap.",
+      "value": "shallow diagonal crease across flap, as if pressed by a thumb"
+    },
+    {
+      "entity": "obj-ivory-revolver",
+      "attribute": "display_status",
+      "quote": "Opposite the clock the weapons case kept its quiet. One mount was empty; the brass plaque beneath read IVORY REVOLVER. The velvet where a grip had lain was pressed down, an absence that made the rest of the row look oddly whole by comparison.",
+      "value": "missing from display; mount shows crushed velvet where grip had lain"
+    },
+    {
+      "entity": "char-anna-rowe",
+      "attribute": "last_seen_lucius_time",
+      "quote": "She told me she had seen Mr. Harben at breakfast, just after eight.",
+      "value": "last seen Lucius at ~08:05-08:15"
+    },
+    {
+      "entity": "char-anna-rowe",
+      "attribute": "observed_household_movements",
+      "quote": "She said Mrs. Harben had left for town a little after nine, and that Mr. Reed had called by later and left before eleven.",
+      "value": "Iris left for town ~09:05; Thomas present earlier, left before 11:00; Thomas observed in workshop"
+    },
+    {
+      "entity": "char-iris-harben",
       "attribute": "alibi",
-      "value": "claims_in_scene_he_was_in_smoking_room_all_evening_and_did_not_go_near_library_after_nine"
+      "quote": "She gave a neat account — she’d been in town that morning to discuss payments connected with the collection —",
+      "value": "in town that morning discussing payments for collection; departed ~09:05 (per Anna)"
     },
     {
-      "entity": "char-henry-harrow",
-      "quote": "He had motive, which is not the same as guilt, and he had the look of a man who expected that to be sufficient.",
-      "attribute": "motive",
-      "value": "dispute_with_Lena_over_money_and_will"
+      "entity": "char-iris-harben",
+      "attribute": "behavioural_tell",
+      "quote": "she smoothed the edge of her hand against her wedding band.",
+      "value": "absentive smoothing of wedding band while speaking (nervous gesture beneath composed exterior)"
     },
     {
-      "entity": "char-mary-rowan",
-      "quote": "\"I was downstairs, laying out the supper,\" she said. \"I heard nothing until Mr Dane came in shouting.\"",
+      "entity": "char-thomas-reed",
       "attribute": "alibi",
-      "value": "claims_in_scene_she_was_downstairs_laying_out_supper_and_heard_nothing_until_Oliver_arrived"
+      "quote": "He said he’d been in the workshop across the square until just before eleven and that a neighbour could confirm it.",
+      "value": "at workshop until just before 11:00; neighbour witness claimed"
     },
     {
-      "entity": "char-mary-rowan",
-      "quote": "\"Lena kept lists,\" Mary said. \"Names, times, the sort of thing that keeps a house honest.\"",
-      "attribute": "belief_about_folio",
-      "value": "Lena_kept_lists_of_names_and_times_in_folio"
+      "entity": "char-thomas-reed",
+      "attribute": "behavioural_tell",
+      "quote": "he kept rubbing the pad of his thumb and forefinger together in that restless way of men who handle small gears.",
+      "value": "rubs thumb and forefinger pad when anxious or trying to steady himself"
     },
     {
-      "entity": "char-oliver-dane",
-      "quote": "\"We had words about pay the week before,\" he admitted when pressed. \"But I was at the greenhouse most of the day — ask the men. I don't spend my nights in the library.\"",
-      "attribute": "alibi_and_dispute",
-      "value": "admits_argument_over_pay_recently_but_claims_to_have_been_at_greenhouse_most_of_day_and_not_in_library_at_night"
-    },
-    {
-      "entity": "char-oliver-dane",
-      "quote": "\"She writes down when people come, sir. She notes times.\"",
-      "attribute": "knowledge_about_folio",
-      "value": "folio_includes_entries_of_people_arriving_and_times"
-    },
-    {
-      "entity": "obj-harrow-folio",
-      "quote": "One page had been torn cleanly away.",
-      "attribute": "missing_page",
-      "value": "a_page_torn_cleanly_away"
-    },
-    {
-      "entity": "obj-harrow-folio",
-      "quote": "I ran a fingertip along the paper where the missing sheet had once lain and found, near the sill, a fresh smear of oil that caught the light the way a small lie catches the interlocutor's eye.",
-      "attribute": "oil_smear_near_sill",
-      "value": "fresh_oil_smear_near_folio_sill"
-    },
-    {
-      "entity": "obj-ashtray",
-      "quote": "On the sill sat the kitchen ashtray, a neat crescent of cigar ash in it.",
-      "attribute": "cigar_ash_present",
-      "value": "present"
-    },
-    {
-      "entity": "char-inspector-milne",
-      "quote": "\"We can finish this, Mr Crowe,\" he said, too loudly. \"There are enough reasons to call this tidy.\"",
-      "attribute": "insistence",
-      "value": "wants_tidy_case"
+      "entity": "char-inspector-margot-lane",
+      "attribute": "instruction_to_ellis_arrival",
+      "quote": "She closed the door behind her and said, in the very words she’d used when I first arrived, “Don’t touch anything until forensics are here, Ellis.”",
+      "value": "Don't touch anything until forensics are here, Ellis"
     }
   ],
   "presentEntities": [
-    "char-august-crowe",
-    "char-henry-harrow",
-    "char-mary-rowan",
-    "char-oliver-dane",
-    "char-inspector-milne",
-    "loc-harrow-manor",
-    "obj-harrow-folio",
-    "obj-ashtray",
-    "obj-secret-pulley"
+    "char-ellis-fletcher",
+    "char-iris-harben",
+    "char-thomas-reed",
+    "char-inspector-margot-lane",
+    "char-anna-rowe",
+    "loc-harben-study",
+    "loc-harben-foyer",
+    "obj-longcase-clock",
+    "obj-ivory-revolver",
+    "obj-black-thread",
+    "obj-envelope"
   ],
   "promises": [],
   "paysOff": []

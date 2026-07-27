@@ -1,26 +1,21 @@
 note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
 rules:
-  - Peri are effectively immortal and powerful, but they are bound by oaths,
-    covenants, and the binding artifacts they make; they cannot simply will away
-    mortal free will without legalistic or talismanic devices.
-  - "Isle Jarrah is subject to the witches' fate-weaving: ordinary physical exit
-    is barred by the island's enchantments. Leaving is possible only through
-    specific bargains, rituals, or by altering the island's weaving from
-    within."
-  - "The Spindle can rewrite individual strands of fate — it can alter
-    probabilities, choices, and the course of a single life-line — but every
-    stitch or unpicking requires an exact metaphysical cost: something
-    equivalent must be unmade, taken, or exchanged. It cannot resurrect the
-    truly dead nor change cosmic constants."
-  - Bargains, names and promises have power. Spoken deals (explicit bargains)
-    made in the island's terms are binding and will be enforced by the island
-    and its practitioners; breaking an explicit bargain creates supernatural
-    consequences.
-  - "The Peri binding amulet enforces compliance but is not absolute: it can be
-    resisted by strong mortal will, counter-magic from the witches, or by using
-    the Spindle under the island's rules — each of those options will carry
-    costs and tradeoffs."
-  - "Magic in this world preserves a balance: gains require losses, and
-    shortcuts to absolute gain (immortality, absolute control of many lives) are
-    blocked by the weave of the world. Characters may negotiate or reroute the
-    balance, but they cannot create value ex nihilo."
+  - Peri are immortal and can bind mortals with tokens that enforce obedience in
+    graduated stages; the token cannot be destroyed by ordinary means but can be
+    'unbound' by specific fate-work.
+  - "The Spindle can rewrite fate only in precise, threadlike edits. Every
+    change demands a proportional cost: a memory, a bond, a trade of consequence
+    that cannot be fabricated."
+  - The Island of Qarrah enforces inescapability by altering memory, geography,
+    and perception; physical exit is possible only when memory-anchors remain or
+    fate-work alters the island's weave.
+  - Witches of Qarrah practice confined fate-work (repairs and calibrations) and
+    guard artifacts. They will not allow wholesale erasure of whole peoples or
+    broad cosmic retcons.
+  - Peri bargains are durable across time; their enforcement is metaphysical and
+    not subject to mortal courts, but the principles of exchange (offer,
+    counteroffer, price) are consistent and can be exploited by skilled
+    fate-work.
+  - "Magic has rules and friction: artifacts like the Spindle are not
+    omnipotent; the more ambitious the rewrite, the more localized and invasive
+    the cost. Miracles are narrow and expensive."

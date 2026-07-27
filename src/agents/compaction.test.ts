@@ -273,3 +273,68 @@ describe("token estimate", () => {
     assert.equal(estimateTokens("a"), 1);
   });
 });
+
+describe("the per-role summary schema", () => {
+  /**
+   * Why one prompt for five roles was not enough.
+   *
+   * A summary is written under length pressure, and under pressure a model
+   * compresses whatever is longest rather than whatever is load-bearing. What is
+   * load-bearing differs completely by role and none of it is inferable from a
+   * generic instruction: the context-builder's is a map of where things live in this
+   * book's index, the verifier's is the false positives it has been talked out of,
+   * the orchestrator's is why it revised the plan and which scenes carry known
+   * defects.
+   */
+  const input = {
+    folded: [{ role: "user", kind: "user" as const, tokens: 10, text: "t" }],
+    canonDigest: "12 facts",
+    openPromises: ["pc-a"],
+    recentSceneIds: ["s-003"],
+  };
+
+  it("tells each role what it cannot recover from the index", () => {
+    const orchestrator = summaryPrompt({ ...input, role: "orchestrator" });
+    assert.match(orchestrator, /As the orchestrator/);
+    assert.match(orchestrator, /every plan revision you made and the reason/);
+    assert.match(orchestrator, /carry unresolved findings/);
+
+    const builder = summaryPrompt({ ...input, role: "context-builder" });
+    assert.match(builder, /where things live in \*this\* book's index/);
+    assert.match(builder, /which searches came back empty/);
+
+    const verifier = summaryPrompt({ ...input, role: "verifier" });
+    assert.match(verifier, /false positive you were talked out of/);
+  });
+
+  it("names what each role may drop, and it is always re-readable", () => {
+    // The pairing is what makes the instruction actionable: "keep everything
+    // important" is not a decision, and "the prose is in the manuscript so drop it"
+    // is.
+    for (const role of [
+      "orchestrator",
+      "context-builder",
+      "writer",
+      "verifier",
+      "index-manager",
+    ] as const) {
+      assert.match(summaryPrompt({ ...input, role }), /Safe to drop: /, role);
+    }
+  });
+
+  it("stays the generic prompt when no role is given", () => {
+    const generic = summaryPrompt(input);
+    assert.ok(!generic.includes("cannot recover from the index"));
+    // The shared half must survive: a summary that asserts canon becomes a second
+    // source of truth nobody can check.
+    assert.match(generic, /Do NOT restate story facts/);
+  });
+
+  it("keeps the never-compress list ahead of the role list", () => {
+    // Order is the priority signal. Where the story stands and what the agent was
+    // part-way through outrank anything role-specific, because those are what a
+    // summary exists for at all.
+    const p = summaryPrompt({ ...input, role: "writer" });
+    assert.ok(p.indexOf("NEVER compress") < p.indexOf("As the writer"));
+  });
+});

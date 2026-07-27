@@ -1,1 +1,1 @@
-Called to a seemingly impossible locked-room death in an old manor, a forensic-minded private detective picks apart small mechanical clues and human lies to expose a sibling's staged murder and the quiet, ingenious trick that made a room appear sealed from within.
+A private detective, called to a locked study where a reclusive horologist lies shot, must pry open a case where an ornate clock, a missing antique revolver, a torn note and a quiet household hide a carefully timed murder — and the closer he gets, the more someone tries to reset the hands of time.

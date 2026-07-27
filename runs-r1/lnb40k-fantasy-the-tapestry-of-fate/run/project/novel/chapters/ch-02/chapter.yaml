@@ -1,50 +1,49 @@
 chapter: ch-02
 scenes:
   - id: s-005
-    intent: The Qitaf departs. Amina narrates the sea journey, the amulet's thrum as
-      Azraq keeps watch via satellite-like sightings, and the crew's nervousness
-      as they approach the island's known coordinates. The island's name hangs
-      in the fog long before sighting.
+    intent: Amina assembles her crew—Nasir, Ibrahim, Tariq—and discusses the peril
+      and reward; show the crew's dynamic and small acts revealing their fears
+      and loyalties.
     present:
       - char-amina
-      - loc-ship-qitaf
-      - char-yusuf
-      - char-rasim
-      - faction-peri-council
-      - loc-island-jarrah
-      - obj-peri-amulet
+      - char-nasir
+      - char-ibrahim
+      - char-tariq
+      - ship-simorgh
+      - char-amina-ghost
   - id: s-006
-    intent: "First strange weather: the sea folds wrong and navigation instruments
-      fail. Amina recognizes patterns like those in the wreck log; the island's
-      enchantment reaches for the ship even before they sight land. The folio
-      map's marginalia echoes what they experience."
+    intent: "Set sail: the journey begins. Use the map-of-ways to show magical
+      currents; first supernatural obstacle at sea (a whirl of lights/peri
+      craft) tests ship and crew and reminds them of peri power."
     present:
-      - char-amina
-      - char-rasim
-      - loc-ship-qitaf
-      - obj-ship-log-wreck
-      - obj-folio-map
-      - loc-island-jarrah
-  - id: s-007
-    intent: They salvage a drifting lifeboat and a tattered log from a wreck; the
-      journal's last entries describe a coastline that rearranged itself and a
-      woman who 'learned to listen' to the island — planting the seed that the
-      witches reweave paths.
-    present:
-      - char-amina
-      - loc-ship-qitaf
-      - obj-ship-log-wreck
-      - loc-island-jarrah
-      - obj-folio-map
-  - id: s-008
-    intent: "Azraq reasserts the Peri Council's control: he demonstrates the
-      amulet's bite on Amina when she balks and describes the council's interest
-      in the spindle — subtly implying motives that will later matter. Stakes
-      are sharpened."
-    present:
-      - char-amina
-      - char-peri-envoy-azraq
-      - obj-peri-amulet
-      - loc-ship-qitaf
+      - ship-simorgh
+      - loc-open-sea
+      - obj-map-of-ways
       - faction-peri-council
-      - obj-spindle
+      - char-amina
+      - char-ibrahim
+      - char-peri-azad
+      - char-peri-sahr
+      - obj-peri-token
+      - char-amina-ghost
+  - id: s-007
+    intent: "A storm of memory: crew members glimpse phantom versions of their past;
+      Amina sees her sibling's ghost. The island's pull is suggested; Amina
+      steels herself to enter Qarrah despite warnings."
+    present:
+      - char-amina
+      - char-amina-ghost
+      - ship-simorgh
+      - char-laila
+      - loc-island-qarrah
+  - id: s-008
+    intent: "First sighting: Qarrah rises in fog. Tension as the crew approaches an
+      island rumored unsayable. The Simorgh attempts landing; wary rituals
+      aboard mark their crossing of an unseen threshold."
+    present:
+      - ship-simorgh
+      - loc-island-qarrah
+      - char-amina
+      - char-laila
+      - char-ibrahim
+      - char-amina-ghost

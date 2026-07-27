@@ -1,0 +1,15 @@
+pairId: faction-peri-council--obj-peri-token
+participants:
+  - faction-peri-council
+  - obj-peri-token
+phases:
+  - index: 1
+    relation: token-of
+    fromScene: s-002
+    toScene: null
+    transition: The feather-engraved silver disc is recognized as a peri token by
+      Gul and implies peri presence when seen.
+    source:
+      scene: s-002
+      span: L12-L16
+openQuestions: []

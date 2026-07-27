@@ -1,0 +1,6 @@
+id: obj-brass-key
+sketch: A heavy brass key used for the study's lock. It is found in the study's
+  lock when the room is discovered locked; custody and origin matter.
+notes:
+  - .writer/drafts/s-001.md L10-L20
+first_seen: s-001

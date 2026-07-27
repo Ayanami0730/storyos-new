@@ -1,7 +1,3 @@
 scene,chapter,beat,tension_target,tension_actual,note
-s-001,ch-01,"turn",8,7,"Inciting incident: Peri envoy binds protagonist and issues the spindle mission, initiating the main plot."
-s-002,ch-01,"turn",7,6,"Clarification/reinforcement of the commission: Azraq clarifies the Council's demand and stakes; offers limits on the amulet and names potential counters, raising strategic stakes."
-s-003,ch-01,"turn",6,5,"Departure/commitment: Amina accepts the mission under coercion, asserts command and protective terms, and the ship prepares and departs—stakes clarified and plot moves to sea."
-s-004,ch-01,"turn",5,4,"Preparation and local lore: supplies gathered, folio and wreck log examined aboard the Qitaf, crew trades sailor-lore about Isle Jarrah; departure preparations continue (departure set for dawn)."
-s-005,ch-02,"turn",7,6,"Approach/at-sea: departure at first light; Azraq watches from aft and the amulet enforces via thrum; crew consults folio and wreck log; approach to Isle Jarrah and fog begin to close in."
-s-006,ch-02,"complication",8,7,"At-sea complication: instrument anomalies and sea-folds force manual seamanship; folio and wreck-log pattern recognition raise stakes; forward hook (flotsam) signals forthcoming incident (s-007)."
+s-001,ch-01,"setup",4,3,"Introduces ship, port and main characters; establishes relationships and sensory grounding. Tension low-to-moderate; sets stage for next scenes."
+s-002,ch-01,"complication",5,4,"Market scene introduces peri tokens and a local warning from Gul; raises tension about peri bargaining."

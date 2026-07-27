@@ -1,40 +1,52 @@
 chapter: ch-04
 scenes:
   - id: s-013
-    intent: Amina meets Lailah unexpectedly at a weir of stitched reeds. Lailah is
-      polite, curious, and probes Amina's motives. She warns that the island
-      takes as much as it gives and mentions the Heart-loom and the spindle, but
-      offers ambiguous aid.
+    intent: "Return to the Simorgh: Laila expresses distrust of Amina's secrecy. The
+      peri token tightens metaphorically (omnipresent danger). Amina realizes
+      the Council expects her to pick a particular stitch of fate, not simply
+      denude it."
     present:
       - char-amina
-      - char-witch-lailah
-      - loc-island-jarrah
-      - obj-spindle
-      - faction-witches-island
+      - char-laila
+      - ship-simorgh
+      - obj-peri-token
+      - char-peri-azad
+      - char-peri-sahr
+      - char-amina-ghost
   - id: s-014
-    intent: "Lailah tests Amina with riddles and small trials meant to read her
-      intentions. Through their dialogue, the island's rule is made clear: those
-      who try to take without understanding become trapped for life; bargains
-      are the witches' law."
+    intent: "A failed stealth attempt: Ibrahim is captured briefly by island
+      illusions and forgets names; rescue mission shows island's
+      inescapability—only memory anchors a person to return. The crew improvises
+      a mnemonic to pull him back."
     present:
+      - char-ibrahim
       - char-amina
-      - char-witch-lailah
-      - faction-witches-island
-      - loc-island-jarrah
-      - obj-spindle
+      - char-laila
+      - loc-ash-scar
+      - loc-island-qarrah
+      - char-amina-ghost
   - id: s-015
-    intent: "Amina introspects in a quiet moment, telling a memory of why freedom
-      matters to her: losses at sea, a brother gone. This scene deepens her
-      inner stakes and explains why she will risk so much."
+    intent: "Elif secretly meets Amina and offers hesitant help. She reveals small
+      truths about the spindle: it is kept under ritual guard and rewrites not
+      the world wholesale but specific threads — with cost — and Mother Khayla
+      fears its removal will unweave protections."
     present:
+      - char-elif
       - char-amina
-  - id: s-016
-    intent: "Lailah reveals more: the spindle sits in the Heart-loom at the island's
-      center and is guarded by concentric 'circles' of enchantment that exact a
-      price for passage. Amina begins to understand the structural obstacles she
-      must navigate."
-    present:
-      - char-amina
-      - char-witch-lailah
-      - loc-island-jarrah
+      - faction-witches-qarrah
+      - char-mother-khayla
       - obj-spindle
+      - char-amina-ghost
+  - id: s-016
+    intent: Amina debates with Laila and Nasir about betraying the witches to save
+      themselves from the peri. Laila argues for returning the token; Nasir
+      calculates odds and suggests a precise strike to minimize harm.
+    present:
+      - char-amina
+      - char-laila
+      - char-nasir
+      - ship-simorgh
+      - obj-peri-token
+      - char-amina-ghost
+      - char-peri-azad
+      - char-peri-sahr
