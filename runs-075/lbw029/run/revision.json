@@ -1,0 +1,10 @@
+{
+  "findings": [],
+  "tasks": [],
+  "coverage": {
+    "scenes": 1,
+    "contractsChecked": 0,
+    "contractsOpen": 0,
+    "capabilitiesChecked": 0
+  }
+}

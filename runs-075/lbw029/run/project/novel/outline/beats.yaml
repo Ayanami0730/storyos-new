@@ -1,0 +1,29 @@
+scenes:
+  - id: s-001
+    chapter: ch-01
+    intent: "A single, roughly 500-word scene showing Ellie on Marlow's platform the
+      morning she leaves. The scene should: 1) Make the reader feel the weight
+      and sweetness of a small-town farewell through sensory details — the smell
+      of baking, the hiss of a kettle through an open window, the grain of the
+      wooden boat in Ellie's palms. 2) Use objects (obj-notebook,
+      obj-carved-boat, obj-suitcase) as emotional anchors that reveal Ellie's
+      history without lengthy exposition. 3) Show Mr. Hart's quiet blessing — a
+      short, specific action (a carved wooden sail added to the boat, a folded
+      note tucked into the notebook, or an extra seam of varnish) rather than a
+      speech — that makes the goodbye possible. 4) Let Rufus the dog act as a
+      tether between Ellie's past and future. 5) End on a modest, open note: the
+      train arrives, Ellie steps aboard holding the boat and notebook; she does
+      not close the door on the town but keeps a small, ordinary object that
+      will carry the reader's sense of continuity. Tone should be tender,
+      unflashy, and precise; show rather than tell. Target length: approximately
+      500 words."
+    present:
+      - char-ellie
+      - char-mr-hart
+      - char-rufus
+      - loc-marlow-platform
+      - loc-marlow-mainstreet
+      - obj-notebook
+      - obj-carved-boat
+      - obj-suitcase
+    target_words: 500

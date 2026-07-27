@@ -1,0 +1,15 @@
+pairId: loc-great-hall--obj-amber-bell
+participants:
+  - loc-great-hall
+  - obj-amber-bell
+phases:
+  - index: 1
+    relation: emergency_signal
+    fromScene: s-014
+    toScene: null
+    transition: Amber Bell is used as an emergency call—its ritual phrase repurposed
+      to signal alarm and to call assembly during the siege.
+    source:
+      scene: s-014
+      span: L1-L6
+openQuestions: []

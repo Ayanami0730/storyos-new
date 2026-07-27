@@ -1,0 +1,16 @@
+pairId: loc-ink-room--obj-folio
+participants:
+  - loc-ink-room
+  - obj-folio
+phases:
+  - index: 1
+    relation: emergency_archive_use
+    fromScene: s-014
+    toScene: null
+    transition: In emergency the Archive Key is signed out, the cabinet opened, and
+      the Folio is consulted for obligations; the Ink Room's procedures are
+      activated.
+    source:
+      scene: s-014
+      span: L6-L14
+openQuestions: []

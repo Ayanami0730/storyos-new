@@ -1,0 +1,15 @@
+pairId: char-dan--char-ellie
+participants:
+  - char-dan
+  - char-ellie
+phases:
+  - index: 1
+    relation: travel_companions
+    fromScene: s-001
+    toScene: null
+    transition: Ellie and Dan (with Maya, Otto and Lina) agree to travel together to
+      the highway; group prepares the truck and leaves (s-001).
+    source:
+      scene: s-001
+      span: L1-L78
+openQuestions: []

@@ -1,0 +1,15 @@
+note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
+rules:
+  - "No supernatural events or magical realism: everything must be explicable in
+    ordinary terms."
+  - Character ages and identities are fixed by their entity sketches and must
+    not be contradicted later (e.g., char-ellie is 19; char-mr-hart is late
+    60s).
+  - "Objects retain continuity: an object given in one scene (e.g.,
+    obj-carved-boat) exists in future scenes and may carry wear or notes
+    explaining its condition."
+  - "Geography is consistent: Marlow is a small town with a single rail platform
+    and a main street as described — distances and directions should not be
+    contradicted."
+  - "No retroactive retcons without an explicit index entry: any change to these
+    facts must be recorded in the project's continuity files with provenance."

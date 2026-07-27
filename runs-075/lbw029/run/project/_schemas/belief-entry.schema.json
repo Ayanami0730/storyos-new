@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "What a character knows, and from when",
+  "description": "Most knowledge contradictions in generated fiction come from a character using information the reader has but the character does not. Belief is therefore tracked separately from truth: world/rules.yaml says what is so, this says who has found out.",
+  "type": "object",
+  "required": [
+    "scene",
+    "proposition",
+    "stance",
+    "quote"
+  ],
+  "properties": {
+    "scene": {
+      "type": "string",
+      "pattern": "^s-\\d{3,}$"
+    },
+    "proposition": {
+      "type": "string"
+    },
+    "stance": {
+      "enum": [
+        "knows",
+        "suspects",
+        "wrong-about",
+        "ignorant-of"
+      ]
+    },
+    "quote": {
+      "type": "string"
+    }
+  }
+}

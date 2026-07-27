@@ -1,0 +1,1 @@
+Returning to settle the estate of the house that stole a childhood memory, a pragmatic narrator finds a leather journal, a dark mirror and a patient ghost who remembers exactly how she died — and wants the truth made to hold, even if that truth turns the living into what they feared most.

@@ -1,0 +1,16 @@
+pairId: char-headmistress--collective-the-hundred
+participants:
+  - char-headmistress
+  - collective-the-hundred
+phases:
+  - index: 1
+    relation: civic_pledge
+    fromScene: s-013
+    toScene: null
+    transition: Headmistress instructs clerks to draft a civic pledge offering
+      kitchens and a rotation of labour hours; the pledge is to be recorded in
+      house logs and named as the Academy's contribution to civic needs.
+    source:
+      scene: s-013
+      span: L12-L20
+openQuestions: []

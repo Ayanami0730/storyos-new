@@ -1,0 +1,50 @@
+{
+  "scene": "s-001",
+  "why": "nomenclature_confusions came back after a rewrite with no fewer blocking findings than before (2 then 2 now), so the writer is producing variations of a fix that does not work rather than converging",
+  "findings": [
+    {
+      "id": "f-d6e27809",
+      "subtype": "nomenclature_confusions",
+      "axis": "consistency",
+      "category": "factual_detail",
+      "tier": "explicit-pair",
+      "validator": "reference",
+      "severity": "fatal",
+      "reasoning": "the delta asserts something about \"scene-s-001\", which is not an entity in the index; committing it would create a dangling reference",
+      "evidence": {
+        "quote": "There were twelve minutes until the bell. Saying the number out loud made our feet decide for us.",
+        "source": "s-001"
+      },
+      "contradicts": {
+        "quote": "known entities: char-eli, char-mara, char-finn, char-mr-bennett, char-goliath-dog, char-ms-ramirez, loc-eli-house, loc-suburban-path, loc-bridge-over-creek, loc-schoolyard, obj-lunchbox, obj-cardboard-helmet, …",
+        "source": "index/story/bible"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "is \"scene-s-001\" a new entity that should be created, or a misspelling of an existing one?"
+      }
+    },
+    {
+      "id": "f-19e62120",
+      "subtype": "nomenclature_confusions",
+      "axis": "consistency",
+      "category": "factual_detail",
+      "tier": "explicit-pair",
+      "validator": "reference",
+      "severity": "fatal",
+      "reasoning": "the delta asserts something about \"scene-s-001\", which is not an entity in the index; committing it would create a dangling reference",
+      "evidence": {
+        "quote": "Mara was at the counter, cheeks dusted with flour and grinning as if she’d been waiting for an errand to become important. She popped the lid and held the lunchbox up with mock solemnity. \"Behold: the Crown of Crumbs,\" she said, as if presenting a crown at court.",
+        "source": "s-001"
+      },
+      "contradicts": {
+        "quote": "known entities: char-eli, char-mara, char-finn, char-mr-bennett, char-goliath-dog, char-ms-ramirez, loc-eli-house, loc-suburban-path, loc-bridge-over-creek, loc-schoolyard, obj-lunchbox, obj-cardboard-helmet, …",
+        "source": "index/story/bible"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "is \"scene-s-001\" a new entity that should be created, or a misspelling of an existing one?"
+      }
+    }
+  ]
+}

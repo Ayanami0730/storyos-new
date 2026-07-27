@@ -1,0 +1,51 @@
+{
+  "sceneId": "s-013",
+  "claims": [
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "mapping_action",
+      "quote": "Mercy set a scrap of chalk on the tile and drew a thin circle where his finger rested. She placed a pebble at the center as a marker, then reached into her kit and, with the practiced economy of her rites, pinched a folded talisman and laid it against the pebble as a boundary—kept closed, not opened. She set the photograph flat beside the pebble as a small compass. Then she asked the neighbor who had accompanied them to speak what he saw and to repeat the placement aloud, so the mark was not Mercy's private note but a witnessed fact.",
+      "value": "Mercy performs witnessed mapping ritual using chalk, pebble, closed talisman and witness repetition; photograph used as spatial anchor"
+    },
+    {
+      "entity": "char-young-refugee",
+      "attribute": "confronted_memory_detail",
+      "quote": "He planted his foot on a tile and pointed with the smallest, most certain motion: toward the ruined stairwell's east step... \"They came from the stair—no, they pushed toward the door here,\" he said, voice low and steady. \"And someone dropped something—a crate, maybe—but it landed here, by this tile. The child—someone's hand—reached back for it.\"",
+      "value": "refugee identifies specific detail: crate landing at east step, child's hand reaching; gives directional and object detail without naming actors"
+    },
+    {
+      "entity": "spirit-vengeful",
+      "attribute": "reaction_to_reenactment",
+      "quote": "The spirit answered by tightening. The laundry line above them twitched twice, a pan sang thinly in a stall, and the air turned colder in a palpable thread between Mercy and the pebble mark.",
+      "value": "spirit reacts to reenactment: localized poltergeist responses, colder air, sharper layered voices, increases Mercy's ringing"
+    },
+    {
+      "entity": "char-young-refugee",
+      "attribute": "agency_gain",
+      "quote": "The refugee's face changed under those sounds. The terror that had folded him into silence unknotted into something like agency—small, frightened, but true. He reached down and brushed the photograph's corner with a fingertip, then pushed his palm flat to the tile where he had stood. \"That's it,\" he said, clearer. \"They moved like that. I was holding her shoe.\"",
+      "value": "refugee gains agency by naming a fragment (holding her shoe) and affirming placement; defines future witness action"
+    },
+    {
+      "entity": "faction-residents-commune",
+      "attribute": "witness_confirmation",
+      "quote": "The witness, Neighbor Lei, stepped forward and echoed the gesture, placing his own pebble on top of Mercy's and saying, \"East step—crate—child's hand.\" His voice added a public weight; the act of placing the second pebble made the memory something the community could point to.",
+      "value": "neighbor witnesses refugee's claim and confirms by placing pebble on Mercy's mark"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "next_action_and_precise_breadcrumb",
+      "quote": "She did not make a broad claim; she recorded the breadcrumb: east step, crate landed, child's hand reached, witness: Lei. The pebble would be the point they returned to with the Elder and the scroll.",
+      "value": "Mercy records breadcrumb and plans to bring it and witnesses to Elder/scroll next"
+    }
+  ],
+  "presentEntities": [
+    "char-mercy-chan",
+    "char-young-refugee",
+    "spirit-vengeful",
+    "loc-kowloon-walled-city",
+    "obj-family-photo",
+    "faction-residents-commune"
+  ],
+  "promises": [],
+  "paysOff": []
+}

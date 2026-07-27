@@ -1,0 +1,289 @@
+[
+  {
+    "id": "fact-loc-orchard-sanctuary_for_evelyn_and_thomas",
+    "entity": "loc-orchard",
+    "attribute": "sanctuary_for_evelyn_and_thomas",
+    "value": "true",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-loc-orchard-scent_in_late_afternoon",
+    "entity": "loc-orchard",
+    "attribute": "scent_in_late_afternoon",
+    "value": "apple_and_pear_blossom",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-evelyn-harrow-present_location",
+    "entity": "char-evelyn-harrow",
+    "attribute": "present_location",
+    "value": "loc-orchard",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-thomas-byrd-present_location",
+    "entity": "char-thomas-byrd",
+    "attribute": "present_location",
+    "value": "loc-orchard",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-thomas-byrd-assigned_duty",
+    "entity": "char-thomas-byrd",
+    "attribute": "assigned_duty",
+    "value": "collecting fruit for the scullery",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-evelyn-harrow-gave_object",
+    "entity": "char-evelyn-harrow",
+    "attribute": "gave_object",
+    "value": "obj-rose-locket to char-thomas-byrd",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-rose-locket-contains",
+    "entity": "obj-rose-locket",
+    "attribute": "contains",
+    "value": "pressed_blossom",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-rose-locket-engraving",
+    "entity": "obj-rose-locket",
+    "attribute": "engraving",
+    "value": "rose_engraving; initials 'E. H.' scratched inside the lid",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-rose-locket-provenance",
+    "entity": "obj-rose-locket",
+    "attribute": "provenance",
+    "value": "Evelyn's mother's locket; entrusted to Evelyn on her mother's deathbed with instruction \"Keep the heart she loved safe\"",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-evelyn-harrow-has_given_locket",
+    "entity": "char-evelyn-harrow",
+    "attribute": "has_given_locket",
+    "value": "true",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-thomas-byrd-accepted_locket",
+    "entity": "char-thomas-byrd",
+    "attribute": "accepted_locket",
+    "value": "true",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-loc-orchard-continuing_sanctuary",
+    "entity": "loc-orchard",
+    "attribute": "continuing_sanctuary",
+    "value": "true",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-loc-orchard-season",
+    "entity": "loc-orchard",
+    "attribute": "season",
+    "value": "spring_early_summer",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-love-letters-concealment_method",
+    "entity": "obj-love-letters",
+    "attribute": "concealment_method",
+    "value": "folded_into_lining_of_cider_crate",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-love-letters-tone",
+    "entity": "obj-love-letters",
+    "attribute": "tone",
+    "value": "tender_urgent",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-thomas-byrd-keeper_of",
+    "entity": "char-thomas-byrd",
+    "attribute": "keeper_of",
+    "value": "obj-rose-locket",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-thomas-byrd-keep_location",
+    "entity": "char-thomas-byrd",
+    "attribute": "keep_location",
+    "value": "inner_pocket_of_shirt",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-thomas-byrd-sleeps_with_rose_locket_beside",
+    "entity": "char-thomas-byrd",
+    "attribute": "sleeps_with_rose_locket_beside",
+    "value": "true",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-mistress-anne-fletcher-noticed_missing_apron",
+    "entity": "char-mistress-anne-fletcher",
+    "attribute": "noticed_missing_apron",
+    "value": "true",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-loc-kitchen-cellars-crate_lining_smell",
+    "entity": "loc-kitchen-cellars",
+    "attribute": "crate_lining_smell",
+    "value": "sun_and_yeast_crate_smell",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-mistress-anne-fletcher-found_scrap_of_paper",
+    "entity": "char-mistress-anne-fletcher",
+    "attribute": "found_scrap_of_paper",
+    "value": "true",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-mistress-anne-fletcher-has_not_reported_to_lord_harrow_yet",
+    "entity": "char-mistress-anne-fletcher",
+    "attribute": "has_not_reported_to_lord_harrow_yet",
+    "value": "true",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-seal-ring-found_in",
+    "entity": "obj-seal-ring",
+    "attribute": "found_in",
+    "value": "lining_of_cider_crate",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-seal-ring-found_by",
+    "entity": "obj-seal-ring",
+    "attribute": "found_by",
+    "value": "char-mistress-anne-fletcher",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-seal-ring-crate_origin",
+    "entity": "obj-seal-ring",
+    "attribute": "crate_origin",
+    "value": "crate_came_from_the_orchard_this_morning",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-seal-ring-ties_to_char",
+    "entity": "obj-seal-ring",
+    "attribute": "ties_to_char",
+    "value": "char-thomas-byrd",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-love-letters-found_with_ring",
+    "entity": "obj-love-letters",
+    "attribute": "found_with_ring",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-mistress-anne-fletcher-testified",
+    "entity": "char-mistress-anne-fletcher",
+    "attribute": "testified",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-loc-chapel-hearing_location",
+    "entity": "loc-chapel",
+    "attribute": "hearing_location",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-evelyn-harrow-confessed_association_with_thomas",
+    "entity": "char-evelyn-harrow",
+    "attribute": "confessed_association_with_thomas",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-lord-harrow-decreed_hearing_at_dawn",
+    "entity": "char-lord-harrow",
+    "attribute": "decreed_hearing_at_dawn",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-mistress-anne-fletcher-catalogue_and_secure_items",
+    "entity": "char-mistress-anne-fletcher",
+    "attribute": "catalogue_and_secure_items",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-lady-margaret-stone-present_at_hearing",
+    "entity": "char-lady-margaret-stone",
+    "attribute": "present_at_hearing",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-thomas-byrd-present_at_hearing",
+    "entity": "char-thomas-byrd",
+    "attribute": "present_at_hearing",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-rose-locket-mentioned_in_confession",
+    "entity": "obj-rose-locket",
+    "attribute": "mentioned_in_confession",
+    "value": "true",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-thomas-byrd-sentence_executed",
+    "entity": "char-thomas-byrd",
+    "attribute": "sentence_executed",
+    "value": "hanged_at_dawn_at_orchard_wall",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-evelyn-harrow-committed_suicide",
+    "entity": "char-evelyn-harrow",
+    "attribute": "committed_suicide",
+    "value": "threw_herself_from_orchard_wall_after_sentence",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-mistress-anne-fletcher-catalogued_and_secured",
+    "entity": "char-mistress-anne-fletcher",
+    "attribute": "catalogued_and_secured",
+    "value": "obj-seal-ring_and_obj-love-letters",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-rose-locket-final_custody",
+    "entity": "obj-rose-locket",
+    "attribute": "final_custody",
+    "value": "char-mistress-anne-fletcher",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-love-letters-status",
+    "entity": "obj-love-letters",
+    "attribute": "status",
+    "value": "unread_and_boxed",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-lord-harrow-decreed_sentence_executed",
+    "entity": "char-lord-harrow",
+    "attribute": "decreed_sentence_executed",
+    "value": "true",
+    "source": "s-004"
+  }
+]

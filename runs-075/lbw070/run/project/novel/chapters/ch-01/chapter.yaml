@@ -1,0 +1,82 @@
+chapter: ch-01
+scenes:
+  - id: s-001
+    intent: "Scene 1 (≈500 words): Establish the everyday task and set up the quest.
+      In Eli's narrow kitchen (loc-eli-house) he discovers the forgotten
+      obj-lunchbox while tying shoes. Introduce Eli (char-eli) and Mara
+      (char-mara) as they decide to deliver the lunch to char-finn at
+      loc-schoolyard. Mara reframes the errand as an Arthurian quest: the
+      lunchbox becomes the 'Crown of Crumbs' and she draws a quick
+      obj-quest-list, recruits the obj-cardboard-helmet and obj-compass-key, and
+      names their roles. Tone: playful, intimate; theme hooks — loyalty and
+      imagination."
+    present:
+      - char-eli
+      - char-mara
+      - char-finn
+      - loc-eli-house
+      - loc-schoolyard
+      - obj-lunchbox
+      - obj-cardboard-helmet
+      - obj-quest-list
+      - obj-compass-key
+  - id: s-002
+    intent: "Scene 2 (≈500 words): The King's Road and the Tollkeeper. As they set
+      out down loc-suburban-path from loc-eli-house, Mara layers myth over the
+      ordinary: hedges become battlements and a cracked drain a dragon's lair.
+      They meet char-mr-bennett stationed by his hedge like a tollkeeper who
+      blocks the quickest route. Mr. Bennett demands reason (and offers a grumpy
+      riddle). Eli must persuade him (showing civility and small moral courage)
+      while Mara performs an outrageous flourish to distract or charm him. The
+      scene builds tension: the price of passage, the stakes (getting to school
+      on time), and a first test of bravery."
+    present:
+      - char-eli
+      - char-mara
+      - char-mr-bennett
+      - loc-suburban-path
+      - loc-eli-house
+      - obj-compass-key
+      - obj-quest-list
+  - id: s-003
+    intent: "Scene 3 (≈500 words): The Moat and the Dragon. The path now forces them
+      toward loc-bridge-over-creek from loc-eli-house. One plank is loose; the
+      creek becomes a moat. The hulking char-goliath-dog appears, bounding
+      toward them from the park (a 'dragon'). Eli must choose between retreat
+      and improvisation: he fetches obj-rope (from his bike) and—guided by
+      Mara's fearless instructions and the symbolic obj-cardboard-helmet—rigs a
+      safe crossing, steadying himself while Mara distracts or soothes the dog.
+      This is the story's emotional pivot: Eli's practical bravery is in equal
+      measure to Mara's imaginative daring."
+    present:
+      - char-eli
+      - char-mara
+      - char-goliath-dog
+      - loc-bridge-over-creek
+      - loc-eli-house
+      - obj-rope
+      - obj-cardboard-helmet
+      - obj-lunchbox
+  - id: s-004
+    intent: "Scene 4 (≈500 words): The Schoolyard and the Coronation. They arrive at
+      loc-schoolyard with minutes to spare. Finn (char-finn) is waiting, small
+      and relieved; Ms. Ramirez (char-ms-ramirez) sees the exchange and calls
+      the pair over. The children are recognized for their quick thinking and
+      cooperation — Ms. Ramirez bestows a playful title ('Knights of the
+      Cafeteria'). Mr. Bennett reappears in the distance with a softened
+      expression; the dog watches from a bench. End on a quiet, honest moment:
+      Eli realizes the task was not merely a run to school but a proving ground
+      where simple bravery and friendship turned routine into story. Reinforce
+      themes and leave a clear, warm resolution."
+    present:
+      - char-eli
+      - char-mara
+      - char-finn
+      - char-ms-ramirez
+      - char-mr-bennett
+      - char-goliath-dog
+      - loc-schoolyard
+      - loc-eli-house
+      - obj-lunchbox
+      - obj-quest-list
+      - obj-cardboard-helmet

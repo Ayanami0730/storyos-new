@@ -1,0 +1,66 @@
+{
+  "sceneId": "s-004",
+  "claims": [
+    {
+      "entity": "char-thomas-byrd",
+      "attribute": "sentence_executed",
+      "value": "hanged_at_dawn_at_orchard_wall",
+      "quote": "\"By the law of Harrow, for a breach of trust that stains the family name, this man is to be hanged at dawn.\" The words finished and the world obeyed. They hanged Thomas Byrd at the orchard wall at dawn."
+    },
+    {
+      "entity": "char-evelyn-harrow",
+      "attribute": "committed_suicide",
+      "value": "threw_herself_from_orchard_wall_after_sentence",
+      "quote": "Then Evelyn threw herself from the orchard wall. The drop was brief and decisive; the hush that followed was longer."
+    },
+    {
+      "entity": "char-mistress-anne-fletcher",
+      "attribute": "catalogued_and_secured",
+      "value": "obj-seal-ring_and_obj-love-letters",
+      "quote": "Mistress Anne had, before the hour, catalogued the ring and the letters and set them in a small wooden box, laying each folded paper flat as if to preserve its shame."
+    },
+    {
+      "entity": "obj-rose-locket",
+      "attribute": "final_custody",
+      "value": "char-mistress-anne-fletcher",
+      "quote": "She opened the small box to check the papers again and then, with a motion almost private, slipped Thomas's silver locket into the inner pocket of her apron."
+    },
+    {
+      "entity": "obj-love-letters",
+      "attribute": "status",
+      "value": "unread_and_boxed",
+      "quote": "The letters lay in their folded linen, unread. The little wooden box with the ring sat closed."
+    },
+    {
+      "entity": "char-lord-harrow",
+      "attribute": "decreed_sentence_executed",
+      "value": "true",
+      "quote": "\"By the law of Harrow, for a breach of trust that stains the family name, this man is to be hanged at dawn.\""
+    }
+  ],
+  "presentEntities": [
+    "char-evelyn-harrow",
+    "char-thomas-byrd",
+    "char-lord-harrow",
+    "char-mistress-anne-fletcher",
+    "loc-orchard",
+    "loc-harrow-manor",
+    "obj-rose-locket",
+    "obj-love-letters"
+  ],
+  "promises": [
+    {
+      "id": "promise-keep-the-heart-safe",
+      "promise": "Payoff: the locket's fate is resolved; Mistress Anne took it into her apron after the execution, preserving it as a private mercy.",
+      "quote": "She whispered the injunction her mother had left her—told to guard what the heart had loved—and the words fell between them like a last bequest.",
+      "dueByScene": "novel/chapters/ch-01/chapter.yaml#end"
+    },
+    {
+      "id": "promise-investigate-patterns",
+      "promise": "Payoff: Mistress Anne's earlier promise to observe for patterns has been paid off by her testimony and actions in cataloguing evidence.",
+      "quote": "\"As I observed, patterns emerged—the missing apron, the scrap in the crate, his lingering by the wall,\" she told him again, and her voice had the flatness of work completed.",
+      "dueByScene": "novel/chapters/ch-01/chapter.yaml#end"
+    }
+  ],
+  "paysOff": []
+}

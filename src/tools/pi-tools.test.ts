@@ -238,3 +238,69 @@ describe("pi's read", () => {
     assert.match(text(result), /not a reason to invent its contents/);
   });
 });
+
+describe("read_index takes a batch", () => {
+  /**
+   * Why the signature changed rather than the prompt.
+   *
+   * Measured: 284 round-trips on a four-scene run, 92% carrying one tool call, the
+   * context-builder averaging 22.5 per turn — each re-sending a 12,000-token
+   * transcript to receive one small YAML file. The batching instruction was added
+   * to `SHARED.md` and the builder's brief; on the next run the index-manager went
+   * from 29.8 round-trips per turn to 4.0 and the builder went *up*, to 31. An
+   * instruction one role follows and another ignores is not a mechanism.
+   */
+  it("reads several files in one call and labels each", async () => {
+    const tool = readIndexTool({
+      read: async (p) => `contents of ${p}`,
+    }) as { execute: (id: string, args: never) => Promise<{ content: { text: string }[] }> };
+    const out = (
+      await tool.execute("c1", {
+        paths: ["objects/obj-key.yaml", "characters/char-mira/profile.yaml"],
+        purpose: "check both",
+      } as never)
+    ).content[0]!.text;
+    assert.match(out, /### objects\/obj-key\.yaml/);
+    assert.match(out, /### characters\/char-mira\/profile\.yaml/);
+  });
+
+  it("charges one budget slot for the batch, not one per file", async () => {
+    // Charging per file would make batching cost exactly as much as not batching,
+    // which is the behaviour being discouraged.
+    let spends = 0;
+    const tool = readIndexTool({
+      read: async (p) => `contents of ${p}`,
+      spend: () => {
+        spends += 1;
+        return null;
+      },
+    }) as { execute: (id: string, args: never) => Promise<unknown> };
+    await tool.execute("c1", { paths: ["a", "b", "c", "d"], purpose: "p" } as never);
+    assert.equal(spends, 1);
+  });
+
+  it("still accepts the single-path form", async () => {
+    // A model that has the old signature in its own transcript will keep using it,
+    // and refusing costs a round-trip to teach what the new shape already suggests.
+    const tool = readIndexTool({
+      read: async (p) => `contents of ${p}`,
+    }) as { execute: (id: string, args: never) => Promise<{ content: { text: string }[] }> };
+    const out = (await tool.execute("c1", { path: "world/rules.yaml", purpose: "p" } as never))
+      .content[0]!.text;
+    assert.match(out, /contents of world\/rules\.yaml/);
+  });
+
+  it("reports a missing file per path without failing the batch", async () => {
+    const tool = readIndexTool({
+      read: async (p) => {
+        if (p === "gone.yaml") throw new Error("ENOENT");
+        return `contents of ${p}`;
+      },
+    }) as { execute: (id: string, args: never) => Promise<{ content: { text: string }[] }> };
+    const out = (
+      await tool.execute("c1", { paths: ["ok.yaml", "gone.yaml"], purpose: "p" } as never)
+    ).content[0]!.text;
+    assert.match(out, /contents of ok\.yaml/);
+    assert.match(out, /no such committed file/);
+  });
+});

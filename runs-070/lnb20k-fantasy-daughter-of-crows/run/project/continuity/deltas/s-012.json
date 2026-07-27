@@ -1,0 +1,46 @@
+{
+  "sceneId": "s-012",
+  "claims": [
+    {
+      "entity": "char-elaine",
+      "attribute": "returned_and_spoke_about_outside_accounts",
+      "quote": "\"Markets have narrowed,\" she said. \"Sponsors keep accounts that have teeth. There are bargains made in port houses and in sponsor ledgers—debts tied to ships' manifests; claims that ask for more than coin. I do not say the Academy trades in names, but I say this: the world outside keeps accounts that are not always written in the Folio's neat hand.\"",
+      "value": "Elaine returned and spoke about external sponsors and accounts affecting lives"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "defensive_public_stance",
+      "quote": "\"We publish successes and we celebrate return,\" the Headmistress said slowly. \"The stories of Elaine and others are public examples of craft and steadiness. If there have been arrangements beyond the public pages, they are matters for the house's counsel and procedure.\"",
+      "value": "Headmistress asserts public examples and defers private arrangements to house counsel"
+    },
+    {
+      "entity": "loc-great-hall",
+      "attribute": "returned-alum_protocol_observed",
+      "quote": "\"Returnees are received at the lectern; the Headmistress introduces them and a scribe records any public remarks; posters or pamphlets may be produced later by the House's press for public consumption.\"",
+      "value": "Returnee reception protocol (lectern introduction, scribe records, potential press materials)"
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "reaction_to_elaine_testimony",
+      "quote": "\"Rue felt, in the back of her throat, the remembering of her own signing: the wax, the signet, the small sharp breath when the pen left the paper. The word 'tethering' slid like a memory along her ribs.\"",
+      "value": "Rue's memory of signing resurfaces and deepens her moral uncertainty"
+    },
+    {
+      "entity": "collective-the-hundred",
+      "attribute": "public_reaction_to_testimony",
+      "quote": "\"There was an answering murmur. ... A clerk stood and took a narrow book—its spine soft with handling—and opened it beneath the lamp. 'Sponsorship ledger,' someone muttered; the clerk's finger ran a line and read aloud, quietly, the heading: 'Sponsors—claims noted.'\"",
+      "value": "Public reaction includes murmur and a clerk producing a sponsorship ledger noting claims"
+    }
+  ],
+  "presentEntities": [
+    "char-elaine",
+    "char-maris",
+    "char-sal",
+    "char-headmistress",
+    "char-rue",
+    "loc-great-hall",
+    "collective-the-hundred"
+  ],
+  "promises": [],
+  "paysOff": []
+}

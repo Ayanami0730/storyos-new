@@ -54,4 +54,27 @@ phases:
     source:
       scene: s-010
       span: L1-L40
+  - index: 5
+    relation: trusted-diagnostic
+    fromScene: s-012
+    toScene: null
+    transition: Mercy offers placation and invites testimony with witnesses; when
+      placation collapses she reframes to a witnessed naming procedure with
+      careful accounting and offerings; continues Mercy's diagnostic/mediator
+      role.
+    asymmetry: Mercy leads method; commune provides witnesses and testimony.
+    source:
+      scene: s-012
+      span: L1-L60
+  - index: 6
+    relation: trusted-diagnostic
+    fromScene: s-013
+    toScene: null
+    transition: "Continues Mercy's trusted role: she performs witnessed mapping
+      rituals with community witnesses to create shared marks that can be
+      cross-referenced with the scroll."
+    asymmetry: Mercy leads mapping; community bears witness and provides corroboration.
+    source:
+      scene: s-013
+      span: L1-L40
 openQuestions: []

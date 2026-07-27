@@ -1,0 +1,76 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "loc-suburban-path",
+      "attribute": "description",
+      "quote": "The King's Road wasn't paved in gold — just patched flagstones and hedges trimmed like a barber's careful work — but when Mara set the cardboard flag to flutter, it felt like a proper procession.",
+      "value": "patched flagstone path; hedges lining sidewalk; Mara renames it 'The King's Road' in play"
+    },
+    {
+      "entity": "obj-compass-key",
+      "attribute": "physical_interaction",
+      "quote": "The compass tugged at my zipper like a small, insistent talisman and the Crown of Crumbs sat heavy against my hip.",
+      "value": "compass attached to zipper; compass physically present and attached to Eli's zipper"
+    },
+    {
+      "entity": "char-mr-bennett",
+      "attribute": "typical_line",
+      "quote": "\"State your business,\" he said, voice low and knobby as a walking stick.",
+      "value": "Typical greeting: 'State your business.' spoken in a low gruff tone"
+    },
+    {
+      "entity": "char-mr-bennett",
+      "attribute": "riddle_text",
+      "quote": "\"What costs nothing, but is paid by every good knight?\"",
+      "value": "What costs nothing, but is paid by every good knight?"
+    },
+    {
+      "entity": "char-mr-bennett",
+      "attribute": "demeanor",
+      "quote": "Mr. Bennett stood where the path narrowed, planted by his hedge like a tollkeeper. He looked at us the way a gate looks at a cart: expectant and a little annoyed.",
+      "value": "Planted by hedge like a tollkeeper; grumpy and expectant; soft-hearted under gruff exterior"
+    },
+    {
+      "entity": "char-mr-bennett",
+      "attribute": "concession_condition",
+      "quote": "\"Fine,\" he grunted. \"Keep your promise. But mind you don't dawdle on the King's Road.\"",
+      "value": "Will grant passage if a promise is kept; warns against dawdling"
+    },
+    {
+      "entity": "char-eli",
+      "attribute": "persuasion_method",
+      "quote": "\"It's not a knight's deed this time, sir,\" I said. The words surprised me by how steady they sounded. \"It's a promise. Finn's seven. He'll wait all morning if he has to. I won't make him.\"",
+      "value": "Eli persuades Mr. Bennett with civility and an appeal to responsibility (promise not to make Finn wait)"
+    },
+    {
+      "entity": "char-mara",
+      "attribute": "distraction_action",
+      "quote": "She bowed so loudly her helmet nearly slid over one eye, then pulled a ridiculous, triumphant face and recited, in an oracle voice, a rhyme about knights and lost lunches.",
+      "value": "Mara distracts with theatrical bow, ridiculous face and recited rhyme about knights and lost lunches"
+    },
+    {
+      "entity": "loc-suburban-path",
+      "attribute": "minutes_until_bell",
+      "quote": "Twelve minutes, I thought, and the number set my teeth toward motion.",
+      "value": "12 minutes until bell at scene start"
+    },
+    {
+      "entity": "loc-suburban-path",
+      "attribute": "tension",
+      "quote": "The King's Road slid into a narrow sidewalk and the school bell, a drum somewhere ahead, began its slow, patient sound.",
+      "value": "rising tension; stakes of getting to school on time reinforced"
+    }
+  ],
+  "presentEntities": [
+    "char-eli",
+    "char-mara",
+    "char-mr-bennett",
+    "loc-suburban-path",
+    "loc-eli-house",
+    "obj-compass-key",
+    "obj-quest-list"
+  ],
+  "promises": [],
+  "paysOff": []
+}

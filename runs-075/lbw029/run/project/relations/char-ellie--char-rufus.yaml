@@ -1,0 +1,15 @@
+pairId: char-ellie--char-rufus
+participants:
+  - char-ellie
+  - char-rufus
+phases:
+  - index: 1
+    relation: separation/companion-left-behind
+    fromScene: s-001
+    toScene: null
+    transition: char-ellie boards the train and leaves; char-rufus remains on the
+      platform watching, changing their immediate spatial relation to separated.
+    source:
+      scene: s-001
+      span: L11-L16
+openQuestions: []

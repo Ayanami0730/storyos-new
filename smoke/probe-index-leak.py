@@ -22,19 +22,28 @@ import sys
 from pathlib import Path
 
 MIN_RUN = 12
-INDEX_SUFFIXES = {".yaml", ".yml"}
-# Only the *descriptive* index: entity sketches, object and location descriptions,
-# world rules. These are the files written in registry language, and they are what
-# must never appear on the page.
+TARGET = "plan.json"
+# The comparison target is `plan.json` — the planner's entity sketches, world rules
+# and scene cards — and nothing else.
 #
-# Everything that stores a prose `quote` is excluded, and this is not a detail —
-# the first version of this probe included `continuity/deltas/*.json` and
-# `canon-facts.jsonl`, which hold the writer's own verbatim quotes for every claim,
-# so every manuscript matched itself and every run reported 100% leaked. A measure
-# that returns the same number for a run that scored 88.2 and one that scored 78.6
-# is measuring the wrong thing.
-KEEP_DIRS = {"objects", "locations", "characters", "world", "factions", "relations"}
-SKIP_NAMES = {"state.jsonl", "beliefs.jsonl"}
+# It took two wrong versions to get here, both of which measured the manuscript
+# against itself:
+#
+#   1. Including `continuity/deltas/*.json` and `canon-facts.jsonl`, which store the
+#      writer's own verbatim quote for every claim. Every manuscript matched itself
+#      and every run reported 100% leaked.
+#   2. Including `relations/*.yaml`, `characters/*/profile.yaml` and the rest of the
+#      live index. index-manager *writes* those from the committed prose, so a match
+#      means the index recorded the manuscript, which is the system working. That
+#      version reported 17.8% for a run and 0.0% for another, and reading the spans
+#      showed all of them were prose the writer had written first:
+#      *"Nestled there was a compact clockwork — tiny plates of brass, a wound
+#      spring and a cam-driven push-rod"*, found in `relations/loc-study--obj-clockwork.yaml`.
+#
+# `plan.json` cannot contain manuscript text, because it exists before any prose
+# does. That makes a match unambiguous: registry language, authored by the planner,
+# on the page.
+TARGET_FILES = ("plan.json",)
 
 
 def words(text: str) -> list[str]:
@@ -60,17 +69,17 @@ def main(runs: list[str]) -> int:
             continue
 
         index_tokens: list[str] = []
-        project = root / "project"
-        for path in sorted(project.rglob("*")):
-            if not path.is_file() or path.suffix not in INDEX_SUFFIXES:
-                continue
-            parts = path.relative_to(project).parts
-            if not parts or parts[0] not in KEEP_DIRS or path.name in SKIP_NAMES:
+        for name in TARGET_FILES:
+            path = root / name
+            if not path.is_file():
                 continue
             try:
                 index_tokens += words(path.read_text(errors="replace")) + ["\u0000"]
             except OSError:
                 pass
+        if not index_tokens:
+            print(f"{run:34s} (no {'/'.join(TARGET_FILES)} to compare against)")
+            continue
 
         index_grams = grams(index_tokens)
         story_words = words(story.read_text(errors="replace"))

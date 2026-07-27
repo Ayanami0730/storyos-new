@@ -1,0 +1,119 @@
+{
+  "logline": "In a rigidly ordered manor, a lord's sheltered daughter and a humble servant fall into a forbidden intimacy; when a vanished signet and a planted accusation split their world, the house's need for honour demands a terrible price and love is crushed under custom.",
+  "entities": [
+    {
+      "id": "char-evelyn-harrow",
+      "sketch": "Lord Harrow's only daughter, 19. Gentle, curious, privately rebellious; finds solace in the orchard and in small acts of kindness."
+    },
+    {
+      "id": "char-thomas-byrd",
+      "sketch": "A 21-year-old servant at Harrow Manor. Skilled hands, steady, dignified; born nearby and quietly proud despite his low station."
+    },
+    {
+      "id": "char-lord-harrow",
+      "sketch": "The lord of Harrow Manor, mid-40s. Stern, honour-obsessed, devoted to lineage and duty; loves his daughter but prioritises the house."
+    },
+    {
+      "id": "char-lady-margaret-stone",
+      "sketch": "An 18-year-old noblewoman betrothed as part of an alliance. Practical and gracious; becomes the socially appropriate match Evelyn is expected to accept."
+    },
+    {
+      "id": "char-mistress-anne-fletcher",
+      "sketch": "The housekeeper, in her 50s. Pragmatic and maternal toward the staff; enforces rules but occasionally softens where she can."
+    },
+    {
+      "id": "loc-harrow-manor",
+      "sketch": "The stone Harrow estate: great hall, courtyard, servants' wing, private chapel; set beside orchards and river-meadows."
+    },
+    {
+      "id": "loc-orchard",
+      "sketch": "A walled orchard behind the manor, secluded and scented with blossom; the lovers' secret refuge."
+    },
+    {
+      "id": "loc-kitchen-cellars",
+      "sketch": "The servants' domain: kitchen, scullery and cramped quarters; warm, busy, and watched."
+    },
+    {
+      "id": "loc-chapel",
+      "sketch": "The family's private chapel within the manor; carved pews and stained glass; where vows and judgments feel binding."
+    },
+    {
+      "id": "obj-rose-locket",
+      "sketch": "A small silver locket engraved with a rose. Evelyn gives it to Thomas; it contains a pressed blossom and her initials."
+    },
+    {
+      "id": "obj-seal-ring",
+      "sketch": "Lord Harrow's heavy signet ring with the house crest. Its disappearance and later discovery are used to accuse Thomas."
+    },
+    {
+      "id": "obj-love-letters",
+      "sketch": "A bundle of secret letters passed between Evelyn and Thomas; intimate proof of their relationship and a danger if found."
+    }
+  ],
+  "worldRules": [
+    "No supernatural elements; the story is realistic.",
+    "Social hierarchy is enforced: marriages between nobility and servants are forbidden; the lord arranges alliances for lineage.",
+    "Physical evidence (the objects listed) is admissible and must be handled consistently across scenes.",
+    "Characters' ages and relations as stated are fixed.",
+    "No deus ex machina reversals: sentences or irreversible outcomes cannot be undone unless earlier foreshadowed."
+  ],
+  "scenes": [
+    {
+      "id": "s-001",
+      "intent": "Meeting and token: Evelyn slips into the orchard to escape court life; she meets Thomas by chance. Their conversation is tentative and intimate; Evelyn gives Thomas the silver rose locket as a private token. Establishes class boundaries, orchard as sanctuary, and the lovers' first secret.",
+      "presentEntities": [
+        "char-evelyn-harrow",
+        "char-thomas-byrd",
+        "loc-orchard",
+        "obj-rose-locket"
+      ],
+      "targetWords": 875
+    },
+    {
+      "id": "s-002",
+      "intent": "Secret courtship: Thomas and Evelyn deepen their intimacy with stolen afternoons in the orchard and exchanged letters. In the kitchen and cellars their furtive movements attract Mistress Anne's attention; small slips (a missing apron, a glimpse at the orchard wall) raise household tension. The lovers' bond and the risks become vivid.",
+      "presentEntities": [
+        "char-evelyn-harrow",
+        "char-thomas-byrd",
+        "char-mistress-anne-fletcher",
+        "loc-kitchen-cellars",
+        "loc-orchard",
+        "obj-love-letters",
+        "obj-rose-locket"
+      ],
+      "targetWords": 875
+    },
+    {
+      "id": "s-003",
+      "intent": "Discovery and accusation: Lord Harrow's signet ring surfaces where Thomas can be tied to it; either found among his effects or presented as evidence. The manor convenes a hearing in the great hall/chapel. Evelyn must choose between confession and protecting Thomas; Lord Harrow insists on honour and the house's law. The scene hinges on the seal ring, the letters, and the social consequences.",
+      "presentEntities": [
+        "char-lord-harrow",
+        "char-evelyn-harrow",
+        "char-thomas-byrd",
+        "char-mistress-anne-fletcher",
+        "char-lady-margaret-stone",
+        "loc-harrow-manor",
+        "loc-chapel",
+        "obj-seal-ring",
+        "obj-love-letters",
+        "obj-rose-locket"
+      ],
+      "targetWords": 875
+    },
+    {
+      "id": "s-004",
+      "intent": "Tragic resolution and aftermath: Punishment (execution, exile, or other irreversible sentence) is carried out. Evelyn's protest culminates in a desperate act—either suicide or a self-sacrificial gesture—that seals the lovers' fate. The manor's cold logic and the ruin left behind are shown; small symbols (the locket, the unread letters) mark the loss.",
+      "presentEntities": [
+        "char-evelyn-harrow",
+        "char-thomas-byrd",
+        "char-lord-harrow",
+        "char-mistress-anne-fletcher",
+        "loc-orchard",
+        "loc-harrow-manor",
+        "obj-rose-locket",
+        "obj-love-letters"
+      ],
+      "targetWords": 875
+    }
+  ]
+}

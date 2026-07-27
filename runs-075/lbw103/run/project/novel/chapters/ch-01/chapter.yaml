@@ -1,0 +1,77 @@
+chapter: ch-01
+scenes:
+  - id: s-001
+    intent: "Open in medias res: the outbreak's first day. Establish Ellie's voice
+      and relationships as the town shutters down. The group coalesces at the
+      gas station where they salvage fuel and a radio, debate routes and resolve
+      to head for the highway. Small discoveries set the stakes: limited gas,
+      noisy hordes attracted to sound, and the old bridge's fragility noted on
+      the map."
+    present:
+      - char-ellie
+      - char-dan
+      - char-maya
+      - char-otto
+      - char-lina
+      - loc-gas-station
+      - loc-old-bridge
+      - loc-highway
+      - obj-radio
+      - obj-truck
+      - obj-shotgun
+      - obj-gas-can
+      - obj-journal
+  - id: s-002
+    intent: A hospital run to grab medicine and morphine for wounded or sedating,
+      and an attempted reconnaissance toward the old bridge. The group faces
+      their first close-quarters fight in the ER, Otto is exposed and later
+      bitten; the bridge is found blocked/collapsed, forcing a reroute to the
+      rail yard. Ellie uses mechanical skill to jury-rig the truck for the
+      coming run.
+    present:
+      - char-ellie
+      - char-otto
+      - char-maya
+      - char-lina
+      - loc-hospital
+      - loc-old-bridge
+      - loc-rail-yard
+      - obj-medkit
+      - obj-pickaxe
+      - obj-truck
+      - obj-radio
+  - id: s-003
+    intent: Nightfall drives the group through the exposed rail yard toward the
+      riverbank to try to skirt the bridge. Tension and limited visibility cause
+      mistakes; Lina panics and is killed, and the group's cohesion frays. Ellie
+      improvises with the flare and pickaxe; a bitter choice is made to abandon
+      Otto and push for the highway at first light.
+    present:
+      - char-ellie
+      - char-dan
+      - char-maya
+      - char-lina
+      - char-otto
+      - loc-rail-yard
+      - loc-riverbank
+      - loc-highway
+      - obj-flare
+      - obj-truck
+      - obj-pickaxe
+      - obj-shotgun
+  - id: s-004
+    intent: "Final desperate sprint to the highway at dawn. The town is a chorus of
+      groans; the truck must punch through a blockade of cars and a spreading
+      horde. Ellie stages a last stand: she rigs a diversion, gives the
+      survivors a path, and fights until she's overwhelmed. The story ends in
+      first person with Ellie's last notebook entry as Dan and Maya's brakes
+      squeal away on the highway."
+    present:
+      - char-ellie
+      - char-dan
+      - char-maya
+      - loc-highway
+      - obj-truck
+      - obj-flare
+      - obj-shotgun
+      - obj-journal

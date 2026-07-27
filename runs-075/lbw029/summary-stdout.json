@@ -1,0 +1,285 @@
+{
+  "harness_version": "0.7.5",
+  "harness_version_note": "orchestrator-driven scene loop with per-scene compute allocated by position in the story (2/3/5 repair rounds and follow-ups across the opening, middle and final 40%, with recall depth 1/2/3), path-addressed artefacts, OS-enforced write gate (docker read-only mount), cost-triggered level-1 compaction, baseline-comparable token accounting (input+output, cache reads excluded), and a per-scene verifier session; the verifier runs the same gpt-5-mini backbone as every other role and every baseline, with cross-family available as an ablation, and checks two axes — ConStory consistency subtypes and a craft axis distilled from the LongBench-Write and LongStoryEval rubrics — against a deterministically assembled claim-by-claim comparison with canon",
+  "premise_words": 16,
+  "target_words": 500,
+  "backbone": "default (no --backbone override)",
+  "models": {
+    "orchestrator": "gpt-5-mini",
+    "context-builder": "gpt-5-mini",
+    "writer": "gpt-5-mini",
+    "verifier": "gpt-5-mini",
+    "index-manager": "gpt-5-mini"
+  },
+  "fresh_each_scene": [
+    "verifier"
+  ],
+  "verifier_model": "gpt-5-mini",
+  "allocation": {
+    "mode": "by-position",
+    "pinned_to": null,
+    "note": "per-scene allowance from runtime/allocation.ts; rows below are the test of it",
+    "schedule": [
+      {
+        "tier": "opening",
+        "up_to_position": 0.3,
+        "repair_rounds": 2,
+        "follow_up_rounds": 2,
+        "recent_scenes_in_packet": 1
+      },
+      {
+        "tier": "middle",
+        "up_to_position": 0.6,
+        "repair_rounds": 3,
+        "follow_up_rounds": 3,
+        "recent_scenes_in_packet": 2
+      },
+      {
+        "tier": "endgame",
+        "up_to_position": 1,
+        "repair_rounds": 5,
+        "follow_up_rounds": 5,
+        "recent_scenes_in_packet": 3
+      }
+    ],
+    "per_scene": [
+      {
+        "scene": "s-001",
+        "tier": "middle",
+        "position": 0.5,
+        "allowed_repair_rounds": 3,
+        "allowed_follow_ups": 3,
+        "recent_scenes_in_packet": 2,
+        "rationale": "middle third: enough is on the page now that this scene has to agree with it, and the material a contradiction would live in is no longer all in front of you. Ask before drafting rather than repairing afterwards; a question costs a fraction of a repair round",
+        "attempts": 1,
+        "findings": 1,
+        "status": "COMMITTED"
+      }
+    ],
+    "by_tier": {
+      "middle": {
+        "scenes": [
+          "s-001"
+        ],
+        "allowed": {
+          "repair_rounds": 3,
+          "follow_up_rounds": 3,
+          "recent_scenes_in_packet": 2
+        },
+        "used": {
+          "repair_rounds": 0,
+          "follow_ups": 0
+        },
+        "findings": 1,
+        "findings_per_scene": 1,
+        "committed": 1,
+        "unresolved_findings": 0
+      }
+    }
+  },
+  "elapsed_ms": 493994,
+  "fatal": null,
+  "words": 518,
+  "attainment": 1.036,
+  "scenes_planned": 1,
+  "scenes_committed": 1,
+  "failures": [],
+  "rejected_findings": [],
+  "repair_rounds": 0,
+  "findings_total": 1,
+  "findings_by_axis": {
+    "consistency": 0,
+    "craft": 1,
+    "craft_blocking": 0,
+    "craft_by_check": {
+      "flat_diction": 1
+    }
+  },
+  "scenes_unverified": 0,
+  "scenes_with_unresolved_findings": 0,
+  "unresolved_findings": [],
+  "canon_facts": 11,
+  "promises_declared": 0,
+  "promises_unpaid": 0,
+  "revision_tasks": 0,
+  "tokens": 328404,
+  "tokens_reported_including_cache": 519508,
+  "tokens_cache_read": 191104,
+  "cost_estimate": {
+    "note": "list-price estimate against the providers' public rates, not the gateway's billing. Cached input priced separately. See src/runtime/rates.ts for sources.",
+    "totalUsd": 0.13721909999999998,
+    "byModel": {
+      "gpt-5-mini": {
+        "usd": 0.13721909999999998,
+        "inputUsd": 0.0749095,
+        "cachedUsd": 0.0047776,
+        "outputUsd": 0.057532,
+        "rate": {
+          "input": 0.25,
+          "cachedInput": 0.025,
+          "output": 2,
+          "source": "OpenAI list price, checked 2026-07-26"
+        },
+        "calls": 6
+      }
+    },
+    "unpriced": []
+  },
+  "calls": 6,
+  "roll_up": {
+    "orchestrator:gpt-5-mini": {
+      "calls": 2,
+      "tokens": 39685,
+      "reported": 59653,
+      "ms": 493850
+    },
+    "context-builder:gpt-5-mini": {
+      "calls": 1,
+      "tokens": 205006,
+      "reported": 353742,
+      "ms": 112911
+    },
+    "writer:gpt-5-mini": {
+      "calls": 1,
+      "tokens": 29107,
+      "reported": 36019,
+      "ms": 90764
+    },
+    "verifier:gpt-5-mini": {
+      "calls": 1,
+      "tokens": 30125,
+      "reported": 31405,
+      "ms": 34333
+    },
+    "index-manager:gpt-5-mini": {
+      "calls": 1,
+      "tokens": 24481,
+      "reported": 38689,
+      "ms": 208906
+    }
+  },
+  "roll_up_note": "roll_up.ms double-counts: the orchestrator's turns contain the turns they delegate. Use elapsed_ms for wall time. roll_up.tokens is additive.",
+  "driving": {
+    "scenesDriven": 1,
+    "stepsByOrchestrator": 4,
+    "stepsRescuedByEngine": 0
+  },
+  "follow_ups": {
+    "total": 0,
+    "by_scene": {},
+    "by_tier": {},
+    "questions": []
+  },
+  "budget": {
+    "profile": "generous",
+    "comparable_with_baselines": false,
+    "note": "NOT comparable with baseline rows — this run had a larger budget than the baselines were given. Use it to judge the architecture, never to claim a win.",
+    "rationale": "get the behaviour right before optimising cost; NOT comparable with any baseline row, and any table mixing the two is wrong",
+    "max_completion_tokens": 64000,
+    "input_ceiling": 256000,
+    "task_token_budget": 8000000,
+    "enforced": false,
+    "spent": 328404,
+    "utilisation": 0.041,
+    "tokens_per_output_word": 634
+  },
+  "sandbox": {
+    "id": "docker",
+    "enforcement": "mount",
+    "requested": "docker",
+    "fell_back_from": null,
+    "fallback_reason": null,
+    "gate_verified": true,
+    "gate_detail": "writing world/.gate-probe from inside the sandbox failed: sh: can't create /project/world/.gate-probe: Read-only file system"
+  },
+  "context": {
+    "thresholds": {
+      "contextWindow": 256000,
+      "maxOutput": 64000,
+      "level1Fraction": 0.7,
+      "level2Fraction": 0.85,
+      "level2Reserve": 13000,
+      "blockReserve": 3000,
+      "keepRecentToolResults": 10,
+      "keepRecentMessages": 12,
+      "level1PayloadTokens": 20000
+    },
+    "peak_context_tokens": 14069,
+    "peak_output_tokens": 10574,
+    "compactions": []
+  },
+  "index": {
+    "reads": 17,
+    "reads_by_role": {
+      "context-builder": 16,
+      "index-manager": 1
+    },
+    "partitions": {
+      "config": 1,
+      "novel/outline": 5,
+      "novel/outline/synopsis": 0,
+      "novel/chapters": 1,
+      "novel/style": 2,
+      "novel/style/exemplars": 0,
+      "characters": 3,
+      "relations": 2,
+      "locations": 2,
+      "objects": 3,
+      "factions": 0,
+      "events": 1,
+      "world": 2,
+      "continuity": 6,
+      "_schemas": 6,
+      "staging": 0,
+      "runtime": 3,
+      "runtime/transcripts": 5,
+      "runtime/artifacts": 0
+    },
+    "references": {
+      "characters": 3,
+      "locations": 2,
+      "objects": 3,
+      "relations": 2,
+      "events": 8,
+      "promises": 3,
+      "state_entries": 11,
+      "belief_entries": 3
+    },
+    "dangling": [],
+    "scenes_committed_on_disk": [
+      "s-001"
+    ]
+  },
+  "memory": {
+    "root": "/home/dumingxuan/storyos-v3/runs-075/lbw029/run/project",
+    "shared_across_runs": false,
+    "skills": {
+      "orchestrator": [
+        "story-architecture"
+      ],
+      "context-builder": [
+        "packet-assembly"
+      ],
+      "writer": [
+        "repair-response",
+        "scene-drafting"
+      ],
+      "verifier": [
+        "continuity-audit",
+        "promise-payoff-audit"
+      ],
+      "index-manager": [
+        "canon-extraction"
+      ]
+    },
+    "topics": {
+      "orchestrator": [],
+      "context-builder": [
+        "packet-assembly-note"
+      ],
+      "writer": [],
+      "verifier": [],
+      "index-manager": []
+    }
+  }
+}

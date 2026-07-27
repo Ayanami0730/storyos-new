@@ -3,5 +3,12 @@ name: elaine
 sketch: Elaine — One of the named individuals counted among the Three. She left
   the Academy years ago and lives beyond the city; she carries a scar the
   Academy never explains.
-identity: {}
-provenance: {}
+identity:
+  appearance: scar at her temple; narrow set of shoulders; plain, not triumphant
+  origin: left the Academy years ago and returned; came back with sponsors and
+    external accounts
+  speech: plain, testimony-like; speaks to expose external ledgers affecting lives
+provenance:
+  appearance: s-012
+  origin: s-012
+  speech: s-012

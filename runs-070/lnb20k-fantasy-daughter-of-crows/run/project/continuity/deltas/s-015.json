@@ -1,0 +1,46 @@
+{
+  "sceneId": "s-015",
+  "claims": [
+    {
+      "entity": "obj-folio",
+      "attribute": "scraped_alteration_revealed",
+      "quote": "The scribe who had taken the Folio from the cabinet set a magnifier in place and folded his sleeves higher... \"This line has been tampered with,\" he said...the blade worked and the lamp made the fibres glimmer... the clerk leaned over and breathed... \"Here—an added note,\" he murmured... \"Exchange noted.\"",
+      "value": "Ink scraped to reveal marginal addition; clerk read 'Exchange noted' beside a sponsored entry"
+    },
+    {
+      "entity": "char-elaine",
+      "attribute": "confirmed_exchange_notation_meaning",
+      "quote": "\"Exchange noted,\" Elaine repeated, not as correction but as confirmation. \"That is the language of sponsors—an account recorded in another book. It does not say what was exchanged. It only names that an exchange occurred.\"",
+      "value": "Elaine confirms 'Exchange noted' denotes that an external exchange occurred, possibly recorded elsewhere"
+    },
+    {
+      "entity": "char-maris",
+      "attribute": "acknowledged_return_costs",
+      "quote": "\"I left... with help that had conditions. I paid with my time and my obligations. I do not regret the life I made, but do not pretend that the return came without accounting.\"",
+      "value": "Maris acknowledges departures carried costs and obligations recorded externally"
+    },
+    {
+      "entity": "obj-archive-key",
+      "attribute": "archive_deeper_review_needed",
+      "quote": "The clerk whispered that some entries required the Archive's deeper lens—the kind that needed keys and hours of scrutiny. \"There are marginalia that need scraping and touch,\" he said.",
+      "value": "Some marginalia require deeper archival review and tools (Archive Key) to read and clarify"
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "absolution_not_found",
+      "quote": "\"She had come to the Ink Room expecting a ritual answer—something tidy and sanctifying—and found instead the bluntness of notation.\"",
+      "value": "Rue does not find ritual absolution; instead she finds marginal notations revealing exchanges"
+    }
+  ],
+  "presentEntities": [
+    "obj-folio",
+    "obj-binding-seal",
+    "char-rue",
+    "char-elaine",
+    "char-maris",
+    "char-sal",
+    "char-headmistress"
+  ],
+  "promises": [],
+  "paysOff": []
+}

@@ -1,0 +1,16 @@
+pairId: char-eli--char-mara
+participants:
+  - char-eli
+  - char-mara
+phases:
+  - index: 1
+    relation: playful allies
+    fromScene: s-001
+    toScene: null
+    transition: Mara appoints roles (Keeper of Maps) and entrusts Eli with Finn's
+      lunchbox (the 'Crown of Crumbs'), establishing a cooperative, playful
+      partnership for this errand.
+    source:
+      scene: s-001
+      span: L1-L40
+openQuestions: []

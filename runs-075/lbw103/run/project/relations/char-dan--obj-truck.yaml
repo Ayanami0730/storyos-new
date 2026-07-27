@@ -1,0 +1,15 @@
+pairId: char-dan--obj-truck
+participants:
+  - char-dan
+  - obj-truck
+phases:
+  - index: 1
+    relation: driver_of
+    fromScene: s-001
+    toScene: null
+    transition: Dan is the driver of the pickup; he checks the rig, turns the key,
+      and starts the engine (s-001).
+    source:
+      scene: s-001
+      span: L1-L78
+openQuestions: []
