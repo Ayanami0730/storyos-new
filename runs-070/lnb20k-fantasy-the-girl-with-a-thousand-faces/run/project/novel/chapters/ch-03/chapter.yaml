@@ -1,0 +1,97 @@
+chapter: ch-03
+scenes:
+  - id: s-009
+    intent: "Lin Wei’s nightmares intensify; Mercy watches over the child and in a
+      liminal night-ritual extracts a memory-vision that reveals a wartime scene
+      tied to the locket: soldiers, a burned courtyard, a betrayal. The spirit’s
+      origin becomes clearer but contains morally ambiguous actors from within
+      the City."
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-010
+    intent: Tensions in the community reach a breaking point as accusations flare.
+      Mercy negotiates between factions—those who want to repel the spirit by
+      force, those who prefer silence. She struggles to persuade them that the
+      exorcism must be a communal acknowledgment rather than simple banishment.
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-011
+    intent: "Mercy follows a physical trail to an abandoned storeroom where she
+      finds personal remnants: names scratched on a wall, an image burned into
+      plaster, and finally the bloodstained locket’s counterpart. The evidence
+      ties specific residents to the wartime incident and escalates moral
+      stakes."
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-012
+    intent: The vengeful spirit grows bolder, possessing objects and projecting
+      painful memories into public spaces; Mercy attempts a high-risk binding
+      that partially contains the spirit but leaves it embedded in the City’s
+      memory—revealing that it cannot be removed without truth and
+      acknowledgment.
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket

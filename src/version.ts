@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.7.0";
+export const VERSION = "0.7.1";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -46,6 +46,21 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.7.1",
+    note:
+      "the writer's follow-up allowance could be spent by the context-builder before the " +
+      "writer asked anything, and on the opening tier that left it none. The allowance was " +
+      "metered by counting `answer_writer` calls; that tool is on the builder's allowlist " +
+      "permanently, so during its *initial* build — with no question outstanding — the builder " +
+      "called it unprompted. Measured on `runs/v062/lbw081` s-001: the count reached one, the " +
+      "opening allowance was one, and the writer's first and only question came back `no " +
+      "follow-ups left`. It wrote the scene without the fact it had asked for and said so in " +
+      "its closing message. Invisible in every summary, because the spontaneous call was " +
+      "recorded *as* a follow-up — `follow_ups.by_tier` reported the mechanism as used. " +
+      "`answer_writer` now requires an outstanding question, and the refusal message prints " +
+      "the count and the allowance separately instead of printing the allowance for both.",
+  },
   {
     version: "0.7.0",
     note:

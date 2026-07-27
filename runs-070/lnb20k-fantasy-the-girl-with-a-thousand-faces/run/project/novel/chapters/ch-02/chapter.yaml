@@ -1,0 +1,94 @@
+chapter: ch-02
+scenes:
+  - id: s-005
+    intent: At the makeshift hospital Mercy meets a wounded neighbor and hears more
+      fractured testimony; Elder Lau reluctantly reveals a specific wartime
+      episode—an atrocity or betrayal—that could be the spirit’s origin, but
+      gives only a partial account and demands caution.
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-006
+    intent: Mercy researches the locket and the wartime rumor, visiting the Bazaar
+      for gossip and foraging a physical lead—someone who used to live near the
+      alleged massacre. The Walled City’s maze resists certainties; Mercy senses
+      that the ghost’s power is woven into shared silence.
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-007
+    intent: "A public exorcism at the communal shrine: Mercy calls for a rite that
+      requires community participation. The ritual initially seems to succeed
+      but instead enrages the spirit, which lashes out through memory-laced
+      illusions, causing neighbors to accuse one another and fray trust."
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-008
+    intent: After the shrine’s failure, Mercy interrogates her own methods and the
+      ethics of exorcism; she confides with Elder Lau and learns of an older
+      ritual form—dangerous but potentially deeper—that may force memory to
+      surface but at a cost.
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket

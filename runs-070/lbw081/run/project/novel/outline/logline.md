@@ -1,0 +1,1 @@
+A methodical detective is called to a locked-room murder in a reclusive antiquarian's study; as he teases apart motive and mechanics, he must outguess a killer who treated the crime like one of Lionel Ashby's mechanical curiosities.

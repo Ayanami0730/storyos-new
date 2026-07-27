@@ -1,0 +1,54 @@
+chapter: ch-02
+scenes:
+  - id: s-005
+    intent: A lesson about the Three — In a fireside conversation, older staff and a
+      clandestine girl recount the history of the Three. Rue learns that in the
+      Academy's ledger history, the exits are three and three alone in living
+      memory; each has a different story and different public explanations. This
+      deepens Rue's choices.
+    present:
+      - char-rue
+      - char-headmistress
+      - loc-archives
+      - group-three
+      - char-ida
+      - char-marra
+      - char-lyss
+  - id: s-006
+    intent: The institute's ambivalences — Rue rises in competence and in
+      responsibility; she sees both succor and cruelty. The Headmistress's
+      speeches emphasize mercy; the Wardens' routine inflicts discipline. Rue
+      witnesses punishments that are justified as correction and wonders at the
+      asymmetry between promise and practice.
+    present:
+      - char-rue
+      - char-warden
+      - char-headmistress
+      - loc-mercy-academy
+      - loc-chapel
+  - id: s-007
+    intent: "A decade's scale suggested — Time passes in a montage: cohorts cycle,
+      seasons mark ten years on the Academy's calendar, and Rue keeps the same
+      corner of the archive. The Folio continues to fill. The statistic is
+      established in the prose: only three ever leave after ten years. Rue
+      reflects on what staying has cost and given her."
+    present:
+      - char-rue
+      - loc-archives
+      - obj-contract-folio
+      - loc-mercy-academy
+      - group-hundred
+      - group-three
+  - id: s-008
+    intent: The cost of choice — Rue encounters a newcomer who regrets her sale and
+      seeks to trade back; Rue must counsel or refuse. The scene explores
+      whether selling oneself was a free choice and what compulsion looks like
+      within the Academy's systems. Rue's complicity and agency are
+      foregrounded.
+    present:
+      - char-rue
+      - loc-dormitory
+      - loc-archives
+      - obj-contract-folio
+      - group-hundred
+      - char-warden

@@ -1,0 +1,120 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "loc-ashby-study",
+      "attribute": "deadbolt_engaged_from_inside",
+      "quote": "From the hall the deadbolt showed as engaged; the metal sat flush in its mortice and the door did not betray even the faintest give. The sash window’s catch sat flush in its slot; the glass threw back the garden in a steady, dull rectangle with no light slipping beneath the frame. \"Latched,\" I said, because facts demand a ledger before hands do anything with them.",
+      "value": "true"
+    },
+    {
+      "entity": "loc-ashby-study",
+      "attribute": "sash_window_latched_from_inside",
+      "quote": "From the hall the deadbolt showed as engaged; the metal sat flush in its mortice and the door did not betray even the faintest give. The sash window’s catch sat flush in its slot; the glass threw back the garden in a steady, dull rectangle with no light slipping beneath the frame. \"Latched,\" I said, because facts demand a ledger before hands do anything with them.",
+      "value": "true"
+    },
+    {
+      "entity": "char-victim-lionel",
+      "attribute": "position_at_time_of_discovery",
+      "quote": "Lionel Ashby was at his desk as if someone had closed a book over him—head tipped, shoulders slack, the kind of neat ruin a man makes when he keeps things orderly even in the dark. The oak desk still held the impression of his weight.",
+      "value": "slumped_at_desk"
+    },
+    {
+      "entity": "obj-antique-clock",
+      "attribute": "stopped_at",
+      "quote": "On the mantel, a small brass clock had stopped: its hands fixed at 11:17, stubborn and precise like an accusation.",
+      "value": "11:17"
+    },
+    {
+      "entity": "obj-letter-opener",
+      "attribute": "present_on_desk",
+      "quote": "The desk drawer that should have carried his brass dagger-shaped opener was open and light. The felt groove where the letter-opener belonged gaped empty.",
+      "value": "false"
+    },
+    {
+      "entity": "obj-crumpled-note",
+      "attribute": "location_found",
+      "quote": "The hearth held two peculiarities. One was a scrap of paper, burned along one edge and crumpled into a hesitant confession; the only legible mark was a single underlined word: 'trust'.",
+      "value": "hearth"
+    },
+    {
+      "entity": "obj-crumpled-note",
+      "attribute": "legible_word",
+      "quote": "The hearth held two peculiarities. One was a scrap of paper, burned along one edge and crumpled into a hesitant confession; the only legible mark was a single underlined word: 'trust'.",
+      "value": "trust"
+    },
+    {
+      "entity": "obj-matchbox",
+      "attribute": "long_match_lodged_in_hearth",
+      "quote": "The other was a single long match lodged at an angle among the coal—too deliberately placed to be mere detritus.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-matchbox",
+      "attribute": "matchbox_style_visible",
+      "quote": "The matchbox, a thin thing made for long striking matches, lay on the mantel with its cover half-askew.",
+      "value": "long_matches"
+    },
+    {
+      "entity": "obj-mudprints",
+      "attribute": "mud_on_inner_garden_sill",
+      "quote": "The inner ledge of the study window bore a smear of fresh mud across its lip, and the painted inner sill showed a pale scuff where wood had briefly protested contact.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-mudprints",
+      "attribute": "scuff_on_inner_windowsill",
+      "quote": "The inner ledge of the study window bore a smear of fresh mud across its lip, and the painted inner sill showed a pale scuff where wood had briefly protested contact.",
+      "value": "true"
+    },
+    {
+      "entity": "loc-ashby-hall",
+      "attribute": "present_people",
+      "quote": "Harrow met me at the study door, clipboard at an angle that said he was not entirely sure whether I was help or hindrance. Evelyn stood in the hall like a photograph you could not quite pick up; gloves folded in her hands, expression composed to the point of polish. Hale lingered at the corridor’s edge, fingers working at his jacket as if there were something there they would not let go of. Marta stood near the hearth, apron neat, a faint smudge at the cuff. No one shouted. There was no immediate need for theatre.",
+      "value": "char-inspector-harrow, char-sister-evelyn, char-partner-hale, char-housekeeper-marta"
+    },
+    {
+      "entity": "char-inspector-harrow",
+      "attribute": "demeanor_at_scene",
+      "quote": "Harrow met me at the study door, clipboard at an angle that said he was not entirely sure whether I was help or hindrance.",
+      "value": "officious"
+    },
+    {
+      "entity": "char-sister-evelyn",
+      "attribute": "demeanor_at_scene",
+      "quote": "Evelyn stood in the hall like a photograph you could not quite pick up; gloves folded in her hands, expression composed to the point of polish.",
+      "value": "poised_composed"
+    },
+    {
+      "entity": "char-partner-hale",
+      "attribute": "demeanor_at_scene",
+      "quote": "Hale lingered at the corridor\u0019s edge, fingers working at his jacket as if there were something there they would not let go of.",
+      "value": "nervous"
+    },
+    {
+      "entity": "char-housekeeper-marta",
+      "attribute": "demeanor_at_scene",
+      "quote": "Marta stood near the hearth, apron neat, a faint smudge at the cuff.",
+      "value": "composed_observant"
+    }
+  ],
+  "presentEntities": [
+    "char-detective-marcus",
+    "char-inspector-harrow",
+    "char-sister-evelyn",
+    "char-partner-hale",
+    "char-housekeeper-marta",
+    "char-victim-lionel",
+    "loc-ashby-study",
+    "loc-ashby-hall"
+  ],
+  "promises": [
+    {
+      "id": "p-s-001-01",
+      "promise": "Explain how the study was secured from the inside despite the presence of mud on the inner garden-sill and a scuff on the inner windowsill.",
+      "quote": "All that made a tidy paradox: the deadbolt drawn, the sash latched, Lionel dead at his desk, the small brass opener gone, a half-burnt scrap with 'trust' underlined, a long match set oddly in the hearth, fresh mud on the garden-sill and a scuff on the inner window—details that belonged to separate crimes if you were greedy for simplicity.",
+      "dueByScene": "s-006"
+    }
+  ],
+  "paysOff": []
+}

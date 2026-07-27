@@ -1,0 +1,91 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "char-mrs-blythe",
+      "attribute": "keeps_collar_in_tin",
+      "value": "true",
+      "quote": "Mrs. Blythe opens a small velvet-lined tin on the hall table with a careful, ceremonial motion, lifts out the brass collar, and shows it as if it were an heirloom."
+    },
+    {
+      "entity": "obj-king-collar",
+      "attribute": "material_and_markings",
+      "value": "small brass collar stamped with a star and a small scratch",
+      "quote": "feeling the weight of brass and a small, mysterious scratch like a scar."
+    },
+    {
+      "entity": "obj-king-collar",
+      "attribute": "physical_state_after_drop",
+      "value": "intact after hitting pavement; rings with metallic sound",
+      "quote": "It hits the pavement with a single metallic ring and bounces toward the gutter, a small sun the size of a coin."
+    },
+    {
+      "entity": "loc-arden-house",
+      "attribute": "porch_sound",
+      "value": "porch creaks when stepped on",
+      "quote": "The porch complains when Arden sets the leash down—one long creak like a page turning"
+    },
+    {
+      "entity": "loc-cobble-lane",
+      "attribute": "smell",
+      "value": "damp cardboard and yesterday's rain",
+      "quote": "Outside, the world smells of damp cardboard and yesterday's rain."
+    },
+    {
+      "entity": "obj-cardboard-map",
+      "attribute": "description_and_storage",
+      "value": "flattened square of cardboard, inked with landmarks and dramatic arrows; carried in Hollis's canvas satchel",
+      "quote": "A canvas satchel is slung over Hollis's shoulder, and with a flourish Hollis produces a flattened square of cardboard, all inked landmarks and dramatic arrows."
+    },
+    {
+      "entity": "obj-wooden-staff",
+      "attribute": "description_and_storage",
+      "value": "lacquered broom handle with a paintbrush tied to the end; carried in Hollis's canvas satchel",
+      "quote": "A canvas satchel is slung over Hollis's shoulder, and with a flourish Hollis produces a flattened square of cardboard, all inked landmarks and dramatic arrows, and a lacquered broom handle with a paintbrush tied to the end."
+    },
+    {
+      "entity": "char-hollis",
+      "attribute": "habit",
+      "value": "reframes small tasks as grand adventures; gives objects quest-names",
+      "quote": "\"A quest,\" Hollis says, as if there could be no other truth. \"The King's Sigil suffers treachery. We must fetch it.\""
+    },
+    {
+      "entity": "obj-king-collar",
+      "attribute": "quest_name_by_children",
+      "value": "King's Sigil",
+      "quote": "\"The King's Sigil suffers treachery. We must fetch it.\""
+    },
+    {
+      "entity": "char-arden",
+      "attribute": "carries_knotted_rope",
+      "value": "true; rope tucked into belt loop at Mrs. Blythe's insistence",
+      "quote": "He realizes, absurdly, that he has Mrs. Blythe's knotted rope tucked into his belt loop because she insisted on some precaution, and the coil is warm against his hip."
+    },
+    {
+      "entity": "char-arden",
+      "attribute": "viewpoint_reaction",
+      "value": "quiet assent to Hollis's framing",
+      "quote": "Arden feels the oath settle in his chest—ridiculous, heavy, the way a coat does when you put it on and it fits."
+    }
+  ],
+  "presentEntities": [
+    "char-arden",
+    "char-hollis",
+    "char-mrs-blythe",
+    "loc-arden-house",
+    "loc-cobble-lane",
+    "obj-king-collar",
+    "obj-cardboard-map",
+    "obj-wooden-staff",
+    "obj-knotted-rope"
+  ],
+  "promises": [
+    {
+      "id": "promise-recover-king-collar",
+      "promise": "Recover the King's Sigil (obj-king-collar) and return it home by day's end.",
+      "quote": "\"Sir Arden,\" Hollis declares, voice deep and ridiculous, \"by the Star, we fetch the King's Sigil and bring it back.\"",
+      "dueByScene": "tbd"
+    }
+  ],
+  "paysOff": []
+}

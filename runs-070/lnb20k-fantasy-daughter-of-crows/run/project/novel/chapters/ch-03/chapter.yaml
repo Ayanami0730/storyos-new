@@ -1,0 +1,51 @@
+chapter: ch-03
+scenes:
+  - id: s-009
+    intent: The Headmistress's politics — A diplomatic visitor or a legalist from
+      the Kingdom questions the Academy's policies. The Headmistress argues the
+      Academy is benevolent, cites philanthropy and social order, and refuses to
+      disclose the details that would explain the Three. Rue sees public cover
+      and private terms.
+    present:
+      - char-headmistress
+      - faction-kingdom
+      - loc-mercy-academy
+      - loc-archives
+      - char-rue
+  - id: s-010
+    intent: The hidden ledger — Rue, now trusted with some archive keys, discovers
+      marginal notes in the Contract Folio and records that contradict the
+      public story. She sees signatures that look like bargains struck with
+      others, and a notation that suggests the Academy trades more than shelter.
+      This is a turning point for Rue's knowledge.
+    present:
+      - char-rue
+      - loc-archives
+      - obj-contract-folio
+      - char-headmistress
+      - loc-mercy-academy
+  - id: s-011
+    intent: An attempt at escape — A clandestine plan among a few of the Hundred to
+      leave after ten years, inspired by the Three, culminates in an attempt. It
+      fails in part; the Academy's systems (wardens, records, and the Bell) stop
+      it. The consequences show how the institution enforces its terms and what
+      penalties for crossing them look like.
+    present:
+      - group-hundred
+      - char-warden
+      - char-rue
+      - obj-binding-bell
+      - loc-dormitory
+      - loc-chapel
+  - id: s-012
+    intent: Rue as keeper — Years later, Rue becomes a keeper of rituals and
+      records; she helps new cohorts, teaches, and is present at the induction
+      of later Hundreds. She has rationalized staying; this scene shows her
+      human warmth and the institutional role she plays in reproducing the
+      Academy's life—ambivalence made habit.
+    present:
+      - char-rue
+      - loc-mercy-academy
+      - loc-archives
+      - group-hundred
+      - char-headmistress

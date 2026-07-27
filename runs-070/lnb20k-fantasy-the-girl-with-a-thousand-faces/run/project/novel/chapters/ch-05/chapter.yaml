@@ -1,0 +1,26 @@
+chapter: ch-05
+scenes:
+  - id: s-017
+    intent: "Epilogue: Mercy looks out over the rooftops; the City hums on under
+      wartime strain. The spirit’s presence is no longer a secret; its story is
+      now part of the community’s memory. Mercy prepares for the next haunting,
+      changed by the knowledge that exorcism can ask as much of the living as of
+      the dead."
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket

@@ -1,0 +1,80 @@
+scenes:
+  - id: s-001
+    chapter: ch-01
+    intent: Introduce Elisande and Rowan and establish the class boundary and the
+      secret that pulls them together. The scene must show how their meeting
+      grows from small confidences to a private ceremony of exchange (the onyx
+      locket), establish Ana as Elisande's confidante, and close with the
+      discovery of a small sealed letter that someone else picks up — setting
+      the inciting crisis.
+    present:
+      - char-elisande
+      - char-rowan
+      - char-ana
+      - loc-rose-terrace
+      - obj-locket-onyx
+      - obj-letter-sealed
+    target_words: 875
+  - id: s-002
+    chapter: ch-01
+    intent: "Deepen the lovers' bond and give them agency: a planning of escape is
+      hinted at but not fully formed. Show Rowan's inner life — his carved
+      keepsakes and love of verse — in the servant quarters; show Ana's warning
+      about risks. Introduce Hoswell the steward as a watchful presence who
+      notices a detail (a misplaced glove, an unfamiliar step), and have Hoswell
+      later present the sealed letter to Lord Garrick, raising the stakes."
+    present:
+      - char-rowan
+      - char-elisande
+      - char-ana
+      - char-hoswell
+      - char-lord-garrick
+      - loc-servant-quarters
+      - loc-rose-terrace
+      - obj-letter-sealed
+      - obj-locket-onyx
+    target_words: 875
+  - id: s-003
+    chapter: ch-01
+    intent: "Confrontation and ultimatum. Lord Garrick reads the letter (or is told
+      its contents) and confronts Elisande in the manor hall and then in the
+      private chapel. Explore Garrick's sense of honour and the pressure he
+      exerts: an arranged marriage must be pursued, or Elisande must be
+      disowned; Rowan must leave the household. Bring Rowan into the
+      confrontation where he is dismissed and threatened; indicate the river as
+      the only place they might try to escape to, with Hoswell dispatching men
+      toward it."
+    present:
+      - char-lord-garrick
+      - char-elisande
+      - char-hoswell
+      - char-priest-marder
+      - char-rowan
+      - loc-manor-hall
+      - loc-chapel-stone
+      - loc-river-willow
+      - obj-signet-ring
+      - obj-letter-sealed
+      - obj-locket-onyx
+    target_words: 875
+  - id: s-004
+    chapter: ch-01
+    intent: "The tragic climax and aftermath. The lovers attempt to flee at the
+      Willow by the River with the boat tied there; they are intercepted. The
+      scene must stage a final choice — togetherness at any cost — and deliver
+      the fatal consequence (death by the river, or a mutually chosen end). Then
+      show the immediate aftermath in the manor: the bodies discovered,
+      Garrick's ruinous remorse, and the locket returned to the chapel altar as
+      an elegy. Close on the lasting moral cost."
+    present:
+      - char-elisande
+      - char-rowan
+      - char-lord-garrick
+      - char-hoswell
+      - char-ana
+      - loc-river-willow
+      - loc-manor-hall
+      - loc-chapel-stone
+      - obj-locket-onyx
+      - obj-signet-ring
+    target_words: 875

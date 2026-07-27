@@ -1,0 +1,75 @@
+scenes:
+  - id: s-001
+    chapter: ch-01
+    intent: "Open on the ordinary chore: Arden takes the dog and the brass collar
+      from Mrs. Blythe. The collar slips from the dog's tags and flies into the
+      street. Hollis arrives and, refusing to see a small accident, immediately
+      reframes the task as a quest. Establish the objective (recover
+      obj-king-collar), the oath between the kids, and introduce
+      obj-cardboard-map and obj-wooden-staff as ritual gear."
+    present:
+      - char-arden
+      - char-hollis
+      - char-mrs-blythe
+      - loc-arden-house
+      - loc-cobble-lane
+      - obj-king-collar
+      - obj-cardboard-map
+      - obj-wooden-staff
+    target_words: 500
+  - id: s-002
+    chapter: ch-01
+    intent: The two set out along loc-cobble-lane toward loc-old-bridge. They
+      navigate realistic obstacles (muddy puddle, a loose plank, a startled
+      cyclist) rendered as Arthurian trials. Hollis narrates their progress with
+      map and ritual; Arden learns to accept the fiction and to speak the oath
+      aloud. Test their teamwork and courage; bump into a small moral choice
+      (help a stray kitten or hurry to the river) that reinforces friendship
+      over glory.
+    present:
+      - char-arden
+      - char-hollis
+      - loc-arden-house
+      - loc-cobble-lane
+      - loc-old-bridge
+      - obj-cardboard-map
+      - obj-wooden-staff
+      - obj-knotted-rope
+    target_words: 500
+  - id: s-003
+    chapter: ch-01
+    intent: "At loc-old-bridge and loc-riverbank the main practical danger happens:
+      the dog's collar falls or is found lodged in reeds in the current. The
+      retrieval requires a risky reach and clever improvisation. Arden must
+      confront fear and rely on Hollis's directions and the rope; together they
+      succeed. Include sensory description of the river, the weight of wet
+      brass, and a small setback (slipping boots) that makes the success
+      earned."
+    present:
+      - char-arden
+      - char-hollis
+      - loc-arden-house
+      - loc-old-bridge
+      - loc-riverbank
+      - obj-king-collar
+      - obj-wooden-staff
+      - obj-knotted-rope
+    target_words: 500
+  - id: s-004
+    chapter: ch-01
+    intent: "Return to loc-arden-house and char-mrs-blythe, ceremony of return:
+      Hollis crowns the recovered brass collar with a cardboard coronet and the
+      children enact a short Arthurian recognition. Mrs. Blythe's real gratitude
+      (and a quiet, adult affirmation about bravery and friendship) pays off the
+      children's game. Close with the ordinary task restored but permanently
+      changed in the children's eyes: a daily chore now carries a heroic
+      memory."
+    present:
+      - char-arden
+      - char-hollis
+      - char-mrs-blythe
+      - loc-arden-house
+      - obj-king-collar
+      - obj-cardboard-map
+      - obj-wooden-staff
+    target_words: 500

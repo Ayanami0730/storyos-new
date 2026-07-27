@@ -1,0 +1,118 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "attribute": "location",
+      "entity": "char-elisande",
+      "quote": "Elisande was early to the terrace because she had practiced patience like a small art.",
+      "value": "loc-rose-terrace"
+    },
+    {
+      "attribute": "location",
+      "entity": "char-rowan",
+      "quote": "Rowan came up the gravel with the long, sure stride of a man who had measured every foot of Garrick grounds.",
+      "value": "loc-rose-terrace"
+    },
+    {
+      "attribute": "location",
+      "entity": "char-ana",
+      "quote": "Ana was already there, kneeling like a small conspirator by the herb box, smoothing a pleat in the hem of her mistress's gown.",
+      "value": "loc-rose-terrace"
+    },
+    {
+      "attribute": "holds",
+      "entity": "char-rowan",
+      "quote": "Rowan looped the chain over his neck with a tenderness that made Ana's hand go to her mouth.",
+      "value": "obj-locket-onyx"
+    },
+    {
+      "attribute": "contains",
+      "entity": "obj-locket-onyx",
+      "quote": "The onyx locket slipped from under her gown like a secret surfacing; the stone was cool and black, dull where fingers had worn it. Inside, she kept the hair she had wrapped from her mother's braid and a pressed scrap of blue blossom. She leaned forward and laid a single rose petal—folded small until it fit beneath the onyx lid—inside the hollow with deliberate fingers.",
+      "value": "scrap of hair; pressed blue blossom; folded white rose petal"
+    },
+    {
+      "attribute": "held_by",
+      "entity": "obj-letter-sealed",
+      "quote": "She bent, scooped the letter into her palm, and pressed it to her chest as if to hide the small heat of it.",
+      "value": "char-ana"
+    },
+    {
+      "attribute": "seal_intact",
+      "entity": "obj-letter-sealed",
+      "quote": "The seal of red wax was whole.",
+      "value": "true"
+    },
+    {
+      "attribute": "confidante_of",
+      "entity": "char-ana",
+      "quote": "She met Elisande's eyes with the plain, frank expression that made confession easier than a sermon.",
+      "value": "char-elisande"
+    },
+    {
+      "attribute": "aware_of_meetings",
+      "entity": "char-ana",
+      "quote": "She had watched the two of them meet like this twice a week for months, slipping into the terrace as if into the margins of a book.",
+      "value": "twice a week for months"
+    },
+    {
+      "attribute": "meets_regularly_with",
+      "entity": "char-elisande",
+      "quote": "She had watched the two of them meet like this twice a week for months, slipping into the terrace as if into the margins of a book.",
+      "value": "char-rowan — twice a week for months"
+    },
+    {
+      "attribute": "has_low_stone_balustrade",
+      "entity": "loc-rose-terrace",
+      "quote": "The terrace was a stepped fold of garden—tiers of clipped yew that rose to a low stone balustrade along the river, a narrow outer path where servants passed between stables and kitchens, and the bench set near the eastern corner beneath a trellis.",
+      "value": "true"
+    },
+    {
+      "attribute": "has_tiers_of_clipped_yew",
+      "entity": "loc-rose-terrace",
+      "quote": "The terrace was a stepped fold of garden—tiers of clipped yew that rose to a low stone balustrade along the river, a narrow outer path where servants passed between stables and kitchens, and the bench set near the eastern corner beneath a trellis.",
+      "value": "true"
+    },
+    {
+      "attribute": "bench_location",
+      "entity": "loc-rose-terrace",
+      "quote": "The terrace was a stepped fold of garden—tiers of clipped yew that rose to a low stone balustrade along the river, a narrow outer path where servants passed between stables and kitchens, and the bench set near the eastern corner beneath a trellis.",
+      "value": "near the eastern corner beneath a trellis"
+    },
+    {
+      "attribute": "has_narrow_outer_path_for_servants",
+      "entity": "loc-rose-terrace",
+      "quote": "The terrace was a stepped fold of garden—tiers of clipped yew that rose to a low stone balustrade along the river, a narrow outer path where servants passed between stables and kitchens, and the bench set near the eastern corner beneath a trellis.",
+      "value": "true"
+    },
+    {
+      "attribute": "sightlines_broken_make_privacy_possible",
+      "entity": "loc-rose-terrace",
+      "quote": "From the manor's windows you could look down into the terrace if you leaned and looked with purpose; but the hedges and balustrade broke sightlines enough to make private things possible.",
+      "value": "true"
+    },
+    {
+      "attribute": "understands_vow_has_no_legal_weight",
+      "entity": "char-elisande",
+      "quote": "\"Not a priest, never that, not here,\" Elisande said quickly, and the words were not a denial so much as a careful map.",
+      "value": "true"
+    }
+  ],
+  "presentEntities": [
+    "char-elisande",
+    "char-rowan",
+    "char-ana",
+    "loc-rose-terrace",
+    "obj-locket-onyx",
+    "obj-letter-sealed"
+  ],
+  "promises": [
+    {
+      "id": "promise-guard-locket",
+      "promise": "Rowan will guard the locket and return it when Elisande asks.",
+      "quote": "\"I will keep it,\" he said. \"I will keep it and I will bring it back when you ask. I am not a man with papers and oaths, Lady Elisande, but I will guard what you give me.\"",
+      "dueByScene": null
+    }
+  ],
+  "paysOff": []
+}

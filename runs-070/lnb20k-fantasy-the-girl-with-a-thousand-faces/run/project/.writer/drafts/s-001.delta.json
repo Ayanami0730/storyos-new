@@ -1,0 +1,94 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "loc-mercy-room",
+      "attribute": "contains",
+      "value": "incense_box, spirit_knife, red_talisman, lacquer_tray, faded_photograph_with_bloodstain",
+      "quote": "A low mat, shelves crowded with jars and folded talismans, a sheathed blade hung above a cracked basin. She worked by habit and temper — fingers that had learned the heavy economy of rites in a place that owed its quiet to practice rather than blessing."
+    },
+    {
+      "entity": "obj-incense-box",
+      "attribute": "used_in_ritual",
+      "value": "night-membrane (sandalwood, frankincense)",
+      "quote": "She lifted a pinch of night-membrane from the incense box, closed her eyes to the City’s muffled night and struck a match."
+    },
+    {
+      "entity": "obj-spirit-knife",
+      "attribute": "used_in_ritual",
+      "value": "traced above smoke; folded talisman pressed to forehead",
+      "quote": "She undid the red cloth and drew the spirit knife free; the metal was cool against her palm. \"Trace the knife's edge above the smoke,\" she said, and her voice smelled of chalk and frying oil."
+    },
+    {
+      "entity": "obj-red-talisman",
+      "attribute": "used_in_ritual",
+      "value": "folded over knife-tip and pressed to forehead",
+      "quote": "She folded a strip from the spare talismans, pressed its crease to the tip of the blade, and leaned the paper against her forehead until the wax of the candle warmed it."
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "felt_after_ritual",
+      "value": "lightheaded, metallic taste (like coins), brief dizziness",
+      "quote": "The instant the paper kissed skin a taste like coins filled her mouth: copper and the brief, clean panic of dizziness. She blinked away a pulse of lightheadedness and swallowed the metallic tang."
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "responded_to_summons",
+      "value": "answered_mei-sook_at_door_then_went_to_stair",
+      "quote": "A knock hammered the thin door, the sound not waiting for the end of a breath. Mercy set the knife back into the red cloth with hands that still remembered the pressure of the ritual and opened. A face crowded the doorway — knuckles raw, hair dusted with flour and soot: Mei-sook from the noodle stall two floors below, voice pitched so the walls might keep it from seeping away."
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "decision",
+      "value": "stay_with_child_until_watch_changes_and_return_with_mirror_if_needed",
+      "quote": "\"I will stay with the child until the watch changes,\" she told Mei-sook and the leaning faces. \"I’ll come back with the mirror if I must. And I will not let anyone touch the talisman.\""
+    },
+    {
+      "entity": "char-elder-lau",
+      "attribute": "present_at_stair",
+      "value": "true",
+      "quote": "Elder Lau waited at the foot of the stair, a battered cardigan leaving only the necessary flesh of authority."
+    },
+    {
+      "entity": "char-lin-wei",
+      "attribute": "present_at_stair",
+      "value": "true",
+      "quote": "Lin Wei stood close to the wall, knees pressed inward as if the stone might fold him away."
+    },
+    {
+      "entity": "char-lin-wei",
+      "attribute": "approximate_age_and_relationship",
+      "value": "about ten years old; unaccompanied refugee (established by this scene)",
+      "quote": "He was small enough for Mercy to measure with a look: about ten years old, his clothes a half-fit of someone else’s hands. There was a refugee’s sharpened watchfulness in him — unaccompanied, she thought, no elder’s hand on his shoulder, no sibling’s sling."
+    },
+    {
+      "entity": "loc-alley-spiral-stair",
+      "attribute": "physical_traces",
+      "value": "cold_patch, flipped_red_talisman_face_down, thin_black_crescent_scorch_on_step",
+      "quote": "A patch of air that bites — colder than the rest, like an empty breath — waited in the stairwell where the children often leaned and counted pebbles. A talisman lay face down on the stone, its red like a heart turned over. And on the edge of the step a thin, black crescent scored the concrete, no smoke clinging to it, just a dark sear that did not belong to any nearby pyre."
+    },
+    {
+      "entity": "residents-walled-city",
+      "attribute": "witness_reports",
+      "value": "child_saw_black_shadow_no_face;heard_scraping_after_raid;talisman_flipped;scorch_mark_present",
+      "quote": "\"Child say — black shadow, no face,\" Mei-sook told Mercy, and the sentence stitched the small crowd together into a single concern. \"Hear it after the raid — like someone scraping the walls,\" a neighbor said, voice small. \"There was a sound — like fingernails, or a bowl dragged.\""
+    }
+  ],
+  "presentEntities": [
+    "char-mercy-chan",
+    "char-lin-wei",
+    "char-elder-lau",
+    "residents-walled-city",
+    "loc-mercy-room",
+    "loc-alley-spiral-stair"
+  ],
+  "promises": [
+    {
+      "id": "promise-watch-with-child",
+      "promise": "Mercy will stay with Lin Wei until the watch changes.",
+      "quote": "\"I will stay with the child until the watch changes,\" she told Mei-sook and the leaning faces.",
+      "dueByScene": "s-003"
+    }
+  ],
+  "paysOff": []
+}

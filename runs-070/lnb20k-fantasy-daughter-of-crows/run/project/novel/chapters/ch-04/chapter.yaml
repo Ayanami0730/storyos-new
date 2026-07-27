@@ -1,0 +1,54 @@
+chapter: ch-04
+scenes:
+  - id: s-013
+    intent: "Rumors of war — Outside the Academy, the Kingdom's frontier cracks;
+      reports of marching are heard. The Academy convenes council: the
+      Headmistress consults ledgers and diplomacy with the Kingdom. Rue sees the
+      first arrival: a messenger whose tone is not merely bureaucratic. It is
+      the War Envoy's first reach toward the Academy."
+    present:
+      - char-war-envoy
+      - faction-kingdom
+      - char-headmistress
+      - loc-mercy-academy
+      - char-rue
+  - id: s-014
+    intent: The Envoy at the gates — The War Envoy comes to the Academy with demands
+      and offers. They ask for levy, women, or sanctuary; they hint that the war
+      will not respect the Academy's old bargains. The Headmistress negotiates;
+      Rue watches as the Academy's moral language meets the tangible threat of
+      armed politics.
+    present:
+      - char-war-envoy
+      - char-headmistress
+      - loc-mercy-academy
+      - char-rue
+      - faction-kingdom
+  - id: s-015
+    intent: Siege and confession — The war reaches the gates in force. The Academy
+      is besieged or at least threatened; panic mixes with ritual. The Archive
+      is broken into, the Contract Folio is exposed; some truths the Academy
+      kept secret are seen. Rue is old now and must decide whether to defend the
+      system she entered and helped run or to reveal what she knows.
+    present:
+      - loc-mercy-academy
+      - char-rue
+      - char-war-envoy
+      - obj-contract-folio
+      - loc-archives
+      - char-headmistress
+      - char-warden
+  - id: s-016
+    intent: Reckoning and aftermath — The siege's climax forces a reckoning. The
+      Three's names and fates are invoked; perhaps one of the Three returns in
+      time to influence events, or their stories are used to press the Academy
+      to change. Rue confronts the Headmistress and the War Envoy; the novel
+      resolves with consequences for the Academy and Rue's own redemption or
+      complicity.
+    present:
+      - char-rue
+      - char-headmistress
+      - char-war-envoy
+      - group-three
+      - loc-mercy-academy
+      - obj-contract-folio

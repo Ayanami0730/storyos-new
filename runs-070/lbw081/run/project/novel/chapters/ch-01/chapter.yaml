@@ -1,0 +1,96 @@
+chapter: ch-01
+scenes:
+  - id: s-001
+    intent: "Set the scene and the locked-room puzzle: narrator arrives, the study
+      is shown locked with the deadbolt engaged and the window latched. The body
+      of Lionel is found at his desk; the mantel clock stopped at 11:17.
+      Introduce primary suspects (Evelyn, Hale, Marta) and the inspector.
+      Present the key physical contradictions—missing letter opener, a crumpled
+      note half-burnt in the fireplace, and mud on the garden sill—establish
+      stakes and the narrator's voice."
+    present:
+      - char-detective-marcus
+      - char-victim-lionel
+      - char-sister-evelyn
+      - char-partner-hale
+      - char-housekeeper-marta
+      - char-inspector-harrow
+      - loc-ashby-study
+      - loc-ashby-hall
+      - obj-deadbolt
+      - obj-antique-clock
+      - obj-crumpled-note
+      - obj-letter-opener
+      - obj-matchbox
+  - id: s-002
+    intent: "Conduct close scene-forensics and interviews: the narrator inspects
+      mudprints, windowsill scuffs, and the hidden vent; learns about Lionel's
+      mechanical tastes and a recent quarrel over money. Tension rises between
+      the narrator and Inspector Harrow over methods. Reveal the brass key found
+      earlier in the hall coat; argue its provenance. End on a small, unsettling
+      discovery: the clock's mechanism had been tampered with."
+    present:
+      - char-detective-marcus
+      - char-sister-evelyn
+      - char-partner-hale
+      - char-housekeeper-marta
+      - char-gardener-ryan
+      - char-inspector-harrow
+      - loc-ashby-study
+      - loc-ashby-garden
+      - obj-mudprints
+      - obj-hidden-vent-grille
+      - obj-brass-key
+      - obj-antique-clock
+      - obj-ladder
+  - id: s-003
+    intent: "Reconstruct possibilities and stage an experiment: the narrator tests
+      the clock and the fireplace sequence, interviews the gardener in the
+      garden, and assembles a hypothesis about mechanical timing or delayed
+      locking. Introduce motive fragments—Evelyn's bank statements hidden in
+      Lionel's desk, Hale's impending bankruptcy, Marta's loyalty—and a
+      contradiction in Marta's timeline. The scene ends with the narrator
+      deciding to force a replication of the locked-room using an unlikely
+      combination of objects (a long match, a string, and the mantel clock) to
+      see if the deadbolt could have been engaged remotely."
+    present:
+      - char-detective-marcus
+      - char-sister-evelyn
+      - char-partner-hale
+      - char-housekeeper-marta
+      - char-gardener-ryan
+      - loc-ashby-study
+      - loc-ashby-garden
+      - obj-matchbox
+      - obj-antique-clock
+      - obj-deadbolt
+      - obj-brass-key
+      - obj-hidden-vent-grille
+      - obj-ladder
+  - id: s-004
+    intent: "The reveal and denouement: the narrator executes the reconstruction,
+      exposes the mechanism (a clever use of Lionel's clockwork that, when wound
+      and arranged with a thread and a long match, smoked the hearth and
+      triggered a timed movement in the desk which nudged the deadbolt—combined
+      with an external egress via the garden ladder). The killer is unmasked
+      through motive and the physical signature: fingerprints on the matchbox
+      and the specific mud pattern matching the gardener's boots, but the motive
+      belonged to someone else—Evelyn engineered the mechanics and hired Ryan to
+      execute the physical part. The scene ends with Evelyn's confession and the
+      narrator's sober reflection on craft and culpability."
+    present:
+      - char-detective-marcus
+      - char-sister-evelyn
+      - char-partner-hale
+      - char-housekeeper-marta
+      - char-gardener-ryan
+      - char-inspector-harrow
+      - loc-ashby-study
+      - loc-ashby-garden
+      - obj-antique-clock
+      - obj-matchbox
+      - obj-ladder
+      - obj-crumpled-note
+      - obj-brass-key
+      - obj-letter-opener
+      - obj-deadbolt

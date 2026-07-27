@@ -1,0 +1,34 @@
+{
+  "task_id": "lnb20k-fantasy-daughter-of-crows",
+  "prompt": "Write a complete fantasy novel of about 20,000 words.\n\nPremise:\nA supposedly benevolent institution—known to outsiders as the Mercy Academy—accepts one hundred girls each year into its care, yet after ten years only three ever walk back out; among those who entered by choice is Rue, who sold herself into the Academy as a young woman and spends the rest of her life there, until in her old age a war finally arrives at the Academy's gates and forces the past and the place to reckon with one another.\n\nCentral conflict:\nRue must confront the long-term consequences of having bound herself to an institution that keeps almost everyone it takes, as an encroaching war threatens the Academy and forces hidden realities into the open.\n\nCharacters:\n- Rue — the woman who willingly entered the Mercy Academy by selling herself.\n- The Hundred — the yearly cohort of girls purchased or acquired by the Academy (collective).\n- The Three — the rare survivors who leave the Academy after ten years (collective).\n- Headmistress — the senior administrator and public face of the Academy.\n- War Envoy — a representative or manifestation of the war that reaches the Academy in Rue's old age.\n\nThe finished novel must contain all of the following:\n- The story must feature an institution that annually acquires one hundred girls.\n- It must establish that after a ten-year period, only three individuals ever leave the institution.\n- The protagonist, Rue, must have entered the institution by selling herself into it.\n- A war must arrive at the institution during Rue's later years, affecting her and the Academy.\n\nWrite the novel itself — no outline, no commentary, no notes to the reader.",
+  "target_words": 20000,
+  "flags": [],
+  "bench": "livenovelbench",
+  "bench_task_id": "task-fantasy-daughter-of-crows",
+  "target_provenance": "tier-20k.json (target_words_override=20000)",
+  "raw": {
+    "prompt_version": "novelbench-task-v1",
+    "task_id": "task-fantasy-daughter-of-crows",
+    "book_id": "fantasy-daughter-of-crows",
+    "mode": "from_scratch",
+    "genre": "fantasy",
+    "target_words": 60000,
+    "premise": "A supposedly benevolent institution—known to outsiders as the Mercy Academy—accepts one hundred girls each year into its care, yet after ten years only three ever walk back out; among those who entered by choice is Rue, who sold herself into the Academy as a young woman and spends the rest of her life there, until in her old age a war finally arrives at the Academy's gates and forces the past and the place to reckon with one another.",
+    "expected_conflict": "Rue must confront the long-term consequences of having bound herself to an institution that keeps almost everyone it takes, as an encroaching war threatens the Academy and forces hidden realities into the open.",
+    "required_elements": [
+      "The story must feature an institution that annually acquires one hundred girls.",
+      "It must establish that after a ten-year period, only three individuals ever leave the institution.",
+      "The protagonist, Rue, must have entered the institution by selling herself into it.",
+      "A war must arrive at the institution during Rue's later years, affecting her and the Academy."
+    ],
+    "characters": [
+      "Rue — the woman who willingly entered the Mercy Academy by selling herself.",
+      "The Hundred — the yearly cohort of girls purchased or acquired by the Academy (collective).",
+      "The Three — the rare survivors who leave the Academy after ten years (collective).",
+      "Headmistress — the senior administrator and public face of the Academy.",
+      "War Envoy — a representative or manifestation of the war that reaches the Academy in Rue's old age."
+    ],
+    "reference_summary": "Every year an institution called the Mercy Academy takes in one hundred girls, yet only three ever leave after a decade; Rue sold herself into the Academy and, in her old age, a war comes to the Academy.",
+    "reference_summary_source": "public_premise_metadata_paraphrase"
+  }
+}

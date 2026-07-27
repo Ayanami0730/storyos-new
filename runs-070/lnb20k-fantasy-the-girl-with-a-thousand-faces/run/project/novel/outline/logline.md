@@ -1,0 +1,1 @@
+In wartime Hong Kong’s labyrinthine Kowloon Walled City, exorcist Mercy Chan must untangle a malignant revenant whose hatred is fed by the community’s wartime wounds; to silence it she must force memory into the open, negotiate with frightened neighbors, and perform costly rituals that blur the line between ghost‑hunting and communal reckoning.

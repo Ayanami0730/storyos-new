@@ -1,0 +1,1 @@
+When Arden is asked to walk a neighbor's dog and return its curious brass collar, a routine errand becomes an Arthurian-styled quest: with Hollis's maps and names, a broom handle becomes a sword, a rope a lifeline, and two ordinary kids must show bravery and friendship to retrieve the 'King's Sigil' from a riverbank and bring it home by day's end.

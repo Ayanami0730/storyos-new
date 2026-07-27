@@ -1,0 +1,243 @@
+scenes:
+  - id: s-001
+    chapter: ch-01
+    intent: "Opening — Rue's choice. A young Rue signs the Folio in the Chapel and
+      sells herself into the Mercy Academy. The scene must show the formalities:
+      the Bronze Bell, the Amber Lantern, the Contract Folio, and the
+      Headmistress's language of mercy. Introduces the statistic (one hundred
+      girls accepted yearly) as part of the ceremony and Rue's practical,
+      resolute reasons for selling herself."
+    present:
+      - char-rue
+      - loc-chapel
+      - obj-contract-folio
+      - obj-binding-bell
+      - obj-amber-lantern
+      - char-headmistress
+      - loc-mercy-academy
+      - group-hundred
+    target_words: 1176
+  - id: s-002
+    chapter: ch-01
+    intent: "First night in the Dormitory — Rue's arrival among the Hundred. The new
+      cohort settles; Rue meets other girls and a Warden explains routines. The
+      scene centers on small intimacies — the sound of the Bell still ringing in
+      Rue's head — and the first mention of those who do not return after ten
+      years: the legend of the Three as a hush among the girls."
+    present:
+      - char-rue
+      - loc-dormitory
+      - char-warden
+      - group-hundred
+      - obj-amber-lantern
+      - obj-binding-bell
+      - group-three
+    target_words: 1176
+  - id: s-003
+    chapter: ch-01
+    intent: Orientation and learning the stakes — In the Chapel and Archive, the
+      Headmistress gives the public account of the Academy's mission and the
+      Archive's senior reads the formal entry into the Contract Folio. Rue
+      witnesses the ledger work and sees how names are recorded, and hears the
+      official justification for the ten-year term without explicit promise of
+      release.
+    present:
+      - char-headmistress
+      - loc-archives
+      - obj-contract-folio
+      - loc-chapel
+      - char-rue
+      - loc-mercy-academy
+    target_words: 1176
+  - id: s-004
+    chapter: ch-01
+    intent: "The Academy's daily life — Rue learns craftwork (weaving/scribing). The
+      Academy's practical side is revealed: labor, schooling, and the way the
+      Hundred are organized. Small rituals use the Red Thread and Lantern; the
+      scene shows friendships forming and small betrayals, and the first
+      disappearance of an entrant drops like a rumor."
+    present:
+      - char-rue
+      - loc-mercy-academy
+      - obj-red-thread
+      - group-hundred
+      - char-warden
+      - loc-dormitory
+    target_words: 1176
+  - id: s-005
+    chapter: ch-02
+    intent: A lesson about the Three — In a fireside conversation, older staff and a
+      clandestine girl recount the history of the Three. Rue learns that in the
+      Academy's ledger history, the exits are three and three alone in living
+      memory; each has a different story and different public explanations. This
+      deepens Rue's choices.
+    present:
+      - char-rue
+      - char-headmistress
+      - loc-archives
+      - group-three
+      - char-ida
+      - char-marra
+      - char-lyss
+    target_words: 1176
+  - id: s-006
+    chapter: ch-02
+    intent: The institute's ambivalences — Rue rises in competence and in
+      responsibility; she sees both succor and cruelty. The Headmistress's
+      speeches emphasize mercy; the Wardens' routine inflicts discipline. Rue
+      witnesses punishments that are justified as correction and wonders at the
+      asymmetry between promise and practice.
+    present:
+      - char-rue
+      - char-warden
+      - char-headmistress
+      - loc-mercy-academy
+      - loc-chapel
+    target_words: 1176
+  - id: s-007
+    chapter: ch-02
+    intent: "A decade's scale suggested — Time passes in a montage: cohorts cycle,
+      seasons mark ten years on the Academy's calendar, and Rue keeps the same
+      corner of the archive. The Folio continues to fill. The statistic is
+      established in the prose: only three ever leave after ten years. Rue
+      reflects on what staying has cost and given her."
+    present:
+      - char-rue
+      - loc-archives
+      - obj-contract-folio
+      - loc-mercy-academy
+      - group-hundred
+      - group-three
+    target_words: 1176
+  - id: s-008
+    chapter: ch-02
+    intent: The cost of choice — Rue encounters a newcomer who regrets her sale and
+      seeks to trade back; Rue must counsel or refuse. The scene explores
+      whether selling oneself was a free choice and what compulsion looks like
+      within the Academy's systems. Rue's complicity and agency are
+      foregrounded.
+    present:
+      - char-rue
+      - loc-dormitory
+      - loc-archives
+      - obj-contract-folio
+      - group-hundred
+      - char-warden
+    target_words: 1176
+  - id: s-009
+    chapter: ch-03
+    intent: The Headmistress's politics — A diplomatic visitor or a legalist from
+      the Kingdom questions the Academy's policies. The Headmistress argues the
+      Academy is benevolent, cites philanthropy and social order, and refuses to
+      disclose the details that would explain the Three. Rue sees public cover
+      and private terms.
+    present:
+      - char-headmistress
+      - faction-kingdom
+      - loc-mercy-academy
+      - loc-archives
+      - char-rue
+    target_words: 1176
+  - id: s-010
+    chapter: ch-03
+    intent: The hidden ledger — Rue, now trusted with some archive keys, discovers
+      marginal notes in the Contract Folio and records that contradict the
+      public story. She sees signatures that look like bargains struck with
+      others, and a notation that suggests the Academy trades more than shelter.
+      This is a turning point for Rue's knowledge.
+    present:
+      - char-rue
+      - loc-archives
+      - obj-contract-folio
+      - char-headmistress
+      - loc-mercy-academy
+    target_words: 1176
+  - id: s-011
+    chapter: ch-03
+    intent: An attempt at escape — A clandestine plan among a few of the Hundred to
+      leave after ten years, inspired by the Three, culminates in an attempt. It
+      fails in part; the Academy's systems (wardens, records, and the Bell) stop
+      it. The consequences show how the institution enforces its terms and what
+      penalties for crossing them look like.
+    present:
+      - group-hundred
+      - char-warden
+      - char-rue
+      - obj-binding-bell
+      - loc-dormitory
+      - loc-chapel
+    target_words: 1176
+  - id: s-012
+    chapter: ch-03
+    intent: Rue as keeper — Years later, Rue becomes a keeper of rituals and
+      records; she helps new cohorts, teaches, and is present at the induction
+      of later Hundreds. She has rationalized staying; this scene shows her
+      human warmth and the institutional role she plays in reproducing the
+      Academy's life—ambivalence made habit.
+    present:
+      - char-rue
+      - loc-mercy-academy
+      - loc-archives
+      - group-hundred
+      - char-headmistress
+    target_words: 1176
+  - id: s-013
+    chapter: ch-04
+    intent: "Rumors of war — Outside the Academy, the Kingdom's frontier cracks;
+      reports of marching are heard. The Academy convenes council: the
+      Headmistress consults ledgers and diplomacy with the Kingdom. Rue sees the
+      first arrival: a messenger whose tone is not merely bureaucratic. It is
+      the War Envoy's first reach toward the Academy."
+    present:
+      - char-war-envoy
+      - faction-kingdom
+      - char-headmistress
+      - loc-mercy-academy
+      - char-rue
+    target_words: 1176
+  - id: s-014
+    chapter: ch-04
+    intent: The Envoy at the gates — The War Envoy comes to the Academy with demands
+      and offers. They ask for levy, women, or sanctuary; they hint that the war
+      will not respect the Academy's old bargains. The Headmistress negotiates;
+      Rue watches as the Academy's moral language meets the tangible threat of
+      armed politics.
+    present:
+      - char-war-envoy
+      - char-headmistress
+      - loc-mercy-academy
+      - char-rue
+      - faction-kingdom
+    target_words: 1176
+  - id: s-015
+    chapter: ch-04
+    intent: Siege and confession — The war reaches the gates in force. The Academy
+      is besieged or at least threatened; panic mixes with ritual. The Archive
+      is broken into, the Contract Folio is exposed; some truths the Academy
+      kept secret are seen. Rue is old now and must decide whether to defend the
+      system she entered and helped run or to reveal what she knows.
+    present:
+      - loc-mercy-academy
+      - char-rue
+      - char-war-envoy
+      - obj-contract-folio
+      - loc-archives
+      - char-headmistress
+      - char-warden
+    target_words: 1176
+  - id: s-016
+    chapter: ch-04
+    intent: Reckoning and aftermath — The siege's climax forces a reckoning. The
+      Three's names and fates are invoked; perhaps one of the Three returns in
+      time to influence events, or their stories are used to press the Academy
+      to change. Rue confronts the Headmistress and the War Envoy; the novel
+      resolves with consequences for the Academy and Rue's own redemption or
+      complicity.
+    present:
+      - char-rue
+      - char-headmistress
+      - char-war-envoy
+      - group-three
+      - loc-mercy-academy
+      - obj-contract-folio
+    target_words: 1176

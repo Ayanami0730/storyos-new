@@ -408,6 +408,10 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
     const scene = builderBus.sceneId;
     const round = builderBus.contribution().followUps.length + 1;
     const maxRounds = allocation.followUpRounds;
+    // Marks the question as outstanding, which is what makes `answer_writer`
+    // legal. Without it the builder could spend the allowance on a question
+    // nobody asked — see `BuilderBus#pending`.
+    builderBus.expect(question);
     await residents.invoke(
       "context-builder",
       followUpBrief({ sceneId: scene, question, round, maxRounds }),

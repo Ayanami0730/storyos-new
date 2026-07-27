@@ -1,0 +1,18 @@
+note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
+rules:
+  - No supernatural or impossible mechanics; all explanations must be physically
+    plausible.
+  - "Forensic facts are realistic: time-of-death estimates, fingerprints and
+    mud/DNA behave as they would in a small-country-house setting."
+  - The first-person narrator (char-detective-marcus) cannot know others'
+    private thoughts; observations and motives must be inferred and later
+    confirmed by evidence or confession.
+  - All entities used in scenes must be declared in this plan; the writer may
+    introduce no new character, location, or significant object without updating
+    the plan.
+  - "Locked-room constraints are literal: exterior doors and the study window
+    are latched or bolted from the inside in the initial state; any remote or
+    delayed locking must be shown in physical detail and repeatable."
+  - "No deus ex machina: the solution must be reproducible by the detective with
+    the objects available on scene or clearly accessible (ladder in the shed,
+    garden access, mantel clock, matches, thread)."

@@ -112,10 +112,40 @@ export class BuilderBus {
     this.#gaps = [];
     this.#reads = 0;
     this.#taken = new Set(takenIds);
+    this.#pending = null;
   }
 
   get sceneId(): string {
     return this.#sceneId;
+  }
+
+  /**
+   * The writer's question, while one is outstanding.
+   *
+   * This exists because of a defect measured in `runs/v062/lbw081`, and the shape
+   * of it is worth stating precisely because it silently removed a whole mechanism.
+   *
+   * The writer's follow-up allowance was metered by counting `answer_writer` calls.
+   * That tool is on the builder's allowlist permanently, so it is callable during
+   * the *initial* build, when there is no question to answer — and on scene `s-001`
+   * the builder called it unprompted, inside its build turn, before the writer had
+   * spoken. The count reached one, the opening tier's allowance is one, and the
+   * writer's first and only question came back `no follow-ups left for this scene`.
+   * It then said so in its closing message and wrote the scene without the fact it
+   * had asked for.
+   *
+   * So the opening tier had an allowance of zero in practice, which is invisible in
+   * every summary: `follow_ups.by_tier` counted the builder's spontaneous call as a
+   * follow-up, so the mechanism looked used.
+   *
+   * A pending question makes the tool's precondition explicit. Unsolicited material
+   * has its own channel — `add_context_item` — and always did.
+   */
+  #pending: string | null = null;
+
+  /** Called by the harness immediately before the builder is asked a question. */
+  expect(question: string): void {
+    this.#pending = question;
   }
 
   noteRead(): void {
@@ -243,7 +273,21 @@ export class BuilderBus {
         }),
         execute: async (_id: string, args: { question: string; answer: string }) => {
           if (!args.answer?.trim()) return toolText("rejected: answer is empty.");
+          if (bus.#pending === null) {
+            // Not pedantry: an unsolicited call here spends the writer's follow-up
+            // allowance, and on the opening tier that allowance is one — so the
+            // writer's only question came back refused before it had asked it.
+            return toolText(
+              "rejected: no follow-up is outstanding, so there is nothing to answer. This " +
+                "tool spends the writer's question allowance for the scene, and calling it " +
+                "unprompted spends it on a question nobody asked — on the opening tier, " +
+                "where the allowance is one, that leaves the writer none. Material you " +
+                "found and think the writer needs goes through add_context_item, which is " +
+                "unlimited and lands in the packet.",
+            );
+          }
           bus.#followUps.push({ question: args.question, answer: args.answer });
+          bus.#pending = null;
           return toolText("answered.");
         },
       },
@@ -473,11 +517,15 @@ export function askBuilderTool(options: {
     }),
     execute: async (_id: string, args: { question: string }) => {
       const maxRounds = options.maxRounds();
-      if (options.roundsUsed() >= maxRounds) {
+      const used = options.roundsUsed();
+      if (used >= maxRounds) {
         return toolText(
-          `no follow-ups left for this scene (${maxRounds} used, which is this scene's ` +
-            `allowance). Write the scene with what you have, and if a hard constraint is ` +
-            `genuinely missing, say so in your reply instead of inventing it.`,
+          // Both numbers, because the previous wording printed the allowance where
+          // it meant the count — so a refusal caused by a bug elsewhere read as a
+          // writer that had used up its questions.
+          `no follow-ups left for this scene (${used} of ${maxRounds} used). Write the ` +
+            `scene with what you have, and if a hard constraint is genuinely missing, say so ` +
+            `in your reply instead of inventing it.`,
         );
       }
       if (!args.question?.trim()) return toolText("rejected: ask something specific.");

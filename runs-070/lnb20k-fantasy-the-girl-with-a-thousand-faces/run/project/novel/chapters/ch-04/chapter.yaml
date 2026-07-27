@@ -1,0 +1,96 @@
+chapter: ch-04
+scenes:
+  - id: s-013
+    intent: "Elder Lau organizes a testimony circle; residents begin telling
+      fragmented truths. Mercy acts as ritual mediator. As memories surface, the
+      spirit manifests fully and speaks: it is both victim and agent, its hatred
+      tied to a wounded promise the City made and broke in wartime."
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-014
+    intent: The community must choose a difficult sacrificial act—ritualized
+      confession, reparative offering, or the destruction of physical
+      evidence—that will let the spirit heal or else doom the City to continued
+      haunting; Mercy grapples with whether to demand personal risk from
+      residents she serves.
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-015
+    intent: "Climax: Mercy performs the older ritual with Elder Lau and the
+      community present, using the mirror and the knife. The spirit resists,
+      unleashing visions of wartime violence; Mercy is tested to her limit and
+      must decide whether to bind, release, or merge the spirit's memory into
+      communal narrative."
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket
+  - id: s-016
+    intent: "Aftermath: the ritual’s consequences unfold. Some wounds begin to heal
+      as memory is acknowledged; others remain raw. Mercy reckons with what she
+      cost and gained, Lin Wei’s arc finds partial resolution, and the Walled
+      City adapts—changed, imperfect, but less haunted."
+    present:
+      - char-mercy-chan
+      - spirit-vengeful
+      - residents-walled-city
+      - char-elder-lau
+      - char-lin-wei
+      - loc-kowloon-walled-city
+      - loc-mercy-room
+      - loc-alley-spiral-stair
+      - loc-communal-shrine
+      - loc-rooftop-lotus
+      - loc-bazaar
+      - loc-makeshift-hospital
+      - obj-spirit-knife
+      - obj-ancestral-mirror
+      - obj-incense-box
+      - obj-red-talisman
+      - obj-bloodstained-locket

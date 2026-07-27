@@ -1,0 +1,1 @@
+When Elisande, a lord's daughter, falls for Rowan, a servant who tends the manor's grounds, their quiet love collides with rigid duty. A found letter, a father's fury, and the impossibility of escape force them toward a desperate choice — and a tragic ending that reverberates through the halls of Garrick Manor.
