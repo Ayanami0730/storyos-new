@@ -1,0 +1,265 @@
+/**
+ * Running many tasks from one file, resumably.
+ *
+ * The single-task launcher was enough while every run was something to watch.
+ * It stopped being enough the moment a result needed more than one task: six runs
+ * launched by hand is six chances to mistype a flag, and the one time that
+ * happened tonight two processes ended up sharing an output directory and
+ * interleaving their commits into one index — which produced a score for a
+ * manuscript that no longer existed.
+ *
+ * So this file holds the parts of batching that can be wrong in a way tests can
+ * catch: what a task record means, and whether a task still needs running. The
+ * process spawning lives in `cli/run-batch.ts`, which is the part tests cannot
+ * usefully say anything about.
+ *
+ * ## Why resume is decided from artefacts, not a progress file
+ *
+ * A batch that recorded its own progress would be a second source of truth about
+ * what finished, and the two would disagree exactly when it mattered — after a
+ * kill, which is the only time resume is used. The run directory already knows:
+ * `summary.json` exists if and only if the harness reached the end, and
+ * `run.lock` exists if and only if a process still holds the directory. Both are
+ * written by the code that does the work.
+ */
+
+/**
+ * One task, as it appears in the input file.
+ *
+ * Deliberately compatible with LongBench-Write's own `tasks.jsonl` — that file
+ * uses `length` where this uses `target_words`, and accepting both means the
+ * benchmark's file can be fed in unchanged. A conversion step is a place for a
+ * task to be scored against a length it was never asked for, which has happened
+ * in this project before.
+ */
+export interface BatchTask {
+  /** Directory name under `runs/`, and the id every artefact is keyed on. */
+  readonly id: string;
+  readonly prompt: string;
+  readonly targetWords: number;
+  /** Everything else from the record, kept so it lands in `task.json` verbatim. */
+  readonly raw: Readonly<Record<string, unknown>>;
+  /** Extra `write-story` flags for this task alone. */
+  readonly flags: readonly string[];
+}
+
+export class BatchInputError extends Error {}
+
+/**
+ * Parse one line of the input file.
+ *
+ * Every rejection names the line and what was wrong with it, because the failure
+ * this prevents is a batch that runs 19 of 20 tasks and reports success.
+ */
+export function parseTask(line: string, lineNumber: number): BatchTask {
+  let record: Record<string, unknown>;
+  try {
+    record = JSON.parse(line) as Record<string, unknown>;
+  } catch (error) {
+    throw new BatchInputError(
+      `line ${lineNumber} is not valid JSON: ${error instanceof Error ? error.message : error}`,
+    );
+  }
+
+  const id = record.task_id ?? record.id;
+  if (typeof id !== "string" || !id.trim()) {
+    throw new BatchInputError(`line ${lineNumber}: task_id (or id) must be a non-empty string`);
+  }
+  // A task id becomes a directory name, so anything that could escape it or
+  // collide after normalisation is refused here rather than producing a run in a
+  // surprising place.
+  if (!/^[A-Za-z0-9._-]+$/.test(id)) {
+    throw new BatchInputError(
+      `line ${lineNumber}: task_id ${JSON.stringify(id)} must be letters, digits, dot, ` +
+        `underscore or hyphen — it is used as a directory name`,
+    );
+  }
+
+  const prompt = record.prompt ?? record.premise;
+  if (typeof prompt !== "string" || !prompt.trim()) {
+    throw new BatchInputError(
+      `line ${lineNumber} (${id}): prompt (or premise) must be a non-empty string`,
+    );
+  }
+
+  const target = record.target_words ?? record.length;
+  if (typeof target !== "number" || !Number.isFinite(target) || target <= 0) {
+    throw new BatchInputError(
+      `line ${lineNumber} (${id}): target_words (or length) must be a positive number; got ` +
+        `${JSON.stringify(target)}`,
+    );
+  }
+
+  const flags = record.flags ?? [];
+  if (!Array.isArray(flags) || flags.some((f) => typeof f !== "string")) {
+    throw new BatchInputError(`line ${lineNumber} (${id}): flags must be an array of strings`);
+  }
+
+  return {
+    id,
+    prompt: prompt.trim(),
+    targetWords: Math.round(target),
+    raw: record,
+    flags: flags as string[],
+  };
+}
+
+export function parseTasks(text: string): readonly BatchTask[] {
+  const tasks: BatchTask[] = [];
+  const seen = new Set<string>();
+  let lineNumber = 0;
+  for (const line of text.split("\n")) {
+    lineNumber += 1;
+    if (!line.trim()) continue;
+    const task = parseTask(line, lineNumber);
+    if (seen.has(task.id)) {
+      // Two records with one id would race for one directory, which is the exact
+      // failure the run lock exists to catch — better to refuse the file.
+      throw new BatchInputError(
+        `line ${lineNumber}: duplicate task_id ${JSON.stringify(task.id)}; two tasks cannot ` +
+          `share an output directory`,
+      );
+    }
+    seen.add(task.id);
+    tasks.push(task);
+  }
+  if (tasks.length === 0) throw new BatchInputError("no tasks in the input file");
+  return tasks;
+}
+
+/** What the run directory says about a task, before anything is launched. */
+export type TaskState =
+  /** Finished with a manuscript. Skipped on resume. */
+  | { readonly kind: "done"; readonly words: number; readonly committed: number }
+  /** Started and never finished, or finished with nothing. Rerun from scratch. */
+  | { readonly kind: "incomplete"; readonly why: string }
+  /** Another live process holds the directory. Left alone. */
+  | { readonly kind: "held"; readonly pid: number }
+  /** Never attempted. */
+  | { readonly kind: "fresh" };
+
+/**
+ * Classify one task from what is on disk.
+ *
+ * Order matters. A live lock wins over everything, because the one thing that
+ * must never happen is a second process in a directory somebody is working in. A
+ * *stale* lock — the file is there and its process is gone — is the ordinary
+ * aftermath of a kill and means the run is incomplete, not that it is protected;
+ * treating it as protected would make a killed batch unresumable.
+ */
+export function classify(input: {
+  readonly summary: Record<string, unknown> | null;
+  readonly lockPid: number | null;
+  readonly lockHolderAlive: boolean;
+}): TaskState {
+  if (input.lockPid !== null && input.lockHolderAlive) {
+    return { kind: "held", pid: input.lockPid };
+  }
+  if (input.summary === null) {
+    return input.lockPid === null
+      ? { kind: "fresh" }
+      : {
+          kind: "incomplete",
+          why: `a stale lock from pid ${input.lockPid} and no summary — the run was killed`,
+        };
+  }
+
+  const fatal = input.summary.fatal;
+  if (typeof fatal === "string" && fatal.trim()) {
+    return { kind: "incomplete", why: `the previous run ended fatally: ${fatal}` };
+  }
+
+  const committed = Number(input.summary.scenes_committed ?? 0);
+  const words = Number(input.summary.words ?? 0);
+  if (committed <= 0 || words <= 0) {
+    return {
+      kind: "incomplete",
+      why: `the previous run produced ${committed} committed scene(s) and ${words} word(s)`,
+    };
+  }
+  return { kind: "done", words, committed };
+}
+
+export interface BatchPlan {
+  readonly toRun: readonly BatchTask[];
+  readonly skipped: readonly {
+    readonly task: BatchTask;
+    readonly state: TaskState;
+    readonly reason: string;
+  }[];
+}
+
+/**
+ * Decide what this invocation will run.
+ *
+ * `force` reruns tasks that already succeeded, which is what you want after a
+ * change to the harness — and is destructive, so it is never the default: a
+ * resume that silently rewrote finished runs would destroy the results it was
+ * invoked to preserve.
+ */
+export function planBatch(
+  tasks: readonly BatchTask[],
+  stateOf: (task: BatchTask) => TaskState,
+  options: { readonly force?: boolean } = {},
+): BatchPlan {
+  const toRun: BatchTask[] = [];
+  const skipped: BatchPlan["skipped"] = [];
+
+  for (const task of tasks) {
+    const state = stateOf(task);
+    if (state.kind === "held") {
+      (skipped as BatchPlan["skipped"][number][]).push({
+        task,
+        state,
+        reason: `another run holds this directory (pid ${state.pid})`,
+      });
+      continue;
+    }
+    if (state.kind === "done" && !options.force) {
+      (skipped as BatchPlan["skipped"][number][]).push({
+        task,
+        state,
+        reason: `already finished: ${state.words} words, ${state.committed} scene(s)`,
+      });
+      continue;
+    }
+    toRun.push(task);
+  }
+
+  return { toRun, skipped };
+}
+
+/**
+ * Run an async job over a list with a fixed number in flight.
+ *
+ * Written here rather than pulled in because the requirement is unusual in one
+ * way: a stagger between starts. Launching four runs in the same second sends
+ * four planning calls at once, and the measured consequence is a burst of 429s
+ * that each run then spends minutes backing off from — so the pool is slower than
+ * its own concurrency limit for the first minute of every batch.
+ */
+export async function pool<T, R>(
+  items: readonly T[],
+  limit: number,
+  staggerMs: number,
+  run: (item: T, index: number) => Promise<R>,
+): Promise<readonly R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
+
+  const worker = async (slot: number): Promise<void> => {
+    if (staggerMs > 0 && slot > 0) {
+      await new Promise((resolve) => setTimeout(resolve, staggerMs * slot));
+    }
+    for (;;) {
+      const mine = next++;
+      if (mine >= items.length) return;
+      results[mine] = await run(items[mine]!, mine);
+    }
+  };
+
+  await Promise.all(
+    Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, (_, slot) => worker(slot)),
+  );
+  return results;
+}

@@ -1,8 +1,16 @@
 # StoryOS status tracker
 
-Live state, not a design doc. Updated 2026-07-25 13:10 +08 on sgp-dev, on taking
-over the project. Design of record is `docs/02-architecture.md`; what the paper
-claims is `docs/01-novelty.md`; measured numbers are `docs/04-results.md`.
+Live state, not a design doc. Updated 2026-07-27 10:30 +08 on sgp-dev; the newest
+iteration log is the highest-lettered §0x section, currently **§0d**. Design of
+record is `docs/02-architecture.md`; what the paper claims is `docs/01-novelty.md`;
+measured numbers are `docs/04-results.md`.
+
+This repository is **independent of `~/storyos` and its four `track/*` worktrees**
+— separate git remote (`storyos-new.git`), separate history. Work here does not
+touch the motivation / eval / baselines / longbench tracks, and the only thing it
+reads from them is `~/work/longbench/experiments/longbench-write`, read-only,
+through `smoke/score-lbw.sh` and `smoke/compare-lbw.py`, both of which redirect
+every output path back into this repo.
 
 ## 0. Where each piece of the argument stands
 
@@ -14,7 +22,7 @@ claims is `docs/01-novelty.md`; measured numbers are `docs/04-results.md`.
 | Novelty 1 | a unified lossless index fixes it | **unproven.** v2 scored CED 4.690 vs bare 4.100. This is what v3 exists to test. |
 | Novelty 2 | filesystem index beats graphs for dense time-varying relations | **argued, not yet demonstrated.** Schema designed (`relations/<pair-id>.yaml`); no run has produced one. |
 | Novelty 3 | FreshNovelBench | **built** — 50 frozen tasks, contamination gate, in Mongo and on the site. Human spot-check and full-50 probe still outstanding. |
-| Method | v3 five-agent resident harness on pi | **running end to end.** Five resident agents, three-layer verification, atomic commit, scene transaction loop, revisable plan, two-tier compaction, agent memory. 226 tests. Writes complete stories; see §0b for what is measured and what is still broken. |
+| Method | v3 five-agent resident harness on pi | **running end to end.** Five resident agents, three-layer verification, atomic commit, scene transaction loop, revisable plan, two-tier compaction, agent memory, per-scene compute allocated by story position. 413 tests. Writes complete stories; see §0d for the current measurement and what is still broken. |
 | Results | ConStory tuning-20, 8 systems | **measured but 3 rows invalid** — adapter unfaithfulness, see `docs/04-results.md` §0 |
 | Results | FreshNovelBench subset-10 lengths | **measured**; CED scoring incomplete |
 | Experiments | all ablations | **none run** |
@@ -137,6 +145,141 @@ Three pieces of debt were paid at the same time:
 309 tests and typecheck pass. Whether the orchestrator uses any of this is a
 question for the run, not the code — the previous round is a standing reminder
 that having a tool and using it are different facts.
+
+## 0d. Iteration log — 2026-07-27, compute allocated by story position
+
+Two versions landed this round: **0.5.0** allocates per-scene compute by position
+in the story, **0.5.1** fixes two repair-loop defects that running 0.5.0 exposed.
+Both are tagged, and `src/version.ts` records why each could move a number.
+
+### What 0.5.0 changed
+
+Three allowances stopped being constants and became a function of where a scene
+sits (`src/runtime/allocation.ts`): **repair rounds and writer follow-ups go
+1 / 3 / 5** across the opening third, the middle third and the final 40%, and the
+packet carries **1 / 2 / 3** previous scenes of prose. This is the bottom-right
+panel of the motivation figure — rising compute per scene against the prior
+paradigm's flat bars — and it is realised in the measured data: mean billable
+tokens per scene across five runs went **440k → 877k → 1,207k → 1,030k**, a 2.7×
+ramp.
+
+It is a *reallocation*, not an increase. The opening tier is tighter than 0.4.0's
+flat default of two repair rounds; rounds not spent where defects are rare are
+what pay for the tier where they accumulate. `--max-repairs <n>` no longer sets a
+global ceiling — it pins every scene to one allowance and is the uniform-allocation
+ablation arm.
+
+The empirical basis is `experiments/degradation` (error instances rise with
+finished length, r = 0.711 over 16 cells, all four per-premise correlations
+positive; timeline/plot and factual detail are 54.8% of them). **The inference is
+stated in the code**: that experiment varies total length *across runs*, not
+position *within* one run, so every scene's allowance is recorded beside its
+findings in `summary.json` → `allocation.by_tier` to make the schedule falsifiable
+from our own data.
+
+### What that record already says, and it is not flattering
+
+Pooled over 20 scenes in five runs:
+
+| tier | scenes | findings/scene | repair rounds used | at ceiling |
+|---|---:|---:|---:|---:|
+| opening | 5 | 1.40 | 5/5 | **5/5** |
+| middle | 5 | 1.20 | 7/15 | 0/5 |
+| endgame | 10 | 1.40 | 11/50 | **0/10** |
+
+Findings per scene are **flat**, not rising. The binding constraint is the
+*opening* — every opening scene hit its single round and committed carrying a
+defect — while the endgame's five rounds were never once reached, because the
+stall detector ends a non-converging loop long before the ceiling. So the schedule
+is mis-shaped in both directions at these lengths, and the open decision is whether
+to raise the opening tier to 2. **Left at 1/3/5 pending that decision** rather than
+tuned to fit n=20.
+
+### The two 0.5.1 fixes, both found by running 0.5.0
+
+- **A failed writer turn aborted the whole scene.** `lbw103`'s opening call hit a
+  provider content filter, the transaction went terminal, and the orchestrator's
+  sensible retry was refused because the transaction no longer existed — a quarter
+  of that manuscript lost with the repair allowance unspent. A failed turn now
+  costs an attempt and leaves the scene draftable, bounded by the scene's own
+  allowance.
+- **The livelock detector compared finding *ids*,** which are subtype plus quoted
+  spans — so a writer that rewrote the passage without fixing the defect produced a
+  new id every round and looked like progress. `lbw081` s-001 spent three rounds on
+  five findings that were all the same causal-logic defect about one door. It now
+  also stops when a blocking subtype recurs after a rewrite without the blocking
+  count falling. This is a **precondition** for 0.5.0's wider endgame ceiling: five
+  rounds multiply the cost of an undetected livelock by two and a half.
+
+### Measured: six LongBench-Write tasks, 500–5,000 words
+
+All six committed every scene (24/24), `scenes_unverified: 0`, $22.65 total at list
+price. **Five of the six are in LongBench-Write's official `creative writing ≥2k`
+story slice**, so they are directly comparable to Table 2b. Paired on those five
+tasks:
+
+| system | S̄ | S_l | S_q | words |
+|---|---:|---:|---:|---:|
+| raw-gpt-5.6-sol | 94.6 | 93.3 | 4.80 | 3811 |
+| raw-gemini-3.1-pro | 93.6 | 94.6 | 4.63 | 3523 |
+| raw-gpt-5.5 | 91.8 | 85.7 | 4.90 | 4503 |
+| **storyos-v3 0.5.1** | **90.0** | **98.1** | 4.10 | 3286 |
+| agentwrite | 80.5 | 80.4 | 4.03 | 5209 |
+| raw-gpt-5-mini (our backbone) | 78.2 | 79.8 | 3.83 | 4956 |
+| bare-long-context | 77.3 | 77.3 | 3.87 | 5324 |
+| storywriter-style | 75.4 | 79.4 | 3.57 | 5212 |
+| agents-room-style | 74.3 | 71.3 | 3.87 | 5993 |
+
+**+11.8 against our own backbone and +9.5 to +15.7 against the four harnesses, with
+all 25 individual task comparisons positive** — not an average hiding a split. Our
+$S_l$ is the highest in the table on the fewest words, so the length compliance is
+not padding. The whole remaining gap to the frontier models is $S_q$. `lbw081` went
+80.9 (0.4.0) → 88.2. Do not read this as SOTA: three raw frontier models are ahead,
+and n=5.
+
+### Short tasks: the four-scene floor had to yield
+
+`lbw029` at 500 words was cut into four 125-word scenes and scored **best length
+compliance of nine systems and worst quality of them**. `sceneCountFor` now floors
+at 500 words per scene, so 500 words is one scene: 93.6 against 88.0, for $0.46
+against $1.31 and 304 tokens per word against 4,542. Nothing at 2,000 words and
+above changes, deliberately — those lengths are already scored.
+
+### Infrastructure this round
+
+- **`src/cli/run-batch.ts`** — many tasks from one jsonl, concurrent, resumable.
+  Resume is decided from artefacts (`summary.json`, `run.lock`), never from a
+  progress file, because a progress file is a second source of truth that
+  disagrees exactly after a kill. Reads LongBench-Write's `tasks.jsonl` unchanged.
+- **`run.lock` on every run directory** (`wx`, atomic). This closed the worst data
+  defect of the session: two processes shared one output directory, interleaved
+  their commits into one index, and a score was reported for a manuscript that no
+  longer existed on disk. The write gate does not cover this — it confines agents,
+  not harness processes.
+- **`smoke/score-lbw.sh` matches judgement rows by `text_sha256`.** It previously
+  printed the last row in an append-only file, which is how the above corruption
+  surfaced as a plausible-looking score.
+- **Trace detail** — `--deep` reconstructs every model round-trip from the
+  transcripts (input, output, tool arguments, tool results, duration, tokens,
+  next step). `lbw081` is 29 turns / 315 round-trips. Rendered on the site with a
+  per-block 中/EN/双语 toggle.
+- **Translation was silently echoing long blocks.** Above 8,000 characters the
+  model returned its input instead of translating, 8 failures in 33 — English text
+  sitting under a 中文 label. Now chunked at 2,500 characters on paragraph
+  boundaries with an echo check; 8 → 1.
+
+413 tests, typecheck clean. Not pushed.
+
+### Open, in order
+
+1. **Token efficiency is the only thing blocking the main result.** 973–1,331
+   tokens per delivered word; the 21-task story slice would cost ~150M tokens,
+   5.5× the entire existing eight-system table. Known handles: context-builder is
+   81% of spend, and level-2 compaction has never once fired.
+2. Whether the opening tier goes to 2 repair rounds (see the table above).
+3. No run has exceeded 9.6k words. 40k is unverified.
+4. Live Story Bench scoring is not wired to this harness — the quality side needs a
+   summary pipeline that does not exist yet.
 
 ## 1. Sync gaps — CLOSED 2026-07-25 14:00
 

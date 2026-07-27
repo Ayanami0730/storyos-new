@@ -70,6 +70,43 @@ YS_KEY="$(cat ~/.config/ys/key)" node smoke/gateway-tool-loop.mjs
 
 sgp-dev 上 Node 22.20.0 已装在 `~/bin/node22`（用 `export PATH="$HOME/bin/node22/bin:$PATH"` 激活，系统的 v20 未改动），冒烟已实测通过，不需要代理。
 
+## 批量跑任务（可断点重续）
+
+一个 jsonl 一行一个任务，并发跑，被 kill 之后重跑同一条命令即可续上——不需要先清理任何东西，
+已完成的 run 不会被碰。
+
+```bash
+export PATH="$HOME/bin/node22/bin:$PATH"
+YS_KEY="$(cat ~/.config/ys/key)" node --experimental-strip-types \
+  src/cli/run-batch.ts --tasks tasks.jsonl --concurrency 3
+```
+
+输入 schema 只要三个字段，另外接受 `length` 作为 `target_words` 的别名、`premise` 作为
+`prompt` 的别名，所以 **LongBench-Write 自己的 `tasks.jsonl` 可以直接喂进来不用转换**（转换
+步骤是"任务被按一个它没被要求过的长度打分"的来源，这个坑踩过）。记录里其余字段原样写进该
+run 的 `task.json`，因为打分器和 trace ingest 读的是它。
+
+```jsonl
+{"task_id":"lbw081","prompt":"Write a first-person detective story…","length":2800}
+{"task_id":"lsb-40k-01","prompt":"…","target_words":40000,"flags":["--max-repairs","2"]}
+```
+
+| flag | 默认 | 说明 |
+|---|---|---|
+| `--concurrency` | 3 | 同时在跑的 run 数 |
+| `--stagger` | 20 | 相邻两个 run 启动间隔（秒）。不是客气：四个 run 同秒启动会让四个规划调用同时打网关，实测换来一串 429，每个 run 再各自退避几分钟，比错开更慢 |
+| `--dry-run` | — | 只打印这次会跑哪些、跳过哪些 |
+| `--force` | — | 连已完成的也重跑（**会删掉它们的 run 目录**，所以不是默认） |
+| `--profile` / `--sandbox` | `generous` / `docker` | 透传给 `write-story` |
+
+续跑的判断只看盘上的产物（`summary.json` 有没有、`run.lock` 的 pid 还活着没有），不维护进度
+文件——进度文件是关于"什么跑完了"的第二个真相来源，而它和产物恰好会在唯一需要续跑的时刻
+（被 kill 之后）打架。四种状态：已完成（跳过）、被 kill（删掉重跑）、**有活进程持有**（放着不
+动，`--force` 也不动）、没跑过。
+
+打分是分开的一步（`smoke/score-lbw.sh`），因为 judge 是另一份预算、另一种失败模式，而且经常
+需要在不重新生成的前提下重打。
+
 ---
 
 # StoryOS v3 (English)
@@ -87,6 +124,21 @@ benchmark data, no checker, no baseline implementations and no paper, and
 
 History begins at the orphan branch `v3-engine` in `storyos` (independent root
 commit, zero shared history with the v2 trunk), split out on 2026-07-25.
+
+## Running a batch, resumably
+
+`src/cli/run-batch.ts` takes one task per line, runs them concurrently, and picks
+up where a kill left off — rerun the same command, nothing needs cleaning up
+first, and finished runs are not touched. `task_id` + `prompt` + `target_words` is
+the whole schema, with `length` and `premise` accepted as the other spelling of the
+last two so LongBench-Write's `tasks.jsonl` works unchanged. See the Chinese
+section above for flags; the one worth knowing is `--stagger`, which spaces out
+launches because four planning calls in the same second buy a burst of 429s that
+costs more than the delay.
+
+Resume state is read from artefacts — `summary.json` and `run.lock` — never from a
+progress file, because a progress file is a second source of truth that disagrees
+with the artefacts exactly after a kill, which is the only time resume runs.
 
 ## Current status
 
