@@ -104,6 +104,13 @@ export interface TraceStep {
   readonly index: number;
   readonly role: string;
   readonly model: string;
+  /**
+   * When the model answered, from the message's own epoch timestamp.
+   *
+   * Not the transcript sink's write time, which is what this used to carry: the
+   * sink flushes a whole turn at once, so every round-trip in a turn shared one
+   * timestamp and the trace showed forty calls happening in the same millisecond.
+   */
   readonly at: string;
   /** Wall time from the previous message in this agent's session to this reply. */
   readonly durationMs: number;
@@ -114,6 +121,8 @@ export interface TraceStep {
     readonly reasoning: number;
     readonly billable: number;
   };
+  /** List-price estimate for this one round-trip. */
+  readonly usd: number;
   readonly stopReason?: string;
   /** Which tools this turn called, in order, for a one-line summary of the step. */
   readonly toolsCalled: readonly string[];
@@ -188,6 +197,27 @@ export interface TraceMemory {
   readonly body: Bilingual;
 }
 
+/**
+ * One file in the project as the run left it.
+ *
+ * The partition *counts* in `index` say the index was filled; they do not let
+ * anyone check what it was filled with, which is the claim the whole design rests
+ * on. So the final state travels with the trace as files a reader can open.
+ *
+ * `runtime/transcripts/` is excluded: it is the largest thing in the tree and it
+ * is already present, structured, as `TraceScene.steps`.
+ */
+export interface TraceFile {
+  /** Relative to the project root, e.g. `characters/char-mira/profile.yaml`. */
+  readonly path: string;
+  readonly bytes: number;
+  /**
+   * Contents. `zh` is filled only for prose — a translated YAML is not a YAML, and
+   * a structured file is mostly identifiers a translation would only damage.
+   */
+  readonly body: Bilingual;
+}
+
 export interface TraceBundle {
   readonly runId: string;
   readonly harnessVersion: string;
@@ -252,6 +282,11 @@ export interface TraceBundle {
     readonly dangling: readonly unknown[];
     readonly readsByRole: Readonly<Record<string, number>>;
   };
+  /**
+   * The project tree as the run left it, for reading rather than counting.
+   * Present only on a deep ingest.
+   */
+  readonly files?: readonly TraceFile[];
   readonly memory: readonly TraceMemory[];
   readonly skills: Readonly<Record<string, readonly string[]>>;
   /** The finished manuscript. */

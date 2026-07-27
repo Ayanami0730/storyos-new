@@ -8,6 +8,7 @@
  * indistinguishable from a fact once it is on a web page.
  */
 
+import type { Dirent } from "node:fs";
 import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
@@ -18,6 +19,7 @@ import type {
   TraceArtifact,
   TraceBundle,
   TraceCall,
+  TraceFile,
   TraceMemory,
   TraceMessage,
   TraceScene,
@@ -97,13 +99,17 @@ async function stepsByTx(project: string): Promise<Map<string, TraceStep[]>> {
         const blocks = Array.isArray(row.content) ? (row.content as Record<string, unknown>[]) : [];
         const at = Number(row.timestamp ?? 0);
 
+        // The message's own clock. `row.at` is when the sink flushed the turn, so
+        // every round-trip in a turn carries the same value there.
+        const when = at > 0 ? new Date(at).toISOString() : (row.at ?? "");
+
         if (row.role === "user" || row.role === "toolResult") {
           for (const block of blocks) {
             const body = typeof block.text === "string" ? block.text : "";
             if (!body.trim()) continue;
             pending.push({
               kind: row.role === "user" ? "prompt" : "toolResult",
-              at: row.at ?? "",
+              at: when,
               body: en(body),
               ...(row.toolName ? { toolName: row.toolName } : {}),
               // The sink writes booleans through `String()`, so both shapes occur.
@@ -123,7 +129,7 @@ async function stepsByTx(project: string): Promise<Map<string, TraceStep[]>> {
             toolsCalled.push(name);
             produced.push({
               kind: "toolCall",
-              at: row.at ?? "",
+              at: when,
               toolName: name,
               arguments:
                 typeof block.arguments === "string"
@@ -133,26 +139,31 @@ async function stepsByTx(project: string): Promise<Map<string, TraceStep[]>> {
               body: en(""),
             });
           } else if (typeof block.text === "string" && block.text.trim()) {
-            produced.push({ kind: "text", at: row.at ?? "", body: en(block.text) });
+            produced.push({ kind: "text", at: when, body: en(block.text) });
           }
         }
 
         const usage = row.usage ?? {};
+        const model = String(row.model ?? "unknown");
+        const spend = {
+          input: usage.input ?? 0,
+          output: usage.output ?? 0,
+          cacheRead: usage.cacheRead ?? 0,
+          reasoning: usage.reasoning ?? 0,
+          billable: (usage.input ?? 0) + (usage.output ?? 0),
+        };
         const txid = row.txid ?? "tx-unknown";
         const list = byTx.get(txid) ?? [];
         list.push({
           index: list.length + 1,
           role,
-          model: String(row.model ?? "unknown"),
-          at: row.at ?? "",
+          model,
+          at: when,
           durationMs: previousAt > 0 && at > previousAt ? at - previousAt : 0,
-          usage: {
-            input: usage.input ?? 0,
-            output: usage.output ?? 0,
-            cacheRead: usage.cacheRead ?? 0,
-            reasoning: usage.reasoning ?? 0,
-            billable: (usage.input ?? 0) + (usage.output ?? 0),
-          },
+          usage: spend,
+          // Priced per round-trip, because "which step cost the money" is not
+          // answerable from a per-turn total when one turn is forty round-trips.
+          usd: costOf(model, spend).usd,
           ...(row.stopReason ? { stopReason: row.stopReason } : {}),
           toolsCalled,
           messages: [...pending, ...produced],
@@ -175,6 +186,70 @@ async function stepsByTx(project: string): Promise<Map<string, TraceStep[]>> {
     );
   }
   return byTx;
+}
+
+/**
+ * The project tree as the run left it.
+ *
+ * Read rather than summarised, because the counts in `index` cannot answer the
+ * question the design rests on — not "did the index get filled" but "filled with
+ * what". A reader who cannot open `characters/char-mira/profile.yaml` has to take
+ * our word for it.
+ *
+ * Two exclusions, both deliberate. `runtime/` is the biggest thing in the tree
+ * (1.6MB of 2.5MB on a four-scene run) and is already here as `steps`, structured.
+ * `.git`-style internals and anything over `MAX_FILE_BYTES` are skipped so a
+ * single pathological file cannot make a bundle unloadable in a browser.
+ */
+const MAX_FILE_BYTES = 512 * 1024;
+
+/** Prose gets translated; structured data does not — a translated YAML is not a YAML. */
+function isProse(relPath: string): boolean {
+  return relPath.endsWith(".md") || relPath.endsWith(".txt");
+}
+
+async function projectFiles(project: string): Promise<TraceFile[]> {
+  const files: TraceFile[] = [];
+
+  async function walk(dir: string, prefix: string): Promise<void> {
+    // Typed explicitly: inferring from `readdir` picks its Buffer overload.
+    let entries: Dirent[] = [];
+    try {
+      entries = await readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) {
+        // The transcripts are the steps; including them here would roughly double
+        // every bundle to say the same thing twice.
+        if (rel === "runtime/transcripts") continue;
+        await walk(path.join(dir, entry.name), rel);
+        continue;
+      }
+      if (!entry.isFile()) continue;
+      const full = path.join(dir, entry.name);
+      const info = await stat(full).catch(() => null);
+      if (!info) continue;
+      if (info.size > MAX_FILE_BYTES) {
+        // Listed but not carried, so the tree stays honest about what exists.
+        files.push({
+          path: rel,
+          bytes: info.size,
+          body: en(`(${info.size.toLocaleString()} bytes — too large to carry in the trace)`),
+        });
+        continue;
+      }
+      const body = await readMaybe(full);
+      if (body === null) continue;
+      files.push({ path: rel, bytes: info.size, body: en(body) });
+    }
+  }
+
+  await walk(project, "");
+  files.sort((a, b) => a.path.localeCompare(b.path));
+  return files;
 }
 
 /** Tool calls per transaction, per role, from the transcripts. */
@@ -543,6 +618,10 @@ export async function buildBundle(options: BundleOptions): Promise<TraceBundle> 
       dangling: summary.index?.dangling ?? [],
       readsByRole: summary.index?.reads_by_role ?? {},
     },
+    // Same gate as the steps: the tree is ~870KB of prose and YAML on a
+    // four-scene run, which is worth carrying for the case you are studying and
+    // not for every run in the index.
+    ...(options.deep ? { files: await projectFiles(project) } : {}),
     memory: await memories(project),
     skills: summary.memory?.skills ?? {},
     manuscript: en(manuscript),

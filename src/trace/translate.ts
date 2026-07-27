@@ -326,6 +326,18 @@ function unitsOf(bundle: TraceBundle): Unit[] {
       for (const message of step.messages) add(message.body);
     }
   }
+  /**
+   * The final filesystem state, prose only.
+   *
+   * A translated YAML is not a YAML: the keys are part of the schema and the values
+   * are mostly entity ids, so translating one damages the artefact a reader opened
+   * it to inspect. The `.md` and `.txt` files are the prose — scenes, packets,
+   * audits, the orchestrator's own accounts — and those are what a Chinese reader
+   * needs.
+   */
+  for (const file of bundle.files ?? []) {
+    if (file.path.endsWith(".md") || file.path.endsWith(".txt")) add(file.body);
+  }
   bundle.memory.forEach((m) => add(m.body));
   add(bundle.manuscript);
   add(bundle.revisionPlan);

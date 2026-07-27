@@ -66,9 +66,12 @@ if (has("deep")) {
   // "round-trip", not "call": one turn runs a tool loop and each pass through it
   // is another request, so this number is legitimately an order larger than the
   // turn count in `calls` and should not read as a contradiction.
+  const files = bundle.files ?? [];
+  const fileBytes = files.reduce((n, f) => n + f.bytes, 0);
   say(
     `deep: ${steps} model round-trip(s) with full input/output, ` +
-      `${chars.toLocaleString()} characters`,
+      `${chars.toLocaleString()} characters; ${files.length} file(s) of final project ` +
+      `state, ${fileBytes.toLocaleString()} bytes`,
   );
 }
 
