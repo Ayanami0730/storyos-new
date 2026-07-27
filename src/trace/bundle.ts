@@ -361,6 +361,63 @@ async function memories(project: string): Promise<TraceMemory[]> {
   return out;
 }
 
+/**
+ * Every other system's score for the same task.
+ *
+ * Exported because it has two callers, and it has two callers for a reason worth
+ * recording: this is the only part of a bundle that is **pure derived data** —
+ * read from frozen judgement files, never translated, identical however many times
+ * it is computed. So when the judgement path broke and six bundles lost their
+ * comparison tables, the fix did not have to be an hour of re-translation; it
+ * could be a patch. Anything else in a bundle would have to be rebuilt.
+ *
+ * Keeping one implementation is the condition on that: a patch tool with its own
+ * copy of this arithmetic would drift from what the ingest produces, and the
+ * disagreement would be a results table nobody could reproduce.
+ */
+export async function readBaselines(
+  files: readonly { readonly system: string; readonly file: string }[],
+  taskId: string | undefined,
+): Promise<
+  readonly {
+    readonly system: string;
+    readonly sBar: number;
+    readonly sLength: number;
+    readonly sQualityRaw: number;
+    readonly words: number;
+  }[]
+> {
+  const baselines: {
+    system: string;
+    sBar: number;
+    sLength: number;
+    sQualityRaw: number;
+    words: number;
+  }[] = [];
+
+  for (const b of files) {
+    const rows = ((await readMaybe(b.file)) ?? "")
+      .split("\n")
+      .filter(Boolean)
+      .map((l) => JSON.parse(l) as Record<string, any>)
+      .filter((r) => r.scores && r.task_id === taskId);
+    // The last row for the task: the scorer appends, and re-judges a cell whose
+    // text changed, so earlier rows can describe text that no longer exists.
+    const row = rows.at(-1);
+    if (!row) continue;
+    baselines.push({
+      system: b.system,
+      sBar: (20 * row.s_quality_raw + row.s_length) / 2,
+      sLength: row.s_length,
+      sQualityRaw: row.s_quality_raw,
+      words: row.response_words,
+    });
+  }
+
+  baselines.sort((a, b) => b.sBar - a.sBar);
+  return baselines;
+}
+
 export interface BundleOptions {
   readonly runDir: string;
   /** The benchmark task this run answered, when there was one. */
@@ -520,24 +577,7 @@ export async function buildBundle(options: BundleOptions): Promise<TraceBundle> 
         .at(-1)
     : null;
 
-  const baselines: TraceBundle["score"] extends null ? never[] : any[] = [];
-  for (const b of options.baselineJudgements ?? []) {
-    const rows = ((await readMaybe(b.file)) ?? "")
-      .split("\n")
-      .filter(Boolean)
-      .map((l) => JSON.parse(l) as Record<string, any>)
-      .filter((r) => r.scores && r.task_id === task?.task_id);
-    const row = rows.at(-1);
-    if (!row) continue;
-    baselines.push({
-      system: b.system,
-      sBar: (20 * row.s_quality_raw + row.s_length) / 2,
-      sLength: row.s_length,
-      sQualityRaw: row.s_quality_raw,
-      words: row.response_words,
-    });
-  }
-  baselines.sort((a, b) => b.sBar - a.sBar);
+  const baselines = await readBaselines(options.baselineJudgements ?? [], task?.task_id);
 
   const manuscript = (await readMaybe(path.join(runDir, "story.md"))) ?? "";
   const revisionPlan =
