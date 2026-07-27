@@ -121,6 +121,31 @@ export function makeFinding(input: {
       `${input.subtype} is a contradiction pair; report the passage it contradicts or do not report it`,
     );
   }
+  /**
+   * A pair whose other side is an absence is not a pair.
+   *
+   * Measured: a verifier raised eleven findings on one run of `lbw081` in the shape
+   * "`objects/obj-note.yaml` has no `first_seen` entry" and "the relation query
+   * returns nothing for these two", labelled as contradiction pairs with the empty
+   * result standing in for the contradicting passage. Every one of them described a
+   * scene establishing a fact for the first time, which is what a scene is for. The
+   * run scored *worse* than one with five real findings, because the writer cannot
+   * tell a spurious finding from a real one — it has no index access — so it spent
+   * its repair rounds writing provenance into prose that was fine.
+   *
+   * The prompt says this too. The check is here because a prompt is advice and this
+   * is the one shape that cannot be a contradiction: if the other side is empty,
+   * nothing is being contradicted.
+   */
+  if (spec.tier === "explicit-pair" && !input.contradicts!.quote.trim()) {
+    throw new FindingError(
+      `${input.subtype}: contradicts.quote is empty. An absence is not the other half of ` +
+        `a contradiction — a missing key, an empty file or a query that returned nothing ` +
+        `describes a fact this scene is establishing for the first time, which is what a ` +
+        `scene is for. Quote the passage that actually says something different, or report ` +
+        `nothing.`,
+    );
+  }
   if (input.severity !== "warning" && !isBlockingSubtype(input.subtype)) {
     throw new FindingError(
       `${input.subtype} is ${spec.tier}; it may only be a warning, because at scene time it is not yet an error`,

@@ -20,6 +20,7 @@ import path from "node:path";
 
 import type { AgentMemory } from "../agents/memory.ts";
 import { thresholdsFor } from "../agents/compaction.ts";
+import { personaFor } from "../agents/personas.ts";
 import type { SkillLibrary } from "../agents/skills.ts";
 import type { LedgerEntry, ResidentAgents } from "../agents/residents.ts";
 import { committedScenes, partitionReport } from "../index/tree.ts";
@@ -101,7 +102,7 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     harness_version_note: VERSION_NOTE,
     premise_words: args.premise.split(/\s+/).filter(Boolean).length,
     target_words: args.target,
-    backbone: args.backbone ?? "default (gpt-5-mini, verifier cross-family)",
+    backbone: args.backbone ?? "default (gpt-5-mini for every role)",
     /**
      * How the per-scene allowance was decided, and what it bought.
      *
@@ -131,7 +132,15 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
      * any baseline uses, and a same-family one removes that confound and costs
      * differently.
      */
-    verifier_model: args.verifierModel ?? "gemini-3.1-pro-preview (default, cross-family)",
+    /**
+     * Read from the persona rather than restated here.
+     *
+     * It was a hard-coded string naming the old default, and it lied the moment the
+     * default changed: a run whose roll-up plainly showed `verifier:gpt-5-mini`
+     * reported `verifier_model: gemini-3.1-pro-preview`. A provenance field that can
+     * disagree with the run it describes is worse than an absent one.
+     */
+    verifier_model: args.verifierModel ?? personaFor("verifier").model,
     allocation: allocationReport(input),
     elapsed_ms: input.elapsedMs,
     fatal: input.fatal,

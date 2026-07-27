@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.6.1";
+export const VERSION = "0.6.2";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -43,6 +43,23 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.6.2",
+    note:
+      "the verifier is stopped from reporting absences as contradictions. On the first run " +
+      "with a same-family verifier it raised eleven findings shaped like " +
+      "`objects/obj-note.yaml has no first_seen entry` and `the relation query returns " +
+      "nothing for these two`, each labelled a contradiction pair with the empty result " +
+      "standing in for the contradicting passage — and every one described a scene " +
+      "establishing a fact for the first time, which is what a scene is for. That run scored " +
+      "79.8 against 88.2 for a run with five real findings: the writer has no index access " +
+      "and cannot tell a spurious finding from a real one, so it spent its repair rounds " +
+      "writing provenance into prose that was already fine, and the prose is what is scored. " +
+      "`makeFinding` now refuses an explicit-pair finding whose `contradicts.quote` is empty, " +
+      "and the verifier brief states the direction outright. Also fixes a summary field that " +
+      "lied: `verifier_model` was a hard-coded string naming the old default, so a run whose " +
+      "roll-up plainly showed `verifier:gpt-5-mini` reported `gemini-3.1-pro-preview`",
+  },
   {
     version: "0.6.1",
     note:

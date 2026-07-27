@@ -242,3 +242,48 @@ describe("renderRepairBrief", () => {
     assert.equal(renderRepairBrief([]), "No findings.");
   });
 });
+
+describe("an absence is not the other half of a contradiction", () => {
+  /**
+   * Taken from a run of `lbw081` where the verifier raised eleven findings shaped
+   * like "`objects/obj-note.yaml` has no `first_seen` entry", each labelled a
+   * contradiction pair with the empty result standing in for the contradicting
+   * passage. Every one described a scene establishing a fact for the first time.
+   * That run scored 79.8 against 88.2 for one with five real findings: the writer
+   * has no index access, cannot tell a spurious finding from a real one, and spent
+   * its repair rounds writing provenance into prose that was fine.
+   */
+  it("refuses a pair whose contradicting side is empty", () => {
+    assert.throws(
+      () =>
+        makeFinding({
+          ...pair,
+          contradicts: { quote: "   ", source: "objects/obj-note.yaml" },
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof FindingError);
+        assert.match((error as Error).message, /absence is not the other half/);
+        return true;
+      },
+    );
+  });
+
+  it("still accepts a pair that quotes both sides", () => {
+    const finding = makeFinding(pair);
+    assert.equal(finding.contradicts!.quote, "grey eyes");
+  });
+
+  it("leaves negative inferences alone, which have no pair by definition", () => {
+    // An unpaid promise is an absence *on purpose* — the whole subtype is about
+    // something that did not happen — so the pair check must not reach it.
+    const finding = makeFinding({
+      subtype: "abandoned_plot_elements",
+      validator: "global",
+      severity: "warning",
+      reasoning: "the locked box is never opened",
+      evidence: { quote: "she pocketed the key", source: "s-002" },
+      editLocus: { kind: "unresolved", question: "does the box ever open?" },
+    });
+    assert.equal(finding.subtype, "abandoned_plot_elements");
+  });
+});

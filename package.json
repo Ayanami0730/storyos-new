@@ -1,6 +1,6 @@
 {
   "name": "storyos-v3",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "StoryOS v3 \u2014 long-form novel-writing agent harness",
   "main": "index.js",
   "scripts": {
