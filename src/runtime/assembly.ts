@@ -30,6 +30,7 @@
  * eats.
  */
 
+import { existsSync } from "node:fs";
 import path from "node:path";
 
 import { Agent } from "@earendil-works/pi-agent-core";
@@ -162,6 +163,20 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
 
   const bus = new SceneToolBus();
   const builderBus = new BuilderBus();
+  /**
+   * A cited source has to be a file that exists.
+   *
+   * Checked against the project directory rather than through `index.read` so the
+   * check costs no read budget and cannot itself fail on a permission boundary. A
+   * source is allowed to name a path with a line range or a trailing note — what is
+   * refused is a source that resolves to nothing, which is what `source:
+   * "synthetic"` does. See `BuilderBus#resolves` for the measurement.
+   */
+  builderBus.checkSourcesWith((source) => {
+    const cleaned = source.trim().split(/[\s,;]+/)[0]!.replace(/[:#].*$/, "");
+    if (!cleaned || cleaned.startsWith("/") || cleaned.includes("..")) return false;
+    return existsSync(path.join(projectRoot, cleaned));
+  });
   const stage = new SceneStage();
   /**
    * What the scene in progress may spend, for the tools that have to ask at call

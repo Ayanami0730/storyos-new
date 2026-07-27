@@ -1,0 +1,15 @@
+pairId: obj-note--obj-wax
+participants:
+  - obj-note
+  - obj-wax
+phases:
+  - index: 1
+    relation: sealed-by
+    fromScene: s-001
+    toScene: null
+    transition: A small folded scrap of paper was clenched in her fingers, sealed
+      with a trace of red sealing-wax.
+    source:
+      scene: s-001
+      span: L6-L6
+openQuestions: []

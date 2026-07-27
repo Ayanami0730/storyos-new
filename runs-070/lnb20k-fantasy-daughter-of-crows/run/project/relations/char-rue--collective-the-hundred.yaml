@@ -1,0 +1,16 @@
+pairId: char-rue--collective-the-hundred
+participants:
+  - char-rue
+  - collective-the-hundred
+phases:
+  - index: 1
+    relation: apprenticeship_cycle
+    fromScene: s-009
+    toScene: null
+    transition: Rue becomes an instructor over the years, teaching multiple cohorts
+      and tying apprenticeships to house logs and rituals; her role shifts from
+      apprentice to mentor and ledger-keeper.
+    source:
+      scene: s-009
+      span: L18-L34
+openQuestions: []

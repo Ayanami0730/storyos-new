@@ -27,4 +27,15 @@ phases:
     source:
       scene: s-006
       span: L1-L40
+  - index: 3
+    relation: memory-keeper-to-commune
+    fromScene: s-008
+    toScene: null
+    transition: Elder advises controlled rites and curates witness lists to hold
+      names responsibly; residents look to him for cautionary norms.
+    asymmetry: Elder holds memory/precedent; commune looks to him to mediate access
+      and discipline.
+    source:
+      scene: s-008
+      span: L1-L40
 openQuestions: []

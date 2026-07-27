@@ -1,0 +1,18 @@
+pairId: char-hospital-orderly--char-mercy-chan
+participants:
+  - char-hospital-orderly
+  - char-mercy-chan
+phases:
+  - index: 1
+    relation: investigator-to-witness
+    fromScene: s-009
+    toScene: null
+    transition: Mercy interviews the hospital orderly and transcribes ledger
+      fragments; the orderly provides guarded testimony and practical guidance
+      on interviewing witnesses.
+    asymmetry: Mercy acts as investigator preserving records; the orderly provides
+      testimony and cautions.
+    source:
+      scene: s-009
+      span: L1-L40
+openQuestions: []

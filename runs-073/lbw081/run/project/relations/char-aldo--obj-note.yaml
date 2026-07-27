@@ -1,0 +1,17 @@
+pairId: char-aldo--obj-note
+participants:
+  - char-aldo
+  - obj-note
+phases:
+  - index: 1
+    relation: scrap_interpreted_as_schedule_but_transcription_pending
+    fromScene: s-003
+    toScene: null
+    transition: "The layout was the thing: columnar marks, a repeated small loop
+      that read like a tally... It was a timetable — a schedule pared down to
+      shorthand. I could not, in good faith, recite its letters here; the full
+      transcription belonged to the promise already filed."
+    source:
+      scene: s-003
+      span: L9-L13
+openQuestions: []

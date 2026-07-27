@@ -1,0 +1,11 @@
+id: char-attendant-inkroom
+name: Ink Room Attendant
+sketch: An attendant who manages the Ink Room registry and signs out the Archive
+  Key; quick and practised at handling ledgers and Folio access requests.
+identity:
+  appearance: attendant at the Ink Room registry; sleeves rolled, watchful eyes like a bird
+  profession: ink room attendant/scribe — handles the signing-out of keys and
+    access to Folio cases; records sign-outs in a register
+provenance:
+  appearance: s-007
+  profession: s-007

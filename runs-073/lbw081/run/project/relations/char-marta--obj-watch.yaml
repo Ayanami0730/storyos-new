@@ -1,0 +1,16 @@
+pairId: char-marta--obj-watch
+participants:
+  - char-marta
+  - obj-watch
+phases:
+  - index: 1
+    relation: protective over object
+    fromScene: s-001
+    toScene: null
+    transition: "Marta moved around the desk as if its surface were hers to defend:
+      a hand on a corner of the blotter, a look that dared anyone to reach for
+      the watch."
+    source:
+      scene: s-001
+      span: L7-L8
+openQuestions: []

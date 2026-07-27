@@ -89,6 +89,37 @@ export interface BuilderContribution {
  * so its tools are registered once, but each scene needs its own buffer.
  */
 export class BuilderBus {
+  /**
+   * Does this source name a file that exists in the project?
+   *
+   * Injected because the bus has no index handle, and required because the
+   * alternative was measured. `add_context_item` takes a `source` and checked only
+   * that it was non-empty, so the builder could add anything and name anything as
+   * its provenance. On the 20k run `lnb20k-fantasy-the-girl-with-a-thousand-faces`
+   * it added **93 items**, four of which cite no file at all — two of them
+   * literally `source: "synthetic"` — and the content of those is invented world
+   * material presented to the writer as established:
+   *
+   * > *"Canonical behaviors when a ritual 'goes wrong' (P3, consistent with
+   * > spirit-vengeful sketch and world rules): Voices become physical…"*
+   *
+   * > *"Practical use in scene: Mercy finds a faded portrait in a token stall or
+   * > folded into a wallet…"*
+   *
+   * Nothing in the index says either. The first calls itself canonical; the second
+   * is the builder staging the scene, which its own prompt forbids in as many
+   * words — *"You never decide what the scene should contain"*. And the shared
+   * contract this system is built on is that a fact not in the index is not
+   * established, because an invented one is indistinguishable from a real one once
+   * it reaches the page and is then defended by every later scene.
+   *
+   * The builder already has the correct channel for exactly this: `note_gap`. "The
+   * market's smells are not recorded anywhere" is a gap, the writer is told it is
+   * free, and whatever it invents lands in the state delta where it becomes canon
+   * *with a record of having been decided*. Fabricating the answer instead skips
+   * that record, which is the whole apparatus.
+   */
+  #resolves: (source: string) => boolean = () => true;
   #items: ContextItem[] = [];
   #followUps: { question: string; answer: string }[] = [];
   #gaps: ContextGap[] = [];
@@ -148,6 +179,17 @@ export class BuilderBus {
     this.#pending = question;
   }
 
+  /**
+   * Teach the bus which sources are real. Called once, at assembly.
+   *
+   * Left permissive by default so unit tests can exercise the rest of the tool
+   * without a project on disk — the enforcement that matters is in a live run,
+   * where a fabricated source is a fabricated fact.
+   */
+  checkSourcesWith(resolves: (source: string) => boolean): void {
+    this.#resolves = resolves;
+  }
+
   noteRead(): void {
     this.#reads += 1;
   }
@@ -204,6 +246,19 @@ export class BuilderBus {
             return toolText(
               "rejected: source is required. The writer has to be able to say where a " +
                 "fact came from, and so does the verifier when it disagrees.",
+            );
+          }
+          if (!bus.#resolves(args.source)) {
+            return toolText(
+              `rejected: "${args.source}" is not a file in this project, so whatever is in ` +
+                `this item is not established — you wrote it. Cite the path you read it from ` +
+                `(\`objects/obj-x.yaml\`, \`novel/chapters/ch-01/scenes/s-003.md\`, ` +
+                `\`continuity/plot-contracts.jsonl\`), one file per item.\n` +
+                `If the index genuinely does not contain it, that is what \`note_gap\` is ` +
+                `for, and a recorded gap is worth more than a plausible answer: the writer is ` +
+                `then told it is free, and whatever it invents lands in the state delta where ` +
+                `it becomes canon *with a record of having been decided*. An item you compose ` +
+                `and label canonical skips that record, and every later scene will defend it.`,
             );
           }
           // Collisions are renamed, not refused. The id is a label for the

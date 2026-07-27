@@ -1,0 +1,16 @@
+pairId: char-henry--char-marta
+participants:
+  - char-henry
+  - char-marta
+phases:
+  - index: 1
+    relation: contradictory_alibis
+    fromScene: s-002
+    toScene: null
+    transition: "\"In the morning room — same chair by the hearth; I was reading the
+      paper...\" vs. \"I was serving breakfast. I put his tea down in the
+      kitchen at nine; he wasn't in the morning room.\""
+    source:
+      scene: s-002
+      span: L12-L16
+openQuestions: []

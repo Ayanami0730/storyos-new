@@ -1,0 +1,1 @@
+In a rigidly ordered manor, a lord's sheltered daughter and a humble servant fall into a forbidden intimacy; when a vanished signet and a planted accusation split their world, the house's need for honour demands a terrible price and love is crushed under custom.

@@ -1,0 +1,44 @@
+{
+  "sceneId": "s-007",
+  "claims": [
+    {
+      "entity": "loc-ink-room",
+      "attribute": "access_control_practice",
+      "quote": "They made the little ritual of sign-out beneath the lamp: a name on a page, a careful loop of ink that said who took the key, and the hour in a marginal column that might as well have been a hinge.",
+      "value": "Archive Key sign-out recorded by name and hour in register"
+    },
+    {
+      "entity": "obj-archive-key",
+      "attribute": "sign_out_and_physical",
+      "quote": "The key caught the light like a small coin. He did not look at her, only lifted it and said, \"You'll need to sign for it.\"",
+      "value": "Archive Key signed out on request; physical description"
+    },
+    {
+      "entity": "obj-folio",
+      "attribute": "observed_anomaly",
+      "quote": "On the page something had been altered. It was the sort of thing the archives taught you to feel before you read: ink density like tide marks, a careful crossing-out in a column where names should be even, and a faint, scoured smear at the margin as if someone had tried to breathe an erasure into being.",
+      "value": "folio page shows crossing-out, marginal scouring, and cramped added marginalia"
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "requested_headmistress_confrontation",
+      "quote": "Rue found the deflection like a hand brushing dust from a ledger page. \"I will speak with the Headmistress,\" she said.",
+      "value": "Rue intends to speak with the Headmistress about the discrepancy"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "evasive_response_pattern",
+      "quote": "\"The Folio is consulted when obligations run their course. The Ten-Year term is a crucible, Rue. Those who reach its end are rare because the house's work is not casual; it is a shaping. Records are kept and reviewed; departures are accounted for when there is cause for them.\"",
+      "value": "Headmistress deflects with institutional rhetoric and frames Ten-Year as crucible; evasive pattern reaffirmed"
+    }
+  ],
+  "presentEntities": [
+    "char-rue",
+    "loc-ink-room",
+    "obj-folio",
+    "obj-archive-key",
+    "char-headmistress"
+  ],
+  "promises": [],
+  "paysOff": []
+}

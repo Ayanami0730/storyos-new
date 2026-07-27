@@ -1,0 +1,16 @@
+pairId: char-derek--obj-clockwork
+participants:
+  - char-derek
+  - obj-clockwork
+phases:
+  - index: 1
+    relation: suspicious_link_via_skill_and_access
+    fromScene: s-003
+    toScene: null
+    transition: Derek had the skill the maker's nick suggested and the means to make
+      a device like this. He also had the ladder opportunity implied by the
+      scuff on the rung and the hatch abrasion.
+    source:
+      scene: s-003
+      span: L11-L14
+openQuestions: []

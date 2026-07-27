@@ -2,4 +2,7 @@ id: loc-hospital-ward
 sketch: Wartime Hospital Ward — makeshift medical wing where injured were tended
   and where improvised mass treatment or burials took place; the site of ledger
   evidence.
-first_seen: null
+notes:
+  - "Introduced in s-009: ledger with torn pages and smudged ink; burial slips
+    tucked in; staff cautious about naming; ward used for testimony not rites."
+first_seen: s-009

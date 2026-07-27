@@ -1,0 +1,18 @@
+pairId: char-mercy-chan--loc-wet-market
+participants:
+  - char-mercy-chan
+  - loc-wet-market
+phases:
+  - index: 1
+    relation: investigator-to-place
+    fromScene: s-007
+    toScene: null
+    transition: Mercy moves through the wet market to locate tokens and photographs
+      that may connect to the story scroll and ledgers; she purchases a faded
+      photograph and secures it to her kit.
+    asymmetry: Mercy treats the market as a source of objects and leads; the market
+      remains neutral.
+    source:
+      scene: s-007
+      span: L1-L30
+openQuestions: []

@@ -1,0 +1,16 @@
+pairId: char-evelyn--obj-watch
+participants:
+  - char-evelyn
+  - obj-watch
+phases:
+  - index: 1
+    relation: held-at-death
+    fromScene: s-001
+    toScene: null
+    transition: Her hand still clutched an engraved pocket watch; its hands had
+      stopped at 9:07, and the case bore a hairline puncture and a faint film of
+      oil.
+    source:
+      scene: s-001
+      span: L6-L8
+openQuestions: []

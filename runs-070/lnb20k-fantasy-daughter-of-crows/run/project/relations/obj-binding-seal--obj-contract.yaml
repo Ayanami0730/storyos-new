@@ -1,0 +1,17 @@
+pairId: obj-binding-seal--obj-contract
+participants:
+  - obj-binding-seal
+  - obj-contract
+phases:
+  - index: 1
+    relation: marginal_binding_evidence
+    fromScene: s-008
+    toScene: null
+    transition: A folded marginal strip in an older Contract containing the single
+      word 'tethering' suggests a linkage between margin clauses and the Binding
+      Seal's enforcement role; margins may house binding phrases that the Seal
+      enacts.
+    source:
+      scene: s-008
+      span: L1-L12
+openQuestions: []

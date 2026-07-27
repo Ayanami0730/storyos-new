@@ -1,0 +1,44 @@
+{
+  "sceneId": "s-008",
+  "claims": [
+    {
+      "entity": "obj-contract",
+      "attribute": "marginal_note_tethering_found",
+      "quote": "She eased it free. The letters were cramped and the ink had pooled in tiny rivers where a later hand had gone back and tried to scrape the stroke. In the seam she could make out a single, breath-sized phrase—one word pressed into the margin like a thumbprint.\n\n\"tethering.\"",
+      "value": "marginal note 'tethering' found folded into seam near witness line on an old Contract"
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "memory_of_signing_willingly",
+      "quote": "She had signed willingly; she had believed in the roof and the trade and in the promise that a counted life could be steadier than the one she left behind.",
+      "value": "Rue remembers willingly signing the Contract"
+    },
+    {
+      "entity": "obj-binding-seal",
+      "attribute": "sensory_description_recalled",
+      "quote": "Now she eased the leather packet open and the smell found her first: beeswax and iron and a bitter tang that the memory of signing had kept like a bruise.",
+      "value": "Rue recalls Binding Seal scent: beeswax and bitter iron tang"
+    },
+    {
+      "entity": "char-loren",
+      "attribute": "partial_explanation_of_tethering",
+      "quote": "\"It ties people to an obligation of service and craft,\" he said, the answer a pared-down fact and not a ritual. \"What it costs depends on what the house logs against a name. Often it's time. Often it's trade. It is rarely what someone thinks when they sign: a neat exchange of bread for hours.\"",
+      "value": "Loren gives partial explanation: tethering ties people to obligation; cost varies and is tracked in house logs, often time or trade"
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "moral_fog_increases",
+      "quote": "The moral fog that had softened her first choice thickened; she would have to reckon with the cost of a tether she had agreed to without seeing its full length.",
+      "value": "Rue's moral uncertainty increases on discovering tethering note"
+    }
+  ],
+  "presentEntities": [
+    "char-rue",
+    "obj-contract",
+    "obj-binding-seal",
+    "loc-ink-room",
+    "char-loren"
+  ],
+  "promises": [],
+  "paysOff": []
+}

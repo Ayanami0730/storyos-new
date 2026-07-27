@@ -27,7 +27,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { createWriteStream } from "node:fs";
+import { createWriteStream, existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -106,10 +106,15 @@ async function stateOf(task: BatchTask): Promise<TaskState> {
   const summary = await readJson(path.join(dir, "run", "summary.json"));
   const lock = await readJson(path.join(dir, "run", "run.lock"));
   const lockPid = typeof lock?.pid === "number" ? lock.pid : null;
+  // `HEAD` exists as soon as the index is initialised, which is before the first
+  // scene and long before a summary. It is the earliest durable evidence that a
+  // process worked in this directory, and after a graceful kill it is the only one.
+  const hasIndex = existsSync(path.join(dir, "run", "project", "HEAD"));
   return classify({
     summary,
     lockPid,
     lockHolderAlive: lockPid !== null && alive(lockPid),
+    hasIndex,
   });
 }
 

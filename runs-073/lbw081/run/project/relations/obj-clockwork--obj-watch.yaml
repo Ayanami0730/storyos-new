@@ -1,0 +1,25 @@
+pairId: obj-clockwork--obj-watch
+participants:
+  - obj-clockwork
+  - obj-watch
+phases:
+  - index: 1
+    relation: shares_oil_signature_with
+    fromScene: s-002
+    toScene: null
+    transition: The oil on its plates matched the smudge on the watch-case Clara—no,
+      Evelyn—had been holding.
+    source:
+      scene: s-002
+      span: L4-L5
+  - index: 2
+    relation: shares_oil_signature_with
+    fromScene: s-003
+    toScene: null
+    transition: Oil had seeped into the nick and stained the edge of the dial
+      plate... the puncture and the oil sat where a driven rod, delivered with a
+      short, hard thrust, would meet metal.
+    source:
+      scene: s-003
+      span: L5-L10
+openQuestions: []

@@ -1,4 +1,8 @@
 id: loc-wet-market
 sketch: Wet Market — busy market at the Walled City’s edge where goods and
   gossip pass; a scene of trade in tokens, including the family photo.
-first_seen: null
+notes:
+  - "Introduced in s-007: wet fish and frying oil smells, tarps overhead casting
+    green-brown light; stalls selling old things (postcards, talismans, a vendor
+    with a tin of photographs)."
+first_seen: s-007

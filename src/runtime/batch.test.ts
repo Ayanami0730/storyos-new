@@ -126,14 +126,16 @@ describe("classifying what is on disk", () => {
       summary: { fatal: null, scenes_committed: 4, words: 3046 },
       lockPid: null,
       lockHolderAlive: false,
+      hasIndex: true,
     });
     assert.deepEqual(state, { kind: "done", words: 3046, committed: 4 });
   });
 
   it("calls an untouched directory fresh", () => {
-    assert.deepEqual(classify({ summary: null, lockPid: null, lockHolderAlive: false }), {
-      kind: "fresh",
-    });
+    assert.deepEqual(
+      classify({ summary: null, lockPid: null, lockHolderAlive: false, hasIndex: false }),
+      { kind: "fresh" },
+    );
   });
 
   /**
@@ -142,9 +144,41 @@ describe("classifying what is on disk", () => {
    * the event that makes resuming necessary.
    */
   it("treats a stale lock with no summary as incomplete, not as protected", () => {
-    const state = classify({ summary: null, lockPid: 4242, lockHolderAlive: false });
+    const state = classify({ summary: null, lockPid: 4242, lockHolderAlive: false, hasIndex: false });
     assert.equal(state.kind, "incomplete");
     assert.match((state as { why: string }).why, /killed/);
+  });
+
+  /**
+   * The gap the stale-lock case above does not cover, and it cost us a run.
+   *
+   * A *graceful* kill releases its lock — that is the shutdown path working — so
+   * after `SIGTERM` there is no lock and no summary, and the only remaining
+   * evidence that anything happened is the index on disk. Both 20k runs were
+   * stopped this way, both released their locks correctly, and the batch then
+   * classified them `fresh`: never attempted. `runTask` only deletes a directory
+   * it believes is incomplete, so the rerun started on top of the abandoned
+   * attempt's index, HEAD, transcripts and four committed scenes. It came out
+   * clean only because the second attempt went further and overwrote the same
+   * paths; a shorter one would have left the first attempt's later scenes on disk,
+   * and `story.md` is assembled from what is on disk.
+   */
+  it("treats a released lock with an index and no summary as incomplete", () => {
+    const state = classify({
+      summary: null,
+      lockPid: null,
+      lockHolderAlive: false,
+      hasIndex: true,
+    });
+    assert.equal(state.kind, "incomplete");
+    assert.match((state as { why: string }).why, /graceful shutdown/);
+  });
+
+  it("still calls a directory with no index at all fresh", () => {
+    assert.deepEqual(
+      classify({ summary: null, lockPid: null, lockHolderAlive: false, hasIndex: false }),
+      { kind: "fresh" },
+    );
   });
 
   it("leaves a directory alone while a live process holds it", () => {
@@ -154,6 +188,7 @@ describe("classifying what is on disk", () => {
       summary: { fatal: null, scenes_committed: 4, words: 3046 },
       lockPid: 999,
       lockHolderAlive: true,
+      hasIndex: true,
     });
     assert.deepEqual(state, { kind: "held", pid: 999 });
   });
@@ -163,6 +198,7 @@ describe("classifying what is on disk", () => {
       summary: { fatal: "Error: gateway unreachable", scenes_committed: 0, words: 0 },
       lockPid: null,
       lockHolderAlive: false,
+      hasIndex: true,
     });
     assert.equal(state.kind, "incomplete");
     assert.match((state as { why: string }).why, /ended fatally/);
@@ -178,6 +214,7 @@ describe("classifying what is on disk", () => {
       summary: { fatal: null, scenes_committed: 0, words: 0 },
       lockPid: null,
       lockHolderAlive: false,
+      hasIndex: true,
     });
     assert.equal(state.kind, "incomplete");
     assert.match((state as { why: string }).why, /0 committed scene/);

@@ -1,0 +1,68 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "entity": "obj-clockwork",
+      "attribute": "one_shot_mechanism",
+      "quote": "The cam moved with an economy that suggested a deliberate, single action rather than a continuous one; the push-rod snapped out once in a blunt, decisive motion.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-clockwork",
+      "attribute": "push_rod_travel_short_distance",
+      "quote": "...the push-rod snapped out once in a blunt, decisive motion.",
+      "value": "short_distance"
+    },
+    {
+      "entity": "obj-watch",
+      "attribute": "puncture_location_and_nature",
+      "quote": "The hairline puncture was at a flank, neat enough to be made by a narrow push — not a hammer, not a fall.",
+      "value": "puncture_by_narrow_push"
+    },
+    {
+      "entity": "obj-watch",
+      "attribute": "oil_in_puncture_and_seam",
+      "quote": "Oil had seeped into the nick and stained the edge of the dial plate.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-note",
+      "attribute": "scrap_is_schedule_shape_not_transcribed",
+      "quote": "The layout was the thing: columnar marks, a repeated small loop that read like a tally, and a series of numerals or near-numerals at regular intervals. It was not a letter of complaint or a shopping list. It was a timetable — a schedule pared down to shorthand. I could not, in good faith, recite its letters here; the full transcription belonged to the promise already filed.",
+      "value": "schedule_shape_only"
+    },
+    {
+      "entity": "loc-study",
+      "attribute": "temporal_match_watch_and_mechanism",
+      "quote": "The watch had stopped at 9:07; that fixed a moment you couldn't fit a long ritual around. The clockwork's wound state and its cam throw suggested a short delay between winding and action — a delay you could produce by winding, placing, and then stepping away inside the span of a few minutes.",
+      "value": "true"
+    },
+    {
+      "entity": "char-derek",
+      "attribute": "alibi_fragile_due_to_access_and_skill",
+      "quote": "Derek had the skill the maker's nick suggested and the means to make a device like this. He also had the ladder opportunity implied by the scuff on the rung and the hatch abrasion.",
+      "value": "true"
+    },
+    {
+      "entity": "char-aldo",
+      "attribute": "requested_actions_after_reconstruction",
+      "quote": "Rao asked the practical question next—photographs, measurements, a warrant to see the shed—things that make hypotheses accountable. I wrote the items down: more photographs of the puncture; controlled unwinding of the clockwork in a lab; a look at Derek's bench.",
+      "value": "photograph_puncture;controlled_unwinding;inspect_derek_bench"
+    }
+  ],
+  "presentEntities": [
+    "char-aldo",
+    "char-derek",
+    "char-henry",
+    "insp-rao",
+    "loc-study",
+    "loc-cellar",
+    "obj-clockwork",
+    "obj-watch",
+    "obj-note",
+    "obj-filing-mark",
+    "obj-coal-hatch"
+  ],
+  "promises": [],
+  "paysOff": []
+}

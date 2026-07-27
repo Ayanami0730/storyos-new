@@ -123,3 +123,99 @@ describe("ask_context_builder", () => {
     assert.deepEqual(asked, ["q2"]);
   });
 });
+
+describe("add_context_item", () => {
+  /**
+   * The defect this pins, from `runs-070/lnb20k-fantasy-the-girl-with-a-thousand-faces`.
+   *
+   * The builder added 93 items on that run and four cited no file at all, two of
+   * them literally `source: "synthetic"`. Their contents were invented world
+   * material handed to the writer as established — *"Canonical behaviors when a
+   * ritual 'goes wrong'…"*, *"Practical use in scene: Mercy finds a faded portrait
+   * in a token stall…"* — and nothing in the index says either. The tool checked
+   * only that `source` was non-empty, so a fabricated provenance passed.
+   *
+   * The channel for "the index does not contain this" already existed: `note_gap`.
+   * The difference is where the invention gets recorded — a gap tells the writer it
+   * is free and what it then invents lands in the state delta as a decision, where
+   * a composed item is defended by every later scene as though established.
+   */
+  const bus = () => {
+    const b = new BuilderBus();
+    b.open("s-001");
+    b.checkSourcesWith((s) => s.startsWith("objects/") || s.startsWith("novel/"));
+    return b;
+  };
+
+  const add = (b: BuilderBus) => toolNamed(b.tools(), "add_context_item");
+
+  it("refuses an item whose source is not a file in the project", async () => {
+    const b = bus();
+    const out = textOf(
+      await add(b).execute("c1", {
+        id: "s001-sensory",
+        priority: "P4",
+        source: "synthetic",
+        content: "Smell: damp and mildew, frying oil, incense low on still days.",
+      } as never),
+    );
+    assert.match(out, /is not a file in this project/);
+    assert.match(out, /note_gap/);
+    assert.equal(b.contribution().items.length, 0);
+  });
+
+  it("accepts an item that cites a real path", async () => {
+    const b = bus();
+    const out = textOf(
+      await add(b).execute("c1", {
+        id: "s001-knife",
+        priority: "P3",
+        source: "objects/obj-spirit-knife.yaml",
+        content: "A short iron blade, handle wrapped in red thread.",
+      } as never),
+    );
+    assert.doesNotMatch(out, /rejected/);
+    assert.equal(b.contribution().items.length, 1);
+  });
+
+  it("tolerates a line range or a note after the path", async () => {
+    // Refusing these would push the builder towards bare paths and lose the span,
+    // which is the part that makes a citation checkable.
+    const b = bus();
+    for (const source of [
+      "objects/obj-spirit-knife.yaml:12-18",
+      "novel/chapters/ch-01/scenes/s-001.md (closing paragraph)",
+    ]) {
+      const out = textOf(
+        await add(b).execute("c1", {
+          id: `item-${source.length}`,
+          priority: "P3",
+          source,
+          content: "something real",
+        } as never),
+      );
+      assert.doesNotMatch(out, /rejected/, source);
+    }
+  });
+
+  it("still refuses P0 and P1, and an empty source", async () => {
+    const b = bus();
+    assert.match(
+      textOf(
+        await add(b).execute("c1", {
+          id: "x",
+          priority: "P0",
+          source: "objects/obj-spirit-knife.yaml",
+          content: "c",
+        } as never),
+      ),
+      /priority must be P2, P3 or P4/,
+    );
+    assert.match(
+      textOf(
+        await add(b).execute("c2", { id: "x", priority: "P3", source: "  ", content: "c" } as never),
+      ),
+      /source is required/,
+    );
+  });
+});

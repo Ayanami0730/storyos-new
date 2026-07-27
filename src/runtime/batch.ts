@@ -151,17 +151,43 @@ export function classify(input: {
   readonly summary: Record<string, unknown> | null;
   readonly lockPid: number | null;
   readonly lockHolderAlive: boolean;
+  /**
+   * Whether an index already exists in the run directory.
+   *
+   * Needed because a *graceful* kill releases its lock, and the lock was the only
+   * evidence that anything had ever started. Measured: the two 20k runs were
+   * stopped with `SIGTERM`, each released its lock correctly, and the batch then
+   * classified them `fresh` — never attempted — so `runTask` did not delete the
+   * directory, and the rerun started on top of the abandoned attempt's index,
+   * HEAD, transcripts and four committed scenes. It happened to come out clean
+   * only because the new run reached scene 8 and overwrote the same paths; a
+   * shorter second attempt would have left the earlier attempt's later scenes
+   * behind, and `story.md` is assembled from what is on disk.
+   *
+   * A stale lock and a half-written index are the same fact — work started and
+   * did not finish — and only one of them survives a clean shutdown.
+   */
+  readonly hasIndex: boolean;
 }): TaskState {
   if (input.lockPid !== null && input.lockHolderAlive) {
     return { kind: "held", pid: input.lockPid };
   }
   if (input.summary === null) {
-    return input.lockPid === null
-      ? { kind: "fresh" }
-      : {
+    if (input.lockPid !== null) {
+      return {
+        kind: "incomplete",
+        why: `a stale lock from pid ${input.lockPid} and no summary — the run was killed`,
+      };
+    }
+    return input.hasIndex
+      ? {
           kind: "incomplete",
-          why: `a stale lock from pid ${input.lockPid} and no summary — the run was killed`,
-        };
+          why:
+            "an index exists but no summary — a previous attempt started and did not finish. " +
+            "Its lock is gone, which is what a graceful shutdown looks like, so the directory " +
+            "is being rebuilt rather than appended to.",
+        }
+      : { kind: "fresh" };
   }
 
   const fatal = input.summary.fatal;

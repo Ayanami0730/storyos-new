@@ -1,0 +1,56 @@
+{
+  "sceneId": "s-009",
+  "claims": [
+    {
+      "entity": "loc-hospital-ward",
+      "attribute": "sensory_description",
+      "quote": "The ward smelled of attempt and failure: boiled rice turned sour, the sharp antiseptic edge of diluted iodine, and the heavy undertone of damp linen folded too long. Oil lamps fought the dim; a single barred window offered a strip of false daylight that made dust hang like confession.",
+      "value": "sour boiled rice, antiseptic iodine, damp linen; dim oil lamps; barred window"
+    },
+    {
+      "entity": "obj-medical-ledger",
+      "attribute": "condition",
+      "quote": "At the central table, a battered ledger sat under a clumsy weight of ration tins. Its cover was loose and the pages inside had the fatigue of being opened and closed in the dark. Mercy reached for it with the careful respect she gave objects that had been made to hold names. The ink had run in places and columns blurred into one another; some entries ended mid-line where a pen had been lifted in a hurry. One page had been torn away cleanly and the glue along the spine showed the ragged gap.",
+      "value": "medical ledger battered; ink runs; mid-line cutoffs; torn-out page"
+    },
+    {
+      "entity": "char-hospital-orderly",
+      "attribute": "testimony_summary",
+      "quote": "\"We wrote what we could,\" he said, as if speaking the ledger’s title could unburden it. \"Some nights there were too many. We buried in the side yard. Quiet. Quick. Not like a funeral—just… puttings away.\"",
+      "value": "orderly reports hurried burials in side yard, minimal records, reluctance to name specifics"
+    },
+    {
+      "entity": "obj-medical-ledger",
+      "attribute": "burial_slips_presence",
+      "quote": "Beside it a narrow column of burial slips—thin rough paper—had been tucked in and then half-removed.",
+      "value": "burial slips tucked and half-removed present with ledger"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "investigative_action",
+      "quote": "She transcribed the ledger's visible fragments—a transcription of a smudged line, the stub of a burial slip, a note that a page had been torn. She wrapped the ledger in a cloth and slid it carefully into a locked cup in the staff room; she transcribed the fragile fragment into her own notebook and tucked the paper into her kit.",
+      "value": "Mercy transcribes visible ledger fragments, secures ledger, and takes a transcription for cross-referencing (chain of custody recorded)"
+    },
+    {
+      "entity": "char-hospital-orderly",
+      "attribute": "interview_guidance",
+      "quote": "\"If you ask people…\" the orderly said as she wrote, his voice low and practical. \"Don't ask them to remember in accused ways. Ask them to tell what they saw. Offer tea. Offer a cigarette. Don't tell them what you want. They protect themselves with silence.\"",
+      "value": "orderly advises Mercy on interviewing witnesses: gentle, non-accusatory questioning and small comforts"
+    },
+    {
+      "entity": "spirit-vengeful",
+      "attribute": "feeding_mechanism_confirmation",
+      "quote": "The ledger’s blanked names and missing pages were not only administrative failings; they were a social practice of survival—erasure as protection. That very erasure, she understood with a quiet dread, made the kind of wound that fed her enemy.",
+      "value": "erasure of records (smudges, torn pages) creates feeding ground for spirit-vengeful; suppression feeds spirit"
+    }
+  ],
+  "presentEntities": [
+    "char-mercy-chan",
+    "char-hospital-orderly",
+    "loc-hospital-ward",
+    "obj-medical-ledger",
+    "spirit-vengeful"
+  ],
+  "promises": [],
+  "paysOff": []
+}

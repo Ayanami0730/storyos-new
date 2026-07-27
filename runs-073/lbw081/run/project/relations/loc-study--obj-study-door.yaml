@@ -1,0 +1,15 @@
+pairId: loc-study--obj-study-door
+participants:
+  - loc-study
+  - obj-study-door
+phases:
+  - index: 1
+    relation: door_of
+    fromScene: s-001
+    toScene: null
+    transition: "People had gathered before I stepped over the threshold: ... The
+      heavy oak door's deadbolt had been slid from the inside."
+    source:
+      scene: s-001
+      span: L2-L2
+openQuestions: []

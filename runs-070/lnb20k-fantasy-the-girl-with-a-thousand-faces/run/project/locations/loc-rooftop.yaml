@@ -1,4 +1,7 @@
 id: loc-rooftop
 sketch: Rooftop — stitched-together roof gardens and laundry lines that offer
   rare daylight and a place for midnight rites and private conversations.
-first_seen: null
+notes:
+  - "Introduced in s-008: mat laid on parapet, potted plants, laundry lines,
+    neighboring roofs kept torches low per Elders' counsel."
+first_seen: s-008

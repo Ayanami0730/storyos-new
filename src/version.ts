@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.7.3";
+export const VERSION = "0.7.4";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -46,6 +46,26 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.7.4",
+    note:
+      "the context-builder could invent packet material and cite nothing for it. `add_context_item` " +
+      "takes a `source` and checked only that it was non-empty, so a fabricated provenance passed. " +
+      "On the 20k run `lnb20k-fantasy-the-girl-with-a-thousand-faces` it added **93 items**, four of " +
+      "which cite no file at all — two literally `source: \"synthetic\"` — and their contents are " +
+      "invented world material handed to the writer as established: *\"Canonical behaviors when a " +
+      "ritual \'goes wrong\'…\"*, *\"Practical use in scene: Mercy finds a faded portrait in a token " +
+      "stall…\"*. The first calls itself canonical; the second stages the scene, which its own prompt " +
+      "forbids in as many words. A source must now resolve to a file in the project, and the refusal " +
+      "points at `note_gap` — which is the channel that already existed for this, and the difference " +
+      "is where the invention gets recorded: a gap tells the writer it is free and what it invents " +
+      "lands in the state delta as a decision, where a composed item is defended by every later " +
+      "scene as though established. Also: a run killed *gracefully* released its lock, so the batch " +
+      "classified it `fresh` — never attempted — and did not clear the directory; both 20k reruns " +
+      "started on top of the abandoned attempt\'s index, HEAD, transcripts and four committed " +
+      "scenes. It came out clean only because the second attempt went further and overwrote the " +
+      "same paths. An existing `HEAD` with no summary now means incomplete.",
+  },
   {
     version: "0.7.3",
     note:
