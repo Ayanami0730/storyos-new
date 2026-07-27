@@ -1,0 +1,44 @@
+{
+  "sceneId": "s-011",
+  "claims": [
+    {
+      "entity": "char-war-envoy",
+      "attribute": "presented_demands_schema",
+      "quote": "\"In time, claims will be made for bonds or levies; in time, support of manpower may be required. We expect counsel and an answer in the period given.\"",
+      "value": "Envoy presented schematic possible demands: bonds, levies, manpower"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "offered_shelter_and_kitchens",
+      "quote": "\"The Mercy Academy is a house of instruction and shelter,\" she said... \"We can muster kitchens, offer shelter, and keep neutrality within our walls for those under our charge. We will not give names of our girls as a commodity.\"",
+      "value": "Headmistress offers kitchens, shelter, neutrality; refuses to hand over names"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "promise_of_accounting",
+      "quote": "\"And we will account for what we can spare. We will offer kitchens and shelter as humanitarian assistance... Where civic claims ask for manpower, we will consider how best to meet obligations without breaking our trust to the house's charge.\"",
+      "value": "Headmistress promises to record and account for assistance; will use records in bargaining"
+    },
+    {
+      "entity": "collective-the-hundred",
+      "attribute": "apprentice_fear_uttered",
+      "quote": "A young apprentice—no more than a handful of years beneath the Academy's roof—stood before the Headmistress as if the Hall's ritual let her speak. Her voice trembled, small and raw: \"If they come for people, what will we do? What will happen to those with ten years left?\"",
+      "value": "An apprentice publicly asked about safety for those nearing Ten-Year term"
+    },
+    {
+      "entity": "loc-great-hall",
+      "attribute": "negotiation_effects_on_operations",
+      "quote": "A clerk moved quietly, taking notes. The Hall's machinery engaged itself with the practical speed of a practiced loom: lists were pulled, rotas rethought, kitchens inventoried.",
+      "value": "Negotiation triggered immediate administrative actions: lists, rota changes, inventories"
+    }
+  ],
+  "presentEntities": [
+    "char-war-envoy",
+    "char-headmistress",
+    "char-rue",
+    "loc-great-hall",
+    "collective-the-hundred"
+  ],
+  "promises": [],
+  "paysOff": []
+}

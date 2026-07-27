@@ -2,5 +2,10 @@ id: char-thomas-byrd
 name: thomas-byrd
 sketch: A 21-year-old servant at Harrow Manor. Skilled hands, steady, dignified;
   born nearby and quietly proud despite his low station.
-identity: {}
-provenance: {}
+identity:
+  appearance: Hands grey with oiled leather and earth; callused thumbs from rope
+    work; wears plain cloth pockets.
+  profession: grounds/servant, handles baskets, scullery deliveries
+provenance:
+  appearance: s-001
+  profession: s-001

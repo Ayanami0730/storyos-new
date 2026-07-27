@@ -15,4 +15,17 @@ phases:
     source:
       scene: s-004
       span: L1-L30
+  - index: 2
+    relation: caregiver-investigator
+    fromScene: s-011
+    toScene: null
+    transition: Mercy and the refugee work together to recover artifacts from the
+      collapsed stairwell; Mercy secures items and conducts investigative
+      excavation while the refugee and neighbors witness; Mercy guides the
+      refugee through the retrieval and preservation process.
+    asymmetry: Mercy leads the excavation and preservation; the refugee participates
+      and provides the impetus and emotional linkage.
+    source:
+      scene: s-011
+      span: L1-L40
 openQuestions: []

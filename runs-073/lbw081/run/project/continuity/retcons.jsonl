@@ -3,3 +3,4 @@
 {"scene":"s-002","attribute":"file_presence","entity":"novel/chapters/ch-01/scenes/s-002.md","from":"absent","to":"committed draft exists","reason":"Committed scene s-002 as drafted in .writer/drafts/s-002.md per orchestrator instruction."}
 {"scene":"s-002","entity":"novel/chapters/ch-01/scenes/s-002.md","attribute":"file_presence","from":"absent","to":"committed draft exists","reason":"Committing scene s-002 as drafted in .writer/drafts/s-002.md per orchestrator instruction"}
 {"scene":"s-003","entity":"novel/chapters/ch-01/scenes/s-003.md","attribute":"file_presence","from":"absent","to":"committed draft exists","reason":"Committing scene s-003 from .writer/drafts/s-003.md as instructed by orchestrator."}
+{"scene":"s-004","entity":"novel/chapters/ch-01/scenes/s-004.md","attribute":"file_presence","from":"absent","to":"committed draft exists","reason":"Committing scene s-004 from .writer/drafts/s-004.md as instructed by orchestrator."}

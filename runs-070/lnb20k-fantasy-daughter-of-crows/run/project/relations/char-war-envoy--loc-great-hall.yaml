@@ -1,0 +1,15 @@
+pairId: char-war-envoy--loc-great-hall
+participants:
+  - char-war-envoy
+  - loc-great-hall
+phases:
+  - index: 1
+    relation: diplomatic_notice
+    fromScene: s-010
+    toScene: null
+    transition: War Envoy delivered a formal notice at the Great Hall and left a
+      folded parchment setting a ten-day deadline for a formal answer.
+    source:
+      scene: s-010
+      span: L8-L18
+openQuestions: []

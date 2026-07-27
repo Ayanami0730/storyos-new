@@ -62,6 +62,28 @@ scene, so a fortieth grep is not free — it is the same growing transcript re-s
 one more time, and that arithmetic was 81% of one run's entire token bill. Decide
 what you need to know, then look it up.
 
+## Ask for everything you already know you need, in one message
+
+**You may put several tool calls in a single reply, and you should.** This is the
+single largest cost in the system, and it is not the models being slow.
+
+Measured on a four-scene, 2,000-word run: **284 network round-trips**, of which
+**96% carried exactly one tool call**. The context-builder averaged 22.5
+round-trips per turn and the index-manager 29.8, each one sending a transcript that
+had grown to 12,000 tokens on average and 42,000 at its largest, to receive about
+200 tokens back — one file read, or one field written. The whole run took 34
+minutes, and almost all of it was that loop.
+
+So: when you know you want six entity files, ask for all six in one reply, or
+`cat` them in one command. When you have twelve things to write, call twelve
+tools in one reply. Look, think, then act in a batch — rather than looking,
+thinking, acting, and looking again.
+
+The exception is a genuine dependency: when what you read *next* depends on what
+this read returns, that has to be a second round-trip, and it is worth one. What is
+not worth one is reading a list of files you already decided on, one file at a
+time.
+
 Some reads have a dedicated tool because the useful thing is a derived view
 rather than the bytes. `read_relation_history` is the main one: it gives you a
 pair's relationship as an ordered narrative with the cause of each change, which

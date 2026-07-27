@@ -1,0 +1,44 @@
+{
+  "sceneId": "s-010",
+  "claims": [
+    {
+      "entity": "char-war-envoy",
+      "attribute": "arrival_protocol_observed",
+      "quote": "They arrived modestly: a small boat at the quay, a party stepping ashore, coats buttoned against a wind that smelled of tar and iron. The War Envoy walked with the economy of someone who had been taught how to occupy space without wasting it.",
+      "value": "War Envoy arrived by boat and was received at the harbor; formal arrival observed"
+    },
+    {
+      "entity": "char-war-envoy",
+      "attribute": "notice_and_deadline",
+      "quote": "He placed a folded paper on the lectern... \"This is notice,\" he said. \"We will return in ten days for a formal answer.\"",
+      "value": "Envoy delivered notice with a ten-day deadline for formal answer"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "public_response_and_private_measure",
+      "quote": "The Headmistress listened... 'We take notice, and we will consider any terms in counsel. Mercy Academy serves not only its students but the city that keeps it. We will respond in kind to any legitimate need, within the bounds of our charge.'",
+      "value": "Headmistress responded publicly and measured private calculation noted by Rue"
+    },
+    {
+      "entity": "loc-great-hall",
+      "attribute": "harbor_vantage_description",
+      "quote": "Rue saw them from the west stairs, where the Great Hall's windows let the harbor in like a picture.",
+      "value": "Rue witnesses arrival from west stairs vantage; Great Hall windows provide view to harbor"
+    },
+    {
+      "entity": "loc-mercy-academy",
+      "attribute": "insulated_life_fractured",
+      "quote": "People began to move with a new cadence... The Academy's insulated life had been given a poke and its surface rippled into practical concern.",
+      "value": "The War Envoy's notice begins to fracture the Academy's insulated routine and triggers administrative responses"
+    }
+  ],
+  "presentEntities": [
+    "char-war-envoy",
+    "char-headmistress",
+    "loc-mercy-academy",
+    "loc-great-hall",
+    "char-rue"
+  ],
+  "promises": [],
+  "paysOff": []
+}

@@ -22,4 +22,14 @@ phases:
     source:
       scene: s-003
       span: L11-L14
+  - index: 3
+    relation: recognized_as_from_bench_of
+    fromScene: s-004
+    toScene: null
+    transition: Next I set the brass plate where everyone could see the tiny nick.
+      'I recognised this at once,' I said. ... Derek's hand went to his sleeve
+      as if to cover a tool.
+    source:
+      scene: s-004
+      span: L6-L6
 openQuestions: []

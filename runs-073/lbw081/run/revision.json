@@ -1,0 +1,146 @@
+{
+  "findings": [
+    {
+      "id": "f-5d9a4873",
+      "subtype": "abandoned_plot_elements",
+      "axis": "consistency",
+      "category": "timeline_plot_logic",
+      "tier": "negative-inference",
+      "validator": "global",
+      "severity": "warning",
+      "reasoning": "The two-line cipher on the scrap in Evelyn's hand will be transcribed for later analysis. was set up in s-001 and should have paid off by s-004; nothing in the span does",
+      "evidence": {
+        "quote": "The scrap bore a two-line cipher; I had not been given a transcription of its exact letters.",
+        "source": "s-001"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "pay off \"The two-line cipher on the scrap in Evelyn's hand will be transcribed for later analysis.\", or mark it deliberately open with a reason"
+      }
+    },
+    {
+      "id": "f-6869e9c9",
+      "subtype": "abandoned_plot_elements",
+      "axis": "consistency",
+      "category": "timeline_plot_logic",
+      "tier": "negative-inference",
+      "validator": "global",
+      "severity": "warning",
+      "reasoning": "Obtain a copy of Evelyn's ledger for inspection and to check for debts or payments. was set up in s-002 and should have paid off by s-004; nothing in the span does",
+      "evidence": {
+        "quote": "I closed my notebook and set a small list against the case: secure and photograph the clockwork, photograph the hatch and ladder, get access to Derek's bench and request a copy of Evelyn's ledger.",
+        "source": "s-002"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "pay off \"Obtain a copy of Evelyn's ledger for inspection and to check for debts or payments.\", or mark it deliberately open with a reason"
+      }
+    },
+    {
+      "id": "f-87678bdf",
+      "subtype": "forgotten_abilities",
+      "axis": "consistency",
+      "category": "characterization",
+      "tier": "negative-inference",
+      "validator": "global",
+      "severity": "warning",
+      "reasoning": "char-derek's true was established in s-003 and never used or removed anywhere in the span",
+      "evidence": {
+        "quote": "Derek had the skill the maker's nick suggested and the means to make a device like this. He also had the ladder opportunity implied by the scuff on the rung and the hatch abrasion.",
+        "source": "s-003"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "use true, explain why it does not apply, or revoke it in the text"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "rev-p-001",
+      "targetScenes": [
+        "s-001",
+        "s-002",
+        "s-003",
+        "s-004"
+      ],
+      "rationale": "unpaid promise from s-001",
+      "finding": {
+        "id": "f-5d9a4873",
+        "subtype": "abandoned_plot_elements",
+        "axis": "consistency",
+        "category": "timeline_plot_logic",
+        "tier": "negative-inference",
+        "validator": "global",
+        "severity": "warning",
+        "reasoning": "The two-line cipher on the scrap in Evelyn's hand will be transcribed for later analysis. was set up in s-001 and should have paid off by s-004; nothing in the span does",
+        "evidence": {
+          "quote": "The scrap bore a two-line cipher; I had not been given a transcription of its exact letters.",
+          "source": "s-001"
+        },
+        "editLocus": {
+          "kind": "unresolved",
+          "question": "pay off \"The two-line cipher on the scrap in Evelyn's hand will be transcribed for later analysis.\", or mark it deliberately open with a reason"
+        }
+      }
+    },
+    {
+      "id": "rev-p-002",
+      "targetScenes": [
+        "s-002",
+        "s-003",
+        "s-004"
+      ],
+      "rationale": "unpaid promise from s-002",
+      "finding": {
+        "id": "f-6869e9c9",
+        "subtype": "abandoned_plot_elements",
+        "axis": "consistency",
+        "category": "timeline_plot_logic",
+        "tier": "negative-inference",
+        "validator": "global",
+        "severity": "warning",
+        "reasoning": "Obtain a copy of Evelyn's ledger for inspection and to check for debts or payments. was set up in s-002 and should have paid off by s-004; nothing in the span does",
+        "evidence": {
+          "quote": "I closed my notebook and set a small list against the case: secure and photograph the clockwork, photograph the hatch and ladder, get access to Derek's bench and request a copy of Evelyn's ledger.",
+          "source": "s-002"
+        },
+        "editLocus": {
+          "kind": "unresolved",
+          "question": "pay off \"Obtain a copy of Evelyn's ledger for inspection and to check for debts or payments.\", or mark it deliberately open with a reason"
+        }
+      }
+    },
+    {
+      "id": "rev-cap-char-derek-alibi_fragile_due_to_access_and_skill",
+      "targetScenes": [
+        "s-004"
+      ],
+      "rationale": "unused established capability from s-003",
+      "finding": {
+        "id": "f-87678bdf",
+        "subtype": "forgotten_abilities",
+        "axis": "consistency",
+        "category": "characterization",
+        "tier": "negative-inference",
+        "validator": "global",
+        "severity": "warning",
+        "reasoning": "char-derek's true was established in s-003 and never used or removed anywhere in the span",
+        "evidence": {
+          "quote": "Derek had the skill the maker's nick suggested and the means to make a device like this. He also had the ladder opportunity implied by the scuff on the rung and the hatch abrasion.",
+          "source": "s-003"
+        },
+        "editLocus": {
+          "kind": "unresolved",
+          "question": "use true, explain why it does not apply, or revoke it in the text"
+        }
+      }
+    }
+  ],
+  "coverage": {
+    "scenes": 4,
+    "contractsChecked": 2,
+    "contractsOpen": 2,
+    "capabilitiesChecked": 1
+  }
+}

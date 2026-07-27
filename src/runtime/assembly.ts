@@ -506,6 +506,18 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
           "relations, then events, then rhythm, then promises. If you want a state attribute",
           "that is not in the vocabulary, what you have is an event.",
           "",
+          // Measured: 29.8 round-trips per commit, 97% of them one tool call, each
+          // re-sending an 8k transcript to write a single field. Ordering the
+          // partitions does not require a separate request per partition — the
+          // order is about what depends on what, and nothing here depends on the
+          // *result* of a write.
+          "**Order is not the same as one-at-a-time.** Read the prose and the delta, decide",
+          "everything you are going to record, and then issue those calls together in one",
+          "reply. Nothing you write depends on the result of another write, so a separate",
+          "request per field buys nothing and costs a full round-trip: measured, you averaged",
+          "29.8 round-trips per commit with 97% carrying a single call, and that is most of",
+          "the time a scene takes to land.",
+          "",
           "Only record what the prose supports. An index that improves on what was written",
           "will disagree with the manuscript, and nothing downstream can tell which is right.",
           "",

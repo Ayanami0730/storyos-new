@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.7.4";
+export const VERSION = "0.7.5";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -46,6 +46,22 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.7.5",
+    note:
+      "batching, because the wall clock was never the model's fault. Measured on a four-scene " +
+      "2,000-word run: **284 network round-trips**, **96% of them carrying exactly one tool " +
+      "call**. The context-builder averaged 22.5 round-trips per turn and the index-manager " +
+      "29.8, each one re-sending a transcript averaging 12,000 tokens (42,000 at its largest) " +
+      "to receive about 200 tokens back — one file read, or one field written. That is 3.07M " +
+      "billable tokens for 2,077 delivered words and 34 minutes of wall time, almost all of it " +
+      "that loop. Several tool calls per reply have always been legal and are used " +
+      "occasionally, so this is a prompt problem: `SHARED.md` now states the measurement and " +
+      "asks every role to decide first and then act in a batch, the builder\'s brief gives " +
+      "batched shell examples instead of one-per-line ones, and the index-manager is told that " +
+      "partition *order* does not imply one request per partition, since no write depends on " +
+      "the result of another.",
+  },
   {
     version: "0.7.4",
     note:
