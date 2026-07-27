@@ -344,6 +344,9 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
                 onRead: (entry) => {
                   reads.push({ role, scene: scene(), ...entry });
                   if (role === "context-builder") builderBus.noteRead();
+                  // Per role and per scene, so the review step can ask whether the
+                  // verifier consulted anything before concluding the scene is clean.
+                  bus.noteRead(role);
                 },
                 });
                 return [

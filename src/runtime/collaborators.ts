@@ -550,6 +550,21 @@ function craftBrief(finalScene: boolean): string {
 const VERIFIER_BRIEF_HEAD = [
   "Check this scene against the index and the scene card.",
   "",
+  "**The computed evidence below is what is already done, not what there is to do.** The",
+  "claim-by-claim comparison against canon covers the claims the writer *declared*, and the",
+  "defects that cost the most are the ones nobody declared: a character acting on something",
+  "they were never told, a span of time that cannot hold the events put in it, a place that",
+  "has quietly changed shape. None of those appears in a comparison of declared values,",
+  "because nothing declared them.",
+  "",
+  "This has to be said because handing you the comparison made it worse. Before it existed",
+  "you made nine index reads and filed five consistency findings on a scene; with it you made",
+  "**zero** reads and filed **zero**, and wrote only craft notes. Free evidence replaced the",
+  "expensive half of the job instead of freeing you to do it.",
+  "",
+  "So read the comparison first, and then go and look. Two or three reads is usually enough,",
+  "and `read_index` takes a list of paths so they cost one round-trip together.",
+  "",
   "**Start with the computed evidence below.** The claim-by-claim comparison against canon is",
   "assembled for you before you are called, so you do not have to recall what a file says: it",
   "names every claim this draft makes, what canon holds for it, and whether that is a conflict,",
@@ -748,12 +763,40 @@ function orchestratorNote(note: string | undefined): string {
 export class SceneToolBus {
   #capture: Capture = { prose: undefined, delta: undefined, findings: [], packetText: "" };
   #sceneId = "s-000";
+  /**
+   * Reads each role has made in this scene, so a check can ask whether the
+   * verifier looked at anything before concluding.
+   *
+   * Needed because the dossier had the opposite of its intended effect, and the
+   * numbers are unambiguous. Verifier round-trips per turn, and the tools used:
+   *
+   *   0.5.1 (cross-family)          3.2   write_findings ×18
+   *   0.6.2 (same family)           3.8   read ×2, read_index ×7, write_findings ×5
+   *   0.7.3 (same family + dossier) 1.8   write_craft_finding ×4, and nothing else
+   *
+   * Handing it the claim-by-claim comparison for free did not free it to do the
+   * expensive half; it replaced the expensive half. Reads went 9 → 0 and
+   * consistency findings went 5 → 0, on all three reruns. The dossier covers only
+   * what the writer *declared*, and the defect that matters most — a character
+   * acting on something nobody told them, a span of time that cannot hold its
+   * events — is invisible there precisely because nobody declared it.
+   */
+  #reads = new Map<AgentRole, number>();
 
   /** Begin a scene, returning the buffer the loop reads out of. */
   open(sceneId: string): Capture {
     this.#sceneId = sceneId;
     this.#capture = { prose: undefined, delta: undefined, findings: [], packetText: "" };
+    this.#reads = new Map();
     return this.#capture;
+  }
+
+  noteRead(role: AgentRole): void {
+    this.#reads.set(role, (this.#reads.get(role) ?? 0) + 1);
+  }
+
+  readsBy(role: AgentRole): number {
+    return this.#reads.get(role) ?? 0;
   }
 
   /** Registered once per agent at construction; valid for every later scene. */
@@ -967,6 +1010,42 @@ export function residentCollaborators(options: {
             );
           }
           throw error;
+        }
+
+        /**
+         * A verifier that consulted nothing has not checked the consistency half.
+         *
+         * One explicit second ask, on the same pattern as the silent-turn retry
+         * above and for a stronger reason: the failure here is not silence, it is a
+         * *plausible* result. Measured across three v0.7.3 runs, the verifier made
+         * **zero** reads and filed **zero** consistency findings on every scene,
+         * writing only craft notes — and "no contradictions" from an agent that read
+         * nothing is not a finding about the manuscript, it is a finding about the
+         * dossier it was handed.
+         *
+         * The cost is bounded at one extra turn per scene, and only on scenes where
+         * both conditions hold.
+         */
+        if (bus.readsBy("verifier") === 0 && capture.findings.every((f) => f.axis === "craft")) {
+          await residents.invoke(
+            "verifier",
+            [
+              `You reported no consistency defect on ${sceneId} without reading anything, so what`,
+              "you checked was the dossier and the draft in front of you. That covers the claims",
+              "the writer *declared*, and the defects that matter most are the ones nobody",
+              "declared: a character acting on something they were never told, a span of time that",
+              "cannot hold the events put in it, a place that has quietly changed shape.",
+              "",
+              "Look now, then answer. Two or three reads is enough and you can batch them in one",
+              "call: `read_index` takes a list of paths. The beliefs of each character present as",
+              "of this scene, the previous scenes under novel/chapters/ that this one refers back",
+              "to, and the promise ledger are where these live.",
+              "",
+              "If it is clean after looking, say so in a sentence and name what you checked — that",
+              "is a real and common result, and it means something now that it did not before.",
+            ].join("\n"),
+            { txid, caller: "orchestrator" },
+          );
         }
 
         if (silentTurn(turn) && capture.findings.length === 0) {

@@ -1,0 +1,345 @@
+[
+  {
+    "id": "fact-loc-hollow-house-condition",
+    "entity": "loc-hollow-house",
+    "attribute": "condition",
+    "value": "weatherbeaten",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-loc-driveway-condition",
+    "entity": "loc-driveway",
+    "attribute": "condition",
+    "value": "driveway flooded and impassable due to coastal storm",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-loc-kitchen-features",
+    "entity": "loc-kitchen",
+    "attribute": "features",
+    "value": "narrow, scoured sink, cracked window, jars with faded labels on high shelf",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-music-box-location",
+    "entity": "obj-music-box",
+    "attribute": "location",
+    "value": "sideboard in loc-kitchen",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-music-box-condition",
+    "entity": "obj-music-box",
+    "attribute": "condition",
+    "value": "scratched, paint flaked, dulled metal, dented corner",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-mrs-harper-location",
+    "entity": "char-mrs-harper",
+    "attribute": "location",
+    "value": "at gate next to loc-hollow-house",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-mrs-harper-utterance",
+    "entity": "char-mrs-harper",
+    "attribute": "utterance",
+    "value": "Mrs Harper makes a hedged, evasive remark about possibly winding the obj-music-box recently (not a definitive admission)",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-loc-attic-features",
+    "entity": "loc-attic",
+    "attribute": "features",
+    "value": "dusty, low ceiling, beams, stacked trunks, tarpaulin over trunk, tall dark mirror upright against wall",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-obsidian-mirror-position",
+    "entity": "obj-obsidian-mirror",
+    "attribute": "position",
+    "value": "upright against far wall in loc-attic",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-obsidian-mirror-feel",
+    "entity": "obj-obsidian-mirror",
+    "attribute": "feel",
+    "value": "wood cool, glass colder; mirror feels like depth rather than polish",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-locked-trunk-location",
+    "entity": "obj-locked-trunk",
+    "attribute": "location",
+    "value": "under tarp in loc-attic; iron-bound with black lock",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-locked-trunk-contents_hint",
+    "entity": "obj-locked-trunk",
+    "attribute": "contents_hint",
+    "value": "contains objects from a single summer (smell: lemon-sugar and rain)",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-rowan-intent",
+    "entity": "char-rowan",
+    "attribute": "intent",
+    "value": "intends to go to loc-basement with obj-journal and obj-brass-key; moving to perform ritual step sequence",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-rowan-physical_reaction",
+    "entity": "char-rowan",
+    "attribute": "physical_reaction",
+    "value": "visceral reaction to the music box's tune (old bruise sensation)",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-music-box-agency",
+    "entity": "obj-music-box",
+    "attribute": "agency",
+    "value": "can wind itself under house's agency (wound and played from downstairs)",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-music-box-sound",
+    "entity": "obj-music-box",
+    "attribute": "sound",
+    "value": "thin, watery lullaby; tinkling notes up through floorboards",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-loc-hollow-house-occupancy_implication",
+    "entity": "loc-hollow-house",
+    "attribute": "occupancy_implication",
+    "value": "house is not empty (implies presence of housebound agency/ghost)",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-journal-location",
+    "entity": "obj-journal",
+    "attribute": "location",
+    "value": "in loc-attic on top of obj-locked-trunk under tarp",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-journal-handwriting",
+    "entity": "obj-journal",
+    "attribute": "handwriting",
+    "value": "child's handwriting, small slanted, careful unevenness",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-journal-ritual_summary",
+    "entity": "obj-journal",
+    "attribute": "ritual_summary",
+    "value": "contains a literal ritual to be performed at shallow well in loc-basement using the lullaby and brass key",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-journal-ritual_steps",
+    "entity": "obj-journal",
+    "attribute": "ritual_steps",
+    "value": "1) bring lullaby to the well; 2) wind the box until key will not turn again; 3) lay brass key on well lip, say what was done, drop eyes",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-journal-ritual_cost_vague",
+    "entity": "obj-journal",
+    "attribute": "ritual_cost_vague",
+    "value": "ritual has a cost, unspecified",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-journal-provenance_name",
+    "entity": "obj-journal",
+    "attribute": "provenance_name",
+    "value": "attributed to Margaret (char-margaret-ghost) by signature in journal",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-brass-key-location",
+    "entity": "obj-brass-key",
+    "attribute": "location",
+    "value": "tucked into back pages of obj-journal in loc-attic; warm; shaft has a nick",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-brass-key-fits_trunk",
+    "entity": "obj-brass-key",
+    "attribute": "fits_trunk",
+    "value": "physically fits obj-locked-trunk; likely to turn cleanly",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-obsidian-mirror-trigger",
+    "entity": "obj-obsidian-mirror",
+    "attribute": "trigger",
+    "value": "mirror shows displaced reflection when narrator speaks aloud (reading the journal) or when music box plays; reflection is of attic as it was with a child present",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-obsidian-mirror-synchronisation",
+    "entity": "obj-obsidian-mirror",
+    "attribute": "synchronisation",
+    "value": "mirror's replay synchronises with obj-music-box sound with slight latency then exact alignment",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-music-box-role_in_ritual",
+    "entity": "obj-music-box",
+    "attribute": "role_in_ritual",
+    "value": "music box's tune (the lullaby) must be brought to the well and wound until it cannot turn further as part of ritual",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-loc-basement-place_named_in_ritual",
+    "entity": "loc-basement",
+    "attribute": "place_named_in_ritual",
+    "value": "the shallow well in loc-basement is the ritual's place",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-margaret-ghost-voice_established",
+    "entity": "char-margaret-ghost",
+    "attribute": "voice_established",
+    "value": "char-margaret-ghost's voice: patient, careful, childlike turning suddenly formal; fixated on being witnessed for how she died",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-rowan-action_taken",
+    "entity": "char-rowan",
+    "attribute": "action_taken",
+    "value": "takes obj-journal and obj-brass-key from attic and moves toward basement (intention to act on ritual)",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-loc-hollow-house-power_state",
+    "entity": "loc-hollow-house",
+    "attribute": "power_state",
+    "value": "power flickering and then out; no generator power",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-brass-key-used_to_open_trunk",
+    "entity": "obj-brass-key",
+    "attribute": "used_to_open_trunk",
+    "value": "used to open obj-locked-trunk; turned with small resistance and clean click",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-locked-trunk-hinges_and_smell",
+    "entity": "obj-locked-trunk",
+    "attribute": "hinges_and_smell",
+    "value": "hinges lazy and functional; smell of lemon-sugar and rain in contents",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-photo-1958-appearance",
+    "entity": "obj-photo-1958",
+    "attribute": "appearance",
+    "value": "black-and-white photo with three children on porch; water stains at corners; thumbprint smear bottom-right; back inscription partially illegible due to water damage",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-rowan-memory_reaction",
+    "entity": "char-rowan",
+    "attribute": "memory_reaction",
+    "value": "photo triggers partial, sensory flash that cannot be held; visceral nausea and disorientation",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-music-box-agency_playing",
+    "entity": "obj-music-box",
+    "attribute": "agency_playing",
+    "value": "obj-music-box plays on its own again under house's agency",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-margaret-ghost-presence_via_whisper",
+    "entity": "char-margaret-ghost",
+    "attribute": "presence_via_whisper",
+    "value": "char-margaret-ghost presence indicated by whispered syllable synchronising with music box's notes",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-loc-hollow-house-house_activity",
+    "entity": "loc-hollow-house",
+    "attribute": "house_activity",
+    "value": "house exhibits mechanical activity (pipes knocking, light stuttering) concurrent with supernatural events",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-journal-verbatim_instruction",
+    "entity": "obj-journal",
+    "attribute": "verbatim_instruction",
+    "value": "journal contains verbatim line used in scene as instruction to perform ritual",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-loc-attic-attic_hole",
+    "entity": "loc-attic",
+    "attribute": "attic_hole",
+    "value": "attic has a ragged hole near mirror sized to drop obj-brass-key through, splintered wood",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-obsidian-mirror-replay_triggered",
+    "entity": "obj-obsidian-mirror",
+    "attribute": "replay_triggered",
+    "value": "mirror triggered by reading verbatim line and music box; shows full sensory replay of final day",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-obsidian-mirror-replay_contents",
+    "entity": "obj-obsidian-mirror",
+    "attribute": "replay_contents",
+    "value": "replay shows who wound the music box (the narrator's mother) and the accident where Margaret fell into the shallow well",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-margaret-ghost-force_replay",
+    "entity": "char-margaret-ghost",
+    "attribute": "force_replay",
+    "value": "char-margaret-ghost forced replay and the adults used the book's ritual to seal the narrator's memory (mechanism of cover-up)",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-locked-trunk-household_response",
+    "entity": "obj-locked-trunk",
+    "attribute": "household_response",
+    "value": "household (adults) covered up the accident by tidying, weeping, and deliberately sealing the truth",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-rowan-ritual_performed",
+    "entity": "char-rowan",
+    "attribute": "ritual_performed",
+    "value": "char-rowan performed the ritual by winding the music box on the mirror, laying the brass key on the attic hole, saying Margaret's name, and dropping eyes",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-rowan-ritual_cost_specific",
+    "entity": "char-rowan",
+    "attribute": "ritual_cost_specific",
+    "value": "ritual cost: narrator permanently loses the memory of 'my father's laugh' (specific autobiographical memory) — replaced by an absence",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-margaret-ghost-freed",
+    "entity": "char-margaret-ghost",
+    "attribute": "freed",
+    "value": "char-margaret-ghost freed from attachment to the house and departs through attic rafters",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-music-box-role_confirmed",
+    "entity": "obj-music-box",
+    "attribute": "role_confirmed",
+    "value": "obj-music-box's lullaby triggers replay and is central to ritual; its provenance shown (wound by narrator's mother in replay)",
+    "source": "s-004"
+  }
+]

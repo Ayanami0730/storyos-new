@@ -1,0 +1,76 @@
+{
+  "sceneId": "s-004",
+  "claims": [
+    {
+      "entity": "obj-journal",
+      "attribute": "verbatim_instruction",
+      "quote": "\"Say her name, wind the song, pour the memory into the well.\"",
+      "value": "journal contains verbatim line used in scene as instruction to perform ritual"
+    },
+    {
+      "entity": "loc-attic",
+      "attribute": "attic_hole",
+      "quote": "There was a ragged hole in the attic floorboard near the mirror — the size a key could find — a scar of saw and splintered wood that had never been sanded out.",
+      "value": "attic has a ragged hole near mirror sized to drop obj-brass-key through, splintered wood"
+    },
+    {
+      "entity": "obj-obsidian-mirror",
+      "attribute": "replay_triggered",
+      "quote": "My voice scraped across the glass and the mirror answered by filling with sound. The attic's dark went thin and then tore: light from another day bled out of the glass, bringing heat and lemon‑sugar and the smell of old rain like a thing that had been simmered and put aside.",
+      "value": "mirror triggered by reading verbatim line and music box; shows full sensory replay of final day"
+    },
+    {
+      "entity": "obj-obsidian-mirror",
+      "attribute": "replay_contents",
+      "quote": "I saw the porch, the three children, and the adults — my mother, my father, and Mrs Harper — their faces small and panicked with the practical panic people get when they must choose between truth and consequence. The music box was in my mother's hands; she wound it with fingers that didn't look old enough to know what they were doing. The lullaby started, bright and thin, and a child — Margaret — slipped on the stones and fell into the shallow well.",
+      "value": "replay shows who wound the music box (the narrator's mother) and the accident where Margaret fell into the shallow well"
+    },
+    {
+      "entity": "char-margaret-ghost",
+      "attribute": "force_replay",
+      "quote": "They had used the book's words as a tool. The consequence was immediate and exact: something in me had been taken so that what happened could be kept from me.",
+      "value": "char-margaret-ghost forced replay and the adults used the book's ritual to seal the narrator's memory (mechanism of cover-up)"
+    },
+    {
+      "entity": "obj-locked-trunk",
+      "attribute": "household_response",
+      "quote": "When the replay finished the mirror showed them weeping and doing the tidy, practical things: buckets, towels, a blank face put on the photograph stack. They sealed the truth in silence because it was easier than explaining why a child had disappeared from a family's life.",
+      "value": "household (adults) covered up the accident by tidying, weeping, and deliberately sealing the truth"
+    },
+    {
+      "entity": "char-rowan",
+      "attribute": "ritual_performed",
+      "quote": "Margaret's small, patient voice threaded through the lullaby as I wound the box on the mirror until the key would not go further. I laid my brass on the floor's hole, said what the book told me — her name, blunt and careful — and let my eyes drop as though I were following instructions I had long been trained to obey.",
+      "value": "char-rowan performed the ritual by winding the music box on the mirror, laying the brass key on the attic hole, saying Margaret's name, and dropping eyes"
+    },
+    {
+      "entity": "char-rowan",
+      "attribute": "ritual_cost_specific",
+      "quote": "The moment the key touched the wood the house seemed to take a breath and the world in my head went clean in a way that left a new absence. Where my father's laugh used to live there was a white place that tasted faintly of salt and old tea. I reached for it and found only the shape of wanting.",
+      "value": "ritual cost: narrator permanently loses the memory of 'my father's laugh' (specific autobiographical memory) — replaced by an absence"
+    },
+    {
+      "entity": "char-margaret-ghost",
+      "attribute": "freed",
+      "quote": "Margaret's reflection stilled in the mirror and then, as if a tide had finally turned, she walked out of the glass and into the attic air. She looked at me long enough for the house to be satisfied, and then she moved through the rafters and was gone.",
+      "value": "char-margaret-ghost freed from attachment to the house and departs through attic rafters"
+    },
+    {
+      "entity": "obj-music-box",
+      "attribute": "role_confirmed",
+      "quote": "The lullaby unwound itself to the last bell. I stood with the journal under one arm and a gap where a laugh had been.",
+      "value": "obj-music-box's lullaby triggers replay and is central to ritual; its provenance shown (wound by narrator's mother in replay)"
+    }
+  ],
+  "presentEntities": [
+    "char-rowan",
+    "char-margaret-ghost",
+    "loc-attic",
+    "obj-obsidian-mirror",
+    "obj-journal",
+    "obj-music-box",
+    "obj-locked-trunk"
+  ],
+  "promises": [],
+  "paysOff": []
+}

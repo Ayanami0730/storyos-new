@@ -1,0 +1,56 @@
+{
+  "sceneId": "s-004",
+  "claims": [
+    {
+      "entity": "loc-schoolyard",
+      "attribute": "time_remaining_on_arrival",
+      "quote": "We stumbled into the schoolyard with five minutes left before the bell.",
+      "value": "5 minutes until bell at arrival"
+    },
+    {
+      "entity": "char-finn",
+      "attribute": "posture",
+      "quote": "Under the pine, Finn sat on his backpack, knees swinging, relief softening his face when he saw us.",
+      "value": "sitting on his backpack under the pine tree, knees swinging, relieved"
+    },
+    {
+      "entity": "char-ms-ramirez",
+      "attribute": "state_line",
+      "quote": "\"Knights of the Cafeteria,\" Ms. Ramirez called, smiling. \"Report to the lunch table, heroes.\"",
+      "value": "Ms. Ramirez bestows title 'Knights of the Cafeteria' with line: 'Report to the lunch table, heroes.'"
+    },
+    {
+      "entity": "char-mr-bennett",
+      "attribute": "location_in_scene",
+      "quote": "In the distance, near the far hedge by the bike rack, Mr. Bennett stood with his hands in his pockets, watching too; his face had that softened look we'd seen before, like a door left ajar.",
+      "value": "near the far hedge by the bike rack; hands in pockets; softened expression"
+    },
+    {
+      "entity": "loc-schoolyard",
+      "attribute": "bench_location",
+      "quote": "Goliath lay on the bench by the pine tree, head on his paws and watching us with the patient expression he'd used on the bridge.",
+      "value": "bench near the pine tree; Goliath watches from bench"
+    },
+    {
+      "entity": "char-mara",
+      "attribute": "ceremony_action",
+      "quote": "Mara stamped the back of our homework flag into Finn's hands and declared, as if reading from a scroll, \"By order of the King's Road, these knights are hereby charged to eat heartily and share snacks when necessary.\"",
+      "value": "Mara formally bestows playful charge, stamps flag into Finn's hands"
+    }
+  ],
+  "presentEntities": [
+    "char-eli",
+    "char-mara",
+    "char-finn",
+    "char-ms-ramirez",
+    "char-mr-bennett",
+    "char-goliath-dog",
+    "loc-schoolyard",
+    "loc-eli-house",
+    "obj-lunchbox",
+    "obj-quest-list",
+    "obj-cardboard-helmet"
+  ],
+  "promises": [],
+  "paysOff": []
+}

@@ -1,0 +1,137 @@
+{
+  "logline": "When Eli realizes he's forgotten his little brother Finn's lunch, he and his imaginative friend Mara turn the ordinary errand into a heroic Arthurian-style quest across 'moats' and 'toll keepers' — and discover that bravery, friendship, and small acts of responsibility can make a kingdom of the everyday.",
+  "entities": [
+    {
+      "id": "char-eli",
+      "sketch": "Eli (12) — cautious, practical, the story's first-person protagonist. Loyal to friends and quietly brave when pushed."
+    },
+    {
+      "id": "char-mara",
+      "sketch": "Mara (12) — Eli's best friend, incandescently imaginative and fearless in play; she turns ordinary tasks into quests."
+    },
+    {
+      "id": "char-finn",
+      "sketch": "Finn (7) — Eli's little brother, small and resolute; waiting at school with a forgotten lunch that sparks the quest."
+    },
+    {
+      "id": "char-mr-bennett",
+      "sketch": "Mr. Bennett (60s) — the grumpy, rule-minded neighbor who stands at the footpath like a tollkeeper; secretly soft-hearted."
+    },
+    {
+      "id": "char-goliath-dog",
+      "sketch": "Goliath — a hulking, slobbery golden retriever who guards the park and startles the children; more bark than bite."
+    },
+    {
+      "id": "char-ms-ramirez",
+      "sketch": "Ms. Ramirez (30s) — the patient, watchful schoolyard supervisor who notices small acts of courage and names them aloud."
+    },
+    {
+      "id": "loc-eli-house",
+      "sketch": "Eli's narrow, book-lined house on Maple Lane; the story opens in its cramped kitchen where the forgotten lunchbox is discovered."
+    },
+    {
+      "id": "loc-suburban-path",
+      "sketch": "The route from Eli's house to school: sidewalks, hedges, a cracked flagstone path that Mara renames 'The King's Road.'"
+    },
+    {
+      "id": "loc-bridge-over-creek",
+      "sketch": "A short wooden footbridge over a shallow creek that the children imagine as a moat; a plank is loose and the crossing becomes a test."
+    },
+    {
+      "id": "loc-schoolyard",
+      "sketch": "The tarmac playground and cluster of trees behind Roosevelt Elementary where Finn waits and the quest is completed."
+    },
+    {
+      "id": "obj-lunchbox",
+      "sketch": "The lunchbox (nicknamed the 'Crown of Crumbs') — Finn's sandwich and juice tucked inside; the quest's objective and a talisman of responsibility."
+    },
+    {
+      "id": "obj-cardboard-helmet",
+      "sketch": "A battered cardboard helmet that Mara fashions into a 'knight's helm' from a cereal box; it frames the children's play and courage."
+    },
+    {
+      "id": "obj-quest-list",
+      "sketch": "A scrawled list on the back of a homework sheet where Mara writes down 'quests' and rules — their contract for the day."
+    },
+    {
+      "id": "obj-compass-key",
+      "sketch": "A small toy compass attached to a keychain — half-broken, mostly decorative, it becomes their 'true north' when decisions are hard."
+    },
+    {
+      "id": "obj-rope",
+      "sketch": "A short length of climbing rope Eli carries on his bike (leftover from a family camping trip) used to improvise a safe crossing."
+    }
+  ],
+  "worldRules": [
+    "No supernatural magic: imaginative transformations are metaphor and shared play that change how characters perceive events, not physical reality (e.g., a creek is still a creek).",
+    "Characters' ages, relationships and basic facts must remain consistent across scenes (Eli = 12, Mara = 12, Finn = 7; Eli and Finn are siblings; Mara is Eli's friend).",
+    "Time flows realistically: the trip must fit a school morning's timeline; actions (walking, talking, rigging rope) take plausible amounts of time.",
+    "Consequences are real: injuries, lateness, or scolds can happen; bravery does not exempt characters from ordinary results.",
+    "All objects and locations introduced here are available for use later; no new characters, locations, or significant objects may be introduced without adding them to the index first."
+  ],
+  "scenes": [
+    {
+      "id": "s-001",
+      "intent": "Scene 1 (≈500 words): Establish the everyday task and set up the quest. In Eli's narrow kitchen (loc-eli-house) he discovers the forgotten obj-lunchbox while tying shoes. Introduce Eli (char-eli) and Mara (char-mara) as they decide to deliver the lunch to char-finn at loc-schoolyard. Mara reframes the errand as an Arthurian quest: the lunchbox becomes the 'Crown of Crumbs' and she draws a quick obj-quest-list, recruits the obj-cardboard-helmet and obj-compass-key, and names their roles. Tone: playful, intimate; theme hooks — loyalty and imagination.",
+      "presentEntities": [
+        "char-eli",
+        "char-mara",
+        "char-finn",
+        "loc-eli-house",
+        "loc-schoolyard",
+        "obj-lunchbox",
+        "obj-cardboard-helmet",
+        "obj-quest-list",
+        "obj-compass-key"
+      ],
+      "targetWords": 500
+    },
+    {
+      "id": "s-002",
+      "intent": "Scene 2 (≈500 words): The King's Road and the Tollkeeper. As they set out down loc-suburban-path from loc-eli-house, Mara layers myth over the ordinary: hedges become battlements and a cracked drain a dragon's lair. They meet char-mr-bennett stationed by his hedge like a tollkeeper who blocks the quickest route. Mr. Bennett demands reason (and offers a grumpy riddle). Eli must persuade him (showing civility and small moral courage) while Mara performs an outrageous flourish to distract or charm him. The scene builds tension: the price of passage, the stakes (getting to school on time), and a first test of bravery.",
+      "presentEntities": [
+        "char-eli",
+        "char-mara",
+        "char-mr-bennett",
+        "loc-suburban-path",
+        "loc-eli-house",
+        "obj-compass-key",
+        "obj-quest-list"
+      ],
+      "targetWords": 500
+    },
+    {
+      "id": "s-003",
+      "intent": "Scene 3 (≈500 words): The Moat and the Dragon. The path now forces them toward loc-bridge-over-creek from loc-eli-house. One plank is loose; the creek becomes a moat. The hulking char-goliath-dog appears, bounding toward them from the park (a 'dragon'). Eli must choose between retreat and improvisation: he fetches obj-rope (from his bike) and—guided by Mara's fearless instructions and the symbolic obj-cardboard-helmet—rigs a safe crossing, steadying himself while Mara distracts or soothes the dog. This is the story's emotional pivot: Eli's practical bravery is in equal measure to Mara's imaginative daring.",
+      "presentEntities": [
+        "char-eli",
+        "char-mara",
+        "char-goliath-dog",
+        "loc-bridge-over-creek",
+        "loc-eli-house",
+        "obj-rope",
+        "obj-cardboard-helmet",
+        "obj-lunchbox"
+      ],
+      "targetWords": 500
+    },
+    {
+      "id": "s-004",
+      "intent": "Scene 4 (≈500 words): The Schoolyard and the Coronation. They arrive at loc-schoolyard with minutes to spare. Finn (char-finn) is waiting, small and relieved; Ms. Ramirez (char-ms-ramirez) sees the exchange and calls the pair over. The children are recognized for their quick thinking and cooperation — Ms. Ramirez bestows a playful title ('Knights of the Cafeteria'). Mr. Bennett reappears in the distance with a softened expression; the dog watches from a bench. End on a quiet, honest moment: Eli realizes the task was not merely a run to school but a proving ground where simple bravery and friendship turned routine into story. Reinforce themes and leave a clear, warm resolution.",
+      "presentEntities": [
+        "char-eli",
+        "char-mara",
+        "char-finn",
+        "char-ms-ramirez",
+        "char-mr-bennett",
+        "char-goliath-dog",
+        "loc-schoolyard",
+        "loc-eli-house",
+        "obj-lunchbox",
+        "obj-quest-list",
+        "obj-cardboard-helmet"
+      ],
+      "targetWords": 500
+    }
+  ]
+}

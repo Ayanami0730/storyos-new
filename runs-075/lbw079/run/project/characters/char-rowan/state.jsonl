@@ -8,3 +8,6 @@
 {"scene":"s-003","attribute":"holds","value":"obj-journal","quote":"I folded the photos back into the trunk with fingers that felt borrowed and, with the journal under my arm and the key warm in my fist, I went down the cellar steps."}
 {"scene":"s-003","attribute":"holds","value":"obj-brass-key","quote":"I folded the photos back into the trunk with fingers that felt borrowed and, with the journal under my arm and the key warm in my fist, I went down the cellar steps."}
 {"scene":"s-003","attribute":"location","value":"loc-basement","quote":"I folded the photos back into the trunk with fingers that felt borrowed and, with the journal under my arm and the key warm in my fist, I went down the cellar steps."}
+{"scene":"s-004","attribute":"holds","value":"obj-journal","quote":"I stood with the journal under one arm and a gap where a laugh had been."}
+{"scene":"s-004","attribute":"location","value":"loc-attic","quote":"I stood with the journal under one arm and a gap where a laugh had been."}
+{"scene":"s-004","attribute":"condition","value":"has a new absence where my father's laugh used to be","quote":"I stood with the journal under one arm and a gap where a laugh had been."}

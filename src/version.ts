@@ -47,6 +47,37 @@ export const VERSION_HISTORY: readonly {
   readonly note: string;
 }[] = [
   {
+    version: "0.7.7",
+    note:
+      "the dossier had the opposite of its intended effect and this undoes it. Verifier " +
+      "round-trips per turn, with the tools used: **3.2** on 0.5.1 cross-family " +
+      "(`write_findings` x18), **3.8** on 0.6.2 same-family (`read` x2, `read_index` x7, " +
+      "`write_findings` x5), **1.8** on 0.7.3 with the dossier (`write_craft_finding` x4 and " +
+      "nothing else). Reads went 9 to 0 and consistency findings went 5 to 0, on all three " +
+      "reruns. Handing the verifier the claim-by-claim comparison for free did not free it to " +
+      "do the expensive half of its job; it replaced it. The comparison covers only what the " +
+      "writer *declared*, and the defects that cost most are the ones nobody declared — a " +
+      "character acting on something they were never told, a span of time that cannot hold its " +
+      "events. The brief now says this, with the numbers, and one explicit second ask fires on " +
+      "any scene where the verifier read nothing and filed no consistency finding: \"no " +
+      "contradictions\" from an agent that consulted nothing is a statement about the dossier, " +
+      "not about the manuscript.",
+  },
+  {
+    version: "0.7.6",
+    note:
+      "`read_index` takes a list of paths, charged as one read against the budget rather than " +
+      "one per file. The batching instruction added in 0.7.5 worked for one role and failed for " +
+      "another — the index-manager fell from 29.8 round-trips per turn to 4.0, the " +
+      "context-builder rose from 22.5 to 31.0 — and an instruction one role follows and another " +
+      "ignores is not a mechanism, so the signature is. Also corrects `probe-index-leak.py`, " +
+      "which had been comparing the manuscript against an index that index-manager writes " +
+      "*from* the manuscript: it now compares against `plan.json` alone, which predates all " +
+      "prose. Under the corrected measure the v0.7.1 `lbw081` leak is real at 5.1% and every " +
+      "other run is 0.0%, including the v0.7.3 rerun — so the guard removed the leak and the " +
+      "score did not move, and the leak was not the cause of that task\'s low score.",
+  },
+  {
     version: "0.7.5",
     note:
       "batching, because the wall clock was never the model's fault. Measured on a four-scene " +

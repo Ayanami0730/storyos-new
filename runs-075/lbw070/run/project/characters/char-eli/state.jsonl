@@ -15,3 +15,6 @@
 {"scene":"s-003","attribute":"holds","value":"obj-lunchbox","quote":"I had the Crown of Crumbs hugged to my side and the helmet shoved back so I could see, and for a second the moat felt very real."}
 {"scene":"s-003","attribute":"companions","value":"char-mara","quote":"Mara moved to the bank and made soft noises to Goliath, who watched us with the patience of a dog considering a puzzle."}
 {"scene":"s-003","attribute":"mood","value":"proud; scared; relieved","quote":"When I reached the far side and set the Crown of Crumbs down, my hands ached and felt proud for being honest about how scared I was."}
+{"scene":"s-004","attribute":"location","value":"loc-schoolyard","quote":"We stumbled into the schoolyard with five minutes left before the bell."}
+{"scene":"s-004","attribute":"mood","value":"reflective; satisfied; relieved","quote":"I put my hand to the dented metal lid of the lunchbox as if to check it was still there, and the weight of it was the same; what had changed was what the weight meant."}
+{"scene":"s-004","attribute":"companions","value":"char-mara","quote":"For a moment after he left, the three of us stood in a small triangle: Mara with her helmet crooked, me with jam still faint on my palm..."}
