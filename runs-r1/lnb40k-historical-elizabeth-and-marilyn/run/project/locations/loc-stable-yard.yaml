@@ -1,4 +1,7 @@
 id: loc-stable-yard
 sketch: "The castle's stable yard and service passages: where servants move and
   where public polish meets private industry."
-first_seen: null
+notes:
+  - Driver instructed to keep curtains drawn and hold the saloon in the shade in
+    s-004.
+first_seen: s-004

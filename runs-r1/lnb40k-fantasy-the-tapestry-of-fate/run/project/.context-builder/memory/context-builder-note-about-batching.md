@@ -1,8 +1,9 @@
 ---
-title: batch reads to reduce round-trips
-hook: batch reads: ask for all index files you need at once
+title: batch-reads-are-cheap
+hook: Batch reads: ask for everything you need in one call
 scope: project-convention
-source: s-002
-last_verified_at: 2026-07-27T17:11:00.526Z
+source: s-007
+last_verified_at: 2026-07-27T18:00:42.092Z
+expires_at: 2027-07-27T18:00:42.092Z
 ---
-Tried to be conservative but still made multiple read_index calls; remember to collect all desired paths in one read_index next time. When in doubt, list the scene file, location, characters present, and any directly referenced objects in a single call.
+Remind self and others to batch read_index calls: collect all files needed (entities, objects, locations, relations) in one read_index invocation to reduce round trips and token retransmission. Based on current build: requested 12 files at once and then used parallel tool calls to add items.

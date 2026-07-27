@@ -1,4 +1,9 @@
 id: loc-open-sea
 sketch: "The open sea between ports and dangers: mutable, full of currents,
   storms, and occasional supernatural phenomena shaped by peri handiwork."
-first_seen: null
+notes:
+  - "Scene s-006 quote: \"Lights rose off the water in a whirl—silver-blue motes
+    that feathered outward and trailed like shaken ash.\" Recorded attribute:
+    peri_whirl_description = 'silver-blue motes feathering outward, tugging
+    ropes and compasses'."
+first_seen: s-006

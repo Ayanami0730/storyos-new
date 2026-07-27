@@ -12,6 +12,13 @@ identity:
   profession: "\"Captain (implied by address as 'Captain' in dialogue)\""
   appearance: '"Carries a compass; moves between ship deck and market; keeps
     gestures small and economical."'
+  bound_by_token_scene: s-003
+  token_present_on_person: "true"
+  quote: "\"For the pledge,\" she said, and pressed it to Amina's throat."
+  decision_accepts_mission: "'I will take it,' she said finally. 'Not for the
+    promise of freedom they offer—I've no faith in their mercy—but because I'll
+    take the terms myself before they take the crew or the ship. For the
+    Simorgh, for the people that live under her, I'll carry their accounting.'"
 provenance:
   carried_compass: s-001
   wore_braided_hair_on_wrist: s-001
@@ -20,3 +27,7 @@ provenance:
   relationship_with_laila_childhood_shared: s-001
   profession: s-002
   appearance: s-002
+  bound_by_token_scene: s-003
+  token_present_on_person: s-003
+  quote: s-003
+  decision_accepts_mission: s-004

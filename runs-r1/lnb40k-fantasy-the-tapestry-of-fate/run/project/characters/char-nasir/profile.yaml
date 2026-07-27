@@ -5,6 +5,13 @@ sketch: Nasir, the ship's quartermaster and an old salt with a pragmatic streak.
 identity:
   carries_ledger: "true"
   scar_on_right_knuckle: "true"
+  appearance: "He rolled his sleeve to show a thin white scar on the knuckle of
+    his right hand. People thought scars were plain things; Nasir had given a
+    story for this one once, when the drink had been bitter and the night long:
+    he had walked away from a dice-game rather than pay a debt he had not
+    earned, and had marked himself instead to keep the ledger straight in his
+    head."
 provenance:
   carries_ledger: s-001
   scar_on_right_knuckle: s-001
+  appearance: s-005

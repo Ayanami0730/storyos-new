@@ -1,0 +1,109 @@
+{
+  "sceneId": "s-006",
+  "claims": [
+    {
+      "entity": "char-queen",
+      "attribute": "location",
+      "quote": "The Queen resumed her walk, the actress returned to her view of stone and shadow, and the small choreography of the day closed without a larger step.",
+      "value": "loc-long-walk"
+    },
+    {
+      "entity": "char-lady",
+      "attribute": "location",
+      "quote": "The lady-in-waiting walked on just a little ahead, not to hurry the sovereign but to make propriety of the path;",
+      "value": "loc-long-walk"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "location",
+      "quote": "She stood for a moment with the castle beyond her shoulder, looking at the familiar stone with a look that was, in its plainness, almost private.",
+      "value": "loc-long-walk"
+    },
+    {
+      "entity": "char-driver",
+      "attribute": "location",
+      "quote": "He did not stand and watch; he lingered at the wheel with the engine idling, eyes busy with some small task that did not involve looking toward the castle.",
+      "value": "outside_view_not_in_primary_sightline"
+    },
+    {
+      "entity": "char-queen",
+      "attribute": "stance",
+      "quote": "She gave the kind of look that settled matters—the brief, impervious fold of a mouth that said she would take the measure herself.",
+      "value": "measured_and_private"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "wardrobe",
+      "quote": "The Queen saw a dark tailored coat; a small side-fastened hat; gloves; and a neat leather bag.",
+      "value": "dark tailored coat; small side-fastened hat; gloves; neat leather bag"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "carried_object",
+      "quote": "In that bag she carried a folded paper script from a new film, the same domestic weight of paper the actress had been known to arrange in private.",
+      "value": "carried a folded paper script from a new film in her bag"
+    },
+    {
+      "entity": "loc-long-walk",
+      "attribute": "time_of_day",
+      "quote": "The sun leaned lower; shadows grew longer and the castle's parapets, lit at the edges, looked for a moment like a drawing pressed into the paper of the sky.",
+      "value": "late_afternoon"
+    },
+    {
+      "entity": "scene-s-006",
+      "attribute": "first_meeting_between_queen_and_actress",
+      "quote": "They were about thirty yards apart: a distance that let costume and carriage do the talking and made features belong to suggestion rather than proof.",
+      "value": "no_prior_acquaintance_recorded"
+    },
+    {
+      "entity": "scene-s-006",
+      "attribute": "visual_distance_between_queen_and_actress",
+      "quote": "They were about thirty yards apart: a distance that let costume and carriage do the talking and made features belong to suggestion rather than proof.",
+      "value": "~30_yards"
+    },
+    {
+      "entity": "scene-s-006",
+      "attribute": "driver_dropped_actress",
+      "quote": "The actress emerged with the practiced speed of someone who had done this often: a small, smooth movement—gloves off, hat adjusted. The Queen saw a dark tailored coat; a small side-fastened hat; gloves; and a neat leather bag.",
+      "value": "driver_dropped_actress_near_approach"
+    },
+    {
+      "entity": "char-lady",
+      "attribute": "response_to_sighting",
+      "quote": "\"Shall I move on, Ma'am?\" she asked, scarcely louder than the scrape of the gravel.",
+      "value": "leaned_in_and_offered_to_move_on"
+    },
+    {
+      "entity": "char-queen",
+      "attribute": "reaction_to_sighting",
+      "quote": "The Queen did not answer with a speech. She gave the kind of look that settled matters—the brief, impervious fold of a mouth that said she would take the measure herself.",
+      "value": "measured_private_look"
+    },
+    {
+      "entity": "char-actress",
+      "attribute": "emotional_state",
+      "quote": "She stood for a moment with the castle beyond her shoulder, looking at the familiar stone with a look that was, in its plainness, almost private.",
+      "value": "contemplative_private"
+    },
+    {
+      "entity": "scene-s-006",
+      "attribute": "public_record_of_meeting",
+      "quote": "It was a meeting whose only consequence was that it had happened.",
+      "value": "no_public_record_created"
+    },
+    {
+      "entity": "char-queen",
+      "attribute": "plans_to_return_to",
+      "quote": "The Queen spoke at last, not of what had happened—the glance was, after all, an event too small to need announcing—but of the tea that would be waiting and the hour’s length.",
+      "value": "loc-queen-apartment"
+    }
+  ],
+  "presentEntities": [
+    "char-queen",
+    "char-lady",
+    "char-actress",
+    "char-driver"
+  ],
+  "promises": [],
+  "paysOff": []
+}

@@ -1,0 +1,143 @@
+{
+  "logline": "A private detective, called to a locked study where a reclusive horologist lies shot, must pry open a case where an ornate clock, a missing antique revolver, a torn note and a quiet household hide a carefully timed murder — and the closer he gets, the more someone tries to reset the hands of time.",
+  "entities": [
+    {
+      "id": "char-ellis-fletcher",
+      "sketch": "Private detective and the story's first-person narrator. Mid-forties, methodical, wry, a former police investigator who left under a cloud."
+    },
+    {
+      "id": "char-lucius-harben",
+      "sketch": "The victim. A reclusive horologist and collector of rare clocks and antique weapons; lived alone with a small staff at Harben House."
+    },
+    {
+      "id": "char-iris-harben",
+      "sketch": "Lucius's wife. Younger than her husband, composed in public, financially and emotionally entangled in his collection and reputation."
+    },
+    {
+      "id": "char-thomas-reed",
+      "sketch": "Lucius's former apprentice and business partner. Expert on clocks, brusque, had recent arguments with Lucius about a disputed sale."
+    },
+    {
+      "id": "char-anna-rowe",
+      "sketch": "Housekeeper at Harben House. Practical, observant, the person who found the body and summoned the police."
+    },
+    {
+      "id": "char-inspector-margot-lane",
+      "sketch": "Local police inspector assigned to the case. Respectful of Ellis but protective of procedure; cautious about letting a private eye meddle."
+    },
+    {
+      "id": "loc-harben-study",
+      "sketch": "Lucius Harben's private study: a compact, well-appointed room lined with books and clocks, dominated by an ornate longcase clock and a display case of antique weapons."
+    },
+    {
+      "id": "loc-harben-foyer",
+      "sketch": "The small foyer outside the study; the study's only door opens into this area. The rest of Harben House is silent and oak-paneled."
+    },
+    {
+      "id": "obj-longcase-clock",
+      "sketch": "An ornate longcase (grandfather) clock, a prized item in Lucius's collection. It has visible hands, a striking mechanism, and an access panel in its case."
+    },
+    {
+      "id": "obj-ivory-revolver",
+      "sketch": "A small antique single-shot revolver from Lucius's weapon display: ivory grips, gilded barrel. At the start of the case its status (in-place/missing/found) is a question to be resolved in the investigation."
+    },
+    {
+      "id": "obj-brass-key",
+      "sketch": "A heavy brass key used for the study's lock. It is found in the study's lock when the room is discovered locked; custody and origin matter."
+    },
+    {
+      "id": "obj-torn-note",
+      "sketch": "A scrap of paper found clutched in Lucius's hand with part of a sentence visible. Its provenance and whether it is genuine or planted is in question."
+    },
+    {
+      "id": "obj-black-thread",
+      "sketch": "A length of thin black thread (waxed linen / monofilament) found tangled behind the clock — a small, apparently insignificant physical clue that ties into mechanical timing."
+    },
+    {
+      "id": "obj-envelope",
+      "sketch": "A sealed envelope found on Lucius's desk containing a terse typed threat about an upcoming sale; the handwriting on the flap is later compared to suspects."
+    }
+  ],
+  "worldRules": [
+    "No supernatural elements or 'impossible' physics — every action must be explainable by real mechanisms or human trickery.",
+    "The narrator, Ellis, cannot know anything he didn't observe, be told, or reasonably infer; revelations must come by evidence or deduction shown in-scene.",
+    "Forensic details (gunshot residue, fingerprints, time of death signs) must be internally consistent and not contradicted later.",
+    "All significant objects, locations and characters used in scenes must be declared as entities above; later scenes may only refer to these ids.",
+    "Locked-room constraints are physical: doors and windows can only be manipulated by plausible mechanical means or realistic sleight, and any trick must be demonstrable within the story's scenes.",
+    "No retroactive retcons of committed facts; if a gap exists it must be acknowledged as such in the prose and can be left unresolved."
+  ],
+  "voice": {
+    "person": "first person, char-ellis-fletcher",
+    "tense": "past"
+  },
+  "scenes": [
+    {
+      "id": "s-001",
+      "intent": "Open on the locked-room discovery: Ellis arrives at Harben House, meets Inspector Lane and Anna, and is shown the study that is locked from the inside with Lucius Harben dead. Establish stakes, the room's layout (longcase clock, display case, desk), the brass key in the lock, the torn note in the victim's hand and the initial puzzle—no gun on display.",
+      "presentEntities": [
+        "char-ellis-fletcher",
+        "char-inspector-margot-lane",
+        "char-anna-rowe",
+        "char-lucius-harben",
+        "loc-harben-study",
+        "loc-harben-foyer",
+        "obj-longcase-clock",
+        "obj-brass-key",
+        "obj-torn-note",
+        "obj-ivory-revolver"
+      ],
+      "targetWords": 700
+    },
+    {
+      "id": "s-002",
+      "intent": "Ellis inspects the study in detail: examines the clock (stopped at a specific minute), checks the weapon display (revolver missing or hidden), finds black thread behind the clock and the envelope on the desk. He interviews Iris Harben and Thomas Reed separately—collect their alibis, motives (financial quarrel, threatened sale), and small tells. Inspector Lane warns Ellis about upsetting the investigation but tacitly lets him proceed.",
+      "presentEntities": [
+        "char-ellis-fletcher",
+        "char-iris-harben",
+        "char-thomas-reed",
+        "char-inspector-margot-lane",
+        "char-anna-rowe",
+        "loc-harben-study",
+        "loc-harben-foyer",
+        "obj-longcase-clock",
+        "obj-ivory-revolver",
+        "obj-black-thread",
+        "obj-envelope"
+      ],
+      "targetWords": 700
+    },
+    {
+      "id": "s-003",
+      "intent": "Ellis pursues a mechanical hypothesis: the clock's internal train could have been used as a timed trigger. He finds evidence of recent access to the clock's inner case and that the torn note was put in the victim's hand after death. Tensions rise when Ellis confronts Thomas, who admits to servicing the clock recently but denies any role in the death. An unexpected piece of evidence (a fingerprint or a peculiar crease in the envelope flap) points to Iris in a way that seems damning and believable.",
+      "presentEntities": [
+        "char-ellis-fletcher",
+        "char-thomas-reed",
+        "char-iris-harben",
+        "char-inspector-margot-lane",
+        "loc-harben-study",
+        "obj-longcase-clock",
+        "obj-black-thread",
+        "obj-torn-note",
+        "obj-envelope"
+      ],
+      "targetWords": 700
+    },
+    {
+      "id": "s-004",
+      "intent": "Final scene: Ellis lays out the mechanics of the staged 'locked room' and exposes the murderer. He demonstrates how the clock and the black thread, together with a hidden placement of the ivory revolver inside the clock case, allowed someone to fire the weapon and then make the room look sealed. The twist: the person with motive and opportunity is not the obvious suspect; Iris engineered it to look like Thomas's specialized knowledge did the deed. The resolution ties the torn note and envelope into the motive, and leaves a hint that Ellis will not be content until he knows what became of a small piece of the collection.",
+      "presentEntities": [
+        "char-ellis-fletcher",
+        "char-iris-harben",
+        "char-thomas-reed",
+        "char-inspector-margot-lane",
+        "loc-harben-study",
+        "obj-longcase-clock",
+        "obj-ivory-revolver",
+        "obj-black-thread",
+        "obj-torn-note",
+        "obj-envelope"
+      ],
+      "targetWords": 700
+    }
+  ]
+}

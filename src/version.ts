@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.7.5";
+export const VERSION = "0.8.2";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.

@@ -1,0 +1,331 @@
+[
+  {
+    "id": "fact-loc-67-fairfax-smell",
+    "entity": "loc-67-fairfax",
+    "attribute": "smell",
+    "value": "faint smell of boiled tea and old paper",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-loc-67-fairfax-acoustics",
+    "entity": "loc-67-fairfax",
+    "attribute": "acoustics",
+    "value": "creaky stairs; thin walls that transmit hall sounds",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-mrs-hollis-demeanor",
+    "entity": "char-mrs-hollis",
+    "attribute": "demeanor",
+    "value": "small, precise, habit-bound, clipped manners",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-mrs-hollis-tenancy_rules_explained",
+    "entity": "char-mrs-hollis",
+    "attribute": "tenancy_rules_explained",
+    "value": "explained house rules and mentioned the stopped hall clock",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-narrator-keeps_written_records",
+    "entity": "char-narrator",
+    "attribute": "keeps_written_records",
+    "value": "timestamps and records events in notebook",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-broken-clock-mentioned_stopped_time_by_mrs_hollis",
+    "entity": "obj-broken-clock",
+    "attribute": "mentioned_stopped_time_by_mrs_hollis",
+    "value": "stopped at 4:22 (reported by Mrs. Hollis)",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-loc-bedroom-2-furniture_and_features",
+    "entity": "loc-bedroom-2",
+    "attribute": "furniture_and_features",
+    "value": "single bed; narrow wardrobe; wall-hung mirror with hairline crack; strip of floral wallpaper with a recent patch",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-wallpaper-patch_location_and_age",
+    "entity": "obj-wallpaper",
+    "attribute": "patch_location_and_age",
+    "value": "recent patch; gap located behind wardrobe in right-hand corner beneath lining",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-silver-locket-found_location",
+    "entity": "obj-silver-locket",
+    "attribute": "found_location",
+    "value": "tucked into narrow gap behind wallpaper lining, right-hand corner, behind wardrobe",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-silver-locket-find_timestamp",
+    "entity": "obj-silver-locket",
+    "attribute": "find_timestamp",
+    "value": "11:07 a.m., March 3",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-silver-locket-physical_description",
+    "entity": "obj-silver-locket",
+    "attribute": "physical_description",
+    "value": "small dented silver locket; chain nearly absent; red-brown smear on rim (rust or dried mud); approximate age early twentieth century (metal worn thin at edges)",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-silver-locket-interior_contents",
+    "entity": "obj-silver-locket",
+    "attribute": "interior_contents",
+    "value": "contains a faded sepia photograph of a child with a broken toy; reverse scratched with initials 'E.L.'",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-silver-locket-residue_and_scent",
+    "entity": "obj-silver-locket",
+    "attribute": "residue_and_scent",
+    "value": "dust on hinge; faint scent of old soap and lavender",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-cracked-mirror-reflection_distortion",
+    "entity": "obj-cracked-mirror",
+    "attribute": "reflection_distortion",
+    "value": "hairline crack distorts lower third of reflection; causes dented edge to appear doubled",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-narrator-keeps_object_in_pocket_and_records",
+    "entity": "char-narrator",
+    "attribute": "keeps_object_in_pocket_and_records",
+    "value": "narrator retains locket and records discovery in notebook",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-narrator-observed_footsteps_times",
+    "entity": "char-narrator",
+    "attribute": "observed_footsteps_times",
+    "value": "2:00 a.m.; 3:12 a.m.",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-loc-attic-attic_accessed_at",
+    "entity": "loc-attic",
+    "attribute": "attic_accessed_at",
+    "value": "9:14 a.m.",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-loc-attic-smell",
+    "entity": "loc-attic",
+    "attribute": "smell",
+    "value": "dust and old varnish",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-chalk-damp_marks_on_trapdoor_hinge",
+    "entity": "obj-chalk",
+    "attribute": "damp_marks_on_trapdoor_hinge",
+    "value": "damp chalk smudges on trapdoor hinge; chalk tacky to touch",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-chalk-jar_handprints",
+    "entity": "obj-chalk",
+    "attribute": "jar_handprints",
+    "value": "handprints in chalk powder around jar rim; powder tacky",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-porcelain-doll-findspot",
+    "entity": "obj-porcelain-doll",
+    "attribute": "findspot",
+    "value": "beneath dented tea tin on central joist",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-porcelain-doll-condition",
+    "entity": "obj-porcelain-doll",
+    "attribute": "condition",
+    "value": "missing one eye; braided ribbon on wrist; dried mud smear on hem",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-diary-findspot",
+    "entity": "obj-diary",
+    "attribute": "findspot",
+    "value": "wedged under northern eaves beam where rafters meet floor",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-diary-contents_and_drawing",
+    "entity": "obj-diary",
+    "attribute": "contents_and_drawing",
+    "value": "childish dated entries; drawing of toy with bent wheel matching sepia photo toy",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-diary-torn_page_folded",
+    "entity": "obj-diary",
+    "attribute": "torn_page_folded",
+    "value": "page torn out and folded into the back lining",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-floorboard-plank-findspot",
+    "entity": "obj-floorboard-plank",
+    "attribute": "findspot",
+    "value": "loose plank three boards from trapdoor",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-floorboard-plank-stash_contents",
+    "entity": "obj-floorboard-plank",
+    "attribute": "stash_contents",
+    "value": "bundle of papers and envelopes (child's palm sized)",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-floorboard-plank-subfloor_stain_properties",
+    "entity": "obj-floorboard-plank",
+    "attribute": "subfloor_stain_properties",
+    "value": "dark dry stain; smell of iron and old cloth; not analysed",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-loc-attic-sound_transmission",
+    "entity": "loc-attic",
+    "attribute": "sound_transmission",
+    "value": "thin joists and hollow cavities transmit attic footfalls into rooms below",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-silver-locket-unexplained_smear",
+    "entity": "obj-silver-locket",
+    "attribute": "unexplained_smear",
+    "value": "red-brown smear on rim unresolved",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-narrator-sensation_of_presence",
+    "entity": "char-narrator",
+    "attribute": "sensation_of_presence",
+    "value": "feels a small, patient presence; rising precise anxiety",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-sepia-photo-back_date_read",
+    "entity": "obj-sepia-photo",
+    "attribute": "back_date_read",
+    "value": "faint ink: Oct 12 1913",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-silver-locket-initials_read",
+    "entity": "obj-silver-locket",
+    "attribute": "initials_read",
+    "value": "appears to read E.L.",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-diary-torn_page_fragment",
+    "entity": "obj-diary",
+    "attribute": "torn_page_fragment",
+    "value": "\"—spilt tea under the boards. Don't tell.\"",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-floorboard-plank-stain_description_matches_diary",
+    "entity": "obj-floorboard-plank",
+    "attribute": "stain_description_matches_diary",
+    "value": "bruise-brown, dry, speckled edges",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-broken-clock-stopped_time",
+    "entity": "obj-broken-clock",
+    "attribute": "stopped_time",
+    "value": "04:22",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-mrs-hollis-response_to_questioning",
+    "entity": "char-mrs-hollis",
+    "attribute": "response_to_questioning",
+    "value": "evasions and deflection",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-diary-torn_page_quote",
+    "entity": "obj-diary",
+    "attribute": "torn_page_quote",
+    "value": "\"—spilt tea under the boards. Don't tell.\"",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-mrs-hollis-confession_name",
+    "entity": "char-mrs-hollis",
+    "attribute": "confession_name",
+    "value": "Elsie L.",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-silver-locket-initials_confirmed",
+    "entity": "obj-silver-locket",
+    "attribute": "initials_confirmed",
+    "value": "E.L.",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-sepia-photo-back_date_confirmed",
+    "entity": "obj-sepia-photo",
+    "attribute": "back_date_confirmed",
+    "value": "Oct 12 1913",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-floorboard-plank-stain_shape_and_texture",
+    "entity": "obj-floorboard-plank",
+    "attribute": "stain_shape_and_texture",
+    "value": "dark, circular, tannin-brown with speckled edges and a tacky adhesive residue around the rim",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-porcelain-doll-ribbon_matches_diary",
+    "entity": "obj-porcelain-doll",
+    "attribute": "ribbon_matches_diary",
+    "value": "braided ribbon matches diary description; diary line: 'I tied my ribbon to Doll's wrist so she'd remember me.'",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-mrs-hollis-admitted_concealment",
+    "entity": "char-mrs-hollis",
+    "attribute": "admitted_concealment",
+    "value": "sealed the cavity the same day; told people child was sent away",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-elsie-ghost_demonstrations_limited",
+    "entity": "char-elsie",
+    "attribute": "ghost_demonstrations_limited",
+    "value": "can repeat child's phrases and make small, physical motions (doll movement; chalk E appearing; timed footfalls)",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-mrs-hollis-admission_date",
+    "entity": "char-mrs-hollis",
+    "attribute": "admission_date",
+    "value": "October 12 1913",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-narrator-performed_confrontation",
+    "entity": "char-narrator",
+    "attribute": "performed_confrontation",
+    "value": "presented torn diary page, locket, photograph date, and subfloor stain to force confession",
+    "source": "s-004"
+  }
+]

@@ -1,2 +1,6 @@
 {"scene":"s-001","attribute":"location","value":"outside loc-harben","quote":"The cab left me on a wet flagstone, the driver already counting the seconds until he could leave."}
 {"scene":"s-001","attribute":"goal","value":"observe and collect initial impressions","quote":"For now there was only the noise of the rain, the smell of oil, and the way the house seemed to be holding its breath."}
+{"scene":"s-003","attribute":"location","value":"loc-harben-study","quote":"\"She'd told me not to touch anything until forensics arrived; I left my hands in my coat and let my eyes do the work.\" (.writer/drafts/s-003.md, L1-L2)"}
+{"scene":"s-003","attribute":"companions","value":"char-inspector-margot-lane","quote":"\"The scrap was put there after the fact,\" I said, careful to keep my tone even. Accusation is heavy; Lane was watching. (.writer/drafts/s-003.md, L31)"}
+{"scene":"s-004","attribute":"location","value":"loc-harben-study","quote":"I said it out slow, because the room needed slow sentences. Lane let my voice do the work while the techs kept their gloves on and their gloved hands where they belonged."}
+{"scene":"s-004","attribute":"goal","value":"find the missing cameo watch from Mrs. Harben's mother's display","quote":"\"I'll find it,\" I told them."}

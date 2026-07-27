@@ -1,0 +1,29 @@
+pairId: char-butler--char-press
+participants:
+  - char-butler
+  - char-press
+phases:
+  - index: 1
+    relation: information_control
+    fromScene: s-004
+    toScene: null
+    transition: The butler wrote a concise internal order and explicitly placed the
+      press last on the notification list to keep the Queen's private hour
+      confidential.
+    asymmetry: The butler (and household) intentionally keeps the press uninformed;
+      the press is not aware of the arrangement.
+    source:
+      scene: s-004
+      span: L1-L80
+  - index: 2
+    relation: information_control
+    fromScene: s-007
+    toScene: null
+    transition: The butler asserted the house instruction 'press last'—only those
+      who must be told would be told—and directed the liaison to give the
+      holding line and no more; the liaison complied.
+    asymmetry: The butler frames the rule as law; the liaison receives and implements it.
+    source:
+      scene: s-007
+      span: L40-L94
+openQuestions: []

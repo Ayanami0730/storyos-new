@@ -1,0 +1,104 @@
+{
+  "findings": [
+    {
+      "id": "f-a7687091",
+      "subtype": "abandoned_plot_elements",
+      "axis": "consistency",
+      "category": "timeline_plot_logic",
+      "tier": "negative-inference",
+      "validator": "global",
+      "severity": "warning",
+      "reasoning": "Reader is owed explanation of the red-brown smear on the locket (rust or dried mud). was set up in s-001 and should have paid off by s-004; nothing in the span does",
+      "evidence": {
+        "quote": "A smear ran along the rim, red-brown in the way rust leans and dark like dried mud",
+        "source": "s-001"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "pay off \"Reader is owed explanation of the red-brown smear on the locket (rust or dried mud).\", or mark it deliberately open with a reason"
+      }
+    },
+    {
+      "id": "f-1b49ef43",
+      "subtype": "abandoned_plot_elements",
+      "axis": "consistency",
+      "category": "timeline_plot_logic",
+      "tier": "negative-inference",
+      "validator": "global",
+      "severity": "warning",
+      "reasoning": "Reader is owed confirmation of the hallway clock's stopped time and its significance. was set up in s-001 and should have paid off by s-004; nothing in the span does",
+      "evidence": {
+        "quote": "\"Don't worry about it; the clock's stopped at 4:22, it likes that time.\"",
+        "source": "s-001"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "pay off \"Reader is owed confirmation of the hallway clock's stopped time and its significance.\", or mark it deliberately open with a reason"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "rev-pr-02-smear-analysis",
+      "targetScenes": [
+        "s-001",
+        "s-002",
+        "s-003",
+        "s-004"
+      ],
+      "rationale": "unpaid promise from s-001",
+      "finding": {
+        "id": "f-a7687091",
+        "subtype": "abandoned_plot_elements",
+        "axis": "consistency",
+        "category": "timeline_plot_logic",
+        "tier": "negative-inference",
+        "validator": "global",
+        "severity": "warning",
+        "reasoning": "Reader is owed explanation of the red-brown smear on the locket (rust or dried mud). was set up in s-001 and should have paid off by s-004; nothing in the span does",
+        "evidence": {
+          "quote": "A smear ran along the rim, red-brown in the way rust leans and dark like dried mud",
+          "source": "s-001"
+        },
+        "editLocus": {
+          "kind": "unresolved",
+          "question": "pay off \"Reader is owed explanation of the red-brown smear on the locket (rust or dried mud).\", or mark it deliberately open with a reason"
+        }
+      }
+    },
+    {
+      "id": "rev-pr-03-clock-time-confirmation",
+      "targetScenes": [
+        "s-001",
+        "s-002",
+        "s-003",
+        "s-004"
+      ],
+      "rationale": "unpaid promise from s-001",
+      "finding": {
+        "id": "f-1b49ef43",
+        "subtype": "abandoned_plot_elements",
+        "axis": "consistency",
+        "category": "timeline_plot_logic",
+        "tier": "negative-inference",
+        "validator": "global",
+        "severity": "warning",
+        "reasoning": "Reader is owed confirmation of the hallway clock's stopped time and its significance. was set up in s-001 and should have paid off by s-004; nothing in the span does",
+        "evidence": {
+          "quote": "\"Don't worry about it; the clock's stopped at 4:22, it likes that time.\"",
+          "source": "s-001"
+        },
+        "editLocus": {
+          "kind": "unresolved",
+          "question": "pay off \"Reader is owed confirmation of the hallway clock's stopped time and its significance.\", or mark it deliberately open with a reason"
+        }
+      }
+    }
+  ],
+  "coverage": {
+    "scenes": 4,
+    "contractsChecked": 6,
+    "contractsOpen": 3,
+    "capabilitiesChecked": 0
+  }
+}

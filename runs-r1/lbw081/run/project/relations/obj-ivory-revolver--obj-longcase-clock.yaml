@@ -1,0 +1,16 @@
+pairId: obj-ivory-revolver--obj-longcase-clock
+participants:
+  - obj-ivory-revolver
+  - obj-longcase-clock
+phases:
+  - index: 1
+    relation: found_in_hidden_cavity
+    fromScene: s-004
+    toScene: null
+    transition: Photographs showed the revolver seated on a thin brass shim inside
+      the longcase clock's concealed cavity; evidence gives provenance for
+      recovery. (manuscript .writer/drafts/s-004.md L5-L5)
+    source:
+      scene: s-004
+      span: L5-L5
+openQuestions: []

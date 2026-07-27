@@ -1,3 +1,7 @@
 scene,chapter,beat,tension_target,tension_actual,note
 s-001,ch-01,"setup",4,3,"Introduces ship, port and main characters; establishes relationships and sensory grounding. Tension low-to-moderate; sets stage for next scenes."
 s-002,ch-01,"complication",5,4,"Market scene introduces peri tokens and a local warning from Gul; raises tension about peri bargaining."
+s-003,ch-01,"complication",8,7,"This scene introduces a binding obligation and a quest (retrieve the Spindle). It raises stakes and moves the plot outward from the market to Qarrah."
+s-004,ch-01,"turn",8,7,"Decision/commitment: Amina accepts the mission and the crew braces; the scene's function is a moral/plot turning point."
+s-005,ch-02,"turn",7,6,"A scene-turn: Amina accepts the council's mission and the crew aligns to support her. Micro-beats (measure oil, mend sail, read scrap) foreground practical stakes and character."
+s-006,ch-02,"complication",7,6,"First supernatural test at sea; establishes mechanics of map, token, and Peri measure. The scene raises stakes and confirms Amina's commitment to follow the Thread."

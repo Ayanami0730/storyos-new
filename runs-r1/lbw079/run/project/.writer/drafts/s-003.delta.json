@@ -2,45 +2,45 @@
   "sceneId": "s-003",
   "claims": [
     {
-      "entity": "obj-broken-clock",
-      "attribute": "stopped_time",
-      "quote": "11:18 a.m. — I held the camera over the face until the glass reflected too much light and, on the third take, caught the hands squared at four twenty-two.",
-      "value": "04:22"
-    },
-    {
-      "entity": "obj-silver-locket",
-      "attribute": "initials_read",
-      "quote": "11:34 a.m. — I laid the locket beside the diary page I had photographed in the attic and took close-ups of the scratched letters on the silver. The initials were shallow and crude: E.L.",
-      "value": "E.L."
+      "entity": "char-narrator",
+      "attribute": "keeps_written_records",
+      "quote": "12:17 p.m. — I wrote the new observations into my notebook the way habit had taught me, the same habit that had me write \"11:07 — silver locket. E.L.\" earlier.",
+      "value": "timestamps and records events in notebook"
     },
     {
       "entity": "obj-sepia-photo",
       "attribute": "back_date_read",
-      "quote": "11:27 a.m. — in my bedroom I set the cracked mirror on the bed and propped the sepia photograph against the glass. Under raking light the back was legible in a way it had not been when I first found it: faint, smeared ink resolved into a date. I read it aloud and wrote it down. \"Oct 12 1913,\" I said",
-      "value": "Oct 12 1913"
+      "quote": "11:27 a.m. — in my bedroom I propped the sepia photograph against the cracked mirror and let raking light coax the back into view. The ink was faint and smeared; under the light the letters resolved. On my phone screen it read, as legible as the smear allowed, \"Oct 12 1913.\"",
+      "value": "faint ink: Oct 12 1913"
+    },
+    {
+      "entity": "obj-silver-locket",
+      "attribute": "initials_read",
+      "quote": "11:34 a.m. — I laid the locket beside the diary page I'd photographed in the attic and took close-ups. The letters on the silver were shallow and crude; in my photographs the inscription appeared to read E.L.",
+      "value": "appears to read E.L."
     },
     {
       "entity": "obj-diary",
       "attribute": "torn_page_fragment",
-      "quote": "I sat on the attic joist and read the torn fragment aloud, just as I had the photograph. The words were small and sudden on the page: \"Oct 12 — tea and the clock. The clock stopped at four and twenty-two when Mam went for sugar. —spilt tea under the boards. Don't tell.\"",
-      "value": "\"Oct 12 — tea and the clock. The clock stopped at four and twenty-two when Mam went for sugar. —spilt tea under the boards. Don't tell.\""
+      "quote": "I sat on a joist and read the torn fragment aloud, careful to say it exactly as it lay: \"—spilt tea under the boards. Don't tell.\" Those four words fit like a key and the rest of the page fell into a context I could map: \"Oct 12 — tea and the clock. The clock stopped at four and twenty-two when Mam went for sugar.\"",
+      "value": "\"—spilt tea under the boards. Don't tell.\""
     },
     {
       "entity": "obj-floorboard-plank",
       "attribute": "stain_description_matches_diary",
-      "quote": "11:44 a.m. — The dark patch under the subfloor had the same stubborn, dry look as before; in the light it read as the colour of old tea, a bruised brown with speckled edges.",
+      "quote": "11:44 a.m. — In the light the stain read the colour of old tea — a bruised brown with speckled edges and a dry, stubborn skin.",
       "value": "bruise-brown, dry, speckled edges"
     },
     {
-      "entity": "char-narrator",
-      "attribute": "keeps_written_records",
-      "quote": "12:17 p.m. — I wrote the new facts into my notebook the way you repair a leak by marking it. The locket's initials read E.L.; the sepia's back read \"Oct 12 1913\"; the torn diary page said, verbatim, \"—spilt tea under the boards. Don't tell.\"",
-      "value": "records timestamps and findings in notebook"
+      "entity": "obj-broken-clock",
+      "attribute": "stopped_time",
+      "quote": "11:18 a.m. — the hands sat at four twenty-two. The photograph saved as 2026-03-03_clock_4-22_front.jpg.",
+      "value": "04:22"
     },
     {
       "entity": "char-mrs-hollis",
       "attribute": "response_to_questioning",
-      "quote": "\"Children left long ago,\" she said, clipped. She moved a jar of preserves between us as if it were a screen. \"This house has its ways. We don't keep much past what's necessary.\"",
+      "quote": "\"Children left long ago,\" she said, clipped. Her fingers found a jar of preserves and slid it to the side like a small shield. \"This house has its ways. We don't keep much past what's necessary.\"",
       "value": "evasions and deflection"
     }
   ],
@@ -60,7 +60,7 @@
     {
       "id": "pr-01-photograph-query",
       "promise": "Reader is owed verification of the photograph's date and the full provenance of the sepia photo inside the locket (matching to obj-sepia-photo).",
-      "quote": "11:27 a.m. — in my bedroom I set the cracked mirror on the bed and propped the sepia photograph against the glass. Under raking light the back was legible in a way it had not been when I first found it: faint, smeared ink resolved into a date. I read it aloud and wrote it down. \"Oct 12 1913,\" I said",
+      "quote": "11:27 a.m. — in my bedroom I propped the sepia photograph against the cracked mirror and let raking light coax the back into view. The ink was faint and smeared; under the light the letters resolved. On my phone screen it read, as legible as the smear allowed, \"Oct 12 1913.\"",
       "dueByScene": "null"
     }
   ],

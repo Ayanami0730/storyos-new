@@ -2,5 +2,15 @@ id: char-peri-sahr
 name: peri-sahr
 sketch: Sahr, an austere peri councillor who keeps records of bargains and
   penalties. She carries the council's memory of promises and debts.
-identity: {}
-provenance: {}
+identity:
+  wing_description: narrower, darker, folded close like a ledger
+  demeanor: austere, exact; reads bargains like ledgers
+  quote: "\"By feather and ledger, by promise and keeping: in the name of the
+    Council and the mark we keep, you shall be bound to the token's counting.
+    Bring us the Spindle from Qarrah and the clasp shall be loosed. Fail, and
+    the clasp will take a currency you cannot coin without giving more than you
+    own.\""
+provenance:
+  wing_description: s-003
+  demeanor: s-003
+  quote: s-003

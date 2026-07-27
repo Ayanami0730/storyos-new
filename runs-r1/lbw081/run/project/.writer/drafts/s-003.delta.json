@@ -4,13 +4,13 @@
     {
       "entity": "obj-longcase-clock",
       "attribute": "access_panel_tool_marks",
-      "quote": "The access panel at the back was a hair ajar; when I peered in the brass looked thumbed and raw where varnish had been rubbed away. There were fine, fresh scores around the latch—hairline marks that caught the light as if someone had used a slender tool to lever it open.",
+      "quote": "The access panel at the back was a hair ajar; the brass inside looked thumbed, varnish rubbed away where skin or a tool had rested. Fine, fresh scores ringed the latch—hairline marks that flashed when the light caught them, as if a slender implement had been used to lever it.",
       "value": "fresh tool marks and hairline scores around latch"
     },
     {
       "entity": "obj-longcase-clock",
       "attribute": "thread_path_into_movement",
-      "quote": "At the base the black thread hung where I'd seen it: waxed, stiff, caught on a small screw. This time I followed its line with my gaze. It wasn't a loose scrap that had wandered into the case; the thread looped and ran up toward the movement, vanishing behind the plates.",
+      "quote": "At the base the black thread hung where I'd seen it: waxed, stiff, snagged on a screw. I followed its line: it looped and ran up toward the movement and vanished behind the plates.",
       "value": "thread looped and ran up toward movement, vanishing behind plates"
     },
     {
@@ -20,15 +20,21 @@
       "value": "admitted servicing clock three days ago to wind and strip weight-gear to clean pivots"
     },
     {
+      "entity": "char-thomas-reed",
+      "attribute": "admission_departure_time",
+      "quote": "\"I was out of the shop just before eleven. Ask anyone.\"",
+      "value": "stated he was out of the shop just before eleven"
+    },
+    {
       "entity": "obj-torn-note",
       "attribute": "postmortem_placement_inference",
-      "quote": "The scrap, though, sat on that halo without a smear. If he'd clutched the paper in his last moments it would have been different—the fibres would have been pressed, ink and blood mingled into the edge. This looked staged.",
+      "quote": "The ragged edge lay on top of the knuckles; the torn fibres splayed against the skin rather than pressed into it. The blotter beneath showed a neat, round stain—the dark halo of a single shot. The scrap sat on that halo without a smear. If he'd clutched the paper in his last moments the fibres would have been pressed, ink and blood rubbed into the edge. This looked arranged.",
       "value": "inference: torn note placed after death (fibres lying on top, no blood transfer)"
     },
     {
       "entity": "obj-envelope",
       "attribute": "flap_partial_print_lift",
-      "quote": "\"We lifted a partial print from the flap's crease,\" he told me without flourish. \"Preliminary lift consistent with Iris Harben.\"",
+      "quote": "\"We lifted a partial print from the flap's crease,\" he said. \"Preliminary lift consistent with Iris Harben.\"",
       "value": "partial latent print lifted from diagonal crease on flap; preliminary lift consistent with Iris Harben"
     },
     {

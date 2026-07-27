@@ -1,0 +1,17 @@
+pairId: obj-diary--obj-silver-locket
+participants:
+  - obj-diary
+  - obj-silver-locket
+phases:
+  - index: 1
+    relation: possible-handwriting-link
+    fromScene: s-003
+    toScene: null
+    transition: Narrator compared the capital E on the diary photograph with the E
+      on the locket and judged the loop and slant to match closely enough to
+      note a similarity; this begins a phase of suspected linkage between the
+      diary's writer and the locket's inscription.
+    source:
+      scene: s-003
+      span: L1-L120
+openQuestions: []

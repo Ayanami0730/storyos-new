@@ -1,3 +1,8 @@
 {"scene":"s-001","attribute":"location","value":"loc-queen-apartment","quote":"The lady-in-waiting arrived shortly, efficient and luminous in the way of those who practiced stillness. She stood at the door and folded her hands in the old way; there was a steadiness to her expression that the Queen had learned to lean on."}
 {"scene":"s-001","attribute":"companions","value":"char-queen","quote":"They walked out together with no fanfare."}
 {"scene":"s-001","attribute":"mood","value":"steady, discreet","quote":"There was a steadiness to her expression that the Queen had learned to lean on."}
+{"scene":"s-004","attribute":"companions","value":"char-queen","quote":"\"The lady-in-waiting offered her support and discretion, as she had at the walk.\""}
+{"scene":"s-004","attribute":"mood","value":"attentive_discreet","quote":"\"she watched the Queen with the attention of someone who could keep a room from unravelling simply by noticing where it might.\""}
+{"scene":"s-006","attribute":"location","value":"loc-long-walk","quote":"The lady-in-waiting walked on just a little ahead, not to hurry the sovereign but to make propriety of the path;"}
+{"scene":"s-006","attribute":"mood","value":"attentive_discreet","quote":"\"Shall I move on, Ma'am?\" she asked, scarcely louder than the scrape of the gravel."}
+{"scene":"s-007","attribute":"companions","value":"present","quote":"The lady‑in‑waiting followed, pencil tucked behind her ear, the posture of someone trained to make small dramas disappear. She did not come as a sensation but as a measured presence. Together they made a small audience for the liaison's rehearsal."}

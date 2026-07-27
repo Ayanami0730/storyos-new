@@ -2,4 +2,16 @@ id: obj-peri-token
 sketch: "A silver token issued by the Peri Council: a binding talisman that
   enforces bargains. Held to a mortal throat it polices obedience with a slow,
   inexorable pressure."
+notes:
+  - Issued by the Peri Council; enforces bargains.
+  - "hum_audibility (scene s-004 quote): \"The hum at her collarbone was
+    intimate, a private counting; it did not speak aloud and no one on deck
+    could hear it.\"; penalty_stages (scene s-004 quote): \"She ran through the
+    thought like one reads a bad tide: the Peri's enforcement came in degrees.
+    First, subtle measurement and warnings; then, if the account demanded it, a
+    private thing might be taken—something tucked in the mind; and, finally, a
+    bond might be unhooked from the person who loved you.\""
+  - 'Scene s-006 quote: "The token at her throat tightened as the lights drew
+    close, a pressure that counted her breaths quicker." Recorded attribute:
+    token_tightens_on_peri_proximity = true.'
 first_seen: s-002

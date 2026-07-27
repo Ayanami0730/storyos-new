@@ -1,0 +1,16 @@
+pairId: char-actress--char-queen
+participants:
+  - char-actress
+  - char-queen
+phases:
+  - index: 1
+    relation: acquaintances?
+    fromScene: s-006
+    toScene: null
+    transition: Brief, uneventful visual recognition across the Long Walk where
+      neither approached the other; their distance and manner kept the encounter
+      private rather than establishing a public tie.
+    source:
+      scene: s-006
+      span: L11-L20
+openQuestions: []

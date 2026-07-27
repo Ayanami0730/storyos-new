@@ -1,0 +1,16 @@
+pairId: char-narrator--obj-broken-clock
+participants:
+  - char-narrator
+  - obj-broken-clock
+phases:
+  - index: 1
+    relation: observed_clock_stop
+    fromScene: s-003
+    toScene: null
+    transition: Narrator photographed the clock with hands at 4:22 and interpreted
+      the stop as non-theatrical; this establishes a phase linking the
+      narrator's observation to the clock's stopped time.
+    source:
+      scene: s-003
+      span: L1-L120
+openQuestions: []

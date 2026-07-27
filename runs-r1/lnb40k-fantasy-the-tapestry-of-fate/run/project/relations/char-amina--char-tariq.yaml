@@ -1,0 +1,16 @@
+pairId: char-amina--char-tariq
+participants:
+  - char-amina
+  - char-tariq
+phases:
+  - index: 1
+    relation: pledged_support
+    fromScene: s-005
+    toScene: null
+    transition: Tariq advises caution about who to bring and what they carry,
+      aligning his assessment with Amina's decision and offering his
+      rune-reading and knowledge.
+    source:
+      scene: s-005
+      span: L48-L62
+openQuestions: []

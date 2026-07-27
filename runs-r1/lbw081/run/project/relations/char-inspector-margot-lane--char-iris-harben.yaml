@@ -1,0 +1,16 @@
+pairId: char-inspector-margot-lane--char-iris-harben
+participants:
+  - char-inspector-margot-lane
+  - char-iris-harben
+phases:
+  - index: 1
+    relation: detaining_pending_inquiry
+    fromScene: s-004
+    toScene: null
+    transition: "Inspector Lane ordered Mrs. Harben to be formally held pending
+      further inquiries: 'Mrs. Harben, you'll be formally held pending further
+      inquiries.' (manuscript .writer/drafts/s-004.md L19-L19)"
+    source:
+      scene: s-004
+      span: L19-L19
+openQuestions: []

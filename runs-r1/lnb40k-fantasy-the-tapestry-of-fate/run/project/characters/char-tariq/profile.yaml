@@ -2,5 +2,8 @@ id: char-tariq
 name: tariq
 sketch: Tariq, a former scholar turned deckhand who loves books and keeps
   secrets. He translates old marks and helps read the island's inscriptions.
-identity: {}
-provenance: {}
+identity:
+  profession: Scholar and rune-reader; able to read common coastal runes and
+    assess marks ("This one leans toward memory").
+provenance:
+  profession: s-005

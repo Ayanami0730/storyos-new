@@ -1,0 +1,38 @@
+{
+  "sceneId": "s-006",
+  "claims": [
+    {
+      "entity": "obj-map-of-ways",
+      "attribute": "map_warms_and_pulls_lines",
+      "quote": "The map warmed and pulled at its inked lines under her palm as if feeling for currents.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-map-of-ways",
+      "attribute": "uses_ley_current",
+      "quote": "She let her thumb rest on a narrow ribbon of ink the map had drawn thin and pale: One ribbon the map marked Eshra's Thread, a pale line that ran like a finger toward the west, and Amina could feel, absurdly and usefully, the suggestion of its direction under her skin.",
+      "value": "Eshra's Thread"
+    },
+    {
+      "entity": "faction-peri-council",
+      "attribute": "peri_whirl_silver_blue_motes",
+      "quote": "Lights rose off the water in a whirl—silver-blue motes that feathered outward and trailed like shaken ash.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-peri-token",
+      "attribute": "token_tightens_on_peri_proximity",
+      "quote": "The token at her throat tightened as the lights drew close, a pressure that counted her breaths quicker.",
+      "value": "true"
+    }
+  ],
+  "presentEntities": [
+    "char-amina",
+    "ship-simorgh",
+    "obj-map-of-ways",
+    "char-ibrahim",
+    "obj-peri-token"
+  ],
+  "promises": [],
+  "paysOff": []
+}

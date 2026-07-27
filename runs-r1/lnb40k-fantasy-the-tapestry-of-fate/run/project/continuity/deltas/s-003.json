@@ -1,0 +1,113 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "entity": "faction-peri-council",
+      "attribute": "council_chambers_description",
+      "quote": "The place the Peri called a council did not feel like a room so much as a pause the world had taken to listen. Amina stepped from the market's heat and found a floor that drank light, a row of seats that hung like ribs, and a ceiling threaded with a slow-feathered wind that smelled faintly of salt and old paper.",
+      "value": "otherworldly chamber with light-drinking floor, rib-like seats, ceiling with slow-feathered wind, scent of salt and old paper"
+    },
+    {
+      "entity": "char-peri-azad",
+      "attribute": "wing_description",
+      "quote": "Wings were not banners here so much as instruments: Azad's were the length of a master's cloak, silver-edged and precise;",
+      "value": "long silver-edged wings, length of a master's cloak"
+    },
+    {
+      "entity": "char-peri-sahr",
+      "attribute": "wing_description",
+      "quote": "Sahr's were narrower and darker, folded close like a ledger.",
+      "value": "narrower darker wings, folded close"
+    },
+    {
+      "entity": "char-peri-azad",
+      "attribute": "manner",
+      "quote": "Azad smiled as if remembering a joke he had told the stars, and when he spoke the sound of his voice unpicked the hush like a hand drawing a thread.",
+      "value": "charming, ceremonial, voice that unpicks hush"
+    },
+    {
+      "entity": "char-peri-sahr",
+      "attribute": "manner",
+      "quote": "Sahr did not smile. She had the stillness of a ledger finally closed and the exactness of a sentence copied three times over.",
+      "value": "austere, exact, ledger-like"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "present_in_council",
+      "quote": "\"Captain Amina al-Sirafi,\" he said, ringed fingers making a courteous arc, \"the Peri Council chooses you.\"",
+      "value": "present and chosen by the Peri Council"
+    },
+    {
+      "entity": "obj-peri-token",
+      "attribute": "physical_description",
+      "quote": "From a fold in her robe she drew a disc of silver, not coin-flat but feather-etched, and held it between finger and thumb like proof that accounts could be kept by hand.",
+      "value": "silver disc, feather-etched, not coin-flat"
+    },
+    {
+      "entity": "obj-map-of-ways",
+      "attribute": "presented_by",
+      "quote": "Azad stepped forward and unfurled something on his knee: a ragged chart, paper gone grey at the edges, lines like migrating currents drawn in ink that breathed.",
+      "value": "presented by Azad as a ragged chart of currents and ley-lines"
+    },
+    {
+      "entity": "obj-map-of-ways",
+      "attribute": "sensory_effect",
+      "quote": "The map warmed in her hands, not like cloth but like a pocket of summer wind: the trace of currents left a faint salt on her palm.",
+      "value": "map imparts warmth and faint salt trace on holder's palm"
+    },
+    {
+      "entity": "obj-peri-token",
+      "attribute": "binding_ritual_words",
+      "quote": "She spoke the binding as if reading the hours: \"By feather and ledger, by promise and keeping: in the name of the Council and the mark we keep, you shall be bound to the token's counting. Bring us the Spindle from Qarrah and the clasp shall be loosed. Fail, and the clasp will take a currency you cannot coin without giving more than you own.\"",
+      "value": "binding recital invoking feather, ledger, Council's mark; conditions for release: return Spindle from Qarrah; penalty: token takes a costly currency"
+    },
+    {
+      "entity": "obj-peri-token",
+      "attribute": "immediate_sensation",
+      "quote": "The touch was small and clean. A glassy warmth ran under Amina's skin and struck the back of her teeth; a metallic taste flooded her mouth like tidewater. The pressure that followed did not crush but numbered: it counted each breath and laid a thread against the hollow of her collarbone.",
+      "value": "glassy warmth, metallic taste, pressure that counts breaths and lays a thread at collarbone"
+    },
+    {
+      "entity": "char-peri-sahr",
+      "attribute": "action_binding",
+      "quote": "\"For the pledge,\" she said, and pressed it to Amina's throat.",
+      "value": "applied the token to Amina's throat to bind her"
+    },
+    {
+      "entity": "char-peri-azad",
+      "attribute": "offer_terms",
+      "quote": "\"We do not bargain for sport, Captain. The Spindle is kept on Qarrah. Bring it here. You will be unbound. You will not bring it—\" He let the alternative hang like a ship's keel catching a shoal.",
+      "value": "demand: retrieve the Spindle from Qarrah in exchange for unbinding"
+    },
+    {
+      "entity": "char-amina",
+      "attribute": "response",
+      "quote": "She opened her mouth to refuse; the token replied with the same small, inexorable arithmetic. Sahr's eyes did not leave her face.",
+      "value": "felt compelled and constrained; could not refuse without token's enforcement"
+    },
+    {
+      "entity": "char-amina-ghost",
+      "attribute": "phrase_present",
+      "quote": "The ghost's voice came again, soft and nearer: Hold the line, Mina. She held it.",
+      "value": "ghost repeats phrase 'Hold the line, Mina' and influences Amina's resolve"
+    }
+  ],
+  "presentEntities": [
+    "faction-peri-council",
+    "char-peri-azad",
+    "char-peri-sahr",
+    "char-amina",
+    "obj-peri-token",
+    "obj-map-of-ways",
+    "char-amina-ghost"
+  ],
+  "promises": [
+    {
+      "id": "promise-retrieve-spindle",
+      "promise": "The Peri Council demands that Amina retrieve the Spindle from Qarrah in exchange for unbinding her from the peri token.",
+      "quote": "\"We do not bargain for sport, Captain. The Spindle is kept on Qarrah. Bring it here. You will be unbound.",
+      "dueByScene": ""
+    }
+  ],
+  "paysOff": []
+}
