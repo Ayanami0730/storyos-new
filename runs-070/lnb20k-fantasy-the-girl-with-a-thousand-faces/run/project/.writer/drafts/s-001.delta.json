@@ -2,92 +2,99 @@
   "sceneId": "s-001",
   "claims": [
     {
-      "entity": "loc-mercy-room",
-      "attribute": "contains",
-      "value": "incense_box, spirit_knife, red_talisman, lacquer_tray, faded_photograph_with_bloodstain",
-      "quote": "A low mat, shelves crowded with jars and folded talismans, a sheathed blade hung above a cracked basin. She worked by habit and temper — fingers that had learned the heavy economy of rites in a place that owed its quiet to practice rather than blessing."
-    },
-    {
-      "entity": "obj-incense-box",
-      "attribute": "used_in_ritual",
-      "value": "night-membrane (sandalwood, frankincense)",
-      "quote": "She lifted a pinch of night-membrane from the incense box, closed her eyes to the City’s muffled night and struck a match."
-    },
-    {
-      "entity": "obj-spirit-knife",
-      "attribute": "used_in_ritual",
-      "value": "traced above smoke; folded talisman pressed to forehead",
-      "quote": "She undid the red cloth and drew the spirit knife free; the metal was cool against her palm. \"Trace the knife's edge above the smoke,\" she said, and her voice smelled of chalk and frying oil."
-    },
-    {
-      "entity": "obj-red-talisman",
-      "attribute": "used_in_ritual",
-      "value": "folded over knife-tip and pressed to forehead",
-      "quote": "She folded a strip from the spare talismans, pressed its crease to the tip of the blade, and leaned the paper against her forehead until the wax of the candle warmed it."
+      "entity": "char-mercy-chan",
+      "attribute": "age",
+      "value": "thirty-eight",
+      "quote": "She was thirty-eight, a hair past the age when other women in the City had started to accept safe trades and quieter lives."
     },
     {
       "entity": "char-mercy-chan",
-      "attribute": "felt_after_ritual",
-      "value": "lightheaded, metallic taste (like coins), brief dizziness",
-      "quote": "The instant the paper kissed skin a taste like coins filled her mouth: copper and the brief, clean panic of dizziness. She blinked away a pulse of lightheadedness and swallowed the metallic tang."
+      "attribute": "prior_loss",
+      "value": "lost a younger brother in the early fighting",
+      "quote": "She had lost a younger brother in the early fighting; the hollow that made her take the work was the kind people do not map on days of calm."
     },
     {
-      "entity": "char-mercy-chan",
-      "attribute": "responded_to_summons",
-      "value": "answered_mei-sook_at_door_then_went_to_stair",
-      "quote": "A knock hammered the thin door, the sound not waiting for the end of a breath. Mercy set the knife back into the red cloth with hands that still remembered the pressure of the ritual and opened. A face crowded the doorway — knuckles raw, hair dusted with flour and soot: Mei-sook from the noodle stall two floors below, voice pitched so the walls might keep it from seeping away."
+      "entity": "loc-occupation-checkpoint",
+      "attribute": "appearance",
+      "value": "sandbags, a half-dozen sentries, a faded banner in the occupiers' script",
+      "quote": "At the City's edge, mercilessly visible even in the alleys' clotted geometry, the checkpoint sat in place like a last, indifferent god: sandbags, a half-dozen sentries, a faded banner in the occupiers' script."
     },
     {
-      "entity": "char-mercy-chan",
-      "attribute": "decision",
-      "value": "stay_with_child_until_watch_changes_and_return_with_mirror_if_needed",
-      "quote": "\"I will stay with the child until the watch changes,\" she told Mei-sook and the leaning faces. \"I’ll come back with the mirror if I must. And I will not let anyone touch the talisman.\""
+      "entity": "loc-kowloon-walled-city",
+      "attribute": "atmosphere",
+      "value": "compressed, maze-like alleys; air-raid dust, coal smoke, rationed kerosene, narrow shafts of light",
+      "quote": "Air-raid dust settled over the City like a second skin, catching in the braids of laundry and in the teeth of the scaffolding. Light came in narrow shafts between stacked balconies; a few bare bulbs hung like tired stars. Distant sirens had finished their long, wheezing wail and left a brittle hush that made voices sound too close. Coal smoke and cooking fat mixed with the sour tang of rationed kerosene, and the whole place seemed to breathe through tiny vents — a compressed chest of alleys that took what the world gave it and held on."
     },
     {
-      "entity": "char-elder-lau",
-      "attribute": "present_at_stair",
+      "entity": "loc-main-alley-spiral",
+      "attribute": "description",
+      "value": "notorious twisting alley with overlapping doors and windows; scorch mark on stone, scent of burnt cloth",
+      "quote": "The Main Alley Spiral was a throat of stone and plaster. Doors overlapped; windows looked over one another like tired witnesses. The scent of burnt cloth came from where someone had tried to burn a blanket after the raid. A scorch marked the stone by a stoop — like fire and like nothing anyone could smoke into explanation."
+    },
+    {
+      "entity": "obj-mercys-incense-box",
+      "attribute": "contents",
+      "value": "pinch of sandalwood-resin, pinch of frankincense, small satchel of 'night-membrane' herb, folded red paper talisman, string of tiny iron bells, faded photograph, wrapped sliver of glass",
+      "quote": "A battered wooden box sat on her knees when she turned it open: it contained a pinch of sandalwood-resin, a pinch of frankincense, a small satchel of powdered 'night-membrane' herb, a folded red paper talisman, a string of tiny iron bells, a faded photograph tucked in a corner and a wrapped sliver of glass that rattled like a memory."
+    },
+    {
+      "entity": "group-kowloon-residents",
+      "attribute": "recent_report",
+      "value": "wailing in the main alley after the raid; reports of a faceless presence",
+      "quote": "\"Mercy,\" she said, voice scabbed with fear. \"Come. Quick. There's wailing in the main alley — after the raid. Children won't go. They say — she had no face — mou jat maan (佢冇面).\""
+    },
+    {
+      "entity": "char-mrs-choi",
+      "attribute": "caller_for_scene",
       "value": "true",
-      "quote": "Elder Lau waited at the foot of the stair, a battered cardigan leaving only the necessary flesh of authority."
+      "quote": "Mrs. Choi, who lived two flights up and sold braised duck from a narrow stall, stood framed in the stairwell, her hair a scatter of white at the temple and her hands knuckled around the banister."
     },
     {
-      "entity": "char-lin-wei",
-      "attribute": "present_at_stair",
-      "value": "true",
-      "quote": "Lin Wei stood close to the wall, knees pressed inward as if the stone might fold him away."
+      "entity": "char-mercy-chan",
+      "attribute": "ritual_phrase",
+      "value": "If blood remembers, let it speak.",
+      "quote": "She traced the knife's edge above the smoke and mouthed the words she used for finishing and for testing alike — a short, practiced invocation folded into a question: \"If blood remembers, let it speak.\""
     },
     {
-      "entity": "char-lin-wei",
-      "attribute": "approximate_age_and_relationship",
-      "value": "about ten years old; unaccompanied refugee (established by this scene)",
-      "quote": "He was small enough for Mercy to measure with a look: about ten years old, his clothes a half-fit of someone else’s hands. There was a refugee’s sharpened watchfulness in him — unaccompanied, she thought, no elder’s hand on his shoulder, no sibling’s sling."
+      "entity": "char-mercy-chan",
+      "attribute": "ritual_side_effects",
+      "value": "lightheadedness, metallic taste, brief dizziness",
+      "quote": "Mercy felt lightheaded and tasted metal at the back of her mouth; a brief dizziness and the metallic tang of old blood followed the gesture."
     },
     {
-      "entity": "loc-alley-spiral-stair",
-      "attribute": "physical_traces",
-      "value": "cold_patch, flipped_red_talisman_face_down, thin_black_crescent_scorch_on_step",
-      "quote": "A patch of air that bites — colder than the rest, like an empty breath — waited in the stairwell where the children often leaned and counted pebbles. A talisman lay face down on the stone, its red like a heart turned over. And on the edge of the step a thin, black crescent scored the concrete, no smoke clinging to it, just a dark sear that did not belong to any nearby pyre."
+      "entity": "loc-main-alley-spiral",
+      "attribute": "supernatural_reading",
+      "value": "stronger-than-usual imprint; presence felt as sharp, hungry accusation linked to wartime wounds",
+      "quote": "But the signal that answered was not the usual murmur of a memory finding a voice. ... This was heavier. It felt like an accusation left in the mouth of a place: sharpened, bright, and hungry."
     },
     {
-      "entity": "residents-walled-city",
-      "attribute": "witness_reports",
-      "value": "child_saw_black_shadow_no_face;heard_scraping_after_raid;talisman_flipped;scorch_mark_present",
-      "quote": "\"Child say — black shadow, no face,\" Mei-sook told Mercy, and the sentence stitched the small crowd together into a single concern. \"Hear it after the raid — like someone scraping the walls,\" a neighbor said, voice small. \"There was a sound — like fingernails, or a bowl dragged.\""
+      "entity": "group-kowloon-residents",
+      "attribute": "witness_phrases",
+      "value": "\"Child say — black shadow, no face.\"; \"Hear it after the raid — like someone scraping the walls\"; \"Scorch on the stone — like fire but no smoke.\"; \"She had no face — mou jat maan (佢冇面).\"",
+      "quote": "A child on a father's hip whispered one of the phrases Mercy had begun to hear and file away: \"Child say — black shadow, no face.\" ... Neighbors repeated what they'd seen — \"Hear it after the raid — like someone scraping the walls\" ... A scorch marked the stone by a stoop — like fire and like nothing anyone could smoke into explanation."
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "professional_style",
+      "value": "methodical, minimal spectacle, diagnostic-first approach",
+      "quote": "She did not make a show of ritual; she did not speak for the crowd. First came a small diagnostic: a bell from the string, three soft strikes, enough to test the air’s response."
     }
   ],
   "presentEntities": [
     "char-mercy-chan",
-    "char-lin-wei",
-    "char-elder-lau",
-    "residents-walled-city",
-    "loc-mercy-room",
-    "loc-alley-spiral-stair"
+    "char-mrs-choi",
+    "group-kowloon-residents",
+    "loc-main-alley-spiral",
+    "loc-kowloon-walled-city",
+    "loc-occupation-checkpoint",
+    "obj-mercys-incense-box"
   ],
   "promises": [
     {
-      "id": "promise-watch-with-child",
-      "promise": "Mercy will stay with Lin Wei until the watch changes.",
-      "quote": "\"I will stay with the child until the watch changes,\" she told Mei-sook and the leaning faces.",
-      "dueByScene": "s-003"
+      "id": "promise-s-001-01",
+      "promise": "Mercy will investigate the wailing in the main alley and report back or act to resolve it.",
+      "quote": "\"I'll look into it,\" she told Mrs. Choi.",
+      "dueByScene": "s-002"
     }
   ],
   "paysOff": []

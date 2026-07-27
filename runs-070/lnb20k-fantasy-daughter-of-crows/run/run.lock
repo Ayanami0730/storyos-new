@@ -1,0 +1,16 @@
+{
+  "pid": 1001475,
+  "startedAt": "2026-07-27T13:01:59.593Z",
+  "argv": [
+    "--premise-file",
+    "/home/dumingxuan/storyos-v3/runs-070/lnb20k-fantasy-daughter-of-crows/premise.txt",
+    "--target",
+    "20000",
+    "--out",
+    "/home/dumingxuan/storyos-v3/runs-070/lnb20k-fantasy-daughter-of-crows/run",
+    "--profile",
+    "generous",
+    "--sandbox",
+    "docker"
+  ]
+}

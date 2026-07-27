@@ -1,17 +1,20 @@
 note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
 rules:
-  - "Social hierarchy is rigid: nobles may contract marriages; servants have no
-    legal claim to marriage with nobility and cannot inherit titles or land."
-  - "The lord's authority within his household is near-absolute: he can order
-    expulsion, binding betrothals, and disinheritance; his signet ring is the
-    instrument of household legal acts."
-  - The Church's rites (a priest's presence for a marriage or vow) are required
-    for a marriage to be legally recognised. A private 'binding' without a
-    priest has no standing.
-  - "No supernatural or anachronistic elements: maintain physical realism and
-    plausible period social mores."
-  - Letters, tokens and objects are admissible as evidence in household disputes
-    but may be ambiguous — provenance must be credible if later cited as fact.
-  - Deaths and legal consequences follow realistic procedures (inquest,
-    household inquiry) and will have social repercussions (loss of standing,
-    rumour).
+  - No supernatural elements or anachronistic technology — the story is grounded
+    in a quasi-medieval household world.
+  - "Household law: the lord has the social and legal authority within his
+    household to arrange his heir's marriage and to punish servants for crimes
+    (including conspiracy or aiding escape). Secret tokens or promises carry
+    emotional meaning only; they confer no legal standing."
+  - Marriage is a legal/sacral act that requires the lord's approval (or a
+    priest with jurisdiction). A clandestine private promise between a noble and
+    a servant does not create a recognized marriage in this world.
+  - "Social mobility is limited: servants cannot inherit land or titles; they
+    can be freed, bound, or punished, but any change to status must be
+    explicitly recorded if it is to be a fact later in the manuscript."
+  - "No deus ex machina: once a scene sets a fact (a letter intercepted, an
+    order given), later scenes must carry its consequences — events are causal
+    and traceable."
+  - "Objects introduced (hairpin, sealed letter) are physical evidence: their
+    existence, who possesses them, and any inscriptions or marks must be
+    recorded in the index if later referenced."

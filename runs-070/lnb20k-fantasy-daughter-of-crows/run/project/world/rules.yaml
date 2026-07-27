@@ -1,34 +1,19 @@
 note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
 rules:
-  - The Academy acquires exactly one hundred girls each year; this is enacted
-    publicly at induction and recorded in the Contract Folio. This must be shown
-    in early scenes and reiterated as ritual fact.
-  - Entry into the Academy is contractual and recorded in the Contract Folio;
-    signatures and ritual (the Amber Lantern and the Bronze Bell) are the formal
-    mechanisms of transfer. The Folio's entries are binding within the society's
-    recognized law and in the Academy's internal enforcement mechanisms.
-  - After a ten-year period from an individual's entry, historical record shows
-    only three individuals (the Three) ever left the Academy. The text must
-    present this as a factual, auditable statistic in the world; any alternative
-    explanations (escape, false death, cloakings) must be consistent with the
-    archive's records and cannot contradict the three-exit fact without being
-    explicitly recorded as a retcon in the Archive.
-  - The Academy is not supernatural in the sense of all-powerful magic; it uses
-    law, ritual, social control, and institutional networks to enforce its
-    claims. Any mystical or uncanny elements must be limited and optional; the
-    story hinges on institutional power and human choices.
-  - The War is an external political-military force from the Kingdom. The War
-    Envoy is its representative. The war can bring violence and political
-    demands to the Academy's gates; it can break archives and expose secrets but
-    cannot arbitrarily rewrite history—the Contract Folio's entries remain
-    legible unless physically destroyed, and any such destruction must be shown
-    in scene provenance.
-  - "Characters' ages and timelines must be coherent: Rue enters as a young
-    woman, ages across the book, and is convincingly old by the time the war
-    arrives. The Academy's calendar and the ten-year mark must be narratively
-    consistent."
-  - Any departures, disappearances, or deaths inside the Academy must be
-    recorded in the Archive unless the tale explicitly shows an attempt to erase
-    or alter those records. Marginal notes, contradictions, and redactions in
-    the Folio are permissible but must be presented with provenance (whose hand,
-    what scene caused it).
+  - Every year, the Mercy Academy acquires exactly one hundred girls; that
+    number is an institutional constant and must appear in the story's facts.
+  - After a ten-year period within the Academy, only three individuals ever
+    leave under normal circumstances; this must be stated and preserved as a
+    factual statistic within the narrative.
+  - Rue entered the Mercy Academy by selling herself; her consent and the
+    Contract she signed must be an established fact in her backstory.
+  - A war arrives and reaches the Academy's gates during Rue's later years; the
+    war must affect events at the Academy and force reckonings with its past.
+  - "The Folio and the Contract are authoritative objects inside the Academy:
+    they record intake and the terms of binding. Any scene that refers to who is
+    allowed to leave must trace to these artifacts or to a documented
+    exception."
+  - Do not contradict the above institutional facts anywhere in the story; if
+    new facts about the Academy's practices are introduced, they must be
+    consistent with the above constraints or be revealed as covert exceptions
+    with provenance in the Archive.

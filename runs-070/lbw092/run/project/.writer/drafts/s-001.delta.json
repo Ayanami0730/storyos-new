@@ -2,115 +2,55 @@
   "sceneId": "s-001",
   "claims": [
     {
+      "entity": "obj-hairpin-ivory",
+      "attribute": "possessed_by",
+      "value": "char-garr",
+      "quote": "\"He closes his hand around the thin ivory and tucks it into the rough of his palm as if expecting to hide something precious beneath skin used to work.\""
+    },
+    {
+      "entity": "char-marta",
+      "attribute": "aware_of_lovers_meetings",
+      "value": "true",
+      "quote": "\"Marta stands a little back, half in shadow on the path where the hedges meet the wall. She is Elys's maid and confidante—pragmatic, watchful—and tonight she has the face of someone who has decided to be a sentinel rather than a snitch.\""
+    },
+    {
+      "entity": "char-marta",
+      "attribute": "has_not_betrayed_lovers",
+      "value": "true",
+      "quote": "\"Marta's answer is a whisper that the leaves nearly steal. 'I'll watch. I won't tell.'\""
+    },
+    {
+      "entity": "char-elys",
       "attribute": "location",
-      "entity": "char-elisande",
-      "quote": "Elisande was early to the terrace because she had practiced patience like a small art.",
-      "value": "loc-rose-terrace"
+      "value": "loc-walled-garden",
+      "quote": "\"Elys moves down the gravel path with the careful feet of someone practiced at making no sound.\""
     },
     {
+      "entity": "char-garr",
       "attribute": "location",
-      "entity": "char-rowan",
-      "quote": "Rowan came up the gravel with the long, sure stride of a man who had measured every foot of Garrick grounds.",
-      "value": "loc-rose-terrace"
+      "value": "loc-walled-garden",
+      "quote": "\"He is waiting on the old stone bench beneath her balcony, shoulders squared as if to carry the world on them.\""
     },
     {
-      "attribute": "location",
-      "entity": "char-ana",
-      "quote": "Ana was already there, kneeling like a small conspirator by the herb box, smoothing a pleat in the hem of her mistress's gown.",
-      "value": "loc-rose-terrace"
-    },
-    {
-      "attribute": "holds",
-      "entity": "char-rowan",
-      "quote": "Rowan looped the chain over his neck with a tenderness that made Ana's hand go to her mouth.",
-      "value": "obj-locket-onyx"
-    },
-    {
-      "attribute": "contains",
-      "entity": "obj-locket-onyx",
-      "quote": "The onyx locket slipped from under her gown like a secret surfacing; the stone was cool and black, dull where fingers had worn it. Inside, she kept the hair she had wrapped from her mother's braid and a pressed scrap of blue blossom. She leaned forward and laid a single rose petal—folded small until it fit beneath the onyx lid—inside the hollow with deliberate fingers.",
-      "value": "scrap of hair; pressed blue blossom; folded white rose petal"
-    },
-    {
-      "attribute": "held_by",
-      "entity": "obj-letter-sealed",
-      "quote": "She bent, scooped the letter into her palm, and pressed it to her chest as if to hide the small heat of it.",
-      "value": "char-ana"
-    },
-    {
-      "attribute": "seal_intact",
-      "entity": "obj-letter-sealed",
-      "quote": "The seal of red wax was whole.",
-      "value": "true"
-    },
-    {
-      "attribute": "confidante_of",
-      "entity": "char-ana",
-      "quote": "She met Elisande's eyes with the plain, frank expression that made confession easier than a sermon.",
-      "value": "char-elisande"
-    },
-    {
-      "attribute": "aware_of_meetings",
-      "entity": "char-ana",
-      "quote": "She had watched the two of them meet like this twice a week for months, slipping into the terrace as if into the margins of a book.",
-      "value": "twice a week for months"
-    },
-    {
-      "attribute": "meets_regularly_with",
-      "entity": "char-elisande",
-      "quote": "She had watched the two of them meet like this twice a week for months, slipping into the terrace as if into the margins of a book.",
-      "value": "char-rowan — twice a week for months"
-    },
-    {
-      "attribute": "has_low_stone_balustrade",
-      "entity": "loc-rose-terrace",
-      "quote": "The terrace was a stepped fold of garden—tiers of clipped yew that rose to a low stone balustrade along the river, a narrow outer path where servants passed between stables and kitchens, and the bench set near the eastern corner beneath a trellis.",
-      "value": "true"
-    },
-    {
-      "attribute": "has_tiers_of_clipped_yew",
-      "entity": "loc-rose-terrace",
-      "quote": "The terrace was a stepped fold of garden—tiers of clipped yew that rose to a low stone balustrade along the river, a narrow outer path where servants passed between stables and kitchens, and the bench set near the eastern corner beneath a trellis.",
-      "value": "true"
-    },
-    {
-      "attribute": "bench_location",
-      "entity": "loc-rose-terrace",
-      "quote": "The terrace was a stepped fold of garden—tiers of clipped yew that rose to a low stone balustrade along the river, a narrow outer path where servants passed between stables and kitchens, and the bench set near the eastern corner beneath a trellis.",
-      "value": "near the eastern corner beneath a trellis"
-    },
-    {
-      "attribute": "has_narrow_outer_path_for_servants",
-      "entity": "loc-rose-terrace",
-      "quote": "The terrace was a stepped fold of garden—tiers of clipped yew that rose to a low stone balustrade along the river, a narrow outer path where servants passed between stables and kitchens, and the bench set near the eastern corner beneath a trellis.",
-      "value": "true"
-    },
-    {
-      "attribute": "sightlines_broken_make_privacy_possible",
-      "entity": "loc-rose-terrace",
-      "quote": "From the manor's windows you could look down into the terrace if you leaned and looked with purpose; but the hedges and balustrade broke sightlines enough to make private things possible.",
-      "value": "true"
-    },
-    {
-      "attribute": "understands_vow_has_no_legal_weight",
-      "entity": "char-elisande",
-      "quote": "\"Not a priest, never that, not here,\" Elisande said quickly, and the words were not a denial so much as a careful map.",
-      "value": "true"
+      "entity": "char-lord-harrow",
+      "attribute": "presence_in_household",
+      "value": "distant_and_controlling",
+      "quote": "\"His power is the architecture of the household, a constant that presses against the edges of gatherings and decisions.\""
     }
   ],
   "presentEntities": [
-    "char-elisande",
-    "char-rowan",
-    "char-ana",
-    "loc-rose-terrace",
-    "obj-locket-onyx",
-    "obj-letter-sealed"
+    "char-elys",
+    "char-garr",
+    "char-marta",
+    "char-lord-harrow",
+    "obj-hairpin-ivory",
+    "loc-walled-garden"
   ],
   "promises": [
     {
-      "id": "promise-guard-locket",
-      "promise": "Rowan will guard the locket and return it when Elisande asks.",
-      "quote": "\"I will keep it,\" he said. \"I will keep it and I will bring it back when you ask. I am not a man with papers and oaths, Lady Elisande, but I will guard what you give me.\"",
+      "id": "promise-lovers-quiet",
+      "promise": "A private, non-legal vow: Garr will return and Elys will wait; their promise is intimate and absolute to them.",
+      "quote": "\"I will come back,\" he says, and the words are plain as a pledge laid on wood.\n\n\"I will wait,\" she says, as plain and as absolute.",
       "dueByScene": null
     }
   ],

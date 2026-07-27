@@ -1,0 +1,16 @@
+{
+  "pid": 1003169,
+  "startedAt": "2026-07-27T13:02:30.402Z",
+  "argv": [
+    "--premise-file",
+    "/home/dumingxuan/storyos-v3/runs-070/lnb20k-fantasy-the-girl-with-a-thousand-faces/premise.txt",
+    "--target",
+    "20000",
+    "--out",
+    "/home/dumingxuan/storyos-v3/runs-070/lnb20k-fantasy-the-girl-with-a-thousand-faces/run",
+    "--profile",
+    "generous",
+    "--sandbox",
+    "docker"
+  ]
+}

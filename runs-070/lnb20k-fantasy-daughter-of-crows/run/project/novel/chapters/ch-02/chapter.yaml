@@ -1,54 +1,44 @@
 chapter: ch-02
 scenes:
   - id: s-005
-    intent: A lesson about the Three — In a fireside conversation, older staff and a
-      clandestine girl recount the history of the Three. Rue learns that in the
-      Academy's ledger history, the exits are three and three alone in living
-      memory; each has a different story and different public explanations. This
-      deepens Rue's choices.
+    intent: "Rue's craft and investment: Over the middle years, Rue takes up a
+      specialty (gardening/medicine/texts) that makes her valuable to the
+      Academy. Scenes of care and small satisfactions complicate the moral
+      picture: the Academy offers skill, shelter and meaning as well as
+      restraint."
     present:
       - char-rue
-      - char-headmistress
-      - loc-archives
-      - group-three
-      - char-ida
-      - char-marra
-      - char-lyss
-  - id: s-006
-    intent: The institute's ambivalences — Rue rises in competence and in
-      responsibility; she sees both succor and cruelty. The Headmistress's
-      speeches emphasize mercy; the Wardens' routine inflicts discipline. Rue
-      witnesses punishments that are justified as correction and wonders at the
-      asymmetry between promise and practice.
-    present:
-      - char-rue
-      - char-warden
-      - char-headmistress
-      - loc-mercy-academy
-      - loc-chapel
-  - id: s-007
-    intent: "A decade's scale suggested — Time passes in a montage: cohorts cycle,
-      seasons mark ten years on the Academy's calendar, and Rue keeps the same
-      corner of the archive. The Folio continues to fill. The statistic is
-      established in the prose: only three ever leave after ten years. Rue
-      reflects on what staying has cost and given her."
-    present:
-      - char-rue
-      - loc-archives
-      - obj-contract-folio
-      - loc-mercy-academy
-      - group-hundred
-      - group-three
-  - id: s-008
-    intent: The cost of choice — Rue encounters a newcomer who regrets her sale and
-      seeks to trade back; Rue must counsel or refuse. The scene explores
-      whether selling oneself was a free choice and what compulsion looks like
-      within the Academy's systems. Rue's complicity and agency are
-      foregrounded.
-    present:
-      - char-rue
+      - loc-garden
       - loc-dormitory
-      - loc-archives
-      - obj-contract-folio
-      - group-hundred
-      - char-warden
+      - loc-archive
+  - id: s-006
+    intent: "The Folio's margins: Rue, working in the Archive, reads marginalia —
+      cryptic notes about departures, names crossed out, and a small list that
+      seems to track The Three. She sees that the Academy keeps more than public
+      records; the Folio holds judgements."
+    present:
+      - char-rue
+      - loc-archive
+      - obj-folio
+      - obj-contract
+  - id: s-007
+    intent: "Headmistress's public face vs private choices: The Headmistress
+      receives visitors and gives interviews. Rue observes the performance.
+      Behind closed doors the Headmistress consults the ledger and argues with
+      senior staff about who stays and who is permitted to leave."
+    present:
+      - char-headmistress
+      - char-rue
+      - loc-ceremony-hall
+      - loc-archive
+      - obj-folio
+  - id: s-008
+    intent: "Life of the Hundred: A montage-like scene showing years passing in the
+      Dormitory and Garden — births of friendships, small rebellions, ritual
+      obedience. The Hundred are portrayed as a living social body with internal
+      economies and loyalties."
+    present:
+      - group-the-hundred
+      - loc-dormitory
+      - loc-garden
+      - obj-bell

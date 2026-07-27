@@ -1,0 +1,9 @@
+id: char-garr
+name: garr
+sketch: "Garr: a stable-hand/servant in his early twenties. Steady, taciturn,
+  surprisingly gentle and practical; he knows the estate's edges and a few books
+  stolen nights in the clerk's light."
+identity:
+  profession: stable-hand
+provenance:
+  profession: s-001

@@ -80,16 +80,28 @@ def main() -> int:
         records = load(role_dir)
         tools: Counter = Counter()
         turns = 0
+        prompts = 0
+        refusals = 0
         for r in records:
-            body = text_of(r)
-            for match in re.finditer(r'"(?:name|toolName)"\s*:\s*"([a-z_]+)"', body):
-                tools[match.group(1)] += 1
-            if r.get("role") == "assistant" or r.get("type") == "turn":
+            role = r.get("role")
+            if role == "assistant":
                 turns += 1
+                for c in r.get("content") or []:
+                    if c.get("type") == "toolCall":
+                        tools[c.get("name", "?")] += 1
+            elif role == "user":
+                prompts += 1
+            elif role == "toolResult":
+                body = text_of(r.get("content"))
+                if body.lstrip().startswith(("refused", "rejected")) or "refused:" in body[:80]:
+                    refusals += 1
         per_role_tools[role_dir.name] = tools
-        print(f"\n## {role_dir.name}: {len(records)} record(s), {turns} assistant turn(s)")
+        print(
+            f"\n## {role_dir.name}: {turns} assistant turn(s), {prompts} prompt(s) received, "
+            f"{sum(tools.values())} tool call(s), {refusals} refused"
+        )
         if tools:
-            print("   tools: " + ", ".join(f"{k}×{v}" for k, v in tools.most_common(12)))
+            print("   " + ", ".join(f"{k}×{v}" for k, v in tools.most_common(14)))
 
     # Where a name a reader sees actually lives. If it is only ever in the writer's
     # own output and never in what the writer was given, the next scene can only get

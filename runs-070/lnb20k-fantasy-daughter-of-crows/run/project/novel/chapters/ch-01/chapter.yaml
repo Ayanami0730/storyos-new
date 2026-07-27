@@ -1,59 +1,50 @@
 chapter: ch-01
 scenes:
   - id: s-001
-    intent: "Opening — Rue's choice. A young Rue signs the Folio in the Chapel and
-      sells herself into the Mercy Academy. The scene must show the formalities:
-      the Bronze Bell, the Amber Lantern, the Contract Folio, and the
-      Headmistress's language of mercy. Introduces the statistic (one hundred
-      girls accepted yearly) as part of the ceremony and Rue's practical,
-      resolute reasons for selling herself."
+    intent: "Prologue: Rue, in poverty, makes the conscious choice to sell herself
+      to the Mercy Academy. We see the private, practical reasons for her
+      decision, the signing of the Contract, and the Ceremony Hall's polished
+      charity. Establish Rue's voice and the moment of consent."
     present:
       - char-rue
-      - loc-chapel
-      - obj-contract-folio
-      - obj-binding-bell
-      - obj-amber-lantern
+      - loc-ceremony-hall
+      - obj-contract
+      - obj-folio
       - char-headmistress
+      - group-the-hundred
       - loc-mercy-academy
-      - group-hundred
   - id: s-002
-    intent: "First night in the Dormitory — Rue's arrival among the Hundred. The new
-      cohort settles; Rue meets other girls and a Warden explains routines. The
-      scene centers on small intimacies — the sound of the Bell still ringing in
-      Rue's head — and the first mention of those who do not return after ten
-      years: the legend of the Three as a hush among the girls."
+    intent: "Arrival: The new Hundred are admitted. Rue moves into the Dormitory,
+      meets a selection of the cohort, and learns the basic rules and rhythms —
+      the Bell, the ledger, the chores. The Academy's public benevolence is
+      shown alongside intimations of its strictness."
     present:
       - char-rue
+      - group-the-hundred
       - loc-dormitory
-      - char-warden
-      - group-hundred
-      - obj-amber-lantern
-      - obj-binding-bell
-      - group-three
+      - obj-bell
+      - loc-ceremony-hall
   - id: s-003
-    intent: Orientation and learning the stakes — In the Chapel and Archive, the
-      Headmistress gives the public account of the Academy's mission and the
-      Archive's senior reads the formal entry into the Contract Folio. Rue
-      witnesses the ledger work and sees how names are recorded, and hears the
-      official justification for the ten-year term without explicit promise of
-      release.
+    intent: "First months: Rue adapts, makes friends and enemies among the Hundred,
+      and is assigned duties that give her access to the Archive and the Folio.
+      She begins to sense patterns — quiet disappearances, a silence around
+      certain names."
+    present:
+      - char-rue
+      - group-the-hundred
+      - loc-archive
+      - obj-folio
+      - loc-garden
+  - id: s-004
+    intent: "The Ten-Year Stat: A lecturer or Headmistress's address makes explicit
+      the Academy's ten-year expectation and the statistic that only three ever
+      leave. Rue learns the institution's language — mercy, protection,
+      permanence — and internalizes the scale of the bargain."
     present:
       - char-headmistress
-      - loc-archives
-      - obj-contract-folio
-      - loc-chapel
       - char-rue
+      - loc-ceremony-hall
+      - obj-folio
+      - group-the-hundred
+      - group-the-three
       - loc-mercy-academy
-  - id: s-004
-    intent: "The Academy's daily life — Rue learns craftwork (weaving/scribing). The
-      Academy's practical side is revealed: labor, schooling, and the way the
-      Hundred are organized. Small rituals use the Red Thread and Lantern; the
-      scene shows friendships forming and small betrayals, and the first
-      disappearance of an entrant drops like a rumor."
-    present:
-      - char-rue
-      - loc-mercy-academy
-      - obj-red-thread
-      - group-hundred
-      - char-warden
-      - loc-dormitory

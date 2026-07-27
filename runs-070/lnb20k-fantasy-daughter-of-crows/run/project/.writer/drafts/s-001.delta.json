@@ -2,86 +2,92 @@
   "sceneId": "s-001",
   "claims": [
     {
-      "entity": "loc-chapel",
-      "attribute": "contains_object",
-      "value": "obj-amber-lantern",
-      "quote": "The Amber Lantern swung close enough for its honeyed light to pick out the lines of her hands."
-    },
-    {
-      "entity": "loc-chapel",
-      "attribute": "contains_object",
-      "value": "obj-binding-bell",
-      "quote": "Behind her, the bronze of the Bell sat on its velvet cushion, mute and waiting."
-    },
-    {
-      "entity": "loc-chapel",
-      "attribute": "is_scene_of",
-      "value": "s-001",
-      "quote": "As the girls were guided from the Chapel toward the dormitory, the Headmistress’s words followed them—an instruction dressed as mercy."
-    },
-    {
-      "entity": "group-hundred",
-      "attribute": "intake_count",
-      "value": "100",
-      "quote": "\"This year we admit one hundred. The Folio will record names, ages, dates, provenance, and signatures."
-    },
-    {
-      "entity": "obj-contract-folio",
-      "attribute": "entry_template",
-      "value": "Folio Entry— Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.",
-      "quote": "A scribe stepped forward with the Contract Folio under his arm, a slab of leather bound like an anchor. He opened to a fresh page and read, aloud, the form as he set his pen: \"Folio Entry— Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.\""
+      "entity": "char-rue",
+      "attribute": "sold_self_to_academy",
+      "value": "true",
+      "quote": "So I sold myself."
     },
     {
       "entity": "char-rue",
-      "attribute": "age_at_entry",
-      "value": "18",
-      "quote": "The scribe's voice marked each line as he copied: \"Name: Rue. Age: 18. Date: this day. Intake: One hundred. Provenance: Sold by consent.\""
+      "attribute": "consented",
+      "value": "true",
+      "quote": "I had consented."
     },
     {
-      "entity": "char-rue",
-      "attribute": "location_at_end",
-      "value": "loc-dormitory",
-      "quote": "As the girls were guided from the Chapel toward the dormitory, the Headmistress’s words followed them—an instruction dressed as mercy."
+      "entity": "loc-ceremony-hall",
+      "attribute": "smell",
+      "value": "beeswax polish and boiled linen",
+      "quote": "The Ceremony Hall smelled of beeswax polish and boiled linen: the kind of clean that announces itself rather than earning quiet trust."
+    },
+    {
+      "entity": "obj-folio",
+      "attribute": "folio_entry_template",
+      "value": "Folio Entry — Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.",
+      "quote": "The Folio was open where a scribe had left it, a pale rectangle of invitation: “Folio Entry — Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.”"
+    },
+    {
+      "entity": "group-the-hundred",
+      "attribute": "intake_number_per_year",
+      "value": "one hundred",
+      "quote": "The hundred benches were arranged like a small amphitheatre; families sat in the outer rings, sober as undertakers."
+    },
+    {
+      "entity": "obj-bell",
+      "attribute": "role",
+      "value": "marks intakes and ends ceremony with a single bronze note",
+      "quote": "The Bell — a single bronze note struck from a high arch — cut the murmurs and put us under the House's attention."
     },
     {
       "entity": "char-headmistress",
-      "attribute": "speech_contains",
-      "value": "Mercy is accounted for by service and attention, not by indulgence.",
+      "attribute": "public_voice",
+      "value": "formal, composed, expert at maintaining charitable image",
+      "quote": "The Headmistress was everything polished with use. She wore mercy as other people wear good coats — tailored to fit, and kept for public weather."
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "stated_statistics",
+      "value": "Out of the hundred who enter each year, only three leave at the end of their ten-year term.",
+      "quote": "\"Out of the hundred who enter each year,\" she said, \"only three leave at the end of their ten-year term. The rest remain under the Academy's charge as is recorded.\""
+    },
+    {
+      "entity": "obj-contract",
+      "attribute": "term_length",
+      "value": "ten years",
+      "quote": "The Contract's clause was quiet in the packet but not shy: ten years."
+    },
+    {
+      "entity": "obj-contract",
+      "attribute": "signed_by",
+      "value": "char-rue",
+      "quote": "I signed in a hand that had practised keeping accounts in cramped ledgers."
+    },
+    {
+      "entity": "obj-folio",
+      "attribute": "witness_mark",
+      "value": "Headmistress witness mark beside Rue's signature",
+      "quote": "The Headmistress dipped a fingertip and made a mark beside the signature — her witness."
+    },
+    {
+      "entity": "loc-ceremony-hall",
+      "attribute": "headmistress_closing_line",
+      "value": "So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.",
       "quote": "\"So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.\""
-    },
-    {
-      "entity": "char-rue",
-      "attribute": "provenance_of_entry",
-      "value": "Sold by consent",
-      "quote": "The scribe's voice marked each line as he copied: \"Name: Rue. Age: 18. Date: this day. Intake: One hundred. Provenance: Sold by consent.\""
-    },
-    {
-      "entity": "obj-binding-bell",
-      "attribute": "used_in_scene",
-      "value": "s-001",
-      "quote": "Then the Bronze Bell was lifted and struck. The sound rolled through the stone like the closing of a gate."
-    },
-    {
-      "entity": "obj-amber-lantern",
-      "attribute": "used_in_scene",
-      "value": "s-001",
-      "quote": "A young warden, pale at the mouth with the weight of his responsibility, took the Amber Lantern from the steward and held it over the inscription so the light lay on her signature."
     }
   ],
   "presentEntities": [
     "char-rue",
+    "loc-ceremony-hall",
+    "obj-contract",
+    "obj-folio",
     "char-headmistress",
-    "obj-contract-folio",
-    "obj-binding-bell",
-    "obj-amber-lantern",
-    "loc-mercy-academy",
-    "group-hundred"
+    "group-the-hundred",
+    "loc-mercy-academy"
   ],
   "promises": [
     {
-      "id": "pr-001",
-      "promise": "The Folio will record names, ages, dates, provenance, and signatures.",
-      "quote": "\"The Folio will record names, ages, dates, provenance, and signatures.\"",
+      "id": "promise-folio-record",
+      "promise": "The Folio will stand as record and law for the intake, establishing the Academy's charge over entrants.",
+      "quote": "\"So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.\"",
       "dueByScene": ""
     }
   ],

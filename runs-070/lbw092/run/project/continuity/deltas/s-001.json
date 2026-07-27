@@ -1,0 +1,58 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "obj-hairpin-ivory",
+      "attribute": "possessed_by",
+      "value": "char-garr",
+      "quote": "\"He closes his hand around the thin ivory and tucks it into the rough of his palm as if expecting to hide something precious beneath skin used to work.\""
+    },
+    {
+      "entity": "char-marta",
+      "attribute": "aware_of_lovers_meetings",
+      "value": "true",
+      "quote": "\"Marta stands a little back, half in shadow on the path where the hedges meet the wall. She is Elys's maid and confidante—pragmatic, watchful—and tonight she has the face of someone who has decided to be a sentinel rather than a snitch.\""
+    },
+    {
+      "entity": "char-marta",
+      "attribute": "has_not_betrayed_lovers",
+      "value": "true",
+      "quote": "\"Marta's answer is a whisper that the leaves nearly steal. 'I'll watch. I won't tell.'\""
+    },
+    {
+      "entity": "char-elys",
+      "attribute": "location",
+      "value": "loc-walled-garden",
+      "quote": "\"Elys moves down the gravel path with the careful feet of someone practiced at making no sound.\""
+    },
+    {
+      "entity": "char-garr",
+      "attribute": "location",
+      "value": "loc-walled-garden",
+      "quote": "\"He is waiting on the old stone bench beneath her balcony, shoulders squared as if to carry the world on them.\""
+    },
+    {
+      "entity": "char-lord-harrow",
+      "attribute": "presence_in_household",
+      "value": "distant_and_controlling",
+      "quote": "\"His power is the architecture of the household, a constant that presses against the edges of gatherings and decisions.\""
+    }
+  ],
+  "presentEntities": [
+    "char-elys",
+    "char-garr",
+    "char-marta",
+    "char-lord-harrow",
+    "obj-hairpin-ivory",
+    "loc-walled-garden"
+  ],
+  "promises": [
+    {
+      "id": "promise-lovers-quiet",
+      "promise": "A private, non-legal vow: Garr will return and Elys will wait; their promise is intimate and absolute to them.",
+      "quote": "\"I will come back,\" he says, and the words are plain as a pledge laid on wood.\n\n\"I will wait,\" she says, as plain and as absolute.",
+      "dueByScene": null
+    }
+  ],
+  "paysOff": []
+}

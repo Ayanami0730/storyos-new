@@ -1,0 +1,15 @@
+pairId: char-garr--char-marta
+participants:
+  - char-garr
+  - char-marta
+phases:
+  - index: 1
+    relation: acquaintances (watchful)
+    fromScene: s-001
+    toScene: null
+    transition: Marta stands back observing Garr and Elys's meeting and promises
+      secrecy; she is not an antagonist in this scene.
+    source:
+      scene: s-001
+      span: L1-L60
+openQuestions: []

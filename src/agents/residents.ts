@@ -308,7 +308,35 @@ export class TurnFailed extends Error {
  * retrying only spends the budget slower.
  */
 export function isRetryableTurnError(message: string): boolean {
-  return /\b(429|5\d\d)\b|rate.?limit|rate_limit|too_many_requests|resource exhausted|负载已饱和|overloaded|time(?:d)?[\s_-]*out|terminated|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up/i.test(
+  return (
+    /\b(429|5\d\d)\b|rate.?limit|rate_limit|too_many_requests|resource exhausted|负载已饱和|overloaded|time(?:d)?[\s_-]*out|terminated|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up/i.test(
+      message,
+    ) || isTruncatedStream(message)
+  );
+}
+
+/**
+ * A response stream that was cut mid-JSON.
+ *
+ * Measured on `runs-070/lbw092` s-001: the orchestrator's turn died with
+ * `Expected ':' after property name in JSON at position 74`, and the log above it
+ * shows why — a server-sent chunk that ends inside an object:
+ *
+ *     Could not parse message into JSON: {"choices":[{"delta":{"tool_calls":[{"function":{"arguments":"01"},"index"
+ *
+ * That is a transport accident of exactly the same kind as a socket hang-up, and it
+ * was not retried: `TurnFailed after 1 attempt(s)`, on the first scene of the run.
+ * Nothing about the request was wrong, so the classifier's own argument for
+ * retrying a 429 — "a scheduling accident rather than a statement about the
+ * request" — applies unchanged.
+ *
+ * The risk of matching too widely is a model that emits malformed tool arguments
+ * every time, which would spend six attempts instead of one. That is bounded and
+ * cheap next to what happens otherwise: a lost orchestrator turn on a scene whose
+ * transaction is mid-flight.
+ */
+function isTruncatedStream(message: string): boolean {
+  return /(?:Expected .*after property name|Unexpected end of JSON input|Unterminated string in JSON|Unexpected (?:token|non-whitespace character).*JSON|is not valid JSON|Could not parse message into JSON)/i.test(
     message,
   );
 }

@@ -311,6 +311,19 @@ describe("a provider call that fails", () => {
     assert.ok(isRetryableTurnError("Request timed out."));
     assert.ok(isRetryableTurnError("terminated"));
     assert.ok(isRetryableTurnError("socket hang up"));
+    /**
+     * A stream cut mid-JSON, which is what this looks like in practice.
+     *
+     * Measured on `runs-070/lbw092` s-001: a server-sent chunk ended inside an
+     * object — `{"choices":[{"delta":{"tool_calls":[{"function":{"arguments":"01"},"index"`
+     * — and the turn died with `TurnFailed after 1 attempt(s)`. Nothing about the
+     * request was wrong, so the same argument that retries a 429 applies.
+     */
+    assert.ok(
+      isRetryableTurnError("Expected ':' after property name in JSON at position 74"),
+    );
+    assert.ok(isRetryableTurnError("Unexpected end of JSON input"));
+    assert.ok(isRetryableTurnError("Could not parse message into JSON: {\"choices\":["));
     assert.ok(!isRetryableTurnError("400: invalid request: unknown field"));
     assert.ok(!isRetryableTurnError("404: model_not_found"));
     // A content filter is a decision about the request, not a transient fault;

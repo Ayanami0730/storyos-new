@@ -1,75 +1,72 @@
 scenes:
   - id: s-001
     chapter: ch-01
-    intent: "Open on the ordinary chore: Arden takes the dog and the brass collar
-      from Mrs. Blythe. The collar slips from the dog's tags and flies into the
-      street. Hollis arrives and, refusing to see a small accident, immediately
-      reframes the task as a quest. Establish the objective (recover
-      obj-king-collar), the oath between the kids, and introduce
-      obj-cardboard-map and obj-wooden-staff as ritual gear."
+    intent: "Set up the daily task and the central relationship: Eloise collects the
+      lunchbox and brooch at loc-eloise-house, explains the 'quest' to Jun, and
+      we see the map and the rules of their imaginative game. Establish stakes
+      (the brooch must reach Mrs. Halloway at loc-halloway-house), voice, and
+      the tone that will let ordinary obstacles be read as mythic challenges."
     present:
-      - char-arden
-      - char-hollis
-      - char-mrs-blythe
-      - loc-arden-house
-      - loc-cobble-lane
-      - obj-king-collar
-      - obj-cardboard-map
-      - obj-wooden-staff
+      - char-eloise
+      - char-jun
+      - char-mrs-halloway
+      - obj-lunchbox
+      - obj-brooch
+      - obj-map
+      - loc-eloise-house
+      - loc-main-street
+      - loc-halloway-house
     target_words: 500
   - id: s-002
     chapter: ch-01
-    intent: The two set out along loc-cobble-lane toward loc-old-bridge. They
-      navigate realistic obstacles (muddy puddle, a loose plank, a startled
-      cyclist) rendered as Arthurian trials. Hollis narrates their progress with
-      map and ritual; Arden learns to accept the fiction and to speak the oath
-      aloud. Test their teamwork and courage; bump into a small moral choice
-      (help a stray kitten or hurry to the river) that reinforces friendship
-      over glory.
+    intent: "Turn a mundane crossing and a run-in with Milo into the first trials:
+      leaving loc-eloise-house they confront loc-main-street and the blocked
+      loc-old-bridge which become a moat and a broken causeway; Eloise's
+      imagination reframes traffic, construction, and Milo's taunts as threats.
+      Jun's practical bravery helps them navigate the real danger while the
+      fantasy keeps them steady."
     present:
-      - char-arden
-      - char-hollis
-      - loc-arden-house
-      - loc-cobble-lane
+      - char-eloise
+      - char-jun
+      - char-milo
+      - loc-main-street
       - loc-old-bridge
-      - obj-cardboard-map
-      - obj-wooden-staff
-      - obj-knotted-rope
+      - loc-eloise-house
+      - obj-flashlight
+      - obj-lunchbox
     target_words: 500
   - id: s-003
     chapter: ch-01
-    intent: "At loc-old-bridge and loc-riverbank the main practical danger happens:
-      the dog's collar falls or is found lodged in reeds in the current. The
-      retrieval requires a risky reach and clever improvisation. Arden must
-      confront fear and rely on Hollis's directions and the rope; together they
-      succeed. Include sensory description of the river, the weight of wet
-      brass, and a small setback (slipping boots) that makes the success
-      earned."
+    intent: "Complication: the obj-brooch slips from the lunchbox during a struggle
+      and is lost in loc-park. The search there becomes an Arthurian 'dark wood'
+      sequence: tense, sensory, and imaginative. Jun's resourcefulness and
+      Eloise's refusal to give up deepen their bond. They find the brooch by
+      combining imagination (the map) and a practical observation; note that the
+      lunchbox and map are still present."
     present:
-      - char-arden
-      - char-hollis
-      - loc-arden-house
-      - loc-old-bridge
-      - loc-riverbank
-      - obj-king-collar
-      - obj-wooden-staff
-      - obj-knotted-rope
+      - char-eloise
+      - char-jun
+      - loc-park
+      - loc-eloise-house
+      - obj-brooch
+      - obj-map
+      - obj-flashlight
+      - obj-lunchbox
     target_words: 500
   - id: s-004
     chapter: ch-01
-    intent: "Return to loc-arden-house and char-mrs-blythe, ceremony of return:
-      Hollis crowns the recovered brass collar with a cardboard coronet and the
-      children enact a short Arthurian recognition. Mrs. Blythe's real gratitude
-      (and a quiet, adult affirmation about bravery and friendship) pays off the
-      children's game. Close with the ordinary task restored but permanently
-      changed in the children's eyes: a daily chore now carries a heroic
-      memory."
+    intent: "Resolution and payoff at loc-halloway-house: Mrs. Halloway receives the
+      brooch, tells a quiet story that reframes the journey's meaning
+      (forgiveness, memory, bravery), and rewards the children with gratitude
+      and a simple keepsake. Milo reappears with a small conciliatory gesture.
+      Close with the theme: ordinary chores can be brave quests when shared with
+      friends."
     present:
-      - char-arden
-      - char-hollis
-      - char-mrs-blythe
-      - loc-arden-house
-      - obj-king-collar
-      - obj-cardboard-map
-      - obj-wooden-staff
+      - char-eloise
+      - char-jun
+      - char-mrs-halloway
+      - char-milo
+      - loc-halloway-house
+      - obj-lunchbox
+      - obj-brooch
     target_words: 500

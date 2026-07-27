@@ -204,6 +204,92 @@ export function orchestratorTools(stage: SceneStage): unknown[] {
   return tools;
 }
 
+/**
+ * The story as it stands, for the one actor that can act on it.
+ *
+ * Four things, chosen because each one enables a decision the orchestrator is
+ * supposed to make and currently cannot:
+ *
+ *  - **How the last scene ended**, verbatim. This is what the next scene has to
+ *    follow from, and it is the material for the brief — "pick up on the door she
+ *    left open" is a sentence only available to someone who has read the door.
+ *  - **What the story owes the reader.** Open promises with their due scene. An
+ *    unpaid promise is invisible at the end precisely because nothing refers to
+ *    it, so the moment to spend one is while it is still listed.
+ *  - **Whether the last scene hit its length.** Half the score on this kind of
+ *    task is length compliance, and the per-scene gap is the actionable version of
+ *    the whole-task total already in this brief.
+ *  - **Where the plan goes next.** `update_plan` has never been called in any run.
+ *    A revisable plan whose upcoming scenes the reviser has not seen is not
+ *    revisable in practice.
+ */
+function renderStoryState(
+  state: Parameters<typeof sceneBrief>[0]["state"],
+  position: { readonly index: number; readonly total: number },
+): string {
+  const lines: string[] = ["## The story as it stands", ""];
+
+  if (state.lastScene) {
+    const gap = state.lastScene.words - state.lastScene.target;
+    lines.push(
+      `Last committed: ${state.lastScene.id}, ${state.lastScene.words} words against a target ` +
+        `of ${state.lastScene.target} (${gap >= 0 ? "+" : ""}${gap}).`,
+    );
+  } else {
+    lines.push("Nothing committed yet — this is the first scene.");
+  }
+
+  if (state.lastSceneClose) {
+    lines.push(
+      "",
+      `How ${state.lastScene?.id ?? "it"} ended:`,
+      `> ${state.lastSceneClose.replace(/\s+/g, " ").trim()}`,
+      "",
+      "That is what this scene follows from. A scene that opens as though the previous one had",
+      "not happened is the most common way a sequence of scenes fails to be a story.",
+    );
+  }
+
+  lines.push("");
+  if (state.openPromises.length === 0) {
+    lines.push("Open promises: none recorded.");
+  } else {
+    lines.push(`Open promises (${state.openPromises.length}) — what the reader is still owed:`);
+    for (const p of state.openPromises) {
+      const due = p.dueByScene ? `due by ${p.dueByScene}` : "no stated deadline";
+      lines.push(`  - ${p.id}: ${p.promise} (${due})`);
+    }
+    lines.push(
+      "A promise falling due in this scene or the next is worth saying so in the writer's",
+      "brief — it cannot see this ledger. One that is overdue is a defect no later scene",
+      "fixes more cheaply than this one does.",
+    );
+  }
+
+  if (state.upcoming.length > 0) {
+    lines.push("", "Planned after this one:");
+    for (const s of state.upcoming) lines.push(`  - ${s.id}: ${s.intent}`);
+  } else {
+    lines.push("", "Nothing is planned after this one: this is the last scene.");
+  }
+
+  if (state.tierBoundary && position.index > 1) {
+    lines.push(
+      "",
+      "**This scene begins a new allowance tier, so review the plan before you start it.**",
+      "Not as a formality — `update_plan` has never been called in any run of this system, and",
+      "a plan that is never revised is a plan written before any of the prose existed and then",
+      "defended. Read the committed scenes and answer one question out loud: do the scenes",
+      "listed above still earn their place, given what the prose actually became? If yes, say",
+      "so and carry on — that is a real answer. If a thread needs more room, or a planned",
+      "scene has become redundant, or the ending needs a scene to set it up, revise now. After",
+      "this scene commits, the scenes behind it are fixed.",
+    );
+  }
+
+  return lines.join("\n");
+}
+
 /** The brief for one scene, addressed to the orchestrator. */
 export function sceneBrief(input: {
   readonly sceneId: string;
@@ -232,6 +318,41 @@ export function sceneBrief(input: {
    * the outcome, and only the orchestrator is in a position to act on the gap.
    */
   readonly words: { readonly committed: number; readonly target: number };
+  /**
+   * The state of the story so far, put in front of the orchestrator rather than
+   * left for it to fetch.
+   *
+   * The brief has told it to look since the tools existed — *"Before you start,
+   * look. You have `bash` and `read` over the whole project"*. Measured on
+   * `runs/v062/lbw081`: in a whole four-scene run it made **one** `read` call,
+   * **zero** `update_plan` calls and **zero** `abandon_scene` calls. Its
+   * twenty-two tool calls were nineteen delegations and two plan submissions. So
+   * the revisable plan, the judgement about whether the outline still fits the
+   * prose, and the decision to cut a scene — three things the design claims — had
+   * no realisations at all, and the orchestrator was a sequencer with a prompt
+   * describing a director.
+   *
+   * The verifier had the identical failure and the fix that worked was not more
+   * insistent wording, it was assembling the evidence. An agent asked to judge
+   * without material judges nothing; an agent handed the last scene's closing
+   * lines, what the story still owes the reader, and where the plan goes next has
+   * something to be wrong about.
+   */
+  readonly state: {
+    /** How the previous scene ended, verbatim. Continuity begins here. */
+    readonly lastSceneClose: string | null;
+    readonly lastScene: { readonly id: string; readonly words: number; readonly target: number } | null;
+    /** Promises made and not yet paid off, with the scene they are due by. */
+    readonly openPromises: readonly {
+      readonly id: string;
+      readonly promise: string;
+      readonly dueByScene: string | null;
+    }[];
+    /** The intents of the scenes after this one, so "the plan is stale" is checkable. */
+    readonly upcoming: readonly { readonly id: string; readonly intent: string }[];
+    /** True when this scene is the first in its allocation tier. */
+    readonly tierBoundary: boolean;
+  };
 }): string {
   return [
     `Run scene ${input.sceneId} — number ${input.position.index} of ${input.position.total}, ` +
@@ -259,11 +380,14 @@ export function sceneBrief(input: {
     "",
     renderAllocation(input.allocation),
     "",
-    "Before you start, look. You have `bash` and `read` over the whole project: the",
-    "committed scenes under novel/chapters/, the outline in novel/outline/, the promise",
-    "ledger, the rhythm file. If the prose has outgrown the plan for the scenes ahead,",
-    "`update_plan` now — you cannot touch scenes already written, and after this one is",
-    "committed it joins them.",
+    renderStoryState(input.state, input.position),
+    "",
+    "That block is assembled for you so that judging the plan does not depend on your",
+    "going to look for it. You still have `bash` and `read` over the whole project — the",
+    "committed scenes under novel/chapters/, the outline, the promise ledger, the rhythm",
+    "file — and the block is a starting point rather than the limit. If the prose has",
+    "outgrown the plan for the scenes ahead, `update_plan` now: you cannot touch scenes",
+    "already written, and after this one is committed it joins them.",
     "",
     "Each call takes a `brief`: what is particular about this scene. The specialists keep",
     "their own sessions and already know their jobs, so a brief that restates their role",

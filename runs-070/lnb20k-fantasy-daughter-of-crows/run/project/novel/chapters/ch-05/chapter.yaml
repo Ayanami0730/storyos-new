@@ -1,0 +1,15 @@
+chapter: ch-05
+scenes:
+  - id: s-017
+    intent: "Epilogue: The novel's moral accounting. The Academy's future is set in
+      a scene that shows the consequences of Rue's choice — whether a new cohort
+      will be taken, whether the Folio's pages are rewritten, whether The Three
+      become a larger number. Rue's voice closes the book, old and reconciled or
+      not."
+    present:
+      - char-rue
+      - loc-ceremony-hall
+      - obj-bell
+      - obj-folio
+      - group-the-hundred
+      - group-the-three

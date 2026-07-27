@@ -1,94 +1,43 @@
 chapter: ch-02
 scenes:
   - id: s-005
-    intent: At the makeshift hospital Mercy meets a wounded neighbor and hears more
-      fractured testimony; Elder Lau reluctantly reveals a specific wartime
-      episode—an atrocity or betrayal—that could be the spirit’s origin, but
-      gives only a partial account and demands caution.
+    intent: "A first formal exorcism attempt in the rooftop shrine: Mercy performs
+      traditional rites that ebb the apparition briefly, but the ritual has an
+      unforeseen cost to a neighbor—showing exorcisms are not cost-free."
     present:
       - char-mercy-chan
-      - spirit-vengeful
-      - residents-walled-city
-      - char-elder-lau
-      - char-lin-wei
-      - loc-kowloon-walled-city
-      - loc-mercy-room
-      - loc-alley-spiral-stair
-      - loc-communal-shrine
-      - loc-rooftop-lotus
-      - loc-bazaar
-      - loc-makeshift-hospital
-      - obj-spirit-knife
-      - obj-ancestral-mirror
-      - obj-incense-box
-      - obj-red-talisman
-      - obj-bloodstained-locket
+      - loc-rooftop-shrine
+      - group-kowloon-residents
+      - obj-mercys-incense-box
+      - obj-memory-thread
+      - char-mrs-choi
   - id: s-006
-    intent: Mercy researches the locket and the wartime rumor, visiting the Bazaar
-      for gossip and foraging a physical lead—someone who used to live near the
-      alleged massacre. The Walled City’s maze resists certainties; Mercy senses
-      that the ghost’s power is woven into shared silence.
+    intent: "Tension rises as the spirit strikes back by altering memories:
+      neighbors begin to forget specific losses in ways that create dangerous
+      denials; a small child nearly gets harmed by conflicting recollections."
     present:
-      - char-mercy-chan
       - spirit-vengeful
-      - residents-walled-city
-      - char-elder-lau
-      - char-lin-wei
-      - loc-kowloon-walled-city
-      - loc-mercy-room
-      - loc-alley-spiral-stair
-      - loc-communal-shrine
-      - loc-rooftop-lotus
-      - loc-bazaar
-      - loc-makeshift-hospital
-      - obj-spirit-knife
-      - obj-ancestral-mirror
-      - obj-incense-box
-      - obj-red-talisman
-      - obj-bloodstained-locket
+      - group-kowloon-residents
+      - char-young-refugee
+      - char-dr-yuen
+      - loc-main-alley-spiral
   - id: s-007
-    intent: "A public exorcism at the communal shrine: Mercy calls for a rite that
-      requires community participation. The ritual initially seems to succeed
-      but instead enrages the spirit, which lashes out through memory-laced
-      illusions, causing neighbors to accuse one another and fray trust."
+    intent: Mercy consults the Elder Storyteller in private; the elder reveals an
+      oral fragment about wartime reprisals in the alley and how communities
+      once used binding rites—the elder warns that the revenant is not a lone
+      ghost but a wound in memory.
     present:
       - char-mercy-chan
-      - spirit-vengeful
-      - residents-walled-city
-      - char-elder-lau
-      - char-lin-wei
-      - loc-kowloon-walled-city
-      - loc-mercy-room
-      - loc-alley-spiral-stair
-      - loc-communal-shrine
-      - loc-rooftop-lotus
-      - loc-bazaar
-      - loc-makeshift-hospital
-      - obj-spirit-knife
-      - obj-ancestral-mirror
-      - obj-incense-box
-      - obj-red-talisman
-      - obj-bloodstained-locket
+      - char-elder-storyteller
+      - obj-elder-scroll
+      - loc-temple-basement
+      - obj-memory-thread
   - id: s-008
-    intent: After the shrine’s failure, Mercy interrogates her own methods and the
-      ethics of exorcism; she confides with Elder Lau and learns of an older
-      ritual form—dangerous but potentially deeper—that may force memory to
-      surface but at a cost.
+    intent: "Mercy’s backstory: a flash of her own wartime loss and how she became
+      an exorcist — this personal stake deepens her commitment; she vows to find
+      the truth about the boy in the photo."
     present:
       - char-mercy-chan
       - spirit-vengeful
-      - residents-walled-city
-      - char-elder-lau
-      - char-lin-wei
+      - obj-bloodied-photo
       - loc-kowloon-walled-city
-      - loc-mercy-room
-      - loc-alley-spiral-stair
-      - loc-communal-shrine
-      - loc-rooftop-lotus
-      - loc-bazaar
-      - loc-makeshift-hospital
-      - obj-spirit-knife
-      - obj-ancestral-mirror
-      - obj-incense-box
-      - obj-red-talisman
-      - obj-bloodstained-locket

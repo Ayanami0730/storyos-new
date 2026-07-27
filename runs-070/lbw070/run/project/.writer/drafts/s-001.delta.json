@@ -2,89 +2,90 @@
   "sceneId": "s-001",
   "claims": [
     {
-      "entity": "char-mrs-blythe",
-      "attribute": "keeps_collar_in_tin",
-      "value": "true",
-      "quote": "Mrs. Blythe opens a small velvet-lined tin on the hall table with a careful, ceremonial motion, lifts out the brass collar, and shows it as if it were an heirloom."
+      "attribute": "handoff_location",
+      "entity": "char-mrs-halloway",
+      "quote": "She presses the tin into my hands like a benediction.",
+      "value": "Mrs. Halloway handed the lunchbox and brooch to Eloise at loc-eloise-house (stoop)"
     },
     {
-      "entity": "obj-king-collar",
-      "attribute": "material_and_markings",
-      "value": "small brass collar stamped with a star and a small scratch",
-      "quote": "feeling the weight of brass and a small, mysterious scratch like a scar."
+      "attribute": "request_quote",
+      "entity": "char-mrs-halloway",
+      "quote": "\"Eloise, darling, would you take this lunch to my sister? And would you mind giving her my silver brooch? It’s... meant to find its way home.\"",
+      "value": "asked Eloise to deliver a lunch and her silver brooch to Mrs. Halloway's sister"
     },
     {
-      "entity": "obj-king-collar",
-      "attribute": "physical_state_after_drop",
-      "value": "intact after hitting pavement; rings with metallic sound",
-      "quote": "It hits the pavement with a single metallic ring and bounces toward the gutter, a small sun the size of a coin."
+      "attribute": "description",
+      "entity": "obj-lunchbox",
+      "quote": "\"A dented tin lunchbox, its knight's paint flaked at the edges, smelling faintly of tomato and pennies; inside, a paper-wrapped sandwich and a small velvet pouch.\"",
+      "value": "dented tin lunchbox with paper-wrapped sandwich and a small velvet pouch inside"
     },
     {
-      "entity": "loc-arden-house",
-      "attribute": "porch_sound",
-      "value": "porch creaks when stepped on",
-      "quote": "The porch complains when Arden sets the leash down—one long creak like a page turning"
+      "attribute": "porch_description",
+      "entity": "loc-halloway-house",
+      "quote": "\"A tidy blue door set on a low porch where ferns droop in green pots; the porch boards smell of lemon oil and old tea.\"",
+      "value": "Mrs. Halloway's porch has a tidy blue door, ferns in green pots, and porch boards that smell of lemon oil and old tea."
     },
     {
-      "entity": "loc-cobble-lane",
-      "attribute": "smell",
-      "value": "damp cardboard and yesterday's rain",
-      "quote": "Outside, the world smells of damp cardboard and yesterday's rain."
+      "attribute": "current_holder",
+      "entity": "obj-lunchbox",
+      "quote": "He tucks the tin into his backpack so it doesn’t rattle.",
+      "value": "char-jun"
     },
     {
-      "entity": "obj-cardboard-map",
-      "attribute": "description_and_storage",
-      "value": "flattened square of cardboard, inked with landmarks and dramatic arrows; carried in Hollis's canvas satchel",
-      "quote": "A canvas satchel is slung over Hollis's shoulder, and with a flourish Hollis produces a flattened square of cardboard, all inked landmarks and dramatic arrows."
+      "attribute": "current_holder",
+      "entity": "obj-brooch",
+      "quote": "I clip the velvet pouch with my thumb and feel the weight of the promise in my pocket, the brooch like a small, stubborn thing that wants only to be home.",
+      "value": "char-eloise"
     },
     {
-      "entity": "obj-wooden-staff",
-      "attribute": "description_and_storage",
-      "value": "lacquered broom handle with a paintbrush tied to the end; carried in Hollis's canvas satchel",
-      "quote": "A canvas satchel is slung over Hollis's shoulder, and with a flourish Hollis produces a flattened square of cardboard, all inked landmarks and dramatic arrows, and a lacquered broom handle with a paintbrush tied to the end."
+      "attribute": "current_holder",
+      "entity": "obj-flashlight",
+      "quote": "He snorts and pockets the flashlight I call the Sword of Light.",
+      "value": "char-jun"
     },
     {
-      "entity": "char-hollis",
-      "attribute": "habit",
-      "value": "reframes small tasks as grand adventures; gives objects quest-names",
-      "quote": "\"A quest,\" Hollis says, as if there could be no other truth. \"The King's Sigil suffers treachery. We must fetch it.\""
+      "attribute": "current_holder",
+      "entity": "obj-map",
+      "quote": "\"Quest supplies,\" I say, and unfold the map with a small ceremonial flourish. The paper is folded until the creases ache; my finger finds the village like a needle finding a thread.",
+      "value": "char-eloise"
     },
     {
-      "entity": "obj-king-collar",
-      "attribute": "quest_name_by_children",
-      "value": "King's Sigil",
-      "quote": "\"The King's Sigil suffers treachery. We must fetch it.\""
+      "attribute": "location",
+      "entity": "char-jun",
+      "quote": "I come home to find Jun on our stoop, one foot propped on the rail like he’s guarding an entrance to a kingdom.",
+      "value": "loc-eloise-house"
     },
     {
-      "entity": "char-arden",
-      "attribute": "carries_knotted_rope",
-      "value": "true; rope tucked into belt loop at Mrs. Blythe's insistence",
-      "quote": "He realizes, absurdly, that he has Mrs. Blythe's knotted rope tucked into his belt loop because she insisted on some precaution, and the coil is warm against his hip."
+      "attribute": "location",
+      "entity": "char-eloise",
+      "quote": "We step off the curb together, which is our way of saying yes.",
+      "value": "loc-eloise-house"
     },
     {
-      "entity": "char-arden",
-      "attribute": "viewpoint_reaction",
-      "value": "quiet assent to Hollis's framing",
-      "quote": "Arden feels the oath settle in his chest—ridiculous, heavy, the way a coat does when you put it on and it fits."
+      "attribute": "location",
+      "entity": "char-mrs-halloway",
+      "quote": "Mrs. Halloway stands, brushes dust from her skirt and turns toward the sidewalk, leaving a little line of her in the air behind her—an image I can call up any time: \"A tidy blue door set on a low porch where ferns droop in green pots; the porch boards smell of lemon oil and old tea.\"",
+      "value": "loc-halloway-house"
     }
   ],
   "presentEntities": [
-    "char-arden",
-    "char-hollis",
-    "char-mrs-blythe",
-    "loc-arden-house",
-    "loc-cobble-lane",
-    "obj-king-collar",
-    "obj-cardboard-map",
-    "obj-wooden-staff",
-    "obj-knotted-rope"
+    "char-eloise",
+    "char-jun",
+    "char-mrs-halloway",
+    "obj-lunchbox",
+    "obj-brooch",
+    "obj-map",
+    "obj-flashlight",
+    "loc-eloise-house",
+    "loc-halloway-house",
+    "loc-main-street"
   ],
   "promises": [
     {
-      "id": "promise-recover-king-collar",
-      "promise": "Recover the King's Sigil (obj-king-collar) and return it home by day's end.",
-      "quote": "\"Sir Arden,\" Hollis declares, voice deep and ridiculous, \"by the Star, we fetch the King's Sigil and bring it back.\"",
-      "dueByScene": "tbd"
+      "id": "promise-brooch-delivered-to-sister",
+      "promise": "Eloise has been asked to deliver Mrs. Halloway's lunch and silver brooch to Mrs. Halloway's sister; the reader is owed that delivery's outcome.",
+      "quote": "\"Eloise, darling, would you take this lunch to my sister? And would you mind giving her my silver brooch? It’s... meant to find its way home.\"",
+      "dueByScene": ""
     }
   ],
   "paysOff": []

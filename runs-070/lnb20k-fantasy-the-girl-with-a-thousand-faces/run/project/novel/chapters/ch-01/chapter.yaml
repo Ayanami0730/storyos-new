@@ -1,94 +1,46 @@
 chapter: ch-01
 scenes:
   - id: s-001
-    intent: Open on the Walled City’s claustrophobic life under wartime strain;
-      introduce Mercy Chan at work in her cramped room as she finishes a small
-      ritual and receives the first frantic summons from neighbors about strange
-      noises and a child who saw a black shape.
+    intent: "Open in the press of the Walled City: establish Mercy’s routines, the
+      claustrophobic setting, and the wartime backdrop; Mercy is called to
+      investigate unexplained wailing in a main alley."
     present:
       - char-mercy-chan
-      - spirit-vengeful
-      - residents-walled-city
-      - char-elder-lau
-      - char-lin-wei
       - loc-kowloon-walled-city
-      - loc-mercy-room
-      - loc-alley-spiral-stair
-      - loc-communal-shrine
-      - loc-rooftop-lotus
-      - loc-bazaar
-      - loc-makeshift-hospital
-      - obj-spirit-knife
-      - obj-ancestral-mirror
-      - obj-incense-box
-      - obj-red-talisman
-      - obj-bloodstained-locket
+      - loc-main-alley-spiral
+      - group-kowloon-residents
+      - loc-occupation-checkpoint
+      - obj-mercys-incense-box
   - id: s-002
-    intent: Mercy visits the Spiral Alley where the sightings began; she assesses
-      physical signs, performs a short reading with her knife, and encounters
-      her first direct hint of a malicious intelligence—an unnatural cold and a
-      whisper that repeats an unfinished plea.
+    intent: "Mercy surveys the scene: neighbors describe disturbances, Mrs. Choi
+      recounts a strange night; Mercy performs a cautious, diagnostic rite that
+      reveals a residual imprint stronger than an ordinary ghost."
     present:
       - char-mercy-chan
-      - spirit-vengeful
-      - residents-walled-city
-      - char-elder-lau
-      - char-lin-wei
-      - loc-kowloon-walled-city
-      - loc-mercy-room
-      - loc-alley-spiral-stair
-      - loc-communal-shrine
-      - loc-rooftop-lotus
-      - loc-bazaar
-      - loc-makeshift-hospital
-      - obj-spirit-knife
-      - obj-ancestral-mirror
-      - obj-incense-box
-      - obj-red-talisman
-      - obj-bloodstained-locket
+      - char-mrs-choi
+      - group-kowloon-residents
+      - obj-mercys-incense-box
+      - obj-bloodied-photo
+      - loc-main-alley-spiral
   - id: s-003
-    intent: Neighbors press Mercy for help; introduce the communal dynamics and
-      fear. Mercy meets Elder Lau and hears a fragmentary oral memory about a
-      wartime incident that many prefer not to speak of; the scene plants the
-      linkage between the haunting and suppressed history.
+    intent: Introduce the Elder Storyteller and Lau the apprentice; the Elder hints
+      at a story from the occupation years tied to the alley; Mercy negotiates
+      with scared residents to let her search a locked room.
     present:
+      - char-elder-storyteller
+      - char-lau-apprentice
       - char-mercy-chan
-      - spirit-vengeful
-      - residents-walled-city
-      - char-elder-lau
-      - char-lin-wei
-      - loc-kowloon-walled-city
-      - loc-mercy-room
-      - loc-alley-spiral-stair
-      - loc-communal-shrine
-      - loc-rooftop-lotus
-      - loc-bazaar
-      - loc-makeshift-hospital
-      - obj-spirit-knife
-      - obj-ancestral-mirror
-      - obj-incense-box
-      - obj-red-talisman
-      - obj-bloodstained-locket
+      - group-kowloon-residents
+      - loc-temple-basement
+      - obj-elder-scroll
+      - loc-occupation-checkpoint
   - id: s-004
-    intent: Lin Wei, the young refugee, is introduced—confused, bereft; Mercy sees
-      in Lin Wei a personal trace that matches the spirit’s whisper. A minor,
-      failed exorcism attempt later that night escalates the haunting, injuring
-      a neighbor and proving the spirit’s unusual potency.
+    intent: Mercy finds the bloodied photo hidden in a cupboard during her search;
+      she connects it to a boy who disappeared during a skirmish—she suspects a
+      wartime origin and sees the revenant’s pattern of feeding on loss.
     present:
       - char-mercy-chan
-      - spirit-vengeful
-      - residents-walled-city
-      - char-elder-lau
-      - char-lin-wei
-      - loc-kowloon-walled-city
-      - loc-mercy-room
-      - loc-alley-spiral-stair
-      - loc-communal-shrine
-      - loc-rooftop-lotus
-      - loc-bazaar
-      - loc-makeshift-hospital
-      - obj-spirit-knife
-      - obj-ancestral-mirror
-      - obj-incense-box
-      - obj-red-talisman
-      - obj-bloodstained-locket
+      - obj-bloodied-photo
+      - char-young-refugee
+      - loc-main-alley-spiral
+      - loc-temple-basement

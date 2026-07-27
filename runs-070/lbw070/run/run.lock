@@ -1,0 +1,16 @@
+{
+  "pid": 994471,
+  "startedAt": "2026-07-27T13:01:00.415Z",
+  "argv": [
+    "--premise-file",
+    "/home/dumingxuan/storyos-v3/runs-070/lbw070/premise.txt",
+    "--target",
+    "2000",
+    "--out",
+    "/home/dumingxuan/storyos-v3/runs-070/lbw070/run",
+    "--profile",
+    "generous",
+    "--sandbox",
+    "docker"
+  ]
+}

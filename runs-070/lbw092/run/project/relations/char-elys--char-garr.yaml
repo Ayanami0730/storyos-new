@@ -1,0 +1,16 @@
+pairId: char-elys--char-garr
+participants:
+  - char-elys
+  - char-garr
+phases:
+  - index: 1
+    relation: lovers (secret)
+    fromScene: s-001
+    toScene: null
+    transition: They exchange a hairpin and pledges to return/wait in the hour after
+      vespers on the old stone bench; their bond is private and not a legal
+      marriage.
+    source:
+      scene: s-001
+      span: L1-L60
+openQuestions: []

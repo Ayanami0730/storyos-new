@@ -221,6 +221,43 @@ export function contextFor(input: {
 }
 
 /** Facts the committed delta adds to canon, so the next scene sees them. */
+/**
+ * The tail of a scene, as the next scene's starting point.
+ *
+ * The closing lines rather than a summary: what the orchestrator needs is the
+ * sentence the reader was left on, and a summary of an ending is exactly the thing
+ * that cannot be followed from. Bounded at roughly a paragraph because it goes into
+ * every scene brief, and a brief that carries the whole previous scene is the
+ * resident-verifier cost mistake in a different place.
+ */
+export function closingLines(text: string | null, words = 60): string | null {
+  if (!text?.trim()) return null;
+  const tokens = text.trim().split(/\s+/);
+  return tokens.slice(-words).join(" ");
+}
+
+/**
+ * Promises declared and not yet paid off.
+ *
+ * Computed from the deltas the loop already holds rather than read from
+ * `continuity/plot-contracts.jsonl`, because the actor this is for has never read
+ * that file: one `read` call in a whole run. A ledger nobody opens does not inform
+ * a decision, whatever it contains.
+ */
+export function openPromisesFrom(
+  deltas: readonly SceneDelta[],
+): readonly { id: string; promise: string; dueByScene: string | null }[] {
+  const paid = new Set(deltas.flatMap((d) => (d.paysOff ?? []).map((p) => p.contractId)));
+  const open = new Map<string, { id: string; promise: string; dueByScene: string | null }>();
+  for (const delta of deltas) {
+    for (const p of delta.promises ?? []) {
+      if (paid.has(p.id)) continue;
+      open.set(p.id, { id: p.id, promise: p.promise, dueByScene: p.dueByScene });
+    }
+  }
+  return [...open.values()];
+}
+
 export function absorb(
   canon: readonly CanonFact[],
   sceneId: string,
@@ -329,6 +366,8 @@ export async function writeStory(options: {
   const allocations: { sceneId: string; allocation: SceneAllocation }[] = [];
   /** Words actually on the page, recounted from committed prose after each scene. */
   let committedWords = 0;
+  /** The previous scene's delivered length against what it was asked for. */
+  let lastCommitted: { id: string; words: number; target: number } | null = null;
 
   say(
     `plan: ${plan.scenes.length} scenes, ${plan.entities.length} entities, ` +
@@ -358,6 +397,7 @@ export async function writeStory(options: {
       pinnedRepairs: options.pinnedRepairs,
     });
     options.allocationState.open(allocation);
+    const previousTier = allocations.at(-1)?.allocation.tier ?? null;
     allocations.push({ sceneId: card.id, allocation });
 
     say(
@@ -442,6 +482,18 @@ export async function writeStory(options: {
           failed: failures.map((f) => f.sceneId),
           allocation,
           words: { committed: committedWords, target: targetWords },
+          state: {
+            lastSceneClose: closingLines(recentProse.at(-1)?.text ?? null),
+            lastScene: lastCommitted,
+            // Declared minus paid off, computed from the deltas already in memory
+            // rather than by reading the ledger — the orchestrator never reads it,
+            // which is the whole reason this block exists.
+            openPromises: openPromisesFrom(committedDeltas),
+            upcoming: (planSink.plan ?? plan).scenes
+              .slice(i + 1)
+              .map((s) => ({ id: s.id, intent: s.intent })),
+            tierBoundary: allocation.tier !== previousTier,
+          },
         }),
         log: say,
       });
@@ -502,7 +554,9 @@ export async function writeStory(options: {
         await index.read(`continuity/deltas/${card.id}.json`),
       ) as SceneDelta;
       canon = absorb(canon, card.id, delta);
-      committedWords += text.split(/\s+/).filter(Boolean).length;
+      const sceneWords = text.split(/\s+/).filter(Boolean).length;
+      committedWords += sceneWords;
+      lastCommitted = { id: card.id, words: sceneWords, target: card.targetWords };
       committedScenes.push(card.id);
       committedDeltas.push(delta);
       proseByScene.set(card.id, text);

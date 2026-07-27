@@ -2,119 +2,123 @@
   "sceneId": "s-001",
   "claims": [
     {
-      "entity": "loc-ashby-study",
-      "attribute": "deadbolt_engaged_from_inside",
-      "quote": "From the hall the deadbolt showed as engaged; the metal sat flush in its mortice and the door did not betray even the faintest give. The sash window’s catch sat flush in its slot; the glass threw back the garden in a steady, dull rectangle with no light slipping beneath the frame. \"Latched,\" I said, because facts demand a ledger before hands do anything with them.",
+      "entity": "loc-study",
+      "attribute": "door_locked_from_inside",
+      "quote": "The study's door was locked from the inside, and every window in that room was latched.",
       "value": "true"
     },
     {
-      "entity": "loc-ashby-study",
-      "attribute": "sash_window_latched_from_inside",
-      "quote": "From the hall the deadbolt showed as engaged; the metal sat flush in its mortice and the door did not betray even the faintest give. The sash window’s catch sat flush in its slot; the glass threw back the garden in a steady, dull rectangle with no light slipping beneath the frame. \"Latched,\" I said, because facts demand a ledger before hands do anything with them.",
+      "entity": "loc-study",
+      "attribute": "windows_latched_from_inside",
+      "quote": "The study's door was locked from the inside, and every window in that room was latched.",
       "value": "true"
     },
     {
-      "entity": "char-victim-lionel",
-      "attribute": "position_at_time_of_discovery",
-      "quote": "Lionel Ashby was at his desk as if someone had closed a book over him—head tipped, shoulders slack, the kind of neat ruin a man makes when he keeps things orderly even in the dark. The oak desk still held the impression of his weight.",
-      "value": "slumped_at_desk"
+      "entity": "char-victor-hale",
+      "attribute": "found_location",
+      "quote": "Victor Hale lay in his study as if his last conversation had been with the fabric of his own chair.",
+      "value": "loc-study"
     },
     {
-      "entity": "obj-antique-clock",
-      "attribute": "stopped_at",
-      "quote": "On the mantel, a small brass clock had stopped: its hands fixed at 11:17, stubborn and precise like an accusation.",
-      "value": "11:17"
+      "entity": "obj-chair-study",
+      "attribute": "worn_spot_left_rear_seam",
+      "quote": "\"Victor's heavy upholstered study chair — the site where he was found slumped. It bears old repairs and a faint circular wear spot on the left rear seam.\"",
+      "value": "present"
     },
     {
-      "entity": "obj-letter-opener",
-      "attribute": "present_on_desk",
-      "quote": "The desk drawer that should have carried his brass dagger-shaped opener was open and light. The felt groove where the letter-opener belonged gaped empty.",
-      "value": "false"
-    },
-    {
-      "entity": "obj-crumpled-note",
-      "attribute": "location_found",
-      "quote": "The hearth held two peculiarities. One was a scrap of paper, burned along one edge and crumpled into a hesitant confession; the only legible mark was a single underlined word: 'trust'.",
-      "value": "hearth"
-    },
-    {
-      "entity": "obj-crumpled-note",
-      "attribute": "legible_word",
-      "quote": "The hearth held two peculiarities. One was a scrap of paper, burned along one edge and crumpled into a hesitant confession; the only legible mark was a single underlined word: 'trust'.",
-      "value": "trust"
-    },
-    {
-      "entity": "obj-matchbox",
-      "attribute": "long_match_lodged_in_hearth",
-      "quote": "The other was a single long match lodged at an angle among the coal—too deliberately placed to be mere detritus.",
+      "entity": "obj-pocket-watch",
+      "attribute": "found_on_person",
+      "quote": "On his person lay his watch — gold, small, ruined in one graceful way: \"Victor's gold pocket watch found stopped on his person; the minute hand bent and the watch stopped at a time relevant to establishing the minute of death.\"",
       "value": "true"
     },
     {
-      "entity": "obj-matchbox",
-      "attribute": "matchbox_style_visible",
-      "quote": "The matchbox, a thin thing made for long striking matches, lay on the mantel with its cover half-askew.",
-      "value": "long_matches"
-    },
-    {
-      "entity": "obj-mudprints",
-      "attribute": "mud_on_inner_garden_sill",
-      "quote": "The inner ledge of the study window bore a smear of fresh mud across its lip, and the painted inner sill showed a pale scuff where wood had briefly protested contact.",
+      "entity": "obj-pocket-watch",
+      "attribute": "minute_hand_bent",
+      "quote": "The watch had indeed stopped. The minute hand had been bent; the watch read 9:14 p.m.",
       "value": "true"
     },
     {
-      "entity": "obj-mudprints",
-      "attribute": "scuff_on_inner_windowsill",
-      "quote": "The inner ledge of the study window bore a smear of fresh mud across its lip, and the painted inner sill showed a pale scuff where wood had briefly protested contact.",
+      "entity": "obj-pocket-watch",
+      "attribute": "stopped_time",
+      "quote": "The watch had indeed stopped. The minute hand had been bent; the watch read 9:14 p.m.",
+      "value": "9:14 p.m."
+    },
+    {
+      "entity": "obj-mantel-clock",
+      "attribute": "quarter_hour_chime_pattern",
+      "quote": "\"The mantel clock, a gilt 19th-century piece, chimes every quarter-hour; its mechanism was Victor's pride.\" It chimes in the old pattern — one at the quarter, two at the half, three at the three-quarters, four on the hour — and in the hall the chime had already marked the evening for us once.",
+      "value": "one-quarter/two-half/three-three-quarters/four-hour"
+    },
+    {
+      "entity": "obj-will-draft",
+      "attribute": "present_in_study",
+      "quote": "the draft of a new will had been found on Victor's desk and it suggested he intended to cut someone out — \"A draft copy of Victor's new will, suggesting he intended to cut someone out; its existence supplies motive.\"",
       "value": "true"
     },
     {
-      "entity": "loc-ashby-hall",
-      "attribute": "present_people",
-      "quote": "Harrow met me at the study door, clipboard at an angle that said he was not entirely sure whether I was help or hindrance. Evelyn stood in the hall like a photograph you could not quite pick up; gloves folded in her hands, expression composed to the point of polish. Hale lingered at the corridor’s edge, fingers working at his jacket as if there were something there they would not let go of. Marta stood near the hearth, apron neat, a faint smudge at the cuff. No one shouted. There was no immediate need for theatre.",
-      "value": "char-inspector-harrow, char-sister-evelyn, char-partner-hale, char-housekeeper-marta"
+      "entity": "loc-study",
+      "attribute": "no_conventional_weapon_found",
+      "quote": "There was, on inspection, no conventional weapon in the room. Whoever had done this had left no knife on the carpet, no blunt instrument on the desk: only the body and its last arrangements.",
+      "value": "true"
     },
     {
-      "entity": "char-inspector-harrow",
-      "attribute": "demeanor_at_scene",
-      "quote": "Harrow met me at the study door, clipboard at an angle that said he was not entirely sure whether I was help or hindrance.",
-      "value": "officious"
+      "entity": "obj-chair-study",
+      "attribute": "abrasion_near_frame",
+      "quote": "The study itself offered a handful of physical cues that I filed in the order my hands could reach them: a faint abrasion at the chair frame, dust pressed and tufted where someone had shifted, a bent minute hand on a dead watch that read 9:14, and the worn, circular spot on the left rear seam of the chair where a pocket or a shoulder might have rubbed for years.",
+      "value": "present"
     },
     {
-      "entity": "char-sister-evelyn",
-      "attribute": "demeanor_at_scene",
-      "quote": "Evelyn stood in the hall like a photograph you could not quite pick up; gloves folded in her hands, expression composed to the point of polish.",
-      "value": "poised_composed"
+      "entity": "char-lucy-hale",
+      "attribute": "present_in_foyer",
+      "quote": "In the foyer the household and the night's guests had been gathered. Lucy Hale stood by the newel, hands clasped so tight the knuckles showed white; she was plainspoken in her grief and in her fear — inheritance anxiety, you could call it, though that is a small thing when a man is dead.",
+      "value": "true"
     },
     {
-      "entity": "char-partner-hale",
-      "attribute": "demeanor_at_scene",
-      "quote": "Hale lingered at the corridor\u0019s edge, fingers working at his jacket as if there were something there they would not let go of.",
-      "value": "nervous"
+      "entity": "char-alfred-broome",
+      "attribute": "present_in_foyer",
+      "quote": "Alfred Broome, the butler, kept his face nearly blank; the stoic, old-school air of a man who has spent his life managing other people's exactness.",
+      "value": "true"
     },
     {
-      "entity": "char-housekeeper-marta",
-      "attribute": "demeanor_at_scene",
-      "quote": "Marta stood near the hearth, apron neat, a faint smudge at the cuff.",
-      "value": "composed_observant"
+      "entity": "char-owen-myers",
+      "attribute": "present_in_foyer",
+      "quote": "Owen Myers hovered, aggrieved and quick to snap a remark; he is a clock repairman and collector, skilled with small mechanisms and apt to quarrel with Victor over the worth of a thing.",
+      "value": "true"
+    },
+    {
+      "entity": "char-evelyn-ross",
+      "attribute": "present_in_foyer",
+      "quote": "Evelyn Ross smiled with the thin courtesy of business; she was the collector who wanted what Victor kept, every polite syllable counting toward acquisition.",
+      "value": "true"
+    },
+    {
+      "entity": "char-james-cole",
+      "attribute": "narrator_tone",
+      "quote": "I tell you this because detail is the only thing that steadies you in a room where someone has just stopped being anything at all.",
+      "value": "methodical, world-weary, sceptical"
+    },
+    {
+      "entity": "loc-foyer",
+      "attribute": "gathered_party",
+      "quote": "In the foyer the household and the night's guests had been gathered.",
+      "value": "char-lucy-hale,char-alfred-broome,char-owen-myers,char-evelyn-ross"
     }
   ],
   "presentEntities": [
-    "char-detective-marcus",
-    "char-inspector-harrow",
-    "char-sister-evelyn",
-    "char-partner-hale",
-    "char-housekeeper-marta",
-    "char-victim-lionel",
-    "loc-ashby-study",
-    "loc-ashby-hall"
+    "char-james-cole",
+    "char-victor-hale",
+    "char-lucy-hale",
+    "char-alfred-broome",
+    "char-owen-myers",
+    "char-evelyn-ross",
+    "loc-hale-mansion",
+    "loc-study",
+    "loc-foyer",
+    "obj-chair-study",
+    "obj-mantel-clock",
+    "obj-pocket-watch",
+    "obj-will-draft"
   ],
-  "promises": [
-    {
-      "id": "p-s-001-01",
-      "promise": "Explain how the study was secured from the inside despite the presence of mud on the inner garden-sill and a scuff on the inner windowsill.",
-      "quote": "All that made a tidy paradox: the deadbolt drawn, the sash latched, Lionel dead at his desk, the small brass opener gone, a half-burnt scrap with 'trust' underlined, a long match set oddly in the hearth, fresh mud on the garden-sill and a scuff on the inner window—details that belonged to separate crimes if you were greedy for simplicity.",
-      "dueByScene": "s-006"
-    }
-  ],
+  "promises": [],
   "paysOff": []
 }

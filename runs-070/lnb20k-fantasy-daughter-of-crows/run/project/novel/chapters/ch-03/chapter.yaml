@@ -1,51 +1,46 @@
 chapter: ch-03
 scenes:
   - id: s-009
-    intent: The Headmistress's politics — A diplomatic visitor or a legalist from
-      the Kingdom questions the Academy's policies. The Headmistress argues the
-      Academy is benevolent, cites philanthropy and social order, and refuses to
-      disclose the details that would explain the Three. Rue sees public cover
-      and private terms.
+    intent: "The Myth of the Three: An older survivor of the Academy (one of The
+      Three) returns in rumor or memory. Rue hears the story of an alumna who
+      left and what she lost and gained; this scene complicates the idea of
+      escape and presents a human face to the statistic."
     present:
-      - char-headmistress
-      - faction-kingdom
-      - loc-mercy-academy
-      - loc-archives
       - char-rue
+      - group-the-three
+      - loc-garden
+      - obj-folio
   - id: s-010
-    intent: The hidden ledger — Rue, now trusted with some archive keys, discovers
-      marginal notes in the Contract Folio and records that contradict the
-      public story. She sees signatures that look like bargains struck with
-      others, and a notation that suggests the Academy trades more than shelter.
-      This is a turning point for Rue's knowledge.
+    intent: "Middle turning: A policy change, a departure attempt, or a disciplinary
+      event forces the Academy to reveal its enforcement machinery (sanctions,
+      rooms, appeals). Rue's complicity — she benefits, has made peace with the
+      rules — is shown; moral friction emerges."
     present:
       - char-rue
-      - loc-archives
-      - obj-contract-folio
       - char-headmistress
-      - loc-mercy-academy
-  - id: s-011
-    intent: An attempt at escape — A clandestine plan among a few of the Hundred to
-      leave after ten years, inspired by the Three, culminates in an attempt. It
-      fails in part; the Academy's systems (wardens, records, and the Bell) stop
-      it. The consequences show how the institution enforces its terms and what
-      penalties for crossing them look like.
-    present:
-      - group-hundred
-      - char-warden
-      - char-rue
-      - obj-binding-bell
+      - group-the-hundred
+      - loc-archive
       - loc-dormitory
-      - loc-chapel
-  - id: s-012
-    intent: Rue as keeper — Years later, Rue becomes a keeper of rituals and
-      records; she helps new cohorts, teaches, and is present at the induction
-      of later Hundreds. She has rationalized staying; this scene shows her
-      human warmth and the institutional role she plays in reproducing the
-      Academy's life—ambivalence made habit.
+  - id: s-011
+    intent: "The first hint of war: News arrives at the Gates of unrest beyond the
+      city. The Headmistress and Academy administrators debate responses; Rue
+      notices the first signs — travelers speaking of levies, the road's emptier
+      wagons, and refugees refused beyond the wall."
     present:
-      - char-rue
-      - loc-mercy-academy
-      - loc-archives
-      - group-hundred
       - char-headmistress
+      - char-rue
+      - loc-gates
+      - loc-ceremony-hall
+      - char-war-envoy
+  - id: s-012
+    intent: "The Envoy at the Gates: The War Envoy arrives officially to deliver a
+      warning or demand. Diplomacy plays against the Academy's self-image. Rue
+      watches the negotiation from the Garden and recognizes that the war will
+      force hard choices on the institution."
+    present:
+      - char-war-envoy
+      - char-headmistress
+      - char-rue
+      - loc-gates
+      - loc-ceremony-hall
+      - loc-garden
