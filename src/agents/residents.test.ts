@@ -144,6 +144,53 @@ describe("residency", () => {
     assert.ok(!agent.toolNames.includes("commit_transaction"));
     assert.match(agent.systemPrompt, /# Verifier/);
   });
+
+  /**
+   * Dropping the conversation without dropping the agent.
+   *
+   * Residency is paid for by re-sending the whole history on every request, and
+   * whether that is affordable is a property of the provider, not of the design.
+   * Measured on `lbw081`: `gemini-3.1-pro-preview` returned **zero** cache reads on
+   * every call while the `gpt-5-mini` roles ran 60–84% cached, so the verifier's
+   * first-call input grew 10k → 62k across four scenes at eight times the rate and
+   * it became 81% of the run's cost on 11% of its round-trips.
+   */
+  describe("resetSession", () => {
+    it("clears the conversation and keeps the same agent", async () => {
+      const { registry, built } = residents();
+      await registry.invoke("verifier", "check scene 1", ctx);
+      assert.equal(built[0]!.messages.length, 2);
+
+      registry.resetSession("verifier");
+      await registry.invoke("verifier", "check scene 2", ctx);
+
+      // Still one agent — the system prompt, model, tools and memory survive; only
+      // the history is gone.
+      assert.equal(built.length, 1);
+      assert.equal(built[0]!.messages.length, 2, "scene 2 must not carry scene 1");
+      assert.deepEqual(built[0]!.prompts, ["check scene 1", "check scene 2"]);
+    });
+
+    it("is a no-op for a role that has never been invoked", () => {
+      // Called from the scene loop before the first scene, so it must not
+      // construct an agent as a side effect of being asked to forget.
+      const { registry, built } = residents();
+      registry.resetSession("verifier");
+      assert.equal(built.length, 0);
+      assert.equal(registry.isResident("verifier"), false);
+    });
+
+    it("leaves other roles' histories alone", async () => {
+      const { registry, built } = residents();
+      await registry.invoke("writer", "draft scene 1", ctx);
+      await registry.invoke("verifier", "check scene 1", ctx);
+      registry.resetSession("verifier");
+      await registry.invoke("writer", "draft scene 2", ctx);
+
+      const writer = built.find((b) => b.systemPrompt.includes("# Writer"))!;
+      assert.equal(writer.messages.length, 4, "the writer stays resident");
+    });
+  });
 });
 
 describe("delegation depth", () => {

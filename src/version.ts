@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.5.1";
+export const VERSION = "0.6.0";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -26,8 +26,9 @@ export const VERSION_NOTE =
   "orchestrator-driven scene loop with per-scene compute allocated by position in " +
   "the story (1/3/5 repair rounds and follow-ups across the opening, middle and " +
   "final 40%, with recall depth 1/2/3), path-addressed artefacts, OS-enforced " +
-  "write gate (docker read-only mount), cost-triggered level-1 compaction, and " +
-  "baseline-comparable token accounting (input+output, cache reads excluded)";
+  "write gate (docker read-only mount), cost-triggered level-1 compaction, " +
+  "baseline-comparable token accounting (input+output, cache reads excluded), and a " +
+  "per-scene verifier session because the cross-family verifier gets no prompt caching";
 
 /**
  * Behaviours that could move a measured number, and when they landed.
@@ -41,6 +42,24 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.6.0",
+    note:
+      "the verifier starts each scene with an empty conversation instead of staying " +
+      "resident for the whole run. Residency is paid for by re-sending the entire history " +
+      "on every request, and whether that is affordable is a property of the provider: on " +
+      "lbw081 the cross-family verifier (gemini-3.1-pro-preview) returned **zero** cache " +
+      "reads on every call of every scene while the gpt-5-mini roles ran 60–84% cached, so " +
+      "its first-call input grew 10,142 → 25,473 → 41,241 → 61,934 tokens across four " +
+      "scenes and it became 81% of the run's cost ($17.42 of $21.62) on 11% of its " +
+      "round-trips. At novel length that grows as scene count times history length, which " +
+      "is the specific reason a 20,000-word target was unreachable. What the verifier gives " +
+      "up is small and testable — its work is per-scene, cross-scene facts come from the " +
+      "index it can read, and its durable lessons are in memory files that survive a reset " +
+      "— and `--resident-all` restores the old behaviour as the ablation arm. Cost rows " +
+      "from before and after are not comparable, so `fresh_each_scene` is recorded in every " +
+      "summary",
+  },
   {
     version: "0.5.1",
     note:

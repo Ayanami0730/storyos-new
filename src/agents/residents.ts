@@ -487,6 +487,34 @@ export class ResidentAgents {
   }
 
   /**
+   * Drop a role's accumulated conversation, keeping the agent itself.
+   *
+   * Residency is the default and it is most of what makes these agents useful: an
+   * agent that has read forty scenes answers differently from one meeting the book
+   * for the first time. But residency is paid for by re-sending the whole history
+   * on every request, and whether that is affordable depends entirely on whether
+   * the provider gives us prompt caching.
+   *
+   * For the cross-family verifier it does not. Measured on `lbw081`:
+   * `gemini-3.1-pro-preview` returned **zero** cache reads across every call of
+   * every scene, while `gpt-5-mini` roles ran 60–84% cached. So the verifier's
+   * first-call input grew 10k → 25k → 41k → 62k tokens across four scenes, each
+   * re-sent in full at eight times the input rate, and the verifier ended up
+   * **81% of the run's cost on 11% of its round-trips**. At novel length that
+   * grows quadratically — scene count times history length — which is the specific
+   * reason a 20k-word target was out of reach.
+   *
+   * What the verifier loses by forgetting is small and testable: its job is
+   * per-scene, cross-scene facts come from the index it can read, and its durable
+   * lessons live in memory files that survive this. The run records which scope
+   * was used so "does verifier residency buy anything" stays answerable.
+   */
+  resetSession(role: AgentRole): void {
+    const agent = this.#agents.get(role);
+    if (agent) agent.state.messages = [];
+  }
+
+  /**
    * The agent for a role, created on first use and reused thereafter. Reuse is
    * the whole point: a fresh instance would be a fresh mind.
    */

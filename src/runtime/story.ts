@@ -17,6 +17,7 @@ import type { ContextItem } from "../context/types.ts";
 
 import type { CanonicalIndex } from "../index/commit.ts";
 import { chapterFor, paths, sceneIndexOf } from "../index/tree.ts";
+import type { AgentRole } from "../transaction/types.ts";
 import type { CanonFact } from "../verification/deterministic.ts";
 import type { ResidentAgents } from "../agents/residents.ts";
 import { type AllocationState, type SceneAllocation, allocate } from "./allocation.ts";
@@ -262,6 +263,14 @@ export async function writeStory(options: {
   readonly pinnedRepairs: number | null;
   /** The holder the writer's own tools read this scene's allowance from. */
   readonly allocationState: AllocationState;
+  /**
+   * Roles that begin each scene with an empty conversation.
+   *
+   * Default is the verifier alone, for the caching reason in
+   * `ResidentAgents.resetSession`. Pass an empty array to get the fully resident
+   * behaviour of 0.5.1 and earlier.
+   */
+  readonly freshEachScene?: readonly AgentRole[];
   readonly planSink: { plan?: StoryPlan };
   /**
    * Shared with whoever constructed the agents. It must be the same bus: the
@@ -366,6 +375,20 @@ export async function writeStory(options: {
       ...(options.backfill ? { backfill: options.backfill } : {}),
     });
     options.onScene?.(card.id);
+
+    /**
+     * Roles whose conversation starts fresh for this scene.
+     *
+     * Not a cost tweak dressed up as a design choice — for a provider that gives
+     * no prompt caching, residency means paying for the entire history on every
+     * request, and the measured verifier bill was 81% of a run on 11% of its
+     * round-trips with its input growing 10k → 62k across four scenes. Which roles
+     * these are is configuration, and the summary records it, so the ablation is
+     * one flag rather than one fork.
+     */
+    for (const role of options.freshEachScene ?? []) {
+      residents.resetSession(role);
+    }
 
     const director = new SceneDirector(
       {

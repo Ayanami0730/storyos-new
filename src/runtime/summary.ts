@@ -62,6 +62,7 @@ export interface SummaryInput {
     readonly target: number;
     readonly backbone: string | null;
     readonly pinnedRepairs: number | null;
+    readonly freshEachScene: readonly string[];
     readonly memoryDir: string | null;
   };
   readonly projectRoot: string;
@@ -114,6 +115,15 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
      * `experiments/degradation` measured errors accumulating with the length of a
      * finished text, not with position inside one run.
      */
+    /**
+     * Which roles began each scene with an empty conversation.
+     *
+     * Beside the cost numbers because it changes what they mean: a resident
+     * verifier on a provider without prompt caching re-sends its whole history
+     * every request, which was 81% of a measured run's money. Two runs with
+     * different values here are not comparable on cost.
+     */
+    fresh_each_scene: args.freshEachScene,
     allocation: allocationReport(input),
     elapsed_ms: input.elapsedMs,
     fatal: input.fatal,

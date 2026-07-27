@@ -33,6 +33,7 @@ import type { ModelId } from "../runtime/gateway.ts";
 import { writeStory } from "../runtime/story.ts";
 import { buildSummary, committedOnDisk } from "../runtime/summary.ts";
 import { CanonicalIndex } from "../index/commit.ts";
+import type { AgentRole } from "../transaction/types.ts";
 import { chapterFor, initialiseProject, paths, sceneIndexOf } from "../index/tree.ts";
 import { checkReferences, renderReferenceReport } from "../verification/references.ts";
 
@@ -75,6 +76,15 @@ interface Args {
    * recorded in the summary.
    */
   enforceBudget: boolean;
+  /**
+   * Roles that start each scene with an empty conversation.
+   *
+   * `--resident-all` restores 0.5.1's behaviour, where every role kept its history
+   * for the whole run. That is the ablation arm: the default exists because the
+   * cross-family verifier gets no prompt caching, so its residency cost 81% of a
+   * run's money on 11% of its round-trips.
+   */
+  freshEachScene: readonly AgentRole[];
 }
 
 /**
@@ -118,6 +128,7 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     memoryDir: get("--memory-dir") ?? null,
     sandbox: (get("--sandbox") as SandboxId | undefined) ?? "none",
     enforceBudget: has("--enforce-budget"),
+    freshEachScene: has("--resident-all") ? [] : (["verifier"] as const),
   };
 }
 
@@ -296,6 +307,7 @@ try {
     targetWords: args.target,
     pinnedRepairs: args.pinnedRepairs,
     allocationState: harness.allocation,
+    freshEachScene: args.freshEachScene,
     log: say,
     build: harness.build,
     backfill: harness.backfill,

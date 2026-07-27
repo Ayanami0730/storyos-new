@@ -1,7 +1,7 @@
 {
   "name": "storyos-v3",
-  "version": "0.5.1",
-  "description": "StoryOS v3 — long-form novel-writing agent harness",
+  "version": "0.6.0",
+  "description": "StoryOS v3 \u2014 long-form novel-writing agent harness",
   "main": "index.js",
   "scripts": {
     "typecheck": "tsc --noEmit",
