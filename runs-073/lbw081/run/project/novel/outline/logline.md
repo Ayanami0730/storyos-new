@@ -1,0 +1,1 @@
+When a well-locked study yields Evelyn Crane's body and a stopped pocket watch, detective-narrator Aldo March must unpick a mechanical trick, a neighbour's machine-smithing, and a ledger of motives to prove a murder that was meant to look impossible.

@@ -1,0 +1,69 @@
+{
+  "sceneId": "s-006",
+  "claims": [
+    {
+      "entity": "faction-residents-commune",
+      "attribute": "meeting_location_and_mood",
+      "quote": "They gathered on the stair that led down to the courtyard because there was nowhere else large enough and quiet enough to hold a meeting. The stairwell smelled of oil and old soap; children’s drawings were pinned to a beam and flapped in the draft like small flags.",
+      "value": "residents meet on shared stairwell; mood anxious and tense"
+    },
+    {
+      "entity": "char-neighbor-lei",
+      "attribute": "advocacy",
+      "quote": "\"We can't wait,\" he said, the words hard as a lid. \"Those spirits—whatever they are—are hurting our children. We need to burn them out of the yard. We need a big rite. Now.\"",
+      "value": "Neighbor Lei advocates for immediate, large-scale rite to remove spirit"
+    },
+    {
+      "entity": "faction-residents-commune",
+      "attribute": "split_in_policy",
+      "quote": "Debate hardened into policy in the space of a minute. A group clustered with Lei at their center; they took torches and the determination of people who had decided already. Another group stayed behind, faces like drawn curtains, and murmured about witnesses and ledger checks and the danger of patrols.",
+      "value": "commune splits: some follow Lei for immediate action, others resist citing patrol risk and need for witnesses"
+    },
+    {
+      "entity": "spirit-vengeful",
+      "attribute": "escalation_manifestations",
+      "quote": "A ladle flew from a hook over an old stove and arced across the stair, clanging against the wall and dropping inches from the child leaning on the rail. ... the bowl on a landing near the stove shivered and slowly filled with water that smelled of iron; it rose until it slopped over the edge and darkened the wood.",
+      "value": "spirit escalates with near-miss ladle toss and deliberate overflowing bowl of iron-smelling water"
+    },
+    {
+      "entity": "obj-ritual-kit",
+      "attribute": "kit_usage_in_meeting",
+      "quote": "Mercy moved forward... She set the dented burner on the step and lit a thin strip of powdered incense—not a rite, just a small test. The smoke threaded up and caught in the stair's shadows.",
+      "value": "Mercy uses ritual kit's dented burner for a small diagnostic test during meeting"
+    },
+    {
+      "entity": "spirit-vengeful",
+      "attribute": "amplification_mechanism",
+      "quote": "The escalation did not feel random. It hit where voices were loud and where accusations were thrown. \"It gets louder where we speak loudest,\" Mercy said, more to herself than the room, and then louder: \"It feeds on contradiction and on secrets named in anger. That is how it finds edges.\"",
+      "value": "spirit intensifies in spaces of loud argument and contradiction"
+    },
+    {
+      "entity": "char-elder-storyteller",
+      "attribute": "advice_in_meeting",
+      "quote": "\"Ritual without witnesses will make this worse if it is done in a hurry,\" he said softly. \"We name to hold, not to display. We take witnesses and we do not make smoke that a patrol might read as signal.\"",
+      "value": "Elder advises restraint: rituals need witnesses and discretion to avoid patrol attention"
+    },
+    {
+      "entity": "faction-residents-commune",
+      "attribute": "follow_up_action",
+      "quote": "A group clustered with Lei at their center; they took torches and the determination of people who had decided already.",
+      "value": "some residents follow Lei to the yard with torches"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "boundary_instruction",
+      "quote": "\"If you must go,\" she told Lei, \"take no more than three. Do it to the yard, not to the shrine. Bring witnesses who can vouch for what you do. Do not make smoke that would signal. If you raise noise, you raise danger.\"",
+      "value": "Mercy instructs limited, discrete action if residents act without Circle sanction"
+    }
+  ],
+  "presentEntities": [
+    "faction-residents-commune",
+    "char-neighbor-lei",
+    "char-mercy-chan",
+    "char-elder-storyteller",
+    "spirit-vengeful",
+    "obj-ritual-kit"
+  ],
+  "promises": [],
+  "paysOff": []
+}

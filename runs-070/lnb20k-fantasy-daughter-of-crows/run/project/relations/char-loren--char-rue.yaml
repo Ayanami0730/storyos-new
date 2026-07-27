@@ -1,0 +1,16 @@
+pairId: char-loren--char-rue
+participants:
+  - char-loren
+  - char-rue
+phases:
+  - index: 1
+    relation: mentor
+    fromScene: s-006
+    toScene: null
+    transition: Loren assigns apprentices to Rue (three slips) and mentors her on
+      training and ledger-keeping practices; he instructs and shows how to
+      smooth creases and record hours.
+    source:
+      scene: s-006
+      span: L26-L34
+openQuestions: []

@@ -1,0 +1,44 @@
+{
+  "sceneId": "s-007",
+  "claims": [
+    {
+      "entity": "obj-family-photo",
+      "attribute": "back_fragment",
+      "quote": "On the back, ink had been written once and then rubbed; there was a partial loop of letters and then a ragged smudge where a name had been dragged away. An old stallholder leaned forward and squinted at the mark. \"That's a studio stamp, maybe—see the ghost of a circle?\" he muttered, voice thin with age. \"Or a place name—maybe '—wan'—\"",
+      "value": "photograph back bears a partial ink loop and smudge; an onlooker tentatively suggests a studio stamp or a place-name fragment (e.g., '—wan')"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "investigative_intent",
+      "quote": "She slipped the photograph back into her palm and said, quietly, \"I'll cross-reference this with the scroll and the ledgers at the shrine.\"",
+      "value": "Mercy intends to cross-reference photo's fragment with Elder's scroll and medical ledgers at shrine/library"
+    },
+    {
+      "entity": "spirit-vengeful",
+      "attribute": "focus_increase",
+      "quote": "Mercy felt the attention turn from the yard's cloth to this new token. It was as if the spirit, finding a clearer face to name, tightened itself around the photograph.",
+      "value": "spirit focus tightens on the family photograph as an anchor"
+    },
+    {
+      "entity": "char-young-refugee",
+      "attribute": "reacts_to_photo",
+      "quote": "The young refugee flinched as if struck. He stepped forward before he could think better of it, fingers reaching for the photograph though his jaw worked as if to keep a word from escaping.",
+      "value": "young refugee visibly reacts to the photograph (flinch, reach, suppressed vocalization)"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "chain_of_custody_action",
+      "quote": "She told the vendor a price, slipped coins into the man's palm, and folded the photograph into the small inner pocket of her woven kit as if tucking a lit ember into cloth.",
+      "value": "Mercy purchases photograph and secures it in her kit's inner pocket for examination (establishes chain of custody)"
+    }
+  ],
+  "presentEntities": [
+    "char-mercy-chan",
+    "char-young-refugee",
+    "obj-family-photo",
+    "spirit-vengeful",
+    "loc-wet-market"
+  ],
+  "promises": [],
+  "paysOff": []
+}

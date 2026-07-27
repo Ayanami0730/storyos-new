@@ -15,4 +15,16 @@ phases:
     source:
       scene: s-002
       span: L20-L40
+  - index: 2
+    relation: memory-keeper-to-commune
+    fromScene: s-006
+    toScene: null
+    transition: Elder advises caution and the need for witnesses and discretion; he
+      provides consequence and cautions while holding communal memory via the
+      scroll.
+    asymmetry: Elder keeps the memory/precedent; the commune defers to him for
+      cautionary norms.
+    source:
+      scene: s-006
+      span: L1-L40
 openQuestions: []

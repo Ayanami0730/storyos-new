@@ -1,0 +1,101 @@
+scenes:
+  - id: s-001
+    chapter: ch-01
+    intent: "Open on the locked-room: Aldo arrives at Crane Manor, examines the
+      sealed study and the body, sets the puzzle (locked deadbolt, latched
+      window, watch stopped at 9:07, wax flake, machine-oil smell). Introduce
+      characters and simmering motive threads (Henry's grief, Marta's
+      protectiveness, Derek's odd presence next door). Plant the clues that will
+      matter later."
+    present:
+      - char-aldo
+      - char-evelyn
+      - char-henry
+      - char-marta
+      - char-derek
+      - insp-rao
+      - loc-crane
+      - loc-study
+      - obj-study-door
+      - obj-study-window
+      - obj-watch
+      - obj-note
+      - obj-ashtray
+      - obj-wax
+    target_words: 700
+  - id: s-002
+    chapter: ch-01
+    intent: Aldo searches the study and the house with Inspector Rao, inspects the
+      mantel and hearth, finds the hidden cavity and the clockwork device,
+      notices the oil staining and the distinct file nick; interrogations of
+      Henry, Marta and Derek establish conflicting alibis and motives (the
+      ledger, debts, a recent angry conversation). The ladder is spotted outside
+      and the coal-hatch's abrasion is recorded.
+    present:
+      - char-aldo
+      - char-henry
+      - char-marta
+      - char-derek
+      - insp-rao
+      - loc-study
+      - loc-garden
+      - loc-cellar
+      - obj-study-door
+      - obj-study-window
+      - obj-clockwork
+      - obj-filing-mark
+      - obj-ladder
+      - obj-coal-hatch
+      - obj-wax
+      - obj-watch
+    target_words: 700
+  - id: s-003
+    chapter: ch-01
+    intent: "Aldo reconstructs possibilities, tests the clockwork, examines the
+      watch more closely (puncture and oil), deciphers the scrap of paper enough
+      to show it was a schedule, and sees the temporal mismatch: the watch's
+      stopped time matches when the device would have fired. He narrows the
+      method: a timed push-rod raised through the floor from the cellar, driven
+      by a wound clockwork hidden under the hearth. Tension rises as one
+      suspect's alibi fractures."
+    present:
+      - char-aldo
+      - char-derek
+      - char-henry
+      - insp-rao
+      - loc-study
+      - loc-cellar
+      - obj-clockwork
+      - obj-watch
+      - obj-note
+      - obj-filing-mark
+      - obj-coal-hatch
+    target_words: 700
+  - id: s-004
+    chapter: ch-01
+    intent: "Confrontation and demonstration: Aldo brings the parties to the study
+      and runs a live re-creation with Inspector Rao, showing how the mechanism,
+      the ladder, the hatch and the waxed note fit Derek's workshop habits and
+      motives. The murderer is exposed; after a last desperate lunge (brief
+      suspense), a confession and the forensic tie (the file nick and wax
+      impression) close the case. End with Aldo reflecting on the thin line
+      between invention and weaponry."
+    present:
+      - char-aldo
+      - char-derek
+      - char-henry
+      - char-marta
+      - insp-rao
+      - loc-study
+      - loc-garden
+      - loc-cellar
+      - obj-study-door
+      - obj-study-window
+      - obj-clockwork
+      - obj-watch
+      - obj-wax
+      - obj-ladder
+      - obj-filing-mark
+      - obj-coal-hatch
+      - obj-note
+    target_words: 700

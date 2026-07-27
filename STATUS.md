@@ -281,6 +281,137 @@ above changes, deliberately — those lengths are already scored.
 4. Live Story Bench scoring is not wired to this harness — the quality side needs a
    summary pipeline that does not exist yet.
 
+## 0e. Iteration log — 2026-07-27 evening, a second verification axis and four defects the trajectories gave up
+
+The instruction was three things: confirm every role runs `gpt-5-mini`; make the
+writer↔verifier loop actually produce findings the writer can act on, with the
+verification directions *distilled from what the graders penalise* rather than
+invented; and then run LongBench-Write and LiveNovelBench tasks concurrently, read
+the trajectories, and iterate fast on what they show.
+
+### Models: confirmed, and now checkable per run
+
+All five roles are `gpt-5-mini` — orchestrator, context-builder, writer, verifier,
+index-manager. `summary.json` gained a `models` field that records each role from
+the persona the run actually built, replacing the string `"gpt-5-mini for every
+role"`, which was literally false for the two versions when the verifier ran on
+`gemini-3.1-pro-preview` and nothing could see it. Cross-family survives as
+`--verifier-model`.
+
+### The craft axis (v0.7.0)
+
+Every finding the verifier could raise was one of ConStory's nineteen consistency
+subtypes. That vocabulary is right for one of the two columns we report and
+orthogonal to the other, and the two worst defects found by reading our own
+finished manuscripts were both unreportable: a story that **stopped instead of
+ending** (an unresolved ending contradicts nothing) and scenes that **restate each
+other** (near-zero verbatim overlap, and not a contradiction).
+
+`verification/craft.ts` holds twelve checks, each carrying `judgedAs` — the scored
+dimension that penalises it, quoted from LongBench-Write's `judge.txt` and the
+LongStoryEval composite that `docs/08` freezes to five dimensions. That field is
+the derivation, not documentation: a check nobody scores cannot justify a repair
+round. Reported through a separate tool from consistency findings, and counted in a
+separate column, because a craft judgement pooled into EID inflates an error
+density with something that is not an error in that taxonomy.
+
+Five checks may block, and only with **checkable evidence** — two verbatim quotes,
+or a named state pair (what is true at the open, what is true at the close). At
+most two may block per round, consistency first. Everything else warns.
+
+### The dossier (v0.7.0)
+
+The verifier's brief has said "read the index" since v0.1; measured behaviour was
+three shell reads across a nineteen-scene run, and eleven findings whose
+contradicting side was an *absence*. So the comparison is now computed and handed
+over: every claim the draft makes against what canon holds for it, with first
+establishments labelled as normal. It also finally passes the deterministic layer's
+findings — which the verifier's own AGENT.md has always told it to read, and which
+were never sent.
+
+`canon_context` on a finding is the third piece: the writer has no shell and no
+index, so the verifier is the only participant that can put a fact in front of it.
+
+### Four defects the trajectories gave up, each with a measurement
+
+1. **The builder could spend the writer's follow-up allowance before the writer
+   asked (v0.7.1).** The allowance was metered by counting `answer_writer` calls,
+   and that tool is permanently on the builder's allowlist — so during its initial
+   build, with no question outstanding, it called it unprompted. On `v062/lbw081`
+   s-001 the count reached one, the opening allowance *was* one, and the writer's
+   only question came back `no follow-ups left`. It wrote the scene without the
+   fact and said so. Invisible in every summary because the spontaneous call was
+   recorded *as* a follow-up.
+2. **The orchestrator never looked at anything (v0.7.1).** One `read` call, zero
+   `update_plan`, zero `abandon_scene` in a whole run; 22 tool calls were 19
+   delegations and 2 plan submissions. The revisable plan had no realisations at
+   all. Same fix as the verifier: the scene brief now carries how the last scene
+   ended (verbatim), what the story still owes the reader, the last scene's
+   delivered length against its target, and the scenes planned ahead — and demands
+   a plan judgement at each tier boundary.
+3. **A character walking somewhere was a blocking contradiction (v0.7.2).**
+   `char-eloise.location` from `loc-eloise-house` to `loc-main-street` — two
+   children stepping off a stoop — reported as `geographical_contradictions` at
+   severity `error`, twice, with the *same finding id*, then twice again on the
+   rewrite, so the stall detector fired and the scene committed carrying two
+   recorded defects that were not defects. It also punished the writer for
+   following its own instructions. Volatile attributes now absorb silently and are
+   counted in `coverage.volatileChanges`; the dossier shows the verifier the move.
+4. **Craft warnings reached nobody (v0.7.2).** A warning does not block, so a scene
+   committing first try never opens a repair round and the writer is never shown
+   the note. Three on `runs-070/lbw081` s-001 went into an audit file and stopped.
+   They now arrive with the *next* scene's brief, because they are habits rather
+   than local defects — only the previous scene's, never accumulated.
+
+### The measurement, and the regression it exposed (v0.7.3)
+
+Five runs launched concurrently on v0.7.1: three LongBench-Write tasks with
+existing baselines, and two LiveNovelBench 20k-word tasks (17 scenes each — four
+times longer than this harness had ever written).
+
+| task | old row | new row | note |
+|---|---:|---:|---|
+| lbw070 | 87.3 (S_q 3.83) | **88.9** (S_q 4.00) | old row used the *cross-family* verifier |
+| lbw092 | 91.1 (S_q 4.17) | 87.7 (S_q 4.00) | ditto; gap 3.4, was 6.7 on lbw081 |
+| lbw081 | 81.5 same-family / 88.2 cross | **78.6** (S_q 3.00) | Reading Experience **2** |
+
+lbw081 went down and the cause is single and specific: the manuscript interleaves
+object and character files with the narration, in quotation marks, from the second
+paragraph on — *"the watch stopped at a time relevant to establishing the minute of
+death"*, which is registry language about why a fact matters to an investigation.
+`smoke/probe-index-leak.py` measures 5.7% of the manuscript over eight spans,
+against **0.0%** for the two v0.7.1 runs that scored 88.9 and 87.7. So the
+regression is the leak, not the craft axis.
+
+**The invitation was ours.** v0.7.0 had just told the writer, of `canon_context`,
+to "use the wording it gives you rather than a plausible equivalent" — meant to
+stop it inventing variants of recorded facts, read as licence to quote the index.
+The prompt now says facts, never sentences, and `write_staged_scene` refuses a
+draft sharing a twelve-word run with its packet. The verifier had in fact caught
+it, correctly, as a craft warning — and a warning does not block, which is why this
+one belongs at the tool boundary.
+
+Also fixed: `compare-lbw.py` was hardcoded to `runs/`, so it printed the old
+87.3 under the same label as the new 88.9. Row labels now name the run directory.
+
+460 tests, typecheck clean, `v0.7.0`–`v0.7.3` tagged locally. Not pushed.
+
+### Open, in order
+
+1. **The v0.7.3 rerun of lbw081 and lbw092 is the outstanding number.** Whether
+   the packet-copy guard recovers the 2.9 points lbw081 lost against v0.6.2.
+2. **The two 20k LiveNovelBench runs are the first at that scale** (17 scenes;
+   0.3–0.4% leakage at scene 5, so not affected by the defect above). What breaks
+   past scene 10 is unmeasured, and `daughter-of-crows` was tracking ~17% short of
+   its per-scene target at scene 5.
+3. **Craft warnings that ought to block.** Three on one scene (`summary_not_scene`,
+   `flat_diction`, `theme_stated`) was an accurate diagnosis of inert prose that
+   nothing acted on. Whether volume of warnings should escalate is not answerable
+   from the rubric and needs an arm.
+4. Token efficiency, still: 294 tok/word at best measured, so the 21-task slice is
+   ~150M tokens.
+5. Live Story Bench quality scoring is still not wired to this harness.
+
 ## 1. Sync gaps — CLOSED 2026-07-25 14:00
 
 Both gaps recorded earlier are resolved. The laptop pushed `codex-run` to

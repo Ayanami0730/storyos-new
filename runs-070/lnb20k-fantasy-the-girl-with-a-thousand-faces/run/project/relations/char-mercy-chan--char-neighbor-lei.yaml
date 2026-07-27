@@ -15,4 +15,18 @@ phases:
     source:
       scene: s-001
       span: L30-L40
+  - index: 2
+    relation: reporter-to-diagnostic
+    fromScene: s-006
+    toScene: null
+    transition: "Mercy instructs Lei on boundaries for action: take no more than
+      three, go to yard not shrine, bring witnesses, avoid smoke; Mercy offers
+      monitoring and a witness list. This continues the earlier
+      reporter->diagnostic relation where Lei reports problems and Mercy
+      provides diagnostics and guidance."
+    asymmetry: Lei reports incidents and advocates action; Mercy provides diagnostic
+      guidance and limits.
+    source:
+      scene: s-006
+      span: L30-L60
 openQuestions: []
