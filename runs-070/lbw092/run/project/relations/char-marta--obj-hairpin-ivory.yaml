@@ -1,0 +1,16 @@
+pairId: char-marta--obj-hairpin-ivory
+participants:
+  - char-marta
+  - obj-hairpin-ivory
+phases:
+  - index: 1
+    relation: holder
+    fromScene: s-004
+    toScene: null
+    transition: After the execution, Marta stoops, finds the willow-pin where it
+      fell and folds it into her palm, pressing it to her breast; she becomes
+      its holder.
+    source:
+      scene: s-004
+      span: L1-L60
+openQuestions: []

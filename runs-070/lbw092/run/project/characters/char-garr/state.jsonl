@@ -10,3 +10,5 @@
 {"scene":"s-002","attribute":"holds","value":"obj-letter-sealed","quote":"\"The letter warm against his chest. In the pocket under his tunic the sealed scrap waited...\""}
 {"scene":"s-003","attribute":"location","value":"loc-harrowhold-stables","quote":"\"Outside, beneath the eaves, Garr moved with the quiet efficiency of a man packing what must be carried...\""}
 {"scene":"s-003","attribute":"condition","value":"detained, escorted to courtyard","quote":"\"Garr's wrists were not yet bound...\""}
+{"scene":"s-004","attribute":"condition","value":"executed_by_hanging","quote":"\"The rope took Garr with a single, terrible explanation; he swung once on the beam and then was still.\""}
+{"scene":"s-004","attribute":"location","value":"loc-courtyard","quote":"\"The execution was swift. The rope took Garr with a single, terrible explanation; he swung once on the beam and then was still.\""}

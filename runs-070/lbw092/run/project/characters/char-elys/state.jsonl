@@ -3,3 +3,5 @@
 {"scene":"s-001","attribute":"mood","value":"quiet, resolute","quote":"\"Elys sits, folding her hands over her skirts.\""}
 {"scene":"s-001","attribute":"companions","value":"char-marta","quote":"\"Marta stands a little back, half in shadow on the path... She is Elys's maid and confidante—pragmatic, watchful...\""}
 {"scene":"s-002","attribute":"location","value":"loc-walled-garden","quote":"\"They met first in the garden as they had the week before and the week before that—Elys slipping down the narrow stair from her chamber in the hour after vespers to sit on the old stone bench...\""}
+{"scene":"s-004","attribute":"condition","value":"executed_by_hanging","quote":"\"She pressed the willow-pin to his lips and kissed it, and then, without a word, she looped the rope over her own head.\""}
+{"scene":"s-004","attribute":"location","value":"loc-courtyard","quote":"\"Elys bent as if to touch his boots and then... climbed the ladder...\""}

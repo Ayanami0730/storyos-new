@@ -1,0 +1,17 @@
+pairId: char-headmistress--obj-contract
+participants:
+  - char-headmistress
+  - obj-contract
+phases:
+  - index: 1
+    relation: explains_contract_margins
+    fromScene: s-005
+    toScene: null
+    transition: Headmistress names the Contract's term (ten years) and acknowledges
+      the existence of margins—orders of apprenticeship, sponsorships, and
+      internal logs—that make the promises practicable; she does not disclose
+      margin details.
+    source:
+      scene: s-005
+      span: L12-L18
+openQuestions: []

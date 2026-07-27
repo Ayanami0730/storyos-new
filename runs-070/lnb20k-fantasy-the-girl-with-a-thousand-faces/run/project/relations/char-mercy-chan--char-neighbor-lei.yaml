@@ -1,0 +1,18 @@
+pairId: char-mercy-chan--char-neighbor-lei
+participants:
+  - char-mercy-chan
+  - char-neighbor-lei
+phases:
+  - index: 1
+    relation: reporter-to-diagnostic
+    fromScene: s-001
+    toScene: null
+    transition: Neighbor Lei and other residents report observations and ask Mercy
+      to perform diagnostics and help; Lei reports torn laundry and child
+      utterances; Mercy responds with small diagnostic rituals.
+    asymmetry: Lei is a witness/reporter and seeks help; Mercy is a practitioner who
+      treats reports as cases to diagnose.
+    source:
+      scene: s-001
+      span: L30-L40
+openQuestions: []

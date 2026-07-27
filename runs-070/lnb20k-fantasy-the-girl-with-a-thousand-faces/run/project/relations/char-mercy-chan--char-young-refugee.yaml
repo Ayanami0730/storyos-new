@@ -1,0 +1,18 @@
+pairId: char-mercy-chan--char-young-refugee
+participants:
+  - char-mercy-chan
+  - char-young-refugee
+phases:
+  - index: 1
+    relation: caregiver-investigator
+    fromScene: s-004
+    toScene: null
+    transition: Mercy approaches the boy in the yard, handles the cloth cautiously,
+      and offers to take it to the shrine with witnesses; the boy refuses to
+      give his name and appears linked to the cloth.
+    asymmetry: Mercy acts as investigator/caregiver; the boy is withdrawn and
+      possibly linked to the spirit.
+    source:
+      scene: s-004
+      span: L1-L30
+openQuestions: []

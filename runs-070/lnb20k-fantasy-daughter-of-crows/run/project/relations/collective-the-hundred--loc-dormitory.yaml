@@ -1,0 +1,27 @@
+pairId: collective-the-hundred--loc-dormitory
+participants:
+  - collective-the-hundred
+  - loc-dormitory
+phases:
+  - index: 1
+    relation: dorm_assignment
+    fromScene: s-002
+    toScene: null
+    transition: Dorm assignments are made from a posted rota transcribed from the
+      Folio; recruits receive placements and are observed by staff like Loren
+      who can tap the rota to set a place.
+    source:
+      scene: s-002
+      span: L5-L12
+  - index: 2
+    relation: dorm_assignment
+    fromScene: s-004
+    toScene: null
+    transition: The dorm board displays names and symbols; infractions are marked
+      with symbols and slips pinned to trunks indicating punishments like
+      scullery duty or extra hours; these marks function as ledgered
+      punishments.
+    source:
+      scene: s-004
+      span: L7-L13
+openQuestions: []

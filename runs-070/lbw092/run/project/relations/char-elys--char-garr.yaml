@@ -16,12 +16,21 @@ phases:
   - index: 2
     relation: lovers (secret)
     fromScene: s-002
-    toScene: null
+    toScene: s-004
     transition: Reinforces that Elys and Garr meet in secret repeatedly after
       vespers; they exchange the willow-pin and make plans including Garr
       preparing a sealed note. This phase continues their private lovers'
       relationship.
     source:
       scene: s-002
+      span: L1-L60
+  - index: 3
+    relation: deceased (lovers)
+    fromScene: s-004
+    toScene: null
+    transition: Both Garr and Elys die by execution in the courtyard; their bond
+      ends in death as public consequence for conspiracy and aiding escape.
+    source:
+      scene: s-004
       span: L1-L60
 openQuestions: []

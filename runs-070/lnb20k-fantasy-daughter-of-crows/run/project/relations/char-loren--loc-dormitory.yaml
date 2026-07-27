@@ -1,0 +1,16 @@
+pairId: char-loren--loc-dormitory
+participants:
+  - char-loren
+  - loc-dormitory
+phases:
+  - index: 1
+    relation: dorm_officer
+    fromScene: s-002
+    toScene: null
+    transition: Loren stands at the dormitory doorway with a sheaf of paper, assigns
+      rota placements by tapping the pinned rota and declaring a placement word
+      (e.g., 'Garden').
+    source:
+      scene: s-002
+      span: L4-L8
+openQuestions: []

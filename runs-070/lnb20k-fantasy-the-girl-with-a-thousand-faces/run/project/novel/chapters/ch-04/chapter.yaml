@@ -1,52 +1,47 @@
 chapter: ch-04
 scenes:
   - id: s-013
-    intent: "A quiet interlude: Mercy and the Elder argue over whether to expose the
-      hidden wartime truth publicly. They prepare materials—a communal
-      confession ritual that will either bind the spirit or fracture the Walled
-      City’s fragile social order."
-    present:
-      - char-mercy-chan
-      - char-elder-storyteller
-      - group-kowloon-residents
-      - obj-elder-scroll
-      - obj-memory-thread
-      - loc-rooftop-shrine
-      - spirit-vengeful
-  - id: s-014
-    intent: "Escalation: the revenant reaches into the city’s collective dreams,
-      provoking violent reenactments among some residents; the City heats toward
-      a breaking point and the occupying presence nearby becomes a pressing,
-      dangerous background."
-    present:
-      - spirit-vengeful
-      - group-kowloon-residents
-      - loc-kowloon-walled-city
-      - loc-occupation-checkpoint
-      - char-lau-apprentice
-  - id: s-015
-    intent: "Climax—public ritual in the main alley: Mercy orchestrates a fraught,
-      community-driven rite combining speech, confession, and formal offerings;
-      the revenant manifests fully and the confrontation forces Mercy to face
-      both the ghost and her own grief."
+    intent: Mercy traverses the Walled City maze as the spirit conjures wartime
+      reenactments—the city becomes a theater of its own past. The Young Refugee
+      confronts the memory that has haunted him and gains agency.
     present:
       - char-mercy-chan
       - spirit-vengeful
-      - group-kowloon-residents
-      - char-elder-storyteller
       - char-young-refugee
-      - obj-mercys-incense-box
-      - loc-main-alley-spiral
-      - loc-rooftop-shrine
-  - id: s-016
-    intent: "Aftermath: the ritual’s immediate effects—some release, some fractures.
-      Individuals reckon with what they did and what they denied; Mercy contends
-      with the moral price paid and a partial laying-to-rest of the revenant,
-      whose hunger is diminished but not wholly erased."
+      - loc-kowloon-walled-city
+      - obj-family-photo
+  - id: s-014
+    intent: "A revealed testimony and the Elder’s scroll show the true origin: a
+      massacre where neighbors chose survival over rescue, and a wound sewn shut
+      by silence. Mercy negotiates with the spirit, offering a different
+      ritual—naming and bearing witness."
+    present:
+      - spirit-vengeful
+      - char-mercy-chan
+      - char-elder-storyteller
+      - loc-bombed-yard
+      - obj-story-scroll
+      - obj-ritual-kit
+  - id: s-015
+    intent: "Climax: the final, costly exorcism in the Walled City’s central
+      courtyard. Ritual rules are tested; Mercy sacrifices a part of her power
+      or memory to free the community. The spirit either is released or
+      transformed."
     present:
       - char-mercy-chan
-      - group-kowloon-residents
       - spirit-vengeful
-      - char-mrs-choi
-      - char-dr-yuen
-      - loc-temple-basement
+      - faction-residents-commune
+      - obj-ritual-kit
+      - loc-central-courtyard
+      - char-young-refugee
+  - id: s-016
+    intent: "Aftermath and reckoning: the residents begin tentative acts of
+      remembrance and repair; Mercy counts the cost in herself and the city. An
+      epilogue gesture shows that memory work continues, and Mercy’s practice
+      has changed."
+    present:
+      - faction-residents-commune
+      - char-mercy-chan
+      - char-young-refugee
+      - char-elder-storyteller
+      - loc-kowloon-walled-city

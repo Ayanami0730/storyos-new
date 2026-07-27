@@ -1,0 +1,68 @@
+{
+  "sceneId": "s-004",
+  "claims": [
+    {
+      "entity": "char-alfred-broome",
+      "attribute": "admitted_having_house_keys_writer_declared",
+      "quote": "(Writer's note: the index contained no prior record of Alfred's possession or use of house keys; the following admission is staged for the confrontation.)",
+      "value": "writer-declared_admission_present"
+    },
+    {
+      "entity": "obj-mantel-clock",
+      "attribute": "bezel_screw_removed_by_alfred_admission",
+      "quote": "\"I took the bezel screw to loosen the face,\" he said.",
+      "value": "removed_by_alfred (admitted)"
+    },
+    {
+      "entity": "obj-spring-spike-device",
+      "attribute": "device_hidden_by_alfred_in_chair_pocket_admitted",
+      "quote": "\"I wrapped the spring and the blade in an old cloth and hid them beneath the left rear seam of Mr. Hale's chair,\" he said. He looked down at the chair as if seeing the pocket again.",
+      "value": "hidden_by_alfred (admitted)"
+    },
+    {
+      "entity": "obj-spring-spike-device",
+      "attribute": "thread_oiled_by_alfred_admission",
+      "quote": "\"I wound the spring and greased the thread where it passed the mantel so it would run cleanly,\" he said, and his fingers brushed his cuff, smearing a thought more than oil.",
+      "value": "alfred_admitted_to_oiling_thread"
+    },
+    {
+      "entity": "char-alfred-broome",
+      "attribute": "confession_of_intent_and_result",
+      "quote": "\"I meant only to frighten him. I did not mean for him to die. I did not think the spring would strike so true. I never thought it would kill him in a minute and leave me— me with nothing.\"",
+      "value": "confessed (did not mean to kill; admits causation)"
+    },
+    {
+      "entity": "obj-will-draft",
+      "attribute": "will_clause_effect_on_alfred_recorded_by_admission",
+      "quote": "\"The draft changed Mr. Hale's provision for me,\" he said. \"It reduced my pension and left the automaton to Miss Ross unless I proved my worth.\"",
+      "value": "writer-declared_clause_admitted_by_alfred"
+    },
+    {
+      "entity": "obj-file-rasp",
+      "attribute": "placed_on_table_as_evidence",
+      "quote": "I placed the rasp on the table, the metal dust still visible in its teeth, and laid the watch beside it: \"The minute hand had been bent; the watch read 9:14 p.m.\"",
+      "value": "true"
+    },
+    {
+      "entity": "obj-pocket-watch",
+      "attribute": "displayed_as_key_evidence",
+      "quote": "I placed the rasp on the table, the metal dust still visible in its teeth, and laid the watch beside it: \"The minute hand had been bent; the watch read 9:14 p.m.\"",
+      "value": "true"
+    }
+  ],
+  "presentEntities": [
+    "char-james-cole",
+    "char-victor-hale",
+    "char-lucy-hale",
+    "char-alfred-broome",
+    "char-owen-myers",
+    "char-evelyn-ross",
+    "loc-foyer",
+    "loc-study",
+    "obj-spring-spike-device",
+    "obj-file-rasp",
+    "obj-will-draft"
+  ],
+  "promises": [],
+  "paysOff": []
+}

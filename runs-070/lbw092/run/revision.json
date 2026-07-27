@@ -1,0 +1,103 @@
+{
+  "findings": [
+    {
+      "id": "f-5d80818b",
+      "subtype": "abandoned_plot_elements",
+      "axis": "consistency",
+      "category": "timeline_plot_logic",
+      "tier": "negative-inference",
+      "validator": "global",
+      "severity": "warning",
+      "reasoning": "A private, non-legal vow: Garr will return and Elys will wait; their promise is intimate and absolute to them. was set up in s-001 and should have paid off by s-004; nothing in the span does",
+      "evidence": {
+        "quote": "\"I will come back,\" he says, and the words are plain as a pledge laid on wood.\n\n\"I will wait,\" she says, as plain and as absolute.",
+        "source": "s-001"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "pay off \"A private, non-legal vow: Garr will return and Elys will wait; their promise is intimate and absolute to them.\", or mark it deliberately open with a reason"
+      }
+    },
+    {
+      "id": "f-9fdb7b9b",
+      "subtype": "abandoned_plot_elements",
+      "axis": "consistency",
+      "category": "timeline_plot_logic",
+      "tier": "negative-inference",
+      "validator": "global",
+      "severity": "warning",
+      "reasoning": "Garr will draft and seal a note proposing escape; the sealed note is prepared and kept by Garr at scene end. was set up in s-002 and should have paid off by s-004; nothing in the span does",
+      "evidence": {
+        "quote": "\"I'll write it tonight,\" he said. The sentence felt like a ladder rung offered to a hand.",
+        "source": "s-002"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "pay off \"Garr will draft and seal a note proposing escape; the sealed note is prepared and kept by Garr at scene end.\", or mark it deliberately open with a reason"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "rev-promise-lovers-quiet",
+      "targetScenes": [
+        "s-001",
+        "s-002",
+        "s-003",
+        "s-004"
+      ],
+      "rationale": "unpaid promise from s-001",
+      "finding": {
+        "id": "f-5d80818b",
+        "subtype": "abandoned_plot_elements",
+        "axis": "consistency",
+        "category": "timeline_plot_logic",
+        "tier": "negative-inference",
+        "validator": "global",
+        "severity": "warning",
+        "reasoning": "A private, non-legal vow: Garr will return and Elys will wait; their promise is intimate and absolute to them. was set up in s-001 and should have paid off by s-004; nothing in the span does",
+        "evidence": {
+          "quote": "\"I will come back,\" he says, and the words are plain as a pledge laid on wood.\n\n\"I will wait,\" she says, as plain and as absolute.",
+          "source": "s-001"
+        },
+        "editLocus": {
+          "kind": "unresolved",
+          "question": "pay off \"A private, non-legal vow: Garr will return and Elys will wait; their promise is intimate and absolute to them.\", or mark it deliberately open with a reason"
+        }
+      }
+    },
+    {
+      "id": "rev-promise-letter-prepared",
+      "targetScenes": [
+        "s-002",
+        "s-003",
+        "s-004"
+      ],
+      "rationale": "unpaid promise from s-002",
+      "finding": {
+        "id": "f-9fdb7b9b",
+        "subtype": "abandoned_plot_elements",
+        "axis": "consistency",
+        "category": "timeline_plot_logic",
+        "tier": "negative-inference",
+        "validator": "global",
+        "severity": "warning",
+        "reasoning": "Garr will draft and seal a note proposing escape; the sealed note is prepared and kept by Garr at scene end. was set up in s-002 and should have paid off by s-004; nothing in the span does",
+        "evidence": {
+          "quote": "\"I'll write it tonight,\" he said. The sentence felt like a ladder rung offered to a hand.",
+          "source": "s-002"
+        },
+        "editLocus": {
+          "kind": "unresolved",
+          "question": "pay off \"Garr will draft and seal a note proposing escape; the sealed note is prepared and kept by Garr at scene end.\", or mark it deliberately open with a reason"
+        }
+      }
+    }
+  ],
+  "coverage": {
+    "scenes": 4,
+    "contractsChecked": 2,
+    "contractsOpen": 2,
+    "capabilitiesChecked": 0
+  }
+}

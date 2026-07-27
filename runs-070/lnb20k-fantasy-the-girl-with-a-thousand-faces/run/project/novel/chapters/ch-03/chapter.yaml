@@ -1,47 +1,47 @@
 chapter: ch-03
 scenes:
   - id: s-009
-    intent: "A mediation with frightened residents: Mercy tries to persuade them to
-      confront the shared trauma rather than hide it; some resist, fearing
-      reprisal from occupying forces or social shame."
+    intent: Mercy investigates the wartime hospital ward and finds medical ledgers
+      and rumor of a makeshift mass-burial. She learns how the city’s wartime
+      survival strategies created wounds that never healed.
     present:
+      - loc-hospital-ward
       - char-mercy-chan
-      - group-kowloon-residents
-      - char-mrs-choi
-      - char-lau-apprentice
-      - loc-main-alley-spiral
+      - obj-medical-ledger
+      - char-hospital-orderly
   - id: s-010
-    intent: "Discovery scene in the temple basement: Mercy and Lau uncover an older
-      communal ledger and marginal notes that point to a concealed massacre
-      during the occupation—more evidence the revenant’s animus is rooted in an
-      act the city has not named."
-    present:
-      - char-mercy-chan
-      - char-lau-apprentice
-      - obj-elder-scroll
-      - loc-temple-basement
-      - spirit-vengeful
-      - loc-occupation-checkpoint
-  - id: s-011
-    intent: "Second ritual, riskier: Mercy prepares to perform a binding that will
-      require the community’s explicit naming of the harm; the ritual escalates
-      the spirit’s aggression and someone is physically hurt, revealing ethical
-      cost."
-    present:
-      - char-mercy-chan
-      - group-kowloon-residents
-      - obj-iron-cleaver
-      - obj-memory-thread
-      - spirit-vengeful
-      - char-mrs-choi
-  - id: s-012
-    intent: "The Young Refugee’s narrative: a concentrated scene with the refugee’s
-      flashback of wartime loss that mirrors the revenant’s wound—Mercy sees how
-      individual trauma and the specter interlock and begins to craft a new
-      ritual approach."
+    intent: The Young Refugee breaks down and reveals a suppressed memory that
+      intersects with the spirit’s anger; Mercy and he map the site of violence
+      together, deepening their bond and clarifying how memory anchors the
+      revenant.
     present:
       - char-young-refugee
       - char-mercy-chan
+      - loc-alley-13
+      - obj-family-photo
+      - faction-residents-commune
       - spirit-vengeful
-      - loc-main-alley-spiral
-      - char-dr-yuen
+  - id: s-011
+    intent: "A search reveals the spirit’s anchor: an object (a locket or cloth)
+      buried beneath a ruined stairwell. Recovering it exposes a composite
+      origin—several deaths, several stories, an angry refusal to be named."
+    present:
+      - spirit-vengeful
+      - obj-anchor-locket
+      - obj-bloodstained-cloth
+      - char-mercy-chan
+      - loc-bombed-yard
+      - loc-ruined-library
+  - id: s-012
+    intent: The community attempts a placation ritual that collapses into a fight of
+      memories—each household’s version of what happened is different; the
+      spirit grows by feeding on contradiction. Mercy realises she must change
+      the ritual’s aim.
+    present:
+      - faction-residents-commune
+      - char-elder-storyteller
+      - char-mercy-chan
+      - spirit-vengeful
+      - loc-temple-shrine
+      - obj-incense-burner
+      - obj-ritual-kit

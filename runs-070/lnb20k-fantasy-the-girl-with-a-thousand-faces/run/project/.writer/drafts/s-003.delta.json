@@ -2,76 +2,67 @@
   "sceneId": "s-003",
   "claims": [
     {
-      "entity": "char-elder-storyteller",
-      "attribute": "role",
-      "value": "lay keeper of the temple who guards obj-elder-scroll but is not the formal priest",
-      "quote": "He was a lay keeper of the temple — guardian of the scroll, not its formal priest — and he made that distinction in the way he spoke and in the small rituals he allowed in his rooms."
+      "entity": "loc-temple-shrine",
+      "attribute": "sensory_description",
+      "quote": "The shrine room smelled of old incense and boiled rice, a sweet sour that sat under the air like a patient thing.",
+      "value": "old incense and boiled rice scent; sweet-sour undercurrent"
     },
     {
-      "entity": "char-lau-apprentice",
-      "attribute": "age",
-      "value": "fifteen",
-      "quote": "Lau fidgeted with a knot of string in his hands; he was fifteen and watched Mercy with the mixture of dislike for being told what to do and the hunger of someone trying to learn a trade that might save them both."
-    },
-    {
-      "entity": "loc-temple-basement",
-      "attribute": "locked_room_history",
-      "value": "has not been opened since the occupation began",
-      "quote": "\"The room hasn't been opened since the occupation began,\" he said, as if stating a fact that would guard them from any lazy assumptions."
-    },
-    {
-      "entity": "obj-elder-scroll",
-      "attribute": "physical_state_and_handling",
-      "value": "brittle, foxed paper with marginal notes in different hands; the Elder will not let others touch it without negotiation",
-      "quote": "He hummed an old line, fingers worrying the edge of the scroll before he unfurled it. The paper was foxed and creased; marginal notes in different hands crowded some pages, and a faded thumbprint smudged one annotation. He would not let others touch it without a quiet negotiation — he set the scroll between them like a thing both alive and fragile and kept his hand over it until Mercy had bargained with the room."
+      "entity": "obj-ritual-kit",
+      "attribute": "kit_setup",
+      "quote": "Mercy set her woven case on the low altar and worked with the same economy she'd used in alleys: open, lay out, test. Inside the case the dented censer caught the light like a small bruise; talismans, a folded incantation slip, chalk and the little knife lay where fingers could find them in the dark.",
+      "value": "ritual kit laid out: dented censer, talismans, a folded incantation slip, chalk, little knife"
     },
     {
       "entity": "char-elder-storyteller",
-      "attribute": "oral_fragments",
-      "value": "\"they buried names in the under-floor\"; \"the men taken at the water's turn\"",
-      "quote": "The Elder tapped the scroll, and then, in a voice like dry paper, offered two fragments that sat like hooks in the air: \"they buried names in the under-floor,\" he said, and later, \"the men taken at the water's turn.\""
-    },
-    {
-      "entity": "group-kowloon-residents",
-      "attribute": "negotiation_conditions",
-      "value": "require talisman left under altar; promise to tell names found; two measures of rice to replace lock",
-      "quote": "An elder woman crossed her arms and said plainly: \"We will let you search, if you leave a talisman under the altar and tell us any names you find. Also — the lock must be fixed afterward. Two measures of rice for the lock, and we will close the door again.\""
+      "attribute": "stewardship",
+      "quote": "He handled the battered scroll with a careful reverence, cradling what seemed like the city's memories for a moment—no claim of possession, only the quiet duty of someone asked to hold them.",
+      "value": "Elder acts as steward/custodian of the story packet/scroll, not claiming ownership"
     },
     {
       "entity": "char-mercy-chan",
-      "attribute": "offering_given",
-      "value": "left two measures of rice on the altar and placed a folded red talisman under the altar",
-      "quote": "Mercy set two measures of rice on the altar herself, the grain bright and ordinary under candlelight. She left a folded red talisman where the smoke would settle and, in a voice meant to be heard, promised to read aloud any names she found."
+      "attribute": "ritual_actions",
+      "quote": "She lit powdered incense in the burner and watched the smoke climb. She drew a talisman from the stack and held it between thumb and forefinger... She pinched a little salt between two fingers and scattered it in a thin line across the threshold of the altar.",
+      "value": "Performs ritual actions: lights powdered incense, draws talisman, sprinkles salt line across altar threshold"
     },
     {
-      "entity": "char-lau-apprentice",
-      "attribute": "holds",
-      "value": "obj-talisman (delegated)",
-      "quote": "\"I'll hold the talisman,\" he said quickly, eager in that messy way apprentices are when offered a task that looks important."
+      "entity": "char-mercy-chan",
+      "attribute": "ritual_costs",
+      "quote": "The room went cold... Mercy's fingers went numb where they held the talisman. A pressure wrapped the base of her throat as if someone had placed a wet stone there; she swallowed against the draft and felt something unnamed shift at the edges of her memory.",
+      "value": "experiences numbness in fingers, pressure at throat, memory disturbance during ritual"
+    },
+    {
+      "entity": "spirit-vengeful",
+      "attribute": "resistance_manifestation",
+      "quote": "It did not arrive slow but layered: voices at once, overlapping in dialects that slid and spat and rose like different instruments playing the same wrong note. For a dizzying second she heard Cantonese, Taishanese, a clipped Japanese fragment, then a child's laugh like someone had thrown it into the machine and sped it up until the syllables frayed.",
+      "value": "spirit resists with layered voices in multiple dialects and a child's laugh distorted"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "sensory_injury",
+      "quote": "a high, metallic ring that flattened the middle register of her hearing. Voices around the room blurred into a far echo; she could not catch half of what was said. Tears salted the skin at her temples where the tightening had been.",
+      "value": "temporary partial hearing loss (high ringing) and tears at temples"
     },
     {
       "entity": "char-elder-storyteller",
-      "attribute": "caution_note",
-      "value": "marginal notes in the scroll may hide names; 'Names rubbed thin hide the worst parts.'",
-      "quote": "The Elder watched, his fingers touching marginalia with the same careful curiosity he'd used on the scroll. He hummed again, an old note that might be a blessing or might be a warning. ... The Elder folded the scroll back to a safe page and, in the hush that followed the bargain, added, almost to himself, \"Mind what the marginal notes hide. Names rubbed thin hide the worst parts.\""
+      "attribute": "judgment",
+      "quote": "\"Names are not neutral,\" he said, the sound a dry measure. \"Calling what is hidden calls the thing that fed on hiding.\"",
+      "value": "Elder's assessment: naming can summon what fed on hiding; warns Mercy of consequences"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "next_action",
+      "quote": "Mercy stepped to the threshold and, with the room's half-attentive watch on her, said, quiet and steady, \"We go to the yard next.\"",
+      "value": "Mercy will investigate the bombed yard next (immediate action)"
     }
   ],
   "presentEntities": [
-    "char-elder-storyteller",
-    "char-lau-apprentice",
     "char-mercy-chan",
-    "group-kowloon-residents",
-    "loc-temple-basement",
-    "obj-elder-scroll",
-    "loc-occupation-checkpoint"
+    "char-elder-storyteller",
+    "spirit-vengeful",
+    "obj-ritual-kit",
+    "loc-temple-shrine"
   ],
-  "promises": [
-    {
-      "id": "promise-s-003-01",
-      "promise": "Mercy will search the locked room in the temple basement with witnesses and report any names back to the hall.",
-      "quote": "\"You may search the basement locked room. But take witnesses and bring the names back to the hall.\"",
-      "dueByScene": "s-004"
-    }
-  ],
+  "promises": [],
   "paysOff": []
 }

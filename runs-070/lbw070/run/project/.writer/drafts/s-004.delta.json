@@ -2,6 +2,18 @@
   "sceneId": "s-004",
   "claims": [
     {
+      "attribute": "location",
+      "entity": "char-eloise",
+      "quote": "We leave the park and walk the short block to Mrs. Halloway's bungalow, the hedges thinning and the sun pulling the day toward evening.",
+      "value": "loc-halloway-house"
+    },
+    {
+      "attribute": "location",
+      "entity": "char-jun",
+      "quote": "We leave the park and walk the short block to Mrs. Halloway's bungalow, the hedges thinning and the sun pulling the day toward evening.",
+      "value": "loc-halloway-house"
+    },
+    {
       "attribute": "porch_description",
       "entity": "loc-halloway-house",
       "quote": "\"A tidy blue door set on a low porch where ferns droop in green pots; the porch boards smell of lemon oil and old tea.\"",
@@ -14,10 +26,22 @@
       "value": "Mrs. Halloway accepted the returned brooch and remarked that some things like to be put back where they belong."
     },
     {
+      "attribute": "brooch_handed",
+      "entity": "obj-brooch",
+      "quote": "I hold the brooch out on my palm like an offering. I hand her the brooch.",
+      "value": "char-mrs-halloway"
+    },
+    {
       "attribute": "halloway_brooch_story",
       "entity": "char-mrs-halloway",
       "quote": "\"This brooch belonged to my mother. She wore it when she forgave someone she thought she could never forgive — and it somehow reminded her that courage could be small and steady, like returning a thing where it ought to be.\"",
       "value": "Mrs. Halloway explained the brooch's history and its meaning about small, steady courage."
+    },
+    {
+      "attribute": "tin_handed",
+      "entity": "obj-lunchbox",
+      "quote": "Jun nudges his backpack forward. Jun hands her the tin.",
+      "value": "char-mrs-halloway"
     },
     {
       "attribute": "halloway_gave_keepsake",
@@ -40,14 +64,20 @@
     {
       "attribute": "current_holder",
       "entity": "obj-brooch",
-      "quote": "Her fingers hover and then close around it with a gentleness that surprises me.",
+      "quote": "Mrs. Halloway clasps the brooch to her cardigan as if it had been waiting for that place all along.",
       "value": "char-mrs-halloway"
     },
     {
       "attribute": "current_holder",
       "entity": "obj-lunchbox",
-      "quote": "Jun nudges his backpack forward and I put the tin into her hands.",
+      "quote": "The tin is returned and the brooch is in her care; the promise has been kept.",
       "value": "char-mrs-halloway"
+    },
+    {
+      "attribute": "closing_theme_line",
+      "entity": "chapter-1",
+      "quote": "Ordinary chores are brave quests when you share them with a friend.",
+      "value": "chapter-1 ends with the explicit theme line."
     }
   ],
   "presentEntities": [
@@ -63,7 +93,7 @@
   "paysOff": [
     {
       "contractId": "promise-brooch-delivered-to-sister",
-      "quote": "Her fingers hover and then close around it with a gentleness that surprises me."
+      "quote": "I hand her the brooch."
     }
   ]
 }

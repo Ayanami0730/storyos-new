@@ -7,3 +7,5 @@
 {"scene":"s-003","attribute":"location","value":"loc-park","quote":"We push through the hedgerow and the world narrows to blades of grass and a square of sand. Jun drops his pack and the tin rolls, a soft clink."}
 {"scene":"s-003","attribute":"holds","value":"obj-lunchbox","quote":"Jun drops his pack and the tin rolls, a soft clink."}
 {"scene":"s-003","attribute":"mood","value":"relieved","quote":"He grins without bragging. \"Knew you'd panic,\" he says, and I punch his shoulder with a grin that starts as relief and ends as laughter."}
+{"scene":"s-004","attribute":"location","value":"loc-halloway-house","quote":"We leave the park and walk the short block to Mrs. Halloway's bungalow, the hedges thinning and the sun pulling the day toward evening."}
+{"scene":"s-004","attribute":"holds","value":"none (handed to char-mrs-halloway)","quote":"Jun nudges his backpack forward. Jun hands her the tin."}

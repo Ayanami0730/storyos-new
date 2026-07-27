@@ -1,0 +1,16 @@
+pairId: char-alfred-broome--obj-mantel-clock
+participants:
+  - char-alfred-broome
+  - obj-mantel-clock
+phases:
+  - index: 1
+    relation: removed_screw_from
+    fromScene: s-004
+    toScene: null
+    transition: Alfred admitted in the foyer that he removed the bezel screw to
+      loosen the clock face.
+    asymmetry: admission recorded by narrator; Alfred's admission is the source
+    source:
+      scene: s-004
+      span: L20-L40
+openQuestions: []

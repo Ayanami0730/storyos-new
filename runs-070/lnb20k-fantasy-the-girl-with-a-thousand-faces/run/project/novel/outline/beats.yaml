@@ -1,229 +1,218 @@
 scenes:
   - id: s-001
     chapter: ch-01
-    intent: "Open in the press of the Walled City: establish Mercy’s routines, the
-      claustrophobic setting, and the wartime backdrop; Mercy is called to
-      investigate unexplained wailing in a main alley."
+    intent: "Establish Mercy Chan, the Walled City setting, and the first domestic
+      disturbance that summons her: introduce Mercy’s ritual practice, her kit,
+      and the dense alleyways where she works. Seed unease in the community."
     present:
       - char-mercy-chan
       - loc-kowloon-walled-city
-      - loc-main-alley-spiral
-      - group-kowloon-residents
-      - loc-occupation-checkpoint
-      - obj-mercys-incense-box
+      - char-neighbor-lei
+      - faction-residents-commune
+      - obj-ritual-kit
     target_words: 1176
   - id: s-002
     chapter: ch-01
-    intent: "Mercy surveys the scene: neighbors describe disturbances, Mrs. Choi
-      recounts a strange night; Mercy performs a cautious, diagnostic rite that
-      reveals a residual imprint stronger than an ordinary ghost."
+    intent: Follow Mercy into Alley 13 and the communal kitchen where small
+      hauntings ripple—pots clatter and a shadow glimpsed. She negotiates with
+      frightened neighbors and meets the Elder Storyteller, who hints at older
+      wounds.
     present:
       - char-mercy-chan
-      - char-mrs-choi
-      - group-kowloon-residents
-      - obj-mercys-incense-box
-      - obj-bloodied-photo
-      - loc-main-alley-spiral
+      - loc-alley-13
+      - loc-communal-kitchen
+      - char-neighbor-lei
+      - char-elder-storyteller
+      - obj-incense-burner
     target_words: 1176
   - id: s-003
     chapter: ch-01
-    intent: Introduce the Elder Storyteller and Lau the apprentice; the Elder hints
-      at a story from the occupation years tied to the alley; Mercy negotiates
-      with scared residents to let her search a locked room.
+    intent: Attempt Mercy’s first ritual on a minor disturbance; the spirit resists
+      in a way she’s not used to. The ritual shows unusual cruelty—voices in
+      many dialects, layered memories—suggesting a composite root.
     present:
-      - char-elder-storyteller
-      - char-lau-apprentice
       - char-mercy-chan
-      - group-kowloon-residents
-      - loc-temple-basement
-      - obj-elder-scroll
-      - loc-occupation-checkpoint
+      - spirit-vengeful
+      - obj-ritual-kit
+      - loc-temple-shrine
+      - char-elder-storyteller
     target_words: 1176
   - id: s-004
     chapter: ch-01
-    intent: Mercy finds the bloodied photo hidden in a cupboard during her search;
-      she connects it to a boy who disappeared during a skirmish—she suspects a
-      wartime origin and sees the revenant’s pattern of feeding on loss.
+    intent: Introduce the Young Refugee and the bloodstained cloth found among his
+      few belongings; his trauma sparks a worsening of the haunt. Mercy sees a
+      direct affective link between the refugee’s loss and the spirit’s anger.
     present:
-      - char-mercy-chan
-      - obj-bloodied-photo
       - char-young-refugee
-      - loc-main-alley-spiral
-      - loc-temple-basement
+      - obj-bloodstained-cloth
+      - char-mercy-chan
+      - loc-bombed-yard
+      - spirit-vengeful
     target_words: 1176
   - id: s-005
     chapter: ch-02
-    intent: "A first formal exorcism attempt in the rooftop shrine: Mercy performs
-      traditional rites that ebb the apparition briefly, but the ritual has an
-      unforeseen cost to a neighbor—showing exorcisms are not cost-free."
+    intent: Mercy consults the Elder Storyteller and studies a battered story scroll
+      and oral histories; the conversation supplies wartime context and an early
+      hypothesis about an unmarked massacre in the Walled City’s recent past.
     present:
+      - char-elder-storyteller
       - char-mercy-chan
-      - loc-rooftop-shrine
-      - group-kowloon-residents
-      - obj-mercys-incense-box
-      - obj-memory-thread
-      - char-mrs-choi
+      - obj-story-scroll
+      - loc-ruined-library
+      - faction-elders-circle
     target_words: 1176
   - id: s-006
     chapter: ch-02
-    intent: "Tension rises as the spirit strikes back by altering memories:
-      neighbors begin to forget specific losses in ways that create dangerous
-      denials; a small child nearly gets harmed by conflicting recollections."
+    intent: "Tensions in the residents’ commune surface: some want Mercy to act
+      quickly and harshly, others fear rituals will provoke reprisals from
+      occupying forces. The spirit responds by escalating—objects move with
+      intentional cruelty."
     present:
+      - faction-residents-commune
+      - char-neighbor-lei
+      - char-mercy-chan
       - spirit-vengeful
-      - group-kowloon-residents
-      - char-young-refugee
-      - char-dr-yuen
-      - loc-main-alley-spiral
     target_words: 1176
   - id: s-007
     chapter: ch-02
-    intent: Mercy consults the Elder Storyteller in private; the elder reveals an
-      oral fragment about wartime reprisals in the alley and how communities
-      once used binding rites—the elder warns that the revenant is not a lone
-      ghost but a wound in memory.
+    intent: Mercy discovers a family photograph and a name fragment tying the
+      haunting to a specific wartime event—a betrayal, a raid, or a broken
+      promise. Her liability grows as the spirit focuses on personal tokens.
     present:
       - char-mercy-chan
-      - char-elder-storyteller
-      - obj-elder-scroll
-      - loc-temple-basement
-      - obj-memory-thread
+      - obj-family-photo
+      - char-young-refugee
+      - spirit-vengeful
+      - loc-wet-market
     target_words: 1176
   - id: s-008
     chapter: ch-02
-    intent: "Mercy’s backstory: a flash of her own wartime loss and how she became
-      an exorcist — this personal stake deepens her commitment; she vows to find
-      the truth about the boy in the photo."
+    intent: "A rooftop midnight ritual with the Elder goes wrong: voices become
+      physical, Mercy is pushed to the edge, and something in her own past
+      brushes against the spirit. The failure costs the community faith and
+      Mercy some of her certainty."
     present:
       - char-mercy-chan
+      - char-elder-storyteller
+      - loc-rooftop
+      - obj-ritual-kit
       - spirit-vengeful
-      - obj-bloodied-photo
-      - loc-kowloon-walled-city
     target_words: 1176
   - id: s-009
     chapter: ch-03
-    intent: "A mediation with frightened residents: Mercy tries to persuade them to
-      confront the shared trauma rather than hide it; some resist, fearing
-      reprisal from occupying forces or social shame."
+    intent: Mercy investigates the wartime hospital ward and finds medical ledgers
+      and rumor of a makeshift mass-burial. She learns how the city’s wartime
+      survival strategies created wounds that never healed.
     present:
+      - loc-hospital-ward
       - char-mercy-chan
-      - group-kowloon-residents
-      - char-mrs-choi
-      - char-lau-apprentice
-      - loc-main-alley-spiral
+      - obj-medical-ledger
+      - char-hospital-orderly
     target_words: 1176
   - id: s-010
     chapter: ch-03
-    intent: "Discovery scene in the temple basement: Mercy and Lau uncover an older
-      communal ledger and marginal notes that point to a concealed massacre
-      during the occupation—more evidence the revenant’s animus is rooted in an
-      act the city has not named."
+    intent: The Young Refugee breaks down and reveals a suppressed memory that
+      intersects with the spirit’s anger; Mercy and he map the site of violence
+      together, deepening their bond and clarifying how memory anchors the
+      revenant.
     present:
+      - char-young-refugee
       - char-mercy-chan
-      - char-lau-apprentice
-      - obj-elder-scroll
-      - loc-temple-basement
+      - loc-alley-13
+      - obj-family-photo
+      - faction-residents-commune
       - spirit-vengeful
-      - loc-occupation-checkpoint
     target_words: 1176
   - id: s-011
     chapter: ch-03
-    intent: "Second ritual, riskier: Mercy prepares to perform a binding that will
-      require the community’s explicit naming of the harm; the ritual escalates
-      the spirit’s aggression and someone is physically hurt, revealing ethical
-      cost."
+    intent: "A search reveals the spirit’s anchor: an object (a locket or cloth)
+      buried beneath a ruined stairwell. Recovering it exposes a composite
+      origin—several deaths, several stories, an angry refusal to be named."
     present:
-      - char-mercy-chan
-      - group-kowloon-residents
-      - obj-iron-cleaver
-      - obj-memory-thread
       - spirit-vengeful
-      - char-mrs-choi
+      - obj-anchor-locket
+      - obj-bloodstained-cloth
+      - char-mercy-chan
+      - loc-bombed-yard
+      - loc-ruined-library
     target_words: 1176
   - id: s-012
     chapter: ch-03
-    intent: "The Young Refugee’s narrative: a concentrated scene with the refugee’s
-      flashback of wartime loss that mirrors the revenant’s wound—Mercy sees how
-      individual trauma and the specter interlock and begins to craft a new
-      ritual approach."
+    intent: The community attempts a placation ritual that collapses into a fight of
+      memories—each household’s version of what happened is different; the
+      spirit grows by feeding on contradiction. Mercy realises she must change
+      the ritual’s aim.
     present:
-      - char-young-refugee
+      - faction-residents-commune
+      - char-elder-storyteller
       - char-mercy-chan
       - spirit-vengeful
-      - loc-main-alley-spiral
-      - char-dr-yuen
+      - loc-temple-shrine
+      - obj-incense-burner
+      - obj-ritual-kit
     target_words: 1176
   - id: s-013
     chapter: ch-04
-    intent: "A quiet interlude: Mercy and the Elder argue over whether to expose the
-      hidden wartime truth publicly. They prepare materials—a communal
-      confession ritual that will either bind the spirit or fracture the Walled
-      City’s fragile social order."
+    intent: Mercy traverses the Walled City maze as the spirit conjures wartime
+      reenactments—the city becomes a theater of its own past. The Young Refugee
+      confronts the memory that has haunted him and gains agency.
     present:
       - char-mercy-chan
-      - char-elder-storyteller
-      - group-kowloon-residents
-      - obj-elder-scroll
-      - obj-memory-thread
-      - loc-rooftop-shrine
       - spirit-vengeful
+      - char-young-refugee
+      - loc-kowloon-walled-city
+      - obj-family-photo
     target_words: 1176
   - id: s-014
     chapter: ch-04
-    intent: "Escalation: the revenant reaches into the city’s collective dreams,
-      provoking violent reenactments among some residents; the City heats toward
-      a breaking point and the occupying presence nearby becomes a pressing,
-      dangerous background."
+    intent: "A revealed testimony and the Elder’s scroll show the true origin: a
+      massacre where neighbors chose survival over rescue, and a wound sewn shut
+      by silence. Mercy negotiates with the spirit, offering a different
+      ritual—naming and bearing witness."
     present:
       - spirit-vengeful
-      - group-kowloon-residents
-      - loc-kowloon-walled-city
-      - loc-occupation-checkpoint
-      - char-lau-apprentice
+      - char-mercy-chan
+      - char-elder-storyteller
+      - loc-bombed-yard
+      - obj-story-scroll
+      - obj-ritual-kit
     target_words: 1176
   - id: s-015
     chapter: ch-04
-    intent: "Climax—public ritual in the main alley: Mercy orchestrates a fraught,
-      community-driven rite combining speech, confession, and formal offerings;
-      the revenant manifests fully and the confrontation forces Mercy to face
-      both the ghost and her own grief."
+    intent: "Climax: the final, costly exorcism in the Walled City’s central
+      courtyard. Ritual rules are tested; Mercy sacrifices a part of her power
+      or memory to free the community. The spirit either is released or
+      transformed."
     present:
       - char-mercy-chan
       - spirit-vengeful
-      - group-kowloon-residents
-      - char-elder-storyteller
+      - faction-residents-commune
+      - obj-ritual-kit
+      - loc-central-courtyard
       - char-young-refugee
-      - obj-mercys-incense-box
-      - loc-main-alley-spiral
-      - loc-rooftop-shrine
     target_words: 1176
   - id: s-016
     chapter: ch-04
-    intent: "Aftermath: the ritual’s immediate effects—some release, some fractures.
-      Individuals reckon with what they did and what they denied; Mercy contends
-      with the moral price paid and a partial laying-to-rest of the revenant,
-      whose hunger is diminished but not wholly erased."
+    intent: "Aftermath and reckoning: the residents begin tentative acts of
+      remembrance and repair; Mercy counts the cost in herself and the city. An
+      epilogue gesture shows that memory work continues, and Mercy’s practice
+      has changed."
     present:
+      - faction-residents-commune
       - char-mercy-chan
-      - group-kowloon-residents
-      - spirit-vengeful
-      - char-mrs-choi
-      - char-dr-yuen
-      - loc-temple-basement
+      - char-young-refugee
+      - char-elder-storyteller
+      - loc-kowloon-walled-city
     target_words: 1176
   - id: s-017
     chapter: ch-05
-    intent: "Epilogue: Mercy walks the City weeks later—some wounds begin to heal,
-      others remain as the occupation grinds on; Mercy prepares for the next
-      call, carrying a new ritual, an altered relationship to communal memory,
-      and an uneasy hope."
+    intent: "Epilogue: Mercy on the rooftop at dawn. She rebinds her ritual kit and
+      leaves or stays with a new pledge to the community; a small, ambiguous
+      sign suggests memory and the supernatural are not gone but altered."
     present:
       - char-mercy-chan
-      - loc-kowloon-walled-city
-      - char-lau-apprentice
-      - group-kowloon-residents
-      - obj-mercys-incense-box
+      - loc-rooftop
+      - obj-ritual-kit
+      - char-elder-storyteller
       - spirit-vengeful
-      - loc-occupation-checkpoint
-      - obj-memory-thread
     target_words: 1176

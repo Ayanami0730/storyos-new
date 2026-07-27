@@ -1,9 +1,13 @@
 id: char-headmistress
 name: headmistress
-sketch: "Headmistress: the Academy's senior administrator and public face —
-  formal, composed, expert at maintaining the Academy's charitable image and its
-  internal discipline."
+sketch: Headmistress — The senior administrator and public face of the Mercy
+  Academy. Polished, diplomatic and possessed of practical ruthlessness; she
+  embodies the Academy's benevolent rhetoric and its hard edges.
 identity:
-  name: Headmistress
+  profession: headmistress of the Mercy Academy
+  appearance: wears gloves; presides behind the Folio in the Great Hall
+  speech: public, steady, rhetorically polished; frames Academy as rescue and trade
 provenance:
-  name: s-001
+  profession: s-001
+  appearance: s-001
+  speech: s-005

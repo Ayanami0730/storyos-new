@@ -1,56 +1,57 @@
 chapter: ch-04
 scenes:
   - id: s-013
-    intent: "Siege preparations: The Academy shifts from ritual to defense. The Bell
-      rings differently; archives are sealed; the Folio's secrets — lists,
-      contracts — become leverage. Rue and others must do work they never
-      imagined: mending gates, tending wounded, preparing to hide or to
-      negotiate."
+    intent: The Academy divides. Some staff and students insist on bargaining with
+      the Envoy; others want to reinforce the gates or to free themselves. Rue
+      is pulled between defending a place that preserved much of her life and
+      acknowledging what it cost others. The Headmistress makes a choice that
+      forces conflict.
     present:
       - char-rue
       - char-headmistress
-      - group-the-hundred
+      - char-loren
+      - collective-the-hundred
+      - char-war-envoy
       - obj-folio
-      - obj-contract
-      - loc-gates
-      - obj-bell
   - id: s-014
-    intent: "The gates are tested: The war reaches the walls. The Academy must
-      decide whether to open, to bar, to bargain. The Headmistress offers terms
-      the War Envoy will not accept; Rue is pushed into action — she is asked to
-      read the Folio or to call on favors embedded in old contracts."
+    intent: The siege begins. The war's instruments strike the island's approaches;
+      the Academy's defenses—both mundane and those tied to the Binding Seal and
+      Folio—are activated. The cost of the Academy's bargains is made physical;
+      the Hundred pay in fear, history and sacrifice.
     present:
-      - char-war-envoy
-      - char-headmistress
+      - loc-mercy-academy
+      - loc-great-hall
+      - collective-the-hundred
       - char-rue
-      - loc-gates
+      - char-war-envoy
+      - obj-binding-seal
+      - obj-amber-bell
       - obj-folio
-      - obj-contract
   - id: s-015
-    intent: "Revelation and rupture: As siege and negotiation collide, the Archive's
-      full ledger is exposed. The Academy's practices — how it binds girls, why
-      most never leave — become known to the envoys and to those inside. Rue
-      confronts what she signed and what the Academy has made of consent."
+    intent: "The Folio reveals what the Binding Seal actually took: a ledgering of
+      lives and a mechanism that prevented departure for most. The Three's exit
+      had costs: names exchanged, bargains fulfilled elsewhere. The Academy's
+      myth of rescue is stripped to its ledgered reality; Rue must confront the
+      life she chose to sell."
     present:
-      - char-rue
-      - loc-archive
-      - char-war-envoy
-      - char-headmistress
       - obj-folio
-      - obj-contract
+      - obj-binding-seal
+      - char-rue
+      - char-elaine
+      - char-maris
+      - char-sal
+      - char-headmistress
   - id: s-016
-    intent: "Aftermath and choice: The war's immediate pressure forces a decision:
-      maintain the old bargains, free some, or risk the Academy's dissolution.
-      Rue must decide whether to use her knowledge and authority to press for
-      release, to uphold the institution that sheltered her, or to burn the
-      Folio."
+    intent: "Rue's reckoning and the final choice: negotiate with the War Envoy, use
+      the Binding Seal, or break the Folio's hold. Rue executes a plan born of
+      experience and sacrifice that alters who may leave. The scene resolves the
+      personal arc—Rue owning the consequence of her sale—and sets the Academy's
+      new trajectory."
     present:
       - char-rue
-      - char-headmistress
       - char-war-envoy
-      - group-the-hundred
-      - group-the-three
+      - char-headmistress
+      - obj-binding-seal
       - obj-folio
-      - obj-contract
-      - loc-garden
-      - loc-gates
+      - collective-the-hundred
+      - char-loren

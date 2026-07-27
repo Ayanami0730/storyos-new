@@ -1,43 +1,43 @@
 chapter: ch-02
 scenes:
   - id: s-005
-    intent: "A first formal exorcism attempt in the rooftop shrine: Mercy performs
-      traditional rites that ebb the apparition briefly, but the ritual has an
-      unforeseen cost to a neighbor—showing exorcisms are not cost-free."
+    intent: Mercy consults the Elder Storyteller and studies a battered story scroll
+      and oral histories; the conversation supplies wartime context and an early
+      hypothesis about an unmarked massacre in the Walled City’s recent past.
+    present:
+      - char-elder-storyteller
+      - char-mercy-chan
+      - obj-story-scroll
+      - loc-ruined-library
+      - faction-elders-circle
+  - id: s-006
+    intent: "Tensions in the residents’ commune surface: some want Mercy to act
+      quickly and harshly, others fear rituals will provoke reprisals from
+      occupying forces. The spirit responds by escalating—objects move with
+      intentional cruelty."
+    present:
+      - faction-residents-commune
+      - char-neighbor-lei
+      - char-mercy-chan
+      - spirit-vengeful
+  - id: s-007
+    intent: Mercy discovers a family photograph and a name fragment tying the
+      haunting to a specific wartime event—a betrayal, a raid, or a broken
+      promise. Her liability grows as the spirit focuses on personal tokens.
     present:
       - char-mercy-chan
-      - loc-rooftop-shrine
-      - group-kowloon-residents
-      - obj-mercys-incense-box
-      - obj-memory-thread
-      - char-mrs-choi
-  - id: s-006
-    intent: "Tension rises as the spirit strikes back by altering memories:
-      neighbors begin to forget specific losses in ways that create dangerous
-      denials; a small child nearly gets harmed by conflicting recollections."
-    present:
-      - spirit-vengeful
-      - group-kowloon-residents
+      - obj-family-photo
       - char-young-refugee
-      - char-dr-yuen
-      - loc-main-alley-spiral
-  - id: s-007
-    intent: Mercy consults the Elder Storyteller in private; the elder reveals an
-      oral fragment about wartime reprisals in the alley and how communities
-      once used binding rites—the elder warns that the revenant is not a lone
-      ghost but a wound in memory.
+      - spirit-vengeful
+      - loc-wet-market
+  - id: s-008
+    intent: "A rooftop midnight ritual with the Elder goes wrong: voices become
+      physical, Mercy is pushed to the edge, and something in her own past
+      brushes against the spirit. The failure costs the community faith and
+      Mercy some of her certainty."
     present:
       - char-mercy-chan
       - char-elder-storyteller
-      - obj-elder-scroll
-      - loc-temple-basement
-      - obj-memory-thread
-  - id: s-008
-    intent: "Mercy’s backstory: a flash of her own wartime loss and how she became
-      an exorcist — this personal stake deepens her commitment; she vows to find
-      the truth about the boy in the photo."
-    present:
-      - char-mercy-chan
+      - loc-rooftop
+      - obj-ritual-kit
       - spirit-vengeful
-      - obj-bloodied-photo
-      - loc-kowloon-walled-city

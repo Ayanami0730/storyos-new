@@ -1,4 +1,6 @@
 scene,chapter,beat,tension_target,tension_actual,note
-s-001,ch-01,"complication",7,6,"The scene establishes Mercy's acceptance of a task to investigate a supernatural complication in the Main Alley Spiral; tension is moderate and targeted above baseline."
-s-002,ch-01,"turn",6,5,"Scene develops the investigation: Mercy gathers physical evidence (photo) and confirms imprint markers; tension shifts from public alarm to a working lead, raising stakes."
-s-003,ch-01,"setup",5,4,"Scene establishes the ritual and social conditions for searching the locked room; sets up the next investigative beat."
+s-001,ch-01,"complication",6,6,"reinforces the haunting complication with sensory detail and ritual diagnostic; tension sustained"
+s-002,ch-01,"turn",7,7,"Scene deepens the investigation: Mercy confirms imprint markers and finds a photograph suggesting a wartime loss; the Elder frames the problem as a communal memory rather than a household haunting."
+s-003,ch-01,"setup+turn",7,7,"Scene sets up controlled permission to search the locked room and shows cost and risks of naming; it also records Mercy's sensory injury after the rite and her decision to proceed to the yard next."
+s-004,ch-01,"complication",8,8,"Scene escalates the haunting: Mercy recovers an anchor object (bloodstained cloth) linking the yard to the shrine and the presence; community reaction increases tensions."
+s-005,ch-02,"turn",7,7,"Scene turns the investigation toward archival work: plan to cross-reference the scroll with ledgers/newspapers and gather witnesses; cost of naming emphasized."

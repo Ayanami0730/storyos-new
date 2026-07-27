@@ -1,0 +1,18 @@
+pairId: char-elder-storyteller--obj-story-scroll
+participants:
+  - char-elder-storyteller
+  - obj-story-scroll
+phases:
+  - index: 1
+    relation: stewardship
+    fromScene: s-005
+    toScene: null
+    transition: Elder Storyteller takes custodial responsibility for the story
+      scroll, holding it as a custodian rather than owner and promising to keep
+      names safe and bring them only with witnesses.
+    asymmetry: Elder holds the scroll and steward role; the community relies on him
+      to mediate access.
+    source:
+      scene: s-005
+      span: L1-L40
+openQuestions: []

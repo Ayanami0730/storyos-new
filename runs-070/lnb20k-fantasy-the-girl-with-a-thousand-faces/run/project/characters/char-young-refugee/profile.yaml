@@ -1,6 +1,14 @@
 id: char-young-refugee
 name: young-refugee
-sketch: A displaced teenager who fled fighting elsewhere in Hong Kong; haunted
-  by the loss of family and whose private trauma resonates with the spirit.
-identity: {}
-provenance: {}
+sketch: The Young Refugee — a displaced teenager/young man who survived wartime
+  loss; haunted by a personal absence, carries a bloodstained cloth and a family
+  photo; his arc moves from silence to witness.
+identity:
+  name: unnamed boy
+  appearance: teenage, thin, threadbare clothes, patched sleeves
+  sketch: A teenage refugee found in the bombed yard; keeps objects and refuses to
+    give a name.
+provenance:
+  name: s-004
+  appearance: s-004
+  sketch: s-004

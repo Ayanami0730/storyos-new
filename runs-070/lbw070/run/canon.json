@@ -1,0 +1,198 @@
+[
+  {
+    "id": "fact-char-mrs-halloway-handoff_location",
+    "entity": "char-mrs-halloway",
+    "attribute": "handoff_location",
+    "value": "Mrs. Halloway handed the lunchbox and brooch to Eloise at loc-eloise-house (stoop)",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-mrs-halloway-request_quote",
+    "entity": "char-mrs-halloway",
+    "attribute": "request_quote",
+    "value": "asked Eloise to deliver a lunch and her silver brooch to Mrs. Halloway's sister",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-lunchbox-description",
+    "entity": "obj-lunchbox",
+    "attribute": "description",
+    "value": "dented tin lunchbox with paper-wrapped sandwich and a small velvet pouch inside",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-loc-halloway-house-porch_description",
+    "entity": "loc-halloway-house",
+    "attribute": "porch_description",
+    "value": "loc-halloway-house porch has a tidy blue door, ferns in green pots, and porch boards that smell of lemon oil and old tea.",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-lunchbox-current_holder",
+    "entity": "obj-lunchbox",
+    "attribute": "current_holder",
+    "value": "char-mrs-halloway",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-brooch-current_holder",
+    "entity": "obj-brooch",
+    "attribute": "current_holder",
+    "value": "char-mrs-halloway",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-flashlight-current_holder",
+    "entity": "obj-flashlight",
+    "attribute": "current_holder",
+    "value": "char-jun",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-obj-map-current_holder",
+    "entity": "obj-map",
+    "attribute": "current_holder",
+    "value": "char-eloise",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-char-jun-location",
+    "entity": "char-jun",
+    "attribute": "location",
+    "value": "loc-halloway-house",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-eloise-location",
+    "entity": "char-eloise",
+    "attribute": "location",
+    "value": "loc-halloway-house",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-mrs-halloway-location",
+    "entity": "char-mrs-halloway",
+    "attribute": "location",
+    "value": "loc-halloway-house",
+    "source": "s-001"
+  },
+  {
+    "id": "fact-loc-old-bridge-traffic_description",
+    "entity": "loc-old-bridge",
+    "attribute": "traffic_description",
+    "value": "loc-old-bridge has orange cones, faded sawhorses with 'BRIDGE CLOSED', nearby rumble of trucks, a detour sign, a narrow muddy gap, split boards and exposed nails; cars pass quickly at crosswalks",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-milo-milo_taunt",
+    "entity": "char-milo",
+    "attribute": "milo_taunt",
+    "value": "Milo taunted Eloise and Jun with the line: Oh look, knights on a quest—don't get eaten by a bus, Eloise.",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-char-jun-jun_shout",
+    "entity": "char-jun",
+    "attribute": "jun_shout",
+    "value": "Jun shouts a practical warning during the crossing: Hold tight—watch the curb, now!",
+    "source": "s-002"
+  },
+  {
+    "id": "fact-obj-flashlight-flashlight_state",
+    "entity": "obj-flashlight",
+    "attribute": "flashlight_state",
+    "value": "obj-flashlight is with char-jun and is off",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-loc-park-park_description",
+    "entity": "loc-park",
+    "attribute": "park_description",
+    "value": "loc-park has tall grasses, a sandbox, hedges forming a green wall; the air smells of cut grass and sunscreen; distant laughter; shadows pool under the swing set.",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-brooch-brooch_slip_line",
+    "entity": "obj-brooch",
+    "attribute": "brooch_slip_line",
+    "value": "the brooch slipped from the tin and fell into the park's grass",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-obj-map-map_holder",
+    "entity": "obj-map",
+    "attribute": "map_holder",
+    "value": "char-eloise",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-jun-discovery_clue",
+    "entity": "char-jun",
+    "attribute": "discovery_clue",
+    "value": "Jun noticed a shine in the sandbox corner near a broken bucket and indicated it",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-jun-discovery_quote",
+    "entity": "char-jun",
+    "attribute": "discovery_quote",
+    "value": "Jun discovered the brooch's location by a glint near the fluted bucket",
+    "source": "s-003"
+  },
+  {
+    "id": "fact-char-mrs-halloway-halloway_acceptance",
+    "entity": "char-mrs-halloway",
+    "attribute": "halloway_acceptance",
+    "value": "Mrs. Halloway accepted the returned brooch and remarked that some things like to be put back where they belong.",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-brooch-brooch_handed",
+    "entity": "obj-brooch",
+    "attribute": "brooch_handed",
+    "value": "char-mrs-halloway",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-mrs-halloway-halloway_brooch_story",
+    "entity": "char-mrs-halloway",
+    "attribute": "halloway_brooch_story",
+    "value": "Mrs. Halloway explained the brooch's history and its meaning about small, steady courage.",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-obj-lunchbox-tin_handed",
+    "entity": "obj-lunchbox",
+    "attribute": "tin_handed",
+    "value": "char-mrs-halloway",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-mrs-halloway-halloway_gave_keepsake",
+    "entity": "char-mrs-halloway",
+    "attribute": "halloway_gave_keepsake",
+    "value": "Mrs. Halloway gave the children a small stamped token from her knitting group as a keepsake.",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-mrs-halloway-keepsake_description",
+    "entity": "char-mrs-halloway",
+    "attribute": "keepsake_description",
+    "value": "a small brass token stamped with a clumsy thimble, worn smooth at the edges, given as a keepsake by Mrs. Halloway.",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-char-milo-milo_conciliatory",
+    "entity": "char-milo",
+    "attribute": "milo_conciliatory",
+    "value": "Milo offered a damp, scuffed toy car and said 'Sorry. Here.' as a conciliatory gesture.",
+    "source": "s-004"
+  },
+  {
+    "id": "fact-chapter-1-closing_theme_line",
+    "entity": "chapter-1",
+    "attribute": "closing_theme_line",
+    "value": "chapter-1 ends with the explicit theme line.",
+    "source": "s-004"
+  }
+]

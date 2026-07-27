@@ -1,50 +1,54 @@
 chapter: ch-01
 scenes:
   - id: s-001
-    intent: "Prologue: Rue, in poverty, makes the conscious choice to sell herself
-      to the Mercy Academy. We see the private, practical reasons for her
-      decision, the signing of the Contract, and the Ceremony Hall's polished
-      charity. Establish Rue's voice and the moment of consent."
+    intent: "Open the novel on the transaction: Rue's decision to sell herself and
+      sign the Contract. Establish the Mercy Academy's public face, the rule
+      that it takes one hundred girls each year, and the notorious statistic
+      that after ten years only three ever walk back out. Introduce the
+      Contract, the Folio and the Headmistress as symbols."
     present:
       - char-rue
-      - loc-ceremony-hall
+      - loc-great-hall
+      - loc-mercy-academy
       - obj-contract
       - obj-folio
+      - obj-amber-bell
       - char-headmistress
-      - group-the-hundred
-      - loc-mercy-academy
+      - collective-the-hundred
   - id: s-002
-    intent: "Arrival: The new Hundred are admitted. Rue moves into the Dormitory,
-      meets a selection of the cohort, and learns the basic rules and rhythms —
-      the Bell, the ledger, the chores. The Academy's public benevolence is
-      shown alongside intimations of its strictness."
+    intent: "Show the Hundred's arrival: induction ritual in the Great Hall and
+      first night. Rue meets Aya and senses the work the Academy does—education
+      braided with discipline. The Folio is read; the Amber Bell is rung. The
+      scene quietly suggests that the Academy gives girls skills but also takes
+      something else."
     present:
+      - collective-the-hundred
+      - loc-great-hall
       - char-rue
-      - group-the-hundred
-      - loc-dormitory
-      - obj-bell
-      - loc-ceremony-hall
+      - char-aya
+      - obj-folio
+      - obj-amber-bell
+      - char-loren
   - id: s-003
-    intent: "First months: Rue adapts, makes friends and enemies among the Hundred,
-      and is assigned duties that give her access to the Archive and the Folio.
-      She begins to sense patterns — quiet disappearances, a silence around
-      certain names."
+    intent: "Depict the early years of training: classrooms, gardens, the Ink Room
+      glimpsed. Introduce the Ink Room as a strange repository and the Binding
+      Seal in passing. Rue learns craft and learns to measure the Academy's
+      quiet demands. The Three are invoked as stories told to keep girls in
+      line."
     present:
+      - loc-ink-room
       - char-rue
-      - group-the-hundred
-      - loc-archive
-      - obj-folio
-      - loc-garden
+      - char-loren
+      - obj-binding-seal
+      - collective-the-three
+      - collective-the-hundred
   - id: s-004
-    intent: "The Ten-Year Stat: A lecturer or Headmistress's address makes explicit
-      the Academy's ten-year expectation and the statistic that only three ever
-      leave. Rue learns the institution's language — mercy, protection,
-      permanence — and internalizes the scale of the bargain."
+    intent: Close-up on Rue's interior life and her bond with Aya. Show why Rue sold
+      herself—family debt, a promise—and what she hoped the Academy would be.
+      Record small kindnesses and micro-violences, establishing the Academy's
+      ambiguous benevolence.
     present:
-      - char-headmistress
       - char-rue
-      - loc-ceremony-hall
-      - obj-folio
-      - group-the-hundred
-      - group-the-three
-      - loc-mercy-academy
+      - char-aya
+      - collective-the-hundred
+      - char-loren

@@ -1,0 +1,18 @@
+pairId: char-mercy-chan--faction-elders-circle
+participants:
+  - char-mercy-chan
+  - faction-elders-circle
+phases:
+  - index: 1
+    relation: investigator-to-elders
+    fromScene: s-005
+    toScene: null
+    transition: "Mercy proposes a method: cross-referencing the scroll with ledgers
+      and newspapers, gathering witnesses; the Circle agrees to proceed
+      carefully with requirements for witnesses and payment."
+    asymmetry: Elders provide sanction and oversight; Mercy provides investigative
+      method and execution.
+    source:
+      scene: s-005
+      span: L10-L50
+openQuestions: []

@@ -1,0 +1,16 @@
+pairId: loc-great-hall--obj-folio
+participants:
+  - loc-great-hall
+  - obj-folio
+phases:
+  - index: 1
+    relation: public_access_policy
+    fromScene: s-002
+    toScene: null
+    transition: A thin transcription of the Folio's day's intake is pinned under the
+      Folio's page for public viewing while the main Folio is removed to the
+      Archive for the afternoon.
+    source:
+      scene: s-002
+      span: L1-L4
+openQuestions: []

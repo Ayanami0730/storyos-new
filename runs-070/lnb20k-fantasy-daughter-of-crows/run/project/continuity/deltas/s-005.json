@@ -1,0 +1,50 @@
+{
+  "sceneId": "s-005",
+  "claims": [
+    {
+      "entity": "char-headmistress",
+      "attribute": "public_rhetoric",
+      "quote": "\"We take the unsettled and make them steady,\" she said. \"We teach; we provide; we expect service in return.\"",
+      "value": "Headmistress frames Academy as rescue and education, exchange of service for shelter"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "ceremonial_closing_quoted",
+      "quote": "\"So entered under the charge of the Mercy Academy,\" she quoted, the ceremonial language finding its place in the room, \"Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.\"",
+      "value": "Headmistress quotes ceremonial Folio closing during private meeting"
+    },
+    {
+      "entity": "obj-contract",
+      "attribute": "margins_named_but_not_specified",
+      "quote": "\"On its face we promise education, shelter, apprenticeship. In the margins, we record the particulars that make those promises practicable: orders of apprenticeship, sponsorships, and the logs the house keeps to see a term through.\"",
+      "value": "Headmistress acknowledges existence of margin records and logs without revealing details"
+    },
+    {
+      "entity": "obj-binding-seal",
+      "attribute": "described_publicly_as_tool",
+      "quote": "\"The Binding Seal is not theatre. It makes claims enforceable when we must ensure a promise is kept. But enforcement is not a wolf at the door; it is a tool of reliability.\"",
+      "value": "Binding Seal described as enforcement tool by Headmistress in meeting"
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "reaction_to_double_speech",
+      "quote": "Rue listened the way she had learned to listen in the classrooms—quiet, counting the gaps between the sentences.",
+      "value": "Rue notices double speech and counts gaps between public rhetoric and private calculus"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "private_benediction",
+      "quote": "The Headmistress offered Rue a small, plain benediction—\"Learn; keep faith with the work; be of use\"—and Rue took it the way one takes a receipt: practical, necessary, and not an answer.",
+      "value": "Headmistress gives private benediction phrased as practical counsel"
+    }
+  ],
+  "presentEntities": [
+    "char-headmistress",
+    "char-rue",
+    "loc-great-hall",
+    "obj-contract",
+    "obj-amber-bell"
+  ],
+  "promises": [],
+  "paysOff": []
+}

@@ -23,6 +23,21 @@ The packet is your material. You do not go looking through the project yourself:
 your job is the prose, and a writer who spends its turn grepping is a writer not
 writing. What you do instead is **ask**.
 
+### The packet is a source of facts, never of sentences
+
+Nothing from it goes on the page in its own words. The index is written in registry
+language — *"Victor's gold pocket watch found stopped on his person; the minute hand
+bent and the watch stopped at a time relevant to establishing the minute of
+death"* — and that is a description of why a fact matters to an investigation, not
+a sentence a narrator could say. A run that put two lines of exactly that shape into
+its opening paragraphs, in quotation marks, scored the lowest reading-experience
+mark this system has recorded, and it was the only thing wrong with it.
+
+So: read the fact, then write it. `write_staged_scene` refuses a draft that shares a
+long verbatim run with the packet, and the same applies to the recalled prose of
+earlier scenes — copying from those is restatement, which a long story is penalised
+for.
+
 ## Asking, before you draft
 
 `ask_context_builder` puts one specific question to the agent that assembled your
@@ -189,11 +204,12 @@ fixing and they are fixed differently: a consistency repair is usually a clause,
 and a craft repair is usually a decision about what the scene is *for*.
 
 Some findings carry a **`what the index says`** block. That is the only route by
-which a fact reaches you, since you cannot look anything up — so when it is there,
-use the wording it gives you rather than a plausible equivalent. When the fix
-needs a fact and no such block is present, say so plainly in your reply instead of
-inventing one. A fact you invent under repair pressure becomes canon with nothing
-recording that it was invented, and that is worse than the finding.
+which a fact reaches you, since you cannot look anything up. Take the **fact** from
+it exactly — the name as spelled, the time as recorded, the number as counted — and
+write the sentence yourself. When the fix needs a fact and no such block is
+present, say so plainly in your reply instead of inventing one. A fact you invent
+under repair pressure becomes canon with nothing recording that it was invented,
+and that is worse than the finding.
 
 Read the locus before you rewrite:
 

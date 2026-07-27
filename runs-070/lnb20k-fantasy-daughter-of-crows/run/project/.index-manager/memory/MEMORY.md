@@ -1,5 +1,6 @@
 # Memory index
 
+- [include-artifacts-and-unresolved-gaps](include-artifacts-and-unresolved-gaps.md) — always include builder/writer/verifier artifacts and record unresolved gaps
 - [archive-keyholder-note](archive-keyholder-note.md) — how to record archive operational roles
 - [dorm-unresolved-fields](dorm-unresolved-fields.md) — what to put in unresolved for dorm scenes
 - [unresolved-finding-template](unresolved-finding-template.md) — how to record unresolved findings for scenes

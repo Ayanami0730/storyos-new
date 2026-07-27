@@ -2,60 +2,79 @@
   "sceneId": "s-003",
   "claims": [
     {
-      "entity": "loc-archive",
-      "attribute": "smell",
-      "value": "vellum and cold dust",
-      "quote": "The Archive smelled of vellum and cold dust — everything there kept its breath low."
+      "entity": "char-loren",
+      "attribute": "teaching_maxim",
+      "quote": "\"Pull tighter; the seam keeps its promise if you keep your edge.\"",
+      "value": "teaching maxim emphasising tight seam and precision"
     },
     {
-      "entity": "loc-archive",
-      "attribute": "access_restrictions",
-      "value": "full Folio kept in Archive; only staff and supervised apprentices may handle it; thin foliolist posted; removal of pages requires two witnesses and an entry in the Archive register",
-      "quote": "\"Full Folio is kept in the Archive; only staff and supervised apprentices may handle it.\" ... The Folio's presence was public enough for us to see it; the Archive would take the book later... The house kept the ledger room under strict watch: two locks, a register at the door, and an expectation that removal of folio pages required two witnesses and an entry in the Archive register."
+      "entity": "char-loren",
+      "attribute": "teaching_gesture_correction",
+      "quote": "His hand found Rue's wrist once to turn her stitch, the motion small and correcting. \"Not from the elbow,\" he said, tapping the joint with the blunt of his thumb. \"From here.\"",
+      "value": "uses hands-on correction and specific tactile guidance in teaching"
+    },
+    {
+      "entity": "loc-mercy-academy",
+      "attribute": "gardens_practice",
+      "quote": "The gardens were a patchwork of taught beds and wild hedgerows where Loren liked to test patience as much as skill. He showed them how to prune a rose so that it would not take the whole branch—a small, decisive cut that demanded attention to the plant's lean.",
+      "value": "gardens used for practical lessons in patience and skill; pruning taught"
+    },
+    {
+      "entity": "loc-ink-room",
+      "attribute": "display_of_binding_seal",
+      "quote": "Behind the glass the seal looked like a small, round relic, a mound of beeswax capped by a dark iron signet.",
+      "value": "Binding Seal displayed behind glass in Ink Room case"
+    },
+    {
+      "entity": "obj-binding-seal",
+      "attribute": "visual_memory_description",
+      "quote": "Behind the glass the seal looked like a small, round relic, a mound of beeswax capped by a dark iron signet.",
+      "value": "visual description: small round beeswax mound with iron signet"
+    },
+    {
+      "entity": "obj-binding-seal",
+      "attribute": "scent_memory",
+      "quote": "Rue remembered the smell more than the sight—something of beeswax and a bitter iron tang rose up from her memory of signing.",
+      "value": "binding seal associated scent: beeswax and bitter iron tang"
+    },
+    {
+      "entity": "collective-the-three",
+      "attribute": "evoked_tones",
+      "quote": "They were a mantra and a warning in different mouths. One girl said, almost reverent, \"Elaine came back to show how it might be done.\" Another rolled her eyes and said, \"Maris is a pamphlet; they've sold her story well enough.\" A boyish mimic in the corner made Sal's departure into a gesture of secrecy and the room swallowed the laugh that followed it.",
+      "value": "Three invoked in three tones: reverent (miracle), used as example (commodity), warning (closed mouth)"
     },
     {
       "entity": "char-rue",
-      "attribute": "archive_duties_assigned",
-      "value": "fetching pages, holding the lamp, wiping folio edges, copying entries into foliolist",
-      "quote": "My job was thin but steady: fetch a page, hold the lamp, wipe a smudge, copy a single address into the day's foliolist."
+      "attribute": "apprenticeship_practice",
+      "quote": "In the afternoons, Rue practiced stitches until her hands were small machines. She mended hems and learned the economy of a neat seam: how a stitch could hold a pocket for a coin and how an extra thread could be the difference between a trade well kept and a trade that cost you a reprimand.",
+      "value": "Rue practiced sewing and trained into craft skills and attention to small economies"
     },
     {
       "entity": "char-rue",
-      "attribute": "supervised_archive_access_granted",
-      "value": "true",
-      "quote": "Over months I proved careful with ink and order; a junior Archivist granted me supervised access to consult older margins."
+      "attribute": "first_small_compromise",
+      "quote": "Once, while binding a scrap for the apprentices' chest, Rue let another girl's thread stand because the other girl had been late to class and begged—Rue's hands moved to hide the omission in the seam and, when Loren passed, he gave her a look that held both instruction and calculation.",
+      "value": "Rue omitted correcting a fellow apprentice's thread as a small favor and received a tacit tally from Loren"
     },
     {
-      "entity": "obj-folio",
-      "attribute": "marginalia_examples",
-      "value": "(child present); * petition deferred; — vanished (no trace); (entry redacted)",
-      "quote": "Some notes were thin and explanatory — \"(child present)\" or \"* petition deferred\" — small, bureaucratic and indifferent. ... I saw a small cluster of shorthand that made the air in my chest go colder: \"— vanished (no trace).\""
+      "entity": "loc-ink-room",
+      "attribute": "access_practice_hint",
+      "quote": "When they led us there the door was a slab below the library's stacks, heavy and unadorned. Loren did not open it; a scribe's hand, quick and exact, showed us the glass along the inner case where the Binding Seal rested.",
+      "value": "Ink Room entry below library; access controlled by scribes; Binding Seal behind glass case and not handled by visitors"
     },
     {
-      "entity": "loc-dormitory",
-      "attribute": "observed_empty_bunk",
-      "value": "a bunk stripped bare with no trunk at its foot",
-      "quote": "I saw such a bunk — a bunk a few rows down had been stripped bare; no trunk stood at its foot."
-    },
-    {
-      "entity": "loc-archive",
-      "attribute": "archive_security_features",
-      "value": "two locks and a register at the door",
-      "quote": "The house kept the ledger room under strict watch: two locks, a register at the door, and an expectation that removal of folio pages required two witnesses and an entry in the Archive register."
-    },
-    {
-      "entity": "loc-garden",
-      "attribute": "role",
-      "value": "place where girls speak more freely and where Rue goes to think and run errands",
-      "quote": "I ran errands into the Garden sometimes, carrying forms that smelled of vellum and damp earth. The Garden was where we could breathe and say louder things in safer company."
+      "entity": "char-rue",
+      "attribute": "beliefs_about_costs",
+      "quote": "The Academy taught its girls to measure things precisely: angles and seams, work and witness. It also taught them to measure what they were willing to lose.",
+      "value": "Rue's belief that the Academy teaches measurement of trade and of personal costs"
     }
   ],
   "presentEntities": [
+    "loc-ink-room",
     "char-rue",
-    "group-the-hundred",
-    "loc-archive",
-    "obj-folio",
-    "loc-garden"
+    "char-loren",
+    "obj-binding-seal",
+    "collective-the-three",
+    "collective-the-hundred"
   ],
   "promises": [],
   "paysOff": []

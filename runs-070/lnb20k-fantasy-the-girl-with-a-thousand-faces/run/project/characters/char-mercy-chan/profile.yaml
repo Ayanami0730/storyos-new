@@ -1,15 +1,13 @@
 id: char-mercy-chan
 name: mercy-chan
-sketch: A professional exorcist operating in Kowloon Walled City during the
-  Japanese occupation; methodical, weary, wry, driven by a mixture of duty and
-  personal loss.
+sketch: Mercy Chan — mid-thirties exorcist who moves through the Walled City
+  negotiating with spirits and people; pragmatic, careful, scarred by past
+  losses, skilled in ritual and mediation.
 identity:
-  age: "38"
-  appearance: hands precise, shoulders squared, eyes that count exits
-  profession: ritual diagnostician
-  prior_loss: younger brother killed in the early fighting
+  name: Mercy Chan
+  profession: ritual practitioner / city diagnostician
+  appearance: moves like a shadow; practiced, light-conserving motions
 provenance:
-  age: s-001
-  appearance: s-001
+  name: s-001
   profession: s-001
-  prior_loss: s-001
+  appearance: s-001

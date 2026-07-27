@@ -5,3 +5,5 @@
 {"scene":"s-002","attribute":"location","value":"held by char-jun","quote":"Jun's shoulder bumps mine as we move, his hand curled around the straps of his backpack. He's got the tin safe in there and the flashlight heavy and familiar in his pocket, off and quiet."}
 {"scene":"s-002","attribute":"condition","value":"intact (at least immediately after crossing)","quote":"The tin is where it should be, and the brooch presses against my leg."}
 {"scene":"s-003","attribute":"location","value":"held by char-jun","quote":"We brush sand from the brooch, the tin, and our knees. The map slides back into my pocket; the tin goes back into Jun's pack."}
+{"scene":"s-004","attribute":"location","value":"held by char-mrs-halloway","quote":"Jun nudges his backpack forward. Jun hands her the tin."}
+{"scene":"s-004","attribute":"condition","value":"returned to owner (at least physically)","quote":"The tin is returned and the brooch is in her care; the promise has been kept."}

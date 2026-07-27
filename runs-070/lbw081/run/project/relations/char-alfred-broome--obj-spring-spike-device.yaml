@@ -1,0 +1,26 @@
+pairId: char-alfred-broome--obj-spring-spike-device
+participants:
+  - char-alfred-broome
+  - obj-spring-spike-device
+phases:
+  - index: 1
+    relation: hid/placed_in
+    fromScene: s-004
+    toScene: null
+    transition: Alfred admitted to wrapping the spring and blade in an old cloth and
+      hiding them beneath the left rear seam of Mr. Hale's chair.
+    asymmetry: admission recorded by narrator; Alfred's admission is the source
+    source:
+      scene: s-004
+      span: L20-L40
+  - index: 2
+    relation: hid/placed_in
+    fromScene: s-004
+    toScene: null
+    transition: Alfred admitted he wound the spring and greased the thread where it
+      passed the mantel so it would run cleanly; the narrator touches the
+      preserved thread and notes the oil ridge as proof.
+    source:
+      scene: s-004
+      span: L30-L50
+openQuestions: []

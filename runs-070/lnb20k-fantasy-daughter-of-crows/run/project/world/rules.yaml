@@ -1,19 +1,25 @@
 note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
 rules:
-  - Every year, the Mercy Academy acquires exactly one hundred girls; that
-    number is an institutional constant and must appear in the story's facts.
-  - After a ten-year period within the Academy, only three individuals ever
-    leave under normal circumstances; this must be stated and preserved as a
-    factual statistic within the narrative.
-  - Rue entered the Mercy Academy by selling herself; her consent and the
-    Contract she signed must be an established fact in her backstory.
-  - A war arrives and reaches the Academy's gates during Rue's later years; the
-    war must affect events at the Academy and force reckonings with its past.
-  - "The Folio and the Contract are authoritative objects inside the Academy:
-    they record intake and the terms of binding. Any scene that refers to who is
-    allowed to leave must trace to these artifacts or to a documented
-    exception."
-  - Do not contradict the above institutional facts anywhere in the story; if
-    new facts about the Academy's practices are introduced, they must be
-    consistent with the above constraints or be revealed as covert exceptions
-    with provenance in the Archive.
+  - The Academy accepts exactly one hundred girls into a cohort each year; this
+    number is public and rigid in the story's social systems.
+  - Historically, after a ten-year period inside the Academy, only three
+    individuals have left and their departures are recorded in the Folio (this
+    historical fact is established early and treated as canon unless explicitly
+    changed by a scena-level event with provenance).
+  - Contracts the recruits sign are legally and magically binding when sealed
+    with the Binding Seal; the Seal enacts the Academy's claims but requires the
+    Academy's own rituals to be maintained.
+  - "Magic has a cost: any enchantment that binds a person's freedom draws from
+    the same ledger as the Folio and must be accounted for in the Academy's
+    records; bargains cannot be silently created or negated without record."
+  - The War Envoy represents external political/military forces; he may demand
+    terms, levy burdens, or threaten force, but he cannot invent or erase
+    Academy records — only expose and exploit them.
+  - The Folio truthfully records entries and departures; it can be read and
+    misread, hidden, or weaponised, but altering historical entries is itself an
+    action with consequences and must be shown on-page when it happens.
+  - The Headmistress is powerful within the Academy but not omnipotent; she must
+    work within political constraints, her staff and the Academy's rituals.
+  - "No deus ex machina: solutions to the Academy's bindings must arise from
+    revealed rules and the characters' established resources and relationships,
+    not from unexplained new powers."

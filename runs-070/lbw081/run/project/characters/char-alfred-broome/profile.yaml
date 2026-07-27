@@ -5,6 +5,8 @@ sketch: "The butler: stoic, old-school, formerly a railway machinist. Knows his
 identity:
   profession: butler
   origin: former railway machinist
+  speech: concise, precise, railway-inflected
 provenance:
   profession: s-001
   origin: s-001
+  speech: s-004

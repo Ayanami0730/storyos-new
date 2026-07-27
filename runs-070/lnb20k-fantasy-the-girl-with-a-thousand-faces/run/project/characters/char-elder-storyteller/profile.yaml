@@ -1,10 +1,13 @@
 id: char-elder-storyteller
 name: elder-storyteller
-sketch: An elder keeper of oral histories and ritual practice, with deep
-  knowledge of local gods, taboo rites, and the Walled City’s layered past.
+sketch: The Elder Storyteller — an older keeper of oral histories and ritual
+  knowledge, repository of old names and rhythms; cautious, fond of metaphor,
+  holds a battered story scroll.
 identity:
-  role: lay keeper of the temple; guardian of obj-elder-scroll
-  appearance: hands marked with ink and incense; moves slow at edges, sudden at core
+  name: Elder Storyteller
+  appearance: small-boned, folded like old paper
+  speech: slow, economical, vowels rounded like coins
 provenance:
-  role: s-003
-  appearance: s-003
+  name: s-002
+  appearance: s-002
+  speech: s-002

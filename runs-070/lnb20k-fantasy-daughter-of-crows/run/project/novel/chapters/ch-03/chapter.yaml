@@ -1,46 +1,54 @@
 chapter: ch-03
 scenes:
   - id: s-009
-    intent: "The Myth of the Three: An older survivor of the Academy (one of The
-      Three) returns in rumor or memory. Rue hears the story of an alumna who
-      left and what she lost and gained; this scene complicates the idea of
-      escape and presents a human face to the statistic."
+    intent: "Montage across decades: Rue ages, becomes an instructor and anchor. The
+      narrative shows the Hundred as a cycle, friendships forming and
+      dissolving, the three alumni used in different ways by the Academy
+      (praise, warning, commodity). Time passes and the institution's scale
+      becomes clear."
     present:
       - char-rue
-      - group-the-three
-      - loc-garden
+      - collective-the-hundred
+      - char-loren
+      - char-aya
+      - char-elaine
+      - char-maris
+      - char-sal
       - obj-folio
   - id: s-010
-    intent: "Middle turning: A policy change, a departure attempt, or a disciplinary
-      event forces the Academy to reveal its enforcement machinery (sanctions,
-      rooms, appeals). Rue's complicity — she benefits, has made peace with the
-      rules — is shown; moral friction emerges."
+    intent: "First sign of the external war: a War Envoy arrives at the harbor to
+      speak with the Headmistress. The envoy's language is formal but unmoving;
+      he carries news that the conflict is swelling toward the island. The
+      Academy's insulated life is threatened for the first time in Rue's
+      memory."
     present:
-      - char-rue
+      - char-war-envoy
       - char-headmistress
-      - group-the-hundred
-      - loc-archive
-      - loc-dormitory
+      - loc-mercy-academy
+      - loc-great-hall
+      - char-rue
   - id: s-011
-    intent: "The first hint of war: News arrives at the Gates of unrest beyond the
-      city. The Headmistress and Academy administrators debate responses; Rue
-      notices the first signs — travelers speaking of levies, the road's emptier
-      wagons, and refugees refused beyond the wall."
+    intent: "Envoy and Headmistress bartering: the Academy negotiates neutrality,
+      offers shelter, and argues its civic usefulness. The envoy hints at
+      demands—bonds, levies or recruits—that unsettle the Headmistress. Rue
+      listens and realises the war will not be kept at bay by rhetoric."
     present:
+      - char-war-envoy
       - char-headmistress
       - char-rue
-      - loc-gates
-      - loc-ceremony-hall
-      - char-war-envoy
+      - loc-great-hall
+      - collective-the-hundred
   - id: s-012
-    intent: "The Envoy at the Gates: The War Envoy arrives officially to deliver a
-      warning or demand. Diplomacy plays against the Academy's self-image. Rue
-      watches the negotiation from the Garden and recognizes that the war will
-      force hard choices on the institution."
+    intent: "One of the Three returns to the Academy with a story that complicates
+      the Headmistress's narrative: Elaine (or Maris or Sal) brings news from
+      the outside that hints at what the Academy extracts for itself, and why so
+      few leave. Their presence fractures the ritual certainties inside the
+      walls."
     present:
-      - char-war-envoy
+      - char-elaine
+      - char-maris
+      - char-sal
       - char-headmistress
       - char-rue
-      - loc-gates
-      - loc-ceremony-hall
-      - loc-garden
+      - loc-great-hall
+      - collective-the-hundred

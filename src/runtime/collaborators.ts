@@ -43,6 +43,85 @@ interface Capture {
   prose: string | undefined;
   delta: SceneDelta | undefined;
   findings: Finding[];
+  /**
+   * The packet the writer is drafting against, so the staging tool can refuse
+   * prose that has copied out of it.
+   *
+   * See `copiedFromPacket`. Kept on the capture rather than closed over because
+   * the writer is resident and its tools are built once.
+   */
+  packetText: string;
+}
+
+/**
+ * The longest run of words the draft shares verbatim with its own packet.
+ *
+ * Measured on `runs-070/lbw081`, which scored 78.6 against 81.5 for the version
+ * before it, with Reading Experience at **2** — the lowest of any dimension in any
+ * of our runs. The cause is visible in the first four paragraphs of the
+ * manuscript, twice:
+ *
+ * > the chair itself looking as if it had held him for decades: *"Victor's heavy
+ * > upholstered study chair — the site where he was found slumped. It bears old
+ * > repairs and a faint circular wear spot on the left rear seam."* That line is not
+ * > mine; it is the chair.
+ *
+ * > On his person lay his watch — gold, small, ruined in one graceful way:
+ * > *"Victor's gold pocket watch found stopped on his person; the minute hand bent
+ * > and the watch stopped at a time relevant to establishing the minute of death."*
+ *
+ * Those are object-file lines, quoted into the manuscript. The second one says "at
+ * a time relevant to establishing the minute of death", which is registry metadata
+ * describing why a fact matters to an investigation — language that cannot occur in
+ * fiction. The verifier caught it and filed `flat_diction`, correctly, as a warning,
+ * and a warning does not block, so it shipped.
+ *
+ * The invitation was ours. `agents/writer/AGENT.md` had just been given a paragraph
+ * about `canon_context` ending *"use the wording it gives you rather than a
+ * plausible equivalent"* — meant to stop the writer inventing a variant of a
+ * recorded fact, and read as licence to quote the index. A prompt that produces
+ * this needs correcting, and it has been; but a prompt is advice, and this
+ * particular defect is cheap to detect and fatal to the score, so it is refused at
+ * the tool boundary as well.
+ *
+ * Twelve words because that is far past coincidence for English prose and still
+ * leaves a remembered line of dialogue or a repeated name intact. The comparison is
+ * against the whole packet, which includes the recalled prose of earlier scenes:
+ * copying from those is also a defect, a different one — the graders penalise a
+ * long story that restates itself — so the refusal names both cases.
+ */
+export function copiedFromPacket(
+  prose: string,
+  packetText: string,
+  minRun = 12,
+): string | null {
+  if (!packetText.trim()) return null;
+  const norm = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u201c\u201d"']/g, "")
+      .split(/\s+/)
+      .filter(Boolean);
+  const proseWords = norm(prose);
+  const packetWords = norm(packetText);
+  if (proseWords.length < minRun || packetWords.length < minRun) return null;
+
+  // Index the packet's n-grams once, then scan the draft. Linear in both, which
+  // matters because this runs on every staging call of every scene.
+  const grams = new Set<string>();
+  for (let i = 0; i + minRun <= packetWords.length; i += 1) {
+    grams.add(packetWords.slice(i, i + minRun).join(" "));
+  }
+  for (let i = 0; i + minRun <= proseWords.length; i += 1) {
+    const gram = proseWords.slice(i, i + minRun).join(" ");
+    if (grams.has(gram)) {
+      // Report the span as it appears in the prose, not normalised, so the writer
+      // can find it.
+      const raw = prose.split(/\s+/).filter(Boolean);
+      return raw.slice(i, i + minRun).join(" ");
+    }
+  }
+  return null;
 }
 
 /**
@@ -62,6 +141,19 @@ function writerTools(live: () => Capture, sceneId: () => string): unknown[] {
       execute: async (_id: string, args: { prose: string }) => {
         if (!args.prose?.trim()) {
           return toolText("rejected: prose is empty. Write the scene, then call this again.");
+        }
+        const copied = copiedFromPacket(args.prose, live().packetText);
+        if (copied) {
+          return toolText(
+            `rejected: this passage is copied verbatim out of your packet —\n  "${copied}"\n` +
+              `The packet is your source of *facts*, never of *sentences*. If that came from an ` +
+              `entity file, it is registry language: it exists to record what is true, and it ` +
+              `reads as an index dump on the page. A measured run put two object-file lines in ` +
+              `quotation marks in its opening paragraphs and scored the lowest reading-experience ` +
+              `mark this system has recorded. If it came from an earlier scene's prose, that is ` +
+              `restatement, which the graders penalise in a long story for good reason. Say the ` +
+              `same fact in your own narration and call this again.`,
+          );
         }
         live().prose = args.prose;
         return toolText(
@@ -654,13 +746,13 @@ function orchestratorNote(note: string | undefined): string {
  * built once against its getters, and `open` swaps what they point at.
  */
 export class SceneToolBus {
-  #capture: Capture = { prose: undefined, delta: undefined, findings: [] };
+  #capture: Capture = { prose: undefined, delta: undefined, findings: [], packetText: "" };
   #sceneId = "s-000";
 
   /** Begin a scene, returning the buffer the loop reads out of. */
   open(sceneId: string): Capture {
     this.#sceneId = sceneId;
-    this.#capture = { prose: undefined, delta: undefined, findings: [] };
+    this.#capture = { prose: undefined, delta: undefined, findings: [], packetText: "" };
     return this.#capture;
   }
 
@@ -717,6 +809,9 @@ export function residentCollaborators(options: {
       }): Promise<Draft> {
         capture.prose = undefined;
         capture.delta = undefined;
+        // What the staging tool checks the draft against, set here because the
+        // packet is per attempt and the tool was registered once.
+        capture.packetText = packet.rendered;
 
         const task =
           attempt === 0

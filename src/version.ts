@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.7.2";
+export const VERSION = "0.7.3";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -46,6 +46,26 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.7.3",
+    note:
+      "the writer may no longer copy sentences out of its packet, and one of our own prompt " +
+      "changes is why it did. `runs-070/lbw081` scored **78.6** against 81.5 for the version " +
+      "before it, with Reading Experience at **2** — the lowest mark on any dimension in any " +
+      "run we have. The manuscript interleaves object and character files with the narration, " +
+      "in quotation marks, from the second paragraph on: *\"Victor's gold pocket watch found " +
+      "stopped on his person; the minute hand bent and the watch stopped at a time relevant to " +
+      "establishing the minute of death.\"* That last clause is registry language about why a " +
+      "fact matters to an investigation and cannot occur in fiction. `smoke/probe-index-leak.py` " +
+      "puts it at 5.7% of the manuscript over eight spans, against 0.0% for the two v0.7.1 runs " +
+      "that scored 88.9 and 87.7 — so this is the whole of the regression and not the new craft " +
+      "axis. The invitation was v0.7.0's own: the writer had just been told, of `canon_context`, " +
+      "to *\"use the wording it gives you rather than a plausible equivalent\"*, meant to stop " +
+      "it inventing variants of recorded facts and read as licence to quote the index. The " +
+      "prompt now says facts, never sentences, and `write_staged_scene` refuses a draft sharing " +
+      "a twelve-word run with its packet — the verifier had in fact caught it and filed it " +
+      "correctly, as a craft warning, and a warning does not block, so it shipped.",
+  },
   {
     version: "0.7.2",
     note:

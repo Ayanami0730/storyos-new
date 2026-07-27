@@ -1,46 +1,44 @@
 chapter: ch-01
 scenes:
   - id: s-001
-    intent: "Open in the press of the Walled City: establish Mercy’s routines, the
-      claustrophobic setting, and the wartime backdrop; Mercy is called to
-      investigate unexplained wailing in a main alley."
+    intent: "Establish Mercy Chan, the Walled City setting, and the first domestic
+      disturbance that summons her: introduce Mercy’s ritual practice, her kit,
+      and the dense alleyways where she works. Seed unease in the community."
     present:
       - char-mercy-chan
       - loc-kowloon-walled-city
-      - loc-main-alley-spiral
-      - group-kowloon-residents
-      - loc-occupation-checkpoint
-      - obj-mercys-incense-box
+      - char-neighbor-lei
+      - faction-residents-commune
+      - obj-ritual-kit
   - id: s-002
-    intent: "Mercy surveys the scene: neighbors describe disturbances, Mrs. Choi
-      recounts a strange night; Mercy performs a cautious, diagnostic rite that
-      reveals a residual imprint stronger than an ordinary ghost."
+    intent: Follow Mercy into Alley 13 and the communal kitchen where small
+      hauntings ripple—pots clatter and a shadow glimpsed. She negotiates with
+      frightened neighbors and meets the Elder Storyteller, who hints at older
+      wounds.
     present:
       - char-mercy-chan
-      - char-mrs-choi
-      - group-kowloon-residents
-      - obj-mercys-incense-box
-      - obj-bloodied-photo
-      - loc-main-alley-spiral
-  - id: s-003
-    intent: Introduce the Elder Storyteller and Lau the apprentice; the Elder hints
-      at a story from the occupation years tied to the alley; Mercy negotiates
-      with scared residents to let her search a locked room.
-    present:
+      - loc-alley-13
+      - loc-communal-kitchen
+      - char-neighbor-lei
       - char-elder-storyteller
-      - char-lau-apprentice
-      - char-mercy-chan
-      - group-kowloon-residents
-      - loc-temple-basement
-      - obj-elder-scroll
-      - loc-occupation-checkpoint
-  - id: s-004
-    intent: Mercy finds the bloodied photo hidden in a cupboard during her search;
-      she connects it to a boy who disappeared during a skirmish—she suspects a
-      wartime origin and sees the revenant’s pattern of feeding on loss.
+      - obj-incense-burner
+  - id: s-003
+    intent: Attempt Mercy’s first ritual on a minor disturbance; the spirit resists
+      in a way she’s not used to. The ritual shows unusual cruelty—voices in
+      many dialects, layered memories—suggesting a composite root.
     present:
       - char-mercy-chan
-      - obj-bloodied-photo
+      - spirit-vengeful
+      - obj-ritual-kit
+      - loc-temple-shrine
+      - char-elder-storyteller
+  - id: s-004
+    intent: Introduce the Young Refugee and the bloodstained cloth found among his
+      few belongings; his trauma sparks a worsening of the haunt. Mercy sees a
+      direct affective link between the refugee’s loss and the spirit’s anger.
+    present:
       - char-young-refugee
-      - loc-main-alley-spiral
-      - loc-temple-basement
+      - obj-bloodstained-cloth
+      - char-mercy-chan
+      - loc-bombed-yard
+      - spirit-vengeful

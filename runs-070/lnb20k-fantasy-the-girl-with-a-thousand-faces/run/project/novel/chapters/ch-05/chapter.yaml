@@ -1,16 +1,12 @@
 chapter: ch-05
 scenes:
   - id: s-017
-    intent: "Epilogue: Mercy walks the City weeks later—some wounds begin to heal,
-      others remain as the occupation grinds on; Mercy prepares for the next
-      call, carrying a new ritual, an altered relationship to communal memory,
-      and an uneasy hope."
+    intent: "Epilogue: Mercy on the rooftop at dawn. She rebinds her ritual kit and
+      leaves or stays with a new pledge to the community; a small, ambiguous
+      sign suggests memory and the supernatural are not gone but altered."
     present:
       - char-mercy-chan
-      - loc-kowloon-walled-city
-      - char-lau-apprentice
-      - group-kowloon-residents
-      - obj-mercys-incense-box
+      - loc-rooftop
+      - obj-ritual-kit
+      - char-elder-storyteller
       - spirit-vengeful
-      - loc-occupation-checkpoint
-      - obj-memory-thread

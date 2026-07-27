@@ -1,26 +1,31 @@
 note: What is true. Not what anyone knows — see characters/<id>/beliefs.jsonl.
 rules:
-  - The story is set during World War II–era Hong Kong (Japanese occupation
-    era); technology, institutions, and social constraints must be
-    period-appropriate and not anachronistic.
-  - "Supernatural mechanics: spirits exist and interact with humans, but their
-    strength is tied to human memory, trauma, and communal denial rather than
-    undifferentiated magical fiat."
-  - "Rituals have material and social costs: a successful rite requires
-    ingredients, consent or participation from the living, and can have tangible
-    side-effects (psychological, physical, or social) on individuals and the
-    community."
-  - "No deus ex machina: Mercy cannot simply 'erase' the spirit with a single
-    magical trick; resolution requires investigation, negotiation, and communal
-    confrontation of historical events."
-  - "The revenant’s power is amplified by wartime violence: historical
-    atrocities, suppressed confessions, and collective silences feed it; the
-    spirit is not merely evil but a wound given form by historical neglect."
-  - "The Walled City’s geography matters: tight spaces, layered dwellings,
-    roofs, and shared courtyards affect how rituals operate and how the
-    community responds."
-  - "Ethical constraint: exorcisms may harm the living—physically, economically,
-    or socially—and these harms must be acknowledged and shown in consequences."
-  - "Characters’ memories and oral histories are treated as evidence:
-    discoverable, mutable under the spirit’s influence, and central to resolving
-    the conflict."
+  - "Setting is historically grounded: World War II–era Hong Kong (Japanese
+    occupation). No anachronistic technology or modern institutions may appear."
+  - Spirits are formed from and fed by unresolved memory, trauma, and communal
+    silence; the more contradictory and suppressed the memory, the stronger the
+    spirit.
+  - Ritual efficacy depends on correct materials, words, and community context;
+    exorcisms can bind, release, or transform spirit-anchors but always carry a
+    measurable personal cost to the ritualist or participants (loss of memory,
+    physical injury, diminished sight/hearing, temporary blindness to emotion,
+    etc.).
+  - Mercy Chan’s craft follows a coherent, internally consistent folk system
+    (incantations, offerings, archival testimony). She cannot perform miracles
+    like raising the dead or reversing wartime events.
+  - Spirits can manifest physically (poltergeist activity, sickness) and
+    psychically (visions, emotional contagion). Physical laws hold except where
+    explicitly suspended by ritual; nobody gains supernatural invulnerability.
+  - "Community consent matters: large-scale rites require the residents’
+    participation; deceptive or coercive rituals produce backlash that
+    strengthens the spirit."
+  - The revenant is not a single person but a composite wound; it responds when
+    specific tokens or places are disturbed and is weakened by acts of truthful
+    remembrance and repair rather than lies or suppression.
+  - Time is linear; memory manifests as overlayed scenes but not literal time
+    travel—characters can witness the past as vision, not rejoin it.
+  - "No contradictions with later committed scenes: all new claims must be
+    recorded with provenance in the index when written."
+  - The story must balance supernatural horror with historical/social realism;
+    the haunting’s resolution requires both ritual action and community moral
+    reckoning.

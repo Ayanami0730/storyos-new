@@ -1,3 +1,6 @@
 scene,chapter,beat,tension_target,tension_actual,note
-s-001,ch-01,"setup",4,4,"Scene established multiple beats (setup, turn, complication, release); full set of rhythm rows recorded."
-s-002,ch-01,"turn",5,5,"Social introductions set up conflicts and alliances (Mara's distrust of official records, Lin's usefulness, Kela's quiet counsel)."
+s-001,ch-01,"setup",6,6,"Intake ceremony establishes stakes and the counting theme; Rue commits to the Academy under a ten-year Contract."
+s-002,ch-01,"turn",5,4,"Dorm induction micro-scene introduces daily practices and discipline; reduces ceremonial duplication from Hall by moving small rituals into dorm."
+s-003,ch-01,"development",6,5,"Apprenticeship continues; this scene develops Rue's skills and her indebtedness via tacit tallies; tension is steady and building."
+s-004,ch-01,"complication",7,6,"Close-up on Rue's interior life and loyalties; small kindnesses and micro-violence complicate Rue's acceptance of the Academy. Tension increased slightly."
+s-005,ch-02,"exposition",5,4,"Headmistress meeting exposes institutional rhetoric and the formal framing of the Binding Seal and margin records; tension is low but leaves Rue unsettled."

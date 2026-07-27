@@ -5,3 +5,6 @@
 {"scene":"s-002","attribute":"mood","value":"watchful, practical","quote":"\"Marta's eyes flicked to the corridor...\""}
 {"scene":"s-002","attribute":"goal","value":"help Elys and Garr avoid detection","quote":"\"I will not be an accomplice in a sermon, but I will put you outside the notice of men who count names.\""}
 {"scene":"s-003","attribute":"condition","value":"coerced, distressed","quote":"\"She looked as if someone had wound the air too tight around her ribs.\""}
+{"scene":"s-004","attribute":"holds","value":"obj-hairpin-ivory","quote":"\"Marta stooped and found the little willow-pin where it had fallen and folded it into her palm as if it were something that might still be kept from being broken. She pressed it to her breast...\""}
+{"scene":"s-004","attribute":"mood","value":"tormented, accusatory","quote":"\"Marta folded her hands over the pin and whispered to herself the line she had already spoken... 'I kept their hour like a prayer; they have asked me to unmake that prayer.'\""}
+{"scene":"s-004","attribute":"companions","value":"obj-hairpin-ivory","quote":"\"Marta stooped and found the little willow-pin where it had fallen and folded it into her palm...\""}

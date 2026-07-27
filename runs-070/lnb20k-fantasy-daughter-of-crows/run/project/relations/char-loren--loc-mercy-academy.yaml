@@ -1,0 +1,15 @@
+pairId: char-loren--loc-mercy-academy
+participants:
+  - char-loren
+  - loc-mercy-academy
+phases:
+  - index: 1
+    relation: instructor
+    fromScene: s-003
+    toScene: null
+    transition: Loren teaches trades in workshop/classroom settings (sewing,
+      pruning) using hands-on correction and maxims of practice.
+    source:
+      scene: s-003
+      span: L1-L10
+openQuestions: []

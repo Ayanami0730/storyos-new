@@ -1,5 +1,5 @@
-{"at":"2026-07-27T12:58:10.339Z","id":"lbw081","ok":false,"interrupted":true,"exitCode":130,"seconds":570,"detail":"interrupted before it finished; rerun to continue"}
-{"at":"2026-07-27T12:58:10.339Z","id":"lbw070","ok":false,"interrupted":true,"exitCode":130,"seconds":540,"detail":"interrupted before it finished; rerun to continue"}
-{"at":"2026-07-27T12:58:10.339Z","id":"lbw092","ok":false,"interrupted":true,"exitCode":130,"seconds":510,"detail":"interrupted before it finished; rerun to continue"}
-{"at":"2026-07-27T12:58:10.339Z","id":"lnb20k-fantasy-daughter-of-crows","ok":false,"interrupted":true,"exitCode":130,"seconds":480,"detail":"interrupted before it finished; rerun to continue"}
-{"at":"2026-07-27T12:58:10.339Z","id":"lnb20k-fantasy-the-girl-with-a-thousand-faces","ok":false,"interrupted":true,"exitCode":130,"seconds":450,"detail":"interrupted before it finished; rerun to continue"}
+{"at":"2026-07-27T13:40:53.139Z","id":"lbw081","ok":true,"interrupted":false,"exitCode":0,"seconds":2424,"detail":"3014 words, 4 scene(s)"}
+{"at":"2026-07-27T13:40:53.139Z","id":"lbw070","ok":true,"interrupted":false,"exitCode":0,"seconds":2029,"detail":"2077 words, 4 scene(s)"}
+{"at":"2026-07-27T13:40:53.139Z","id":"lbw092","ok":true,"interrupted":false,"exitCode":0,"seconds":2205,"detail":"3112 words, 4 scene(s)"}
+{"at":"2026-07-27T13:40:53.139Z","id":"lnb20k-fantasy-daughter-of-crows","ok":false,"interrupted":false,"exitCode":130,"seconds":1798,"detail":"fresh — last log line: [13:28:23] s-003 context-builder added 8 item(s) after 3 read(s), and recorded 2 gap(s) [opening]"}
+{"at":"2026-07-27T13:40:53.139Z","id":"lnb20k-fantasy-the-girl-with-a-thousand-faces","ok":false,"interrupted":false,"exitCode":130,"seconds":1768,"detail":"fresh — last log line: [13:31:45] s-004 start [opening @ 0.206: 2 repair, 2 follow-up, 1 recall] — Mercy finds the bloodied photo hidden in a cupboard during h"}

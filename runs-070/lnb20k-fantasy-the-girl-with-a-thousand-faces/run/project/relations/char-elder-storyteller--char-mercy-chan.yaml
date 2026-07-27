@@ -1,0 +1,18 @@
+pairId: char-elder-storyteller--char-mercy-chan
+participants:
+  - char-elder-storyteller
+  - char-mercy-chan
+phases:
+  - index: 1
+    relation: mentor-like-memory-holder
+    fromScene: s-002
+    toScene: null
+    transition: Elder Storyteller offers memory and precedent; addresses Mercy as
+      'child' and warns she cannot fix this alone; the Elder holds a folded
+      packet of notes and guides interpretation rather than command action.
+    asymmetry: Elder holds memory/precedent; Mercy holds tools and will take
+      investigative action.
+    source:
+      scene: s-002
+      span: L30-L60
+openQuestions: []

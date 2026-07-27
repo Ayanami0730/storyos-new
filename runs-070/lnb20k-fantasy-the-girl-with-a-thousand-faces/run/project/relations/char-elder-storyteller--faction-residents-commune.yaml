@@ -1,0 +1,18 @@
+pairId: char-elder-storyteller--faction-residents-commune
+participants:
+  - char-elder-storyteller
+  - faction-residents-commune
+phases:
+  - index: 1
+    relation: memory-keeper-to-commune
+    fromScene: s-002
+    toScene: null
+    transition: Elder Storyteller speaks to the room, sharing precedent and oral
+      knowledge about the wound; he positions memory and narrative as communal
+      responsibility.
+    asymmetry: Elder keeps oral memory; residents look to him to interpret narrative
+      context.
+    source:
+      scene: s-002
+      span: L20-L40
+openQuestions: []

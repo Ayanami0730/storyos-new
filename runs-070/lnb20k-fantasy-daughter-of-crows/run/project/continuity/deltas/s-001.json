@@ -2,94 +2,88 @@
   "sceneId": "s-001",
   "claims": [
     {
-      "entity": "char-rue",
-      "attribute": "sold_self_to_academy",
-      "value": "true",
-      "quote": "So I sold myself."
-    },
-    {
-      "entity": "char-rue",
-      "attribute": "consented",
-      "value": "true",
-      "quote": "I had consented."
-    },
-    {
-      "entity": "loc-ceremony-hall",
-      "attribute": "smell",
-      "value": "beeswax polish and boiled linen",
-      "quote": "The Ceremony Hall smelled of beeswax polish and boiled linen: the kind of clean that announces itself rather than earning quiet trust."
-    },
-    {
       "entity": "obj-folio",
-      "attribute": "folio_entry_template",
-      "value": "Folio Entry — Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.",
-      "quote": "The Folio was open where a scribe had left it, a pale rectangle of invitation: “Folio Entry — Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.”"
+      "attribute": "template_text",
+      "quote": "“Folio Entry — Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.”",
+      "value": "Folio entry template as printed in the Great Hall"
     },
     {
-      "entity": "group-the-hundred",
-      "attribute": "intake_number_per_year",
-      "value": "one hundred",
-      "quote": "The hundred benches were arranged like a small amphitheatre; families sat in the outer rings, sober as undertakers."
+      "entity": "loc-mercy-academy",
+      "attribute": "annual_intake",
+      "quote": "“Folio Entry — Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.”",
+      "value": "100"
     },
     {
-      "entity": "obj-bell",
-      "attribute": "role",
-      "value": "marks intakes and ends ceremony with a single bronze note",
-      "quote": "The Bell — a single bronze note struck from a high arch — cut the murmurs and put us under the House's attention."
-    },
-    {
-      "entity": "char-headmistress",
-      "attribute": "public_voice",
-      "value": "formal, composed, expert at maintaining charitable image",
-      "quote": "The Headmistress was everything polished with use. She wore mercy as other people wear good coats — tailored to fit, and kept for public weather."
-    },
-    {
-      "entity": "char-headmistress",
-      "attribute": "stated_statistics",
-      "value": "Out of the hundred who enter each year, only three leave at the end of their ten-year term.",
-      "quote": "\"Out of the hundred who enter each year,\" she said, \"only three leave at the end of their ten-year term. The rest remain under the Academy's charge as is recorded.\""
+      "entity": "loc-mercy-academy",
+      "attribute": "historical_departures_after_ten_years",
+      "quote": "“Out of the hundred who enter each year, only three leave at the end of their ten-year term. The rest remain under the Academy's charge as is recorded.”",
+      "value": "3"
     },
     {
       "entity": "obj-contract",
-      "attribute": "term_length",
-      "value": "ten years",
-      "quote": "The Contract's clause was quiet in the packet but not shy: ten years."
+      "attribute": "term",
+      "quote": "The Contract's clause was quiet in the packet but not shy: ten years.",
+      "value": "ten years"
     },
     {
-      "entity": "obj-contract",
-      "attribute": "signed_by",
-      "value": "char-rue",
-      "quote": "I signed in a hand that had practised keeping accounts in cramped ledgers."
+      "entity": "char-rue",
+      "attribute": "contract_provenance",
+      "quote": "When she set the pen to the Contract she wrote 'sold' in the space the Folio called Provenance.",
+      "value": "sold"
     },
     {
-      "entity": "obj-folio",
-      "attribute": "witness_mark",
-      "value": "Headmistress witness mark beside Rue's signature",
-      "quote": "The Headmistress dipped a fingertip and made a mark beside the signature — her witness."
+      "entity": "char-rue",
+      "attribute": "signed_contract",
+      "quote": "She signed her name with a hand that would make do.",
+      "value": "true"
     },
     {
-      "entity": "loc-ceremony-hall",
-      "attribute": "headmistress_closing_line",
-      "value": "So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.",
-      "quote": "\"So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.\""
+      "entity": "obj-binding-seal",
+      "attribute": "physical_description",
+      "quote": "The Binding Seal waited on the table, a mound of beeswax and a small iron signet beside a bottle that smelled of tincture. Even in the dry light she could tell it smelled of beeswax and a bitter iron tang.",
+      "value": "wax, iron, tincture; smell of beeswax and bitter iron tang"
+    },
+    {
+      "entity": "obj-amber-bell",
+      "attribute": "ritual_phrase",
+      "quote": "\"By amber and ink, so sealed,\" someone intoned, low enough that its syllables felt like a private thing.",
+      "value": "By amber and ink, so sealed."
+    },
+    {
+      "entity": "obj-amber-bell",
+      "attribute": "description",
+      "quote": "The Amber Bell was on the table, a warm piece of glass-grey amber held in a loop of brass.",
+      "value": "small amber bell, used ceremonially"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "public_statement_statistic",
+      "quote": "“Out of the hundred who enter each year, only three leave at the end of their ten-year term. The rest remain under the Academy's charge as is recorded.”",
+      "value": "statement asserting only three leave after ten years"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "ceremonial_closing",
+      "quote": "“So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.”",
+      "value": "So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence."
     }
   ],
   "presentEntities": [
     "char-rue",
-    "loc-ceremony-hall",
+    "loc-great-hall",
+    "loc-mercy-academy",
     "obj-contract",
     "obj-folio",
+    "obj-amber-bell",
     "char-headmistress",
-    "group-the-hundred",
-    "loc-mercy-academy"
+    "collective-the-hundred",
+    "obj-binding-seal"
   ],
-  "promises": [
+  "promises": [],
+  "paysOff": [
     {
-      "id": "promise-folio-record",
-      "promise": "The Folio will stand as record and law for the intake, establishing the Academy's charge over entrants.",
-      "quote": "\"So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.\"",
-      "dueByScene": ""
+      "contractId": "promise-folio-record",
+      "quote": "“So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.”"
     }
-  ],
-  "paysOff": []
+  ]
 }

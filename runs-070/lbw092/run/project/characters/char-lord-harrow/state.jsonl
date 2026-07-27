@@ -5,3 +5,5 @@
 {"scene":"s-003","attribute":"mood","value":"stern, resolute","quote":"\"The lord's face did not flame; it set.\""}
 {"scene":"s-003","attribute":"holds","value":"obj-letter-sealed","quote":"\"He lifted the scrap and the wax between his fingers as evidence, and his voice when he spoke carried the weight of household law.\""}
 {"scene":"s-003","attribute":"goal","value":"maintain household order","quote":"\"This is enough,\" he said. \"Captain Rowan—see that Garr is brought here. Take him from the yard to the courtyard. Let none hinder you.\""}
+{"scene":"s-004","attribute":"mood","value":"flat, exhausted","quote":"\"Lord Harrow's face did not fall into triumph; it was the flat, exhausted line of a man who had paid a bill he thought would settle favor and found only more accounts.\""}
+{"scene":"s-004","attribute":"goal","value":"preserve_household_order","quote":"\"His victory was a silence that filled up rooms: practical, uncelebratory.\""}

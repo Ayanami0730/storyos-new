@@ -1,0 +1,56 @@
+{
+  "findings": [
+    {
+      "id": "f-6c80794a",
+      "subtype": "forgotten_abilities",
+      "axis": "consistency",
+      "category": "characterization",
+      "tier": "negative-inference",
+      "validator": "global",
+      "severity": "warning",
+      "reasoning": "char-owen-myers's skilled_in_small_mechanisms; obvious_suspect was established in s-002 and never used or removed anywhere in the span",
+      "evidence": {
+        "quote": "The evidence made him the obvious suspect: the missing bezel screw, the fresh filings, his skill with small mechanisms.",
+        "source": "s-002"
+      },
+      "editLocus": {
+        "kind": "unresolved",
+        "question": "use skilled_in_small_mechanisms; obvious_suspect, explain why it does not apply, or revoke it in the text"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "rev-cap-char-owen-myers-skill_and_suspect_status",
+      "targetScenes": [
+        "s-003",
+        "s-004"
+      ],
+      "rationale": "unused established capability from s-002",
+      "finding": {
+        "id": "f-6c80794a",
+        "subtype": "forgotten_abilities",
+        "axis": "consistency",
+        "category": "characterization",
+        "tier": "negative-inference",
+        "validator": "global",
+        "severity": "warning",
+        "reasoning": "char-owen-myers's skilled_in_small_mechanisms; obvious_suspect was established in s-002 and never used or removed anywhere in the span",
+        "evidence": {
+          "quote": "The evidence made him the obvious suspect: the missing bezel screw, the fresh filings, his skill with small mechanisms.",
+          "source": "s-002"
+        },
+        "editLocus": {
+          "kind": "unresolved",
+          "question": "use skilled_in_small_mechanisms; obvious_suspect, explain why it does not apply, or revoke it in the text"
+        }
+      }
+    }
+  ],
+  "coverage": {
+    "scenes": 4,
+    "contractsChecked": 0,
+    "contractsOpen": 0,
+    "capabilitiesChecked": 1
+  }
+}

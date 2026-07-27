@@ -21,4 +21,13 @@ phases:
     source:
       scene: s-001
       span: L3-L9
+  - index: 3
+    relation: neighbor-trust
+    fromScene: s-004
+    toScene: null
+    transition: Mrs. Halloway receives the brooch and thanks Eloise, framing its
+      return as a small act of courage.
+    source:
+      scene: s-004
+      span: L5-L20
 openQuestions: []
