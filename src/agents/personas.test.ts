@@ -14,6 +14,7 @@ import {
   systemPromptFor,
   toolNamesFor,
   withBackbone,
+  withVerifier,
 } from "./personas.ts";
 
 const AGENTS_ROOT = path.join(
@@ -109,12 +110,37 @@ describe("personas", () => {
     assert.ok(tools.includes("write_findings"));
   });
 
-  it("draws the verifier from a different family than the writer", () => {
-    const family = (id: string) => id.split(/[-.]/)[0];
-    assert.notEqual(
-      family(personaFor("verifier").model),
-      family(personaFor("writer").model),
-    );
+  /**
+   * The verifier runs the writer's backbone, and this test used to assert the
+   * opposite.
+   *
+   * Cross-family was the default until 0.6.1 on a sound argument — a verifier from
+   * the writer's own family inherits its blind spots. It lost to two things the
+   * argument cannot answer. It breaks the comparison: main's experiment settings
+   * hold the generation backbone constant across systems and every baseline runs
+   * `gpt-5-mini` throughout, so a stronger model in one role makes our measured
+   * margin unattributable. And the gateway returns zero cache reads for that model,
+   * so a resident verifier re-sent its whole history every call — 81% of a run's
+   * cost on 11% of its round-trips, then the channel's quota ran out and scenes
+   * committed unverified.
+   */
+  it("runs the verifier on the same backbone as every other role and every baseline", () => {
+    assert.equal(personaFor("verifier").model, personaFor("writer").model);
+    for (const role of ["orchestrator", "context-builder", "index-manager"] as const) {
+      assert.equal(personaFor(role).model, personaFor("verifier").model);
+    }
+  });
+
+  it("still allows a cross-family verifier, which is now the ablation", () => {
+    // The blind-spot question is real and worth measuring; it is a variable now
+    // rather than a confound baked into the main table.
+    const swapped = withVerifier(PERSONAS, "gemini-3.1-pro-preview");
+    const verifier = swapped.find((p) => p.role === "verifier")!;
+    assert.equal(verifier.model, "gemini-3.1-pro-preview");
+    // And nothing else moves.
+    for (const p of swapped) {
+      if (p.role !== "verifier") assert.equal(p.model, "gpt-5-mini");
+    }
   });
 
   it("refuses to describe a role it does not have", () => {

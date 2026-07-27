@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.6.0";
+export const VERSION = "0.6.1";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -28,7 +28,8 @@ export const VERSION_NOTE =
   "final 40%, with recall depth 1/2/3), path-addressed artefacts, OS-enforced " +
   "write gate (docker read-only mount), cost-triggered level-1 compaction, " +
   "baseline-comparable token accounting (input+output, cache reads excluded), and a " +
-  "per-scene verifier session because the cross-family verifier gets no prompt caching";
+  "per-scene verifier session; the verifier runs the same gpt-5-mini backbone as every\n" +
+  "other role and every baseline, with cross-family available as an ablation";
 
 /**
  * Behaviours that could move a measured number, and when they landed.
@@ -42,6 +43,25 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.6.1",
+    note:
+      "the verifier runs `gpt-5-mini`, the same backbone as every other role and as every " +
+      "baseline. It was `gemini-3.1-pro-preview` from the start, on the argument that a " +
+      "verifier from the writer's own family inherits its blind spots — a sound argument " +
+      "that could not answer two objections. It broke the comparison: " +
+      "docs/13-experiment-settings.md holds the generation backbone constant across " +
+      "systems and every baseline runs gpt-5-mini throughout, so our +11.8 over the same " +
+      "backbone on the LongBench-Write story slice mixed an architectural effect with a " +
+      "stronger model in one role and could not be attributed. And it was unaffordable in " +
+      "a way specific to us: the gateway returns zero cache reads for that model, so the " +
+      "resident verifier re-sent its whole growing history every request (first-call input " +
+      "10,142 → 61,934 tokens over four scenes at 8× the rate), reaching 81% of a run's " +
+      "cost on 11% of its round-trips, and then exhausted the channel's plan quota so that " +
+      "every call failed and scenes committed unverified. Cross-family is now the ablation " +
+      "(`--verifier-model gemini-3.1-pro-preview`), recorded per run in `verifier_model`. " +
+      "Every cost and quality row from before this is not comparable with one from after",
+  },
   {
     version: "0.6.0",
     note:

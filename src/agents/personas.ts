@@ -13,9 +13,33 @@
  * persona quietly given a narrower view breaks the claim that no agent is a
  * second-class citizen.
  *
- * **The verifier is cross-family by default.** It is checking prose produced by
- * the writer's model; drawn from the same family it inherits the same blind
- * spots, and the deterministic layer only covers what needs no judgement.
+ * **Every role runs the same generation backbone**, the verifier included.
+ *
+ * It was cross-family until 0.6.1, on the argument that a verifier drawn from the
+ * writer's own family inherits its blind spots. The argument is sound and it lost
+ * to two things it cannot answer.
+ *
+ * It breaks the comparison. `docs/13-experiment-settings.md` puts the generation
+ * backbone in the column that must be held constant across systems, and every
+ * baseline runs `gpt-5-mini` throughout. A verifier on `gemini-3.1-pro-preview`
+ * gives our system a stronger model in one role than any comparator gets, so the
+ * measured margin — +11.8 over the same backbone on the LongBench-Write story
+ * slice — mixes an architectural effect with a model advantage and cannot be
+ * attributed.
+ *
+ * And it was unaffordable in a way that was specifically ours. The gateway returns
+ * **zero** cache reads for that model, so a resident verifier re-sent its whole
+ * growing history on every request: first-call input climbed 10,142 → 25,473 →
+ * 41,241 → 61,934 tokens across four scenes, at eight times the input rate, and
+ * the verifier became 81% of a run's cost on 11% of its round-trips. It then
+ * exhausted the channel's plan quota mid-validation and every call failed, which
+ * commits scenes unverified — the gate cannot be both the strongest model and the
+ * one that stops answering.
+ *
+ * Cross-family remains available and worth measuring: `--verifier-model
+ * gemini-3.1-pro-preview` restores it, and `withVerifier` records the choice in the
+ * summary. The blind-spot question is a real one; it is now an ablation instead of
+ * a confound in the main table.
  */
 
 import { readFileSync } from "node:fs";
@@ -98,8 +122,10 @@ export const PERSONAS: readonly PersonaSpec[] = [
   },
   {
     role: "verifier",
-    // Cross-family on purpose; see the header.
-    model: "gemini-3.1-pro-preview",
+    // Same backbone as every other role, and as every baseline; see the header for
+    // why the cross-family default was withdrawn. `--verifier-model` restores it as
+    // an ablation.
+    model: "gpt-5-mini",
     writeTools: ["write_findings"],
     mayDelegate: false,
   },

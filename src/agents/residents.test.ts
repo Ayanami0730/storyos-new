@@ -139,7 +139,9 @@ describe("residency", () => {
     const { registry, built } = residents();
     await registry.invoke("verifier", "check", ctx);
     const agent = built[0]!;
-    assert.equal(agent.model, "gemini-3.1-pro-preview");
+    // Same backbone as every other role since 0.6.1; see personas.ts for why the
+    // cross-family default was withdrawn.
+    assert.equal(agent.model, "gpt-5-mini");
     assert.ok(agent.toolNames.includes("write_findings"));
     assert.ok(!agent.toolNames.includes("commit_transaction"));
     assert.match(agent.systemPrompt, /# Verifier/);
@@ -674,7 +676,7 @@ describe("ledger", () => {
     assert.equal(roll["writer:gpt-5-mini"]!.tokens, 280);
     // `reported` keeps what the provider actually said, cache reads included.
     assert.equal(roll["writer:gpt-5-mini"]!.reported, 310);
-    assert.equal(roll["verifier:gemini-3.1-pro-preview"]!.calls, 1);
+    assert.equal(roll["verifier:gpt-5-mini"]!.calls, 1);
   });
 
   it("keeps cache reads out of what the budget charges", async () => {
