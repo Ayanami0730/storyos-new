@@ -77,4 +77,18 @@ phases:
     source:
       scene: s-013
       span: L1-L40
+  - index: 7
+    relation: trusted-diagnostic
+    fromScene: s-015
+    toScene: null
+    transition: Mercy performs the final witnessed naming ritual and sacrifices a
+      private memory token; this continues and deepens her trusted diagnostic
+      role as the community's mediator and ritualist, now including sacrificial
+      cost.
+    asymmetry: Mercy pays the ritual cost and loses a private memory; commune bears
+      witness and offers offerings; Elder curates the scroll fragments and
+      procedure.
+    source:
+      scene: s-015
+      span: L1-L80
 openQuestions: []

@@ -1,0 +1,64 @@
+{
+  "sceneId": "s-015",
+  "claims": [
+    {
+      "entity": "loc-central-courtyard",
+      "attribute": "setup_and_attendance",
+      "quote": "The central courtyard had been hushed and steadied into a theater of memory... The inner ring held witnesses—two from each household whose pebbles had been placed in the alley—faces set to a duty that tasted like salt.",
+      "value": "central courtyard arranged for witnessed naming; inner ring contains two witnesses per household; offerings and low lamps present"
+    },
+    {
+      "entity": "char-elder-storyteller",
+      "attribute": "scroll_fragments_used",
+      "quote": "The Elder pried a page and read the fragment that had drawn them here: a smudged notation that repeated in different hands—'moved to side-yard', 'placed, not named'—and a margin where ink had been scraped away until the paper was raw.",
+      "value": "Elder reads scroll fragments showing patterns of moved/buried/erased entries"
+    },
+    {
+      "entity": "faction-residents-commune",
+      "attribute": "witnessed_testimonies",
+      "quote": "One by one the households came forward... The refugee... spoke of the east step and the child's hand he had held. The witness who had stood with him repeated his words.",
+      "value": "households present witnessed testimonies; refugee and his witness recorded"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "sacrifice_action",
+      "quote": "She drew from the kit a small folded scrap she'd kept for herself... She took the token, held it to her palm, and said, so the crowd could hear but not the world beyond, 'I give what I keep for myself. I give the small thing I hold to remember. Take it and be counted.' She laid the token on the altar and let the folded talisman rest on it.",
+      "value": "Mercy sacrifices a private token representing a private memory into the ritual (voluntary sacrifice)"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "sacrifice_consequence",
+      "quote": "As she spoke, the token loosened in her mind like a thread being cut... Mercy felt a private detail... slip like a coin from a palm. It sank away not like a lost object but like a small door closed: she remembered saying the memory aloud, but when she reached for the picture that had held it, there was a thin, sharp blank that had not been there before.",
+      "value": "Mercy loses a specific private memory detail as cost of the ritual; memory blank occurs"
+    },
+    {
+      "entity": "spirit-vengeful",
+      "attribute": "climactic_response",
+      "quote": "The spirit's reaction was a single, changing sound... the chorus screamed... then something in the howl thinned, as if the absence the spirit had fed upon had been matched by a voluntary absence. The fury did not vanish... it reorganised into a quieter presence: layered voices no longer seeking to erase but to be held—an uneasy mourner.",
+      "value": "spirit is transformed: from feeding on silence to becoming a quieter, named mourner after Mercy's sacrifice"
+    },
+    {
+      "entity": "faction-residents-commune",
+      "attribute": "aftermath_and_plan",
+      "quote": "The Elder closed the scroll and, with a voice that trembled, said, 'It has changed. It is not gone, but it is held. We will keep witnesses and offerings. We will work to name what was left un-named.' They set the date for follow-up witnessings and offerings.",
+      "value": "Aftermath: spirit changed but not gone; plan made for follow-up witnessings and offerings"
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "personal_state_postrite",
+      "quote": "Mercy felt the loss as a new hollow where a small private certainty had been. It would change how she worked—an instrument slightly altered.",
+      "value": "Mercy is altered by losing private memory; her craft is changed (personal state)"
+    }
+  ],
+  "presentEntities": [
+    "char-mercy-chan",
+    "spirit-vengeful",
+    "faction-residents-commune",
+    "char-elder-storyteller",
+    "obj-ritual-kit",
+    "loc-central-courtyard",
+    "char-young-refugee"
+  ],
+  "promises": [],
+  "paysOff": []
+}

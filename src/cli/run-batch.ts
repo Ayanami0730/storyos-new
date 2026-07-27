@@ -62,6 +62,26 @@ const concurrency = Number(flag("concurrency") ?? 3);
  * then backs off from for minutes. The stagger costs less than the backoff.
  */
 const staggerMs = Number(flag("stagger") ?? 20) * 1000;
+
+/**
+ * What actually limits concurrency here, and it is not this machine.
+ *
+ * Measured with five runs in flight: the host sat at a one-minute load of 10–60 on
+ * 24 cores with every run network-bound, and the *gateway* began refusing. Two
+ * distinct 429s, interleaved: per-region rate limits (`Your requests to gpt-5-mini
+ * for gpt-5-mini in polandcentral have exceeded rate limit`, then swedencentral,
+ * then eastus2) and a group-level one (`当前分组上游负载已饱和`). Two runs
+ * accumulated 8 and 11 retry failures, the second reaching attempt 4 of 6 on a
+ * single call, which converts concurrency straight into backoff.
+ *
+ * Nothing is lost when this happens — the retry schedule absorbs it and a
+ * context-builder that finally fails degrades to the deterministic skeleton — but a
+ * run bought with hours of wall clock gets a thinner packet for it. So the practical
+ * ceiling is about four concurrent runs on this gateway, and the resource to budget
+ * is the shared model quota, not CPU. When a long run matters, give it the quota
+ * rather than starting more work beside it.
+ */
+const GATEWAY_CONCURRENCY_CEILING = 4;
 const profile = flag("profile") ?? "generous";
 const sandbox = flag("sandbox") ?? "docker";
 const force = has("force");
@@ -69,6 +89,14 @@ const dryRun = has("dry-run");
 
 const say = (line: string) =>
   console.error(`[${new Date().toISOString().slice(11, 19)}] ${line}`);
+
+if (concurrency > GATEWAY_CONCURRENCY_CEILING) {
+  say(
+    `warning: concurrency ${concurrency} is above the measured gateway ceiling of ` +
+      `${GATEWAY_CONCURRENCY_CEILING} — past it the 429s turn concurrency into backoff ` +
+      `rather than throughput, and a long run beside them gets a thinner packet for it`,
+  );
+}
 
 const tasks = parseTasks(await readFile(tasksFile, "utf8"));
 say(`${tasks.length} task(s) from ${tasksFile}`);

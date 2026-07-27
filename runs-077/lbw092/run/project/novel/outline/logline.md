@@ -1,0 +1,1 @@
+A sheltered lord's daughter and a lowly servant forge a secret tenderness that the strict hierarchy and a father's sense of honour cannot contain; when a misplaced token and a devoted steward conspire against them, the lovers’ choice to defy rank ends in a private, irreversible tragedy.

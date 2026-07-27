@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+"""Export a finished run into the layout LiveNovelBench's scorers expect.
+
+The contract, from the livenovelbench lane:
+
+    ~/storyos-data/outputs/storyos/novelbench/
+    ├── <task_id>.txt          # plain prose, paragraphs separated by blank lines
+    └── metadata.jsonl         # one line per cell
+
+    {"system":"storyos","bench":"novelbench","task_id":"…","target_words":20000}
+
+Two things this refuses to do, both of them failures the two repositories have
+already produced between them:
+
+  * **It will not export a task that is not in the tier it is being scored at.**
+    `target_words` decides attainment, and the tier manifest decides which target a
+    task was asked for. `tier-20k.json` changed under us mid-run — it now holds
+    twelve ids instead of ten — and `task-fantasy-the-girl-with-a-thousand-faces`
+    moved to the 80k tier, so a 20,000-word run of it is off-manifest. Scoring it as
+    a 20k cell would report a task against a length nobody asked it for, which is
+    the exact mistake the batch runner's schema comments exist to prevent.
+  * **It will not write `metadata.jsonl` without `target_words`.** Omitting it makes
+    the pipeline fall back to the per-book anchored target in `tasks.jsonl` — 57k to
+    142k words — and attainment comes out wrong rather than absent.
+
+    python3 smoke/export-lnb.py runs-070/lnb20k-fantasy-daughter-of-crows/run \
+        --task-id task-fantasy-daughter-of-crows --tier 20k
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import pathlib
+import sys
+
+BENCH = pathlib.Path.home() / "lane" / "livenovelbench" / "benchmarks" / "novelbench"
+DEST = pathlib.Path.home() / "storyos-data" / "outputs" / "storyos" / "novelbench"
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("run", help="a run directory containing story.md")
+    ap.add_argument("--task-id", required=True)
+    ap.add_argument("--tier", required=True, help="20k | 40k | 60k | 80k | 100k")
+    ap.add_argument("--dest", default=str(DEST))
+    ap.add_argument("--force-off-manifest", action="store_true",
+                    help="export a task the tier does not list; it is not a Table 1 cell")
+    args = ap.parse_args()
+
+    manifest_path = BENCH / f"tier-{args.tier}.json"
+    if not manifest_path.exists():
+        print(f"no tier manifest at {manifest_path}", file=sys.stderr)
+        return 2
+    manifest = json.loads(manifest_path.read_text())
+    target = manifest["target_words_override"]
+
+    if args.task_id not in manifest["ids"]:
+        where = [
+            t for t in ("20k", "40k-topup", "60k", "80k", "100k")
+            if (BENCH / f"tier-{t}.json").exists()
+            and args.task_id in json.loads((BENCH / f"tier-{t}.json").read_text())["ids"]
+        ]
+        msg = (
+            f"{args.task_id} is not in the {args.tier} tier"
+            + (f" — it is in {', '.join(where)}" if where else "")
+            + ". Scoring it here would report it against a length it was never asked for."
+        )
+        if not args.force_off_manifest:
+            print(f"refused: {msg}", file=sys.stderr)
+            print("Pass --force-off-manifest to export it anyway as a robustness "
+                  "datapoint, which is not a Table 1 cell.", file=sys.stderr)
+            return 1
+        print(f"warning: {msg}", file=sys.stderr)
+
+    story = pathlib.Path(args.run) / "story.md"
+    if not story.exists():
+        print(f"no story.md under {args.run} — the run has not finished", file=sys.stderr)
+        return 1
+    text = story.read_text()
+    words = len(text.split())
+
+    dest = pathlib.Path(args.dest)
+    dest.mkdir(parents=True, exist_ok=True)
+    (dest / f"{args.task_id}.txt").write_text(text)
+
+    # Merged by task_id rather than appended, so re-exporting a rerun replaces its
+    # row instead of leaving two rows that disagree about the same cell.
+    meta_path = dest / "metadata.jsonl"
+    rows = {}
+    if meta_path.exists():
+        for line in meta_path.read_text().splitlines():
+            if line.strip():
+                row = json.loads(line)
+                rows[row["task_id"]] = row
+    rows[args.task_id] = {
+        "system": "storyos",
+        "bench": "novelbench",
+        "task_id": args.task_id,
+        "target_words": target,
+        # Provenance, so a cell can be traced back to the harness version that wrote
+        # it. Not required by the contract and cheap to carry.
+        "source_run": str(pathlib.Path(args.run).resolve()),
+        "harness_version": harness_version(pathlib.Path(args.run)),
+        "words": words,
+    }
+    meta_path.write_text(
+        "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows.values())
+    )
+
+    print(f"{args.task_id}: {words:,} words -> {dest}/{args.task_id}.txt")
+    print(f"  target {target:,} ({100 * words / target:.0f}% attainment), "
+          f"{len(rows)} row(s) in metadata.jsonl")
+    return 0
+
+
+def harness_version(run: pathlib.Path) -> str | None:
+    try:
+        return json.loads((run / "summary.json").read_text()).get("harness_version")
+    except OSError:
+        return None
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

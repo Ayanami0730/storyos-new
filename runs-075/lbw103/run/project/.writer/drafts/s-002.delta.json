@@ -1,0 +1,102 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "obj-truck",
+      "attribute": "tank_fraction",
+      "quote": "By the time we limped up to the hospital, the pickup had maybe a quarter left.",
+      "value": "~0.25",
+      "supersedes": {
+        "factId": "obj-truck.tank_fraction",
+        "reason": "Updated after driving from gas station to hospital; deliberate recalculation based on travel."
+      }
+    },
+    {
+      "entity": "obj-medkit",
+      "attribute": "contents",
+      "quote": "Notebook — margin: morphine x3 taken from pharmacy; medkit now lists: 3 morphine vials, 1 tourniquet, 2 antibiotic packets.",
+      "value": "3 morphine vials; 1 tourniquet; 2 antibiotic packets"
+    },
+    {
+      "entity": "loc-hospital",
+      "attribute": "pharmacy_controlled_meds",
+      "quote": "There were controlled meds behind it — bottles lined and neat — and a safe with trays of ampoules.",
+      "value": "present"
+    },
+    {
+      "entity": "char-maya",
+      "attribute": "legal_access_pharmacy_controlled_meds",
+      "quote": "As an EMT trainee she doesn't have the legal right to open the controlled cabinet.",
+      "value": "no"
+    },
+    {
+      "entity": "loc-hospital",
+      "attribute": "pharmacy_accessed_by_force",
+      "quote": "Lina wedged the pickaxe handle into the lock and Dan rammed the door. It snapped with a sound like breaking a promise.",
+      "value": "yes"
+    },
+    {
+      "entity": "obj-pickaxe",
+      "attribute": "provenance",
+      "quote": "Pickaxe: Willow Creek Hardware, Main Street; it was in the truck before we left the gas station (old and heavy).",
+      "value": "Willow Creek Hardware, Main Street"
+    },
+    {
+      "entity": "obj-pickaxe",
+      "attribute": "in_truck_before_departure",
+      "quote": "Pickaxe: Willow Creek Hardware, Main Street; it was in the truck before we left the gas station (old and heavy).",
+      "value": "true"
+    },
+    {
+      "entity": "loc-hospital",
+      "attribute": "er_engaged_infected_count",
+      "quote": "There were three of them tucked into the rooms and the hallway when we came through the door — one on a gurney clutching at a sheet, one hunched behind the nurses' station, and another that came out of a supply closet with a sound like a slammed fist.",
+      "value": "3"
+    },
+    {
+      "entity": "char-otto",
+      "attribute": "preexisting_condition",
+      "quote": "He has a bad knee that takes his balance when the world leans; I know because his steps are the kind you apologise for.",
+      "value": "bad knee (limited mobility)"
+    },
+    {
+      "entity": "char-otto",
+      "attribute": "bitten_location",
+      "quote": "He was bitten on the forearm.",
+      "value": "forearm"
+    },
+    {
+      "entity": "loc-old-bridge",
+      "attribute": "status",
+      "quote": "The bridge that had been the short cut was worse than pencil on paper — planks gone, beams splintered like someone had used the bridge for a kind of violence. Cars sat on the lip of the span, bumper to bumper, and a mound of wreckage had been heaped across the far side. A snapped support leaned like a broken finger.",
+      "value": "blocked/collapsed"
+    },
+    {
+      "entity": "loc-rail-yard",
+      "attribute": "detour_planned",
+      "quote": "The map's detour paperwork would toss us the rail yard. Dan pointed and said, \"Rail yard's the only route left. Less cover, more noise — but it gets us past the bridge.\"",
+      "value": "planned detour due to bridge block"
+    },
+    {
+      "entity": "obj-truck",
+      "attribute": "battery_maintenance",
+      "quote": "The pickup's battery is weak; I scraped the terminals, taped a cracked vacuum hose enough to keep the hand pump from wobbling, twisted a spare cable into a bypass and cranked the starter relay so she would spin smoother.",
+      "value": "battery weak; terminals cleaned; cracked vacuum hose taped; starter relay bypassed with spare cable"
+    }
+  ],
+  "presentEntities": [
+    "char-ellie",
+    "char-otto",
+    "char-maya",
+    "char-lina",
+    "loc-hospital",
+    "loc-old-bridge",
+    "loc-rail-yard",
+    "obj-medkit",
+    "obj-pickaxe",
+    "obj-truck",
+    "obj-radio"
+  ],
+  "promises": [],
+  "paysOff": []
+}

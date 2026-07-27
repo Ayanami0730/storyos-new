@@ -1,0 +1,46 @@
+{
+  "sceneId": "s-016",
+  "claims": [
+    {
+      "entity": "char-rue",
+      "attribute": "guarantor_action",
+      "quote": "\"I volunteer to be guarantor—my time and my instructional hours—to underwrite the first set of petitions. Let the record show a guarantor with a name who will be accountable.\"",
+      "value": "Rue volunteers as guarantor, pledging instructional hours to underwrite petitions for release"
+    },
+    {
+      "entity": "obj-folio",
+      "attribute": "pending_release_entry",
+      "quote": "The clerk wrote the heading into the Folio: 'Pending Release — conditional upon sponsor or municipal acknowledgment; civic exchange recorded.' He left a narrow column for names and another for witnesses.",
+      "value": "Folio contains a new 'Pending Release' column for conditional release based on sponsor/municipal acknowledgment and civic exchange"
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "convened_counsel_schedule",
+      "quote": "\"We will convene counsel within three days to consider petitions under this entry,\" she said. \"Let the clerks prepare the lists.\"",
+      "value": "Headmistress schedules counsel within three days to review petitions under the Pending Release entry"
+    },
+    {
+      "entity": "char-war-envoy",
+      "attribute": "recognized_civic_pledge_in_principle",
+      "quote": "The Envoy inclined his head and, in a small, efficient motion, noted the city's receipt of the civic pledge—an acceptance in principle, not full ratification.",
+      "value": "Envoy acknowledged the civic pledge in principle; acceptance in principle recorded"
+    },
+    {
+      "entity": "collective-the-hundred",
+      "attribute": "costs_of_release_mechanism",
+      "quote": "\"The cost was immediate. The rota boards were adjusted: apprentices would lose hours; ration tickets were cut; cooks doubled their output.\"",
+      "value": "Costs include reduced apprenticeship hours, rationed provisions, and increased labor demands"
+    }
+  ],
+  "presentEntities": [
+    "char-rue",
+    "char-war-envoy",
+    "char-headmistress",
+    "obj-binding-seal",
+    "obj-folio",
+    "collective-the-hundred",
+    "char-loren"
+  ],
+  "promises": [],
+  "paysOff": []
+}
