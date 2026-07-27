@@ -1,0 +1,29 @@
+pairId: obj-mantel-clock--obj-spring-spike-device
+participants:
+  - obj-mantel-clock
+  - obj-spring-spike-device
+phases:
+  - index: 1
+    relation: physically_linked_by_thread
+    fromScene: s-003
+    toScene: s-003
+    transition: Narrator traces a thread from the device toward the mantel and finds
+      clock oil on it; demonstration ties the device activation to the mantel
+      clock cam.
+    source:
+      scene: s-003
+      span: L20-L60
+  - index: 2
+    relation: physically_linked_by_thread
+    fromScene: s-003
+    toScene: null
+    transition: "This phase records the physical link demonstrated in scene s-003:
+      the narrator traced a thread from the device toward the mantel, found
+      clock oil on it, and demonstrated the device springs when the mantel clock
+      cam moves. Note: an earlier relation was mistakenly recorded under the id
+      'obj-spring-spike_device' due to a typographic error; this phase
+      supersedes that erroneous record for the canonical pairing."
+    source:
+      scene: s-003
+      span: L20-L60
+openQuestions: []

@@ -1,0 +1,62 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "entity": "loc-archive",
+      "attribute": "smell",
+      "value": "vellum and cold dust",
+      "quote": "The Archive smelled of vellum and cold dust — everything there kept its breath low."
+    },
+    {
+      "entity": "loc-archive",
+      "attribute": "access_restrictions",
+      "value": "full Folio kept in Archive; only staff and supervised apprentices may handle it; thin foliolist posted; removal of pages requires two witnesses and an entry in the Archive register",
+      "quote": "\"Full Folio is kept in the Archive; only staff and supervised apprentices may handle it.\" ... The Folio's presence was public enough for us to see it; the Archive would take the book later... The house kept the ledger room under strict watch: two locks, a register at the door, and an expectation that removal of folio pages required two witnesses and an entry in the Archive register."
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "archive_duties_assigned",
+      "value": "fetching pages, holding the lamp, wiping folio edges, copying entries into foliolist",
+      "quote": "My job was thin but steady: fetch a page, hold the lamp, wipe a smudge, copy a single address into the day's foliolist."
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "supervised_archive_access_granted",
+      "value": "true",
+      "quote": "Over months I proved careful with ink and order; a junior Archivist granted me supervised access to consult older margins."
+    },
+    {
+      "entity": "obj-folio",
+      "attribute": "marginalia_examples",
+      "value": "(child present); * petition deferred; — vanished (no trace); (entry redacted)",
+      "quote": "Some notes were thin and explanatory — \"(child present)\" or \"* petition deferred\" — small, bureaucratic and indifferent. ... I saw a small cluster of shorthand that made the air in my chest go colder: \"— vanished (no trace).\""
+    },
+    {
+      "entity": "loc-dormitory",
+      "attribute": "observed_empty_bunk",
+      "value": "a bunk stripped bare with no trunk at its foot",
+      "quote": "I saw such a bunk — a bunk a few rows down had been stripped bare; no trunk stood at its foot."
+    },
+    {
+      "entity": "loc-archive",
+      "attribute": "archive_security_features",
+      "value": "two locks and a register at the door",
+      "quote": "The house kept the ledger room under strict watch: two locks, a register at the door, and an expectation that removal of folio pages required two witnesses and an entry in the Archive register."
+    },
+    {
+      "entity": "loc-garden",
+      "attribute": "role",
+      "value": "place where girls speak more freely and where Rue goes to think and run errands",
+      "quote": "I ran errands into the Garden sometimes, carrying forms that smelled of vellum and damp earth. The Garden was where we could breathe and say louder things in safer company."
+    }
+  ],
+  "presentEntities": [
+    "char-rue",
+    "group-the-hundred",
+    "loc-archive",
+    "obj-folio",
+    "loc-garden"
+  ],
+  "promises": [],
+  "paysOff": []
+}

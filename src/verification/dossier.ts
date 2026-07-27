@@ -39,7 +39,12 @@
  * claims and what canon holds, which exists nowhere until it is computed.
  */
 
-import type { CanonFact, ProposedClaim, SceneDelta } from "./deterministic.ts";
+import {
+  type CanonFact,
+  type ProposedClaim,
+  type SceneDelta,
+  isVolatileAttribute,
+} from "./deterministic.ts";
 import type { Finding } from "./finding.ts";
 
 const normalise = (value: string) => value.trim().replace(/\s+/g, " ").toLowerCase();
@@ -51,6 +56,17 @@ export type ClaimVerdict =
   | "supersedes"
   /** Canon holds a different value and nobody declared anything. A real pair. */
   | "conflicts"
+  /**
+   * Canon holds a different value on an attribute that is supposed to change.
+   *
+   * A character walking from a house to the street, or learning something. The
+   * deterministic layer used to report these as contradictions at severity `error`
+   * — two per scene on `runs-070/lbw070` s-002, which stalled the repair loop and
+   * committed a scene carrying two recorded defects that were not defects. It no
+   * longer does, so the verifier is told instead: there is a real question here,
+   * and it is whether the prose *shows* the change, not whether the value moved.
+   */
+  | "moved"
   /** Canon holds nothing for this entity and attribute. Normal, not a defect. */
   | "new";
 
@@ -83,9 +99,12 @@ export function compareClaims(
     if (normalise(existing.value) === normalise(claim.value)) {
       return { ...base, verdict: "agrees" as ClaimVerdict };
     }
+    if (claim.supersedes?.factId === existing.id) {
+      return { ...base, verdict: "supersedes" as ClaimVerdict };
+    }
     return {
       ...base,
-      verdict: (claim.supersedes?.factId === existing.id ? "supersedes" : "conflicts") as ClaimVerdict,
+      verdict: (isVolatileAttribute(claim.attribute) ? "moved" : "conflicts") as ClaimVerdict,
     };
   });
 }
@@ -113,7 +132,7 @@ export function renderDossier(input: {
   const rows = compareClaims(input.delta.claims, input.canon);
   const counts = rows.reduce<Record<ClaimVerdict, number>>(
     (acc, row) => ({ ...acc, [row.verdict]: (acc[row.verdict] ?? 0) + 1 }),
-    { agrees: 0, supersedes: 0, conflicts: 0, new: 0 },
+    { agrees: 0, supersedes: 0, conflicts: 0, moved: 0, new: 0 },
   );
 
   const lines: string[] = [
@@ -124,8 +143,8 @@ export function renderDossier(input: {
     "have to recall a file to know what it says.",
     "",
     `${rows.length} claim(s): ${counts.conflicts} conflict, ${counts.supersedes} declared ` +
-      `change, ${counts.agrees} agree with canon, ${counts.new} establish something for the ` +
-      `first time.`,
+      `change, ${counts.moved} moved on an attribute that changes, ${counts.agrees} agree with ` +
+      `canon, ${counts.new} establish something for the first time.`,
     "",
   ];
 
@@ -159,6 +178,17 @@ export function renderDossier(input: {
             `(${row.canonSource}), draft says "${row.claimed}", **declared as a deliberate ` +
             `change**. Your question is whether the prose actually shows the change happening ` +
             `— a declared supersede with nothing on the page is a retcon, not an event.`,
+        );
+        break;
+      case "moved":
+        lines.push(
+          `- \`${row.entity}.${row.attribute}\`: canon says "${row.canon}" ` +
+            `(${row.canonSource}), draft says "${row.claimed}". This attribute is one that ` +
+            `changes as the story runs — somebody walked somewhere, learnt something, picked ` +
+            `something up — so the change is **not** a contradiction and no declaration is ` +
+            `needed. The question worth asking is whether the prose *shows* it happening: a ` +
+            `character who is suddenly elsewhere with no journey, or who suddenly knows a ` +
+            `thing nobody told them, is a real defect, and it is one only a reading finds.`,
         );
         break;
       case "conflicts":

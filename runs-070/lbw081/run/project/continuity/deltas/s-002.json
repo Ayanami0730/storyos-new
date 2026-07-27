@@ -1,0 +1,104 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "obj-mantel-clock",
+      "attribute": "bezel_missing_screw",
+      "quote": "On the mantel, close to the gilt clock, a faint smear of oil caught the light when I put my palm over it — clock oil, dark and slightly sicced — and beside the clock there was an empty seat where a screw should have been. \"The mantel clock, a gilt 19th-century piece, chimes every quarter-hour; its mechanism was Victor's pride.\" The bezel had a clear gap: a missing bezel screw.",
+      "value": "true"
+    },
+    {
+      "entity": "loc-study",
+      "attribute": "mantel_grease_smear",
+      "quote": "There were other, smaller things. A faint grease smear along the mantel's edge where someone had rested a hand while fiddling with the clock; small metal filings gathered in the shadow beneath the gilt work; a tiny abrasion on the chair frame close to that worn circular spot, and one tuft of the upholstery pulled and stuck up as if fingers had worried at it.",
+      "value": "present"
+    },
+    {
+      "entity": "obj-file-rasp",
+      "attribute": "found_location_declared_by_writer",
+      "quote": "I will be clear about a choice I made for the sake of being able to stage what followed: I found the obj-file-rasp in a top drawer of the loc-kitchen during my walk-through. The rasp had fresh filings in its teeth. I mark that location as my deliberate staging choice because the index did not specify where the rasp was found.",
+      "value": "loc-kitchen (writer-declared)"
+    },
+    {
+      "entity": "obj-file-rasp",
+      "attribute": "fresh_filings_visible",
+      "quote": "I will be clear about a choice I made for the sake of being able to stage what followed: I found the obj-file-rasp in a top drawer of the loc-kitchen during my walk-through. The rasp had fresh filings in its teeth.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-chair-study",
+      "attribute": "upholstery_tuft_disturbance",
+      "quote": "There were other, smaller things. A faint grease smear along the mantel's edge where someone had rested a hand while fiddling with the clock; small metal filings gathered in the shadow beneath the gilt work; a tiny abrasion on the chair frame close to that worn circular spot, and one tuft of the upholstery pulled and stuck up as if fingers had worried at it.",
+      "value": "present"
+    },
+    {
+      "entity": "obj-chair-study",
+      "attribute": "tiny_abrasion_near_worn_spot",
+      "quote": "There were other, smaller things. A faint grease smear along the mantel's edge where someone had rested a hand while fiddling with the clock; small metal filings gathered in the shadow beneath the gilt work; a tiny abrasion on the chair frame close to that worn circular spot, and one tuft of the upholstery pulled and stuck up as if fingers had worried at it.",
+      "value": "present"
+    },
+    {
+      "entity": "obj-mantel-clock",
+      "attribute": "filings_found_beneath",
+      "quote": "There were other, smaller things. A faint grease smear along the mantel's edge where someone had rested a hand while fiddling with the clock; small metal filings gathered in the shadow beneath the gilt work; a tiny abrasion on the chair frame close to that worn circular spot, and one tuft of the upholstery pulled and stuck up as if fingers had worried at it.",
+      "value": "present"
+    },
+    {
+      "entity": "char-owen-myers",
+      "attribute": "produced_rail_ticket",
+      "quote": "He was quick to deflect. \"I do my work at the bench,\" he said, hands already open to show nothing to be hidden. \"That rasp's mine. I used it earlier—\" He cut off, and then, with another movement, drew from his coat pocket a folded ticket. It was the sort of paper that can make an alibi feel like a wall. \"A train ticket,\" he said.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-rail-ticket",
+      "attribute": "found_in_coat_pocket_declared_by_writer",
+      "quote": "He was quick to deflect. \"I do my work at the bench,\" he said, hands already open to show nothing to be hidden. \"That rasp's mine. I used it earlier—\" He cut off, and then, with another movement, drew from his coat pocket a folded ticket. It was the sort of paper that can make an alibi feel like a wall. \"A train ticket,\" he said. For the sake of the scene — and because that detail is not in the index — I record here as my writer's choice that the ticket was for a 9:22 p.m. departure from the nearby station and that it was found in his coat pocket.",
+      "value": "found_in_coat_pocket; departure_9:22_p.m. (writer-declared)"
+    },
+    {
+      "entity": "loc-kitchen",
+      "attribute": "drawer_contains_file_rasp",
+      "quote": "I will be clear about a choice I made for the sake of being able to stage what followed: I found the obj-file-rasp in a top drawer of the loc-kitchen during my walk-through. The rasp had fresh filings in its teeth.",
+      "value": "true"
+    },
+    {
+      "entity": "char-lucy-hale",
+      "attribute": "answer_style",
+      "quote": "Lucy answered in short, trembling sentences. She could not hide how thin her voice had gone: \"I— I was in the drawing-room. I heard the bell. I went to the study when Alfred called.\"",
+      "value": "short, trembling answers"
+    },
+    {
+      "entity": "char-alfred-broome",
+      "attribute": "gave_precise_timing_in_kitchen",
+      "quote": "Alfred, when it came to his turn, gave a precise account of what he had been doing in the kitchen and when. He laid out his minutes like a clerk: he had lit the samovar, checked the oven at half-past eight, polished a tray at a quarter to nine and moved to fetch tea at nine.",
+      "value": "true"
+    },
+    {
+      "entity": "char-owen-myers",
+      "attribute": "skill_and_suspect_status",
+      "quote": "The evidence made him the obvious suspect: the missing bezel screw, the fresh filings, his skill with small mechanisms.",
+      "value": "skilled_in_small_mechanisms; obvious_suspect"
+    },
+    {
+      "entity": "char-james-cole",
+      "attribute": "took_rasp_into_evidence_towel",
+      "quote": "I left the kitchen with that sentence under my tongue and the rasp in a paper towel at my hip.",
+      "value": "held_in_paper_towel_pending_evidence_handling"
+    }
+  ],
+  "presentEntities": [
+    "char-james-cole",
+    "char-lucy-hale",
+    "char-alfred-broome",
+    "char-owen-myers",
+    "char-evelyn-ross",
+    "loc-study",
+    "loc-kitchen",
+    "obj-chair-study",
+    "obj-mantel-clock",
+    "obj-rail-ticket",
+    "obj-file-rasp"
+  ],
+  "promises": [],
+  "paysOff": []
+}

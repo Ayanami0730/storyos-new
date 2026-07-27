@@ -1,0 +1,70 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "loc-main-alley-spiral",
+      "attribute": "environmental_markers",
+      "value": "cold patch near left-hand stair; thin black crescent scorch on stoop; talisman flipped face-down; low thrum in metal objects",
+      "quote": "The alley held the same environmental markers the rite warned would persist. A cold patch hung near the left-hand stair — not a breeze so much as an absence that made the skin pucker. The thin black crescent on the stoop was still there, dark against the worn stone: a scorch like the bite of heat with no ash to explain it. A talisman lay face-down by a threshold, its paper rimmed with the dust of someone who'd worried it with fingers."
+    },
+    {
+      "entity": "char-mrs-choi",
+      "attribute": "gestures",
+      "value": "keeps upside-down pot lid on crate when discussing the wail; fingers a child's single shoe and presses it to her chest; pins and rebuckles a red talisman above her doorway",
+      "quote": "Mrs. Choi had set an upside-down pot lid on the crate beside Mercy; she kept one fist around a child's single shoe and held it to her chest as she spoke, as if the shoe itself might quiet the memory.\n\n\"It goes on at night,\" Mrs. Choi said again, voice low and cracked. She lifted the little red talisman above her doorway with a trembling thumb when she mentioned the calls."
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "diagnostic_rite_steps",
+      "value": "three soft bell strikes; light a pinch of sandalwood and frankincense; trace knife above smoke; say 'If blood remembers, let it speak.'; fold talisman over knife-tip and press to forehead",
+      "quote": "The steps were small and precise: three soft bell strikes to test the air's response; a pinch of sandalwood and frankincense lit and coaxed until smoke gathered; the knife's edge traced above that smoke; the words spoken, the talisman folded over the tip and pressed to the forehead."
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "diagnostic_sensations",
+      "value": "smoke bends; bells hollow ring; talisman paper thrums; cold patch resists warming; scorch remains; metallic taste and lightheadedness",
+      "quote": "The smoke bent as if pulled toward a shape the eye could not hold. The bells answered with a hollow ring that shivered through the crate and set the teeth on edge. The talisman's paper thrummed in her palm like a trapped insect. The cold patch refused to warm when bodies crowded it; the scorched crescent stayed black and particular. Small metal things nearby began to tremble with a low, continuing vibration, the kind of thrum that made a talisman hum in the night."
+    },
+    {
+      "entity": "obj-bloodied-photo",
+      "attribute": "discovery_locus",
+      "value": "tucked behind a false back in a locked lacquer cupboard that had been pried open recently",
+      "quote": "Tucked behind a false back, hidden as if hurriedly, she found a photograph folded and stained, the edges feathered with age and damp."
+    },
+    {
+      "entity": "obj-bloodied-photo",
+      "attribute": "description",
+      "value": "black-and-white photograph of a barefoot boy, about seven or eight, with a dark smear staining a corner",
+      "quote": "It was a small black-and-white of a barefoot boy in a plain shirt, no more than seven or eight. Something dark stained the corner of the image — a smear that could have been blood or rust."
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "holds",
+      "value": "obj-bloodied-photo",
+      "quote": "Mercy closed her hand over the card and slid it into the inner fold of her robe instead."
+    },
+    {
+      "entity": "loc-main-alley-spiral",
+      "attribute": "supernatural_nature",
+      "value": "communal wound rather than household haunt; anchored to wartime memory",
+      "quote": "\"This isn't the small haunt that forgets when you pass by,\" she said, low enough that only the nearest could hear. \"It answers to more than one house. It Answers to the City.\""
+    }
+  ],
+  "presentEntities": [
+    "char-mercy-chan",
+    "char-mrs-choi",
+    "group-kowloon-residents",
+    "loc-main-alley-spiral",
+    "obj-mercys-incense-box",
+    "obj-bloodied-photo"
+  ],
+  "promises": [
+    {
+      "id": "promise-s-002-01",
+      "promise": "Mercy will investigate beyond the diagnostic, using the photograph and alley's markers as a lead, and return with findings or next actions.",
+      "quote": "\"This isn't the small haunt that forgets when you pass by,\" she said, low enough that only the nearest could hear. \"It answers to more than one house. It answers to the City.\"",
+      "dueByScene": "s-004"
+    }
+  ],
+  "paysOff": []
+}

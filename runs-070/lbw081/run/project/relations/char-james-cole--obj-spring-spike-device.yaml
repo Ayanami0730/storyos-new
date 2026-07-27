@@ -1,0 +1,16 @@
+pairId: char-james-cole--obj-spring-spike-device
+participants:
+  - char-james-cole
+  - obj-spring-spike-device
+phases:
+  - index: 1
+    relation: collected/removed
+    fromScene: s-003
+    toScene: null
+    transition: James Cole finds components in a padding pocket in the chair and
+      removes them, carrying them wrapped in watchcloth and thread in an
+      envelope.
+    source:
+      scene: s-003
+      span: L70-L80
+openQuestions: []

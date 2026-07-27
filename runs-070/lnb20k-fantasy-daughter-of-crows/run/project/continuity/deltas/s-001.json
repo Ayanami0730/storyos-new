@@ -1,0 +1,95 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "char-rue",
+      "attribute": "sold_self_to_academy",
+      "value": "true",
+      "quote": "So I sold myself."
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "consented",
+      "value": "true",
+      "quote": "I had consented."
+    },
+    {
+      "entity": "loc-ceremony-hall",
+      "attribute": "smell",
+      "value": "beeswax polish and boiled linen",
+      "quote": "The Ceremony Hall smelled of beeswax polish and boiled linen: the kind of clean that announces itself rather than earning quiet trust."
+    },
+    {
+      "entity": "obj-folio",
+      "attribute": "folio_entry_template",
+      "value": "Folio Entry — Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.",
+      "quote": "The Folio was open where a scribe had left it, a pale rectangle of invitation: “Folio Entry — Name: __________________; Age: __; Date: ______; Intake: One hundred; Provenance (sold/placed/orphaned): __________; Signature: __________________; Witness: Headmistress / Scribe.”"
+    },
+    {
+      "entity": "group-the-hundred",
+      "attribute": "intake_number_per_year",
+      "value": "one hundred",
+      "quote": "The hundred benches were arranged like a small amphitheatre; families sat in the outer rings, sober as undertakers."
+    },
+    {
+      "entity": "obj-bell",
+      "attribute": "role",
+      "value": "marks intakes and ends ceremony with a single bronze note",
+      "quote": "The Bell — a single bronze note struck from a high arch — cut the murmurs and put us under the House's attention."
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "public_voice",
+      "value": "formal, composed, expert at maintaining charitable image",
+      "quote": "The Headmistress was everything polished with use. She wore mercy as other people wear good coats — tailored to fit, and kept for public weather."
+    },
+    {
+      "entity": "char-headmistress",
+      "attribute": "stated_statistics",
+      "value": "Out of the hundred who enter each year, only three leave at the end of their ten-year term.",
+      "quote": "\"Out of the hundred who enter each year,\" she said, \"only three leave at the end of their ten-year term. The rest remain under the Academy's charge as is recorded.\""
+    },
+    {
+      "entity": "obj-contract",
+      "attribute": "term_length",
+      "value": "ten years",
+      "quote": "The Contract's clause was quiet in the packet but not shy: ten years."
+    },
+    {
+      "entity": "obj-contract",
+      "attribute": "signed_by",
+      "value": "char-rue",
+      "quote": "I signed in a hand that had practised keeping accounts in cramped ledgers."
+    },
+    {
+      "entity": "obj-folio",
+      "attribute": "witness_mark",
+      "value": "Headmistress witness mark beside Rue's signature",
+      "quote": "The Headmistress dipped a fingertip and made a mark beside the signature — her witness."
+    },
+    {
+      "entity": "loc-ceremony-hall",
+      "attribute": "headmistress_closing_line",
+      "value": "So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.",
+      "quote": "\"So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.\""
+    }
+  ],
+  "presentEntities": [
+    "char-rue",
+    "loc-ceremony-hall",
+    "obj-contract",
+    "obj-folio",
+    "char-headmistress",
+    "group-the-hundred",
+    "loc-mercy-academy"
+  ],
+  "promises": [
+    {
+      "id": "promise-folio-record",
+      "promise": "The Folio will stand as record and law for the intake, establishing the Academy's charge over entrants.",
+      "quote": "\"So entered under the charge of the Mercy Academy. Let the Folio stand as record and law. Let those within this house remember that mercy is accounted for by service and attention, not by indulgence.\"",
+      "dueByScene": ""
+    }
+  ],
+  "paysOff": []
+}

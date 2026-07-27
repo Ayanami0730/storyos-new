@@ -1,0 +1,17 @@
+pairId: obj-mantel-clock--obj-spring-spike_device
+participants:
+  - obj-mantel-clock
+  - obj-spring-spike_device
+phases:
+  - index: 1
+    relation: linked_via_thread
+    fromScene: s-003
+    toScene: null
+    transition: Narrator traces a thread carrying clock oil from the device toward
+      the mantel and demonstrates the device springing when the mantel clock cam
+      moves; establishes a physical link between the device and the mantel
+      clock.
+    source:
+      scene: s-003
+      span: L20-L60
+openQuestions: []

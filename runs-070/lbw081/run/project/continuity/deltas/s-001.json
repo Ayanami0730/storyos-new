@@ -1,0 +1,124 @@
+{
+  "sceneId": "s-001",
+  "claims": [
+    {
+      "entity": "loc-study",
+      "attribute": "door_locked_from_inside",
+      "quote": "The study's door was locked from the inside, and every window in that room was latched.",
+      "value": "true"
+    },
+    {
+      "entity": "loc-study",
+      "attribute": "windows_latched_from_inside",
+      "quote": "The study's door was locked from the inside, and every window in that room was latched.",
+      "value": "true"
+    },
+    {
+      "entity": "char-victor-hale",
+      "attribute": "found_location",
+      "quote": "Victor Hale lay in his study as if his last conversation had been with the fabric of his own chair.",
+      "value": "loc-study"
+    },
+    {
+      "entity": "obj-chair-study",
+      "attribute": "worn_spot_left_rear_seam",
+      "quote": "\"Victor's heavy upholstered study chair — the site where he was found slumped. It bears old repairs and a faint circular wear spot on the left rear seam.\"",
+      "value": "present"
+    },
+    {
+      "entity": "obj-pocket-watch",
+      "attribute": "found_on_person",
+      "quote": "On his person lay his watch — gold, small, ruined in one graceful way: \"Victor's gold pocket watch found stopped on his person; the minute hand bent and the watch stopped at a time relevant to establishing the minute of death.\"",
+      "value": "true"
+    },
+    {
+      "entity": "obj-pocket-watch",
+      "attribute": "minute_hand_bent",
+      "quote": "The watch had indeed stopped. The minute hand had been bent; the watch read 9:14 p.m.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-pocket-watch",
+      "attribute": "stopped_time",
+      "quote": "The watch had indeed stopped. The minute hand had been bent; the watch read 9:14 p.m.",
+      "value": "9:14 p.m."
+    },
+    {
+      "entity": "obj-mantel-clock",
+      "attribute": "quarter_hour_chime_pattern",
+      "quote": "\"The mantel clock, a gilt 19th-century piece, chimes every quarter-hour; its mechanism was Victor's pride.\" It chimes in the old pattern — one at the quarter, two at the half, three at the three-quarters, four on the hour — and in the hall the chime had already marked the evening for us once.",
+      "value": "one-quarter/two-half/three-three-quarters/four-hour"
+    },
+    {
+      "entity": "obj-will-draft",
+      "attribute": "present_in_study",
+      "quote": "the draft of a new will had been found on Victor's desk and it suggested he intended to cut someone out — \"A draft copy of Victor's new will, suggesting he intended to cut someone out; its existence supplies motive.\"",
+      "value": "true"
+    },
+    {
+      "entity": "loc-study",
+      "attribute": "no_conventional_weapon_found",
+      "quote": "There was, on inspection, no conventional weapon in the room. Whoever had done this had left no knife on the carpet, no blunt instrument on the desk: only the body and its last arrangements.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-chair-study",
+      "attribute": "abrasion_near_frame",
+      "quote": "The study itself offered a handful of physical cues that I filed in the order my hands could reach them: a faint abrasion at the chair frame, dust pressed and tufted where someone had shifted, a bent minute hand on a dead watch that read 9:14, and the worn, circular spot on the left rear seam of the chair where a pocket or a shoulder might have rubbed for years.",
+      "value": "present"
+    },
+    {
+      "entity": "char-lucy-hale",
+      "attribute": "present_in_foyer",
+      "quote": "In the foyer the household and the night's guests had been gathered. Lucy Hale stood by the newel, hands clasped so tight the knuckles showed white; she was plainspoken in her grief and in her fear — inheritance anxiety, you could call it, though that is a small thing when a man is dead.",
+      "value": "true"
+    },
+    {
+      "entity": "char-alfred-broome",
+      "attribute": "present_in_foyer",
+      "quote": "Alfred Broome, the butler, kept his face nearly blank; the stoic, old-school air of a man who has spent his life managing other people's exactness.",
+      "value": "true"
+    },
+    {
+      "entity": "char-owen-myers",
+      "attribute": "present_in_foyer",
+      "quote": "Owen Myers hovered, aggrieved and quick to snap a remark; he is a clock repairman and collector, skilled with small mechanisms and apt to quarrel with Victor over the worth of a thing.",
+      "value": "true"
+    },
+    {
+      "entity": "char-evelyn-ross",
+      "attribute": "present_in_foyer",
+      "quote": "Evelyn Ross smiled with the thin courtesy of business; she was the collector who wanted what Victor kept, every polite syllable counting toward acquisition.",
+      "value": "true"
+    },
+    {
+      "entity": "char-james-cole",
+      "attribute": "narrator_tone",
+      "quote": "I tell you this because detail is the only thing that steadies you in a room where someone has just stopped being anything at all.",
+      "value": "methodical, world-weary, sceptical"
+    },
+    {
+      "entity": "loc-foyer",
+      "attribute": "gathered_party",
+      "quote": "In the foyer the household and the night's guests had been gathered.",
+      "value": "char-lucy-hale,char-alfred-broome,char-owen-myers,char-evelyn-ross"
+    }
+  ],
+  "presentEntities": [
+    "char-james-cole",
+    "char-victor-hale",
+    "char-lucy-hale",
+    "char-alfred-broome",
+    "char-owen-myers",
+    "char-evelyn-ross",
+    "loc-hale-mansion",
+    "loc-study",
+    "loc-foyer",
+    "obj-chair-study",
+    "obj-mantel-clock",
+    "obj-pocket-watch",
+    "obj-will-draft"
+  ],
+  "promises": [],
+  "paysOff": []
+}

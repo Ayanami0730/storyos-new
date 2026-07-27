@@ -1,0 +1,15 @@
+pairId: char-mara--char-rue
+participants:
+  - char-mara
+  - char-rue
+phases:
+  - index: 1
+    relation: cohort_nearby
+    fromScene: s-002
+    toScene: null
+    transition: Mara positions herself as an interlocutor and warns Rue about
+      trusting official records; they become part of the same dorm cohort.
+    source:
+      scene: s-002
+      span: L1-L24
+openQuestions: []

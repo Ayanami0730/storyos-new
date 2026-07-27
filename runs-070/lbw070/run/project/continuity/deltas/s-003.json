@@ -1,0 +1,65 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "attribute": "park_description",
+      "entity": "loc-park",
+      "quote": "\"The park sat like a held breath: tall grasses whispering, the sandbox's dry sugar grain glittering underfoot, hedges stitched together into a green wall. The air smelled of cut grass and cheap sunscreen; distant laughter was a child's spyglass, far and round. Shadows pooled under the swing set; each rustle could be a fox or a secret.\"",
+      "value": "loc-park has tall grasses, a sandbox, hedges forming a green wall; the air smells of cut grass and sunscreen; distant laughter; shadows pool under the swing set."
+    },
+    {
+      "attribute": "brooch_slip_line",
+      "entity": "obj-brooch",
+      "quote": "\"The velvet pouch slipped from the tin—like a small animal startled, the brooch fell free and vanished into the grass.\"",
+      "value": "the brooch slipped from the tin and fell into the park's grass"
+    },
+    {
+      "attribute": "flashlight_state",
+      "entity": "obj-flashlight",
+      "quote": "the flashlight in Jun's pocket—off and quiet—feels like a sleeping sword.",
+      "value": "obj-flashlight is with char-jun and is off"
+    },
+    {
+      "attribute": "current_holder",
+      "entity": "obj-lunchbox",
+      "quote": "Jun drops his pack and the tin rolls, a soft clink.",
+      "value": "char-jun"
+    },
+    {
+      "attribute": "current_holder",
+      "entity": "obj-brooch",
+      "quote": "My fingers close around cold filigree. \"It was silver and cool, the filigree like tiny vines; it had the weight of a thing that remembered being handled.\"",
+      "value": "char-eloise"
+    },
+    {
+      "attribute": "map_holder",
+      "entity": "obj-map",
+      "quote": "I flip the map open across my knee; the inked playground looks like a constellation I've seen a hundred times, and the sandbox is a dot that suddenly matters.",
+      "value": "char-eloise"
+    },
+    {
+      "attribute": "discovery_clue",
+      "entity": "char-jun",
+      "quote": "He crouches, head close to the sand, and pointed: \"There's a shine—over by the corner where the bucket broke.\"",
+      "value": "Jun noticed a shine in the sandbox corner near a broken bucket and indicated it"
+    },
+    {
+      "attribute": "discovery_quote",
+      "entity": "char-jun",
+      "quote": "Jun hissed: 'There—by the fluted bucket. That's metal.'",
+      "value": "Jun discovered the brooch's location by a glint near the fluted bucket"
+    }
+  ],
+  "presentEntities": [
+    "char-eloise",
+    "char-jun",
+    "loc-park",
+    "loc-eloise-house",
+    "obj-brooch",
+    "obj-map",
+    "obj-flashlight",
+    "obj-lunchbox"
+  ],
+  "promises": [],
+  "paysOff": []
+}

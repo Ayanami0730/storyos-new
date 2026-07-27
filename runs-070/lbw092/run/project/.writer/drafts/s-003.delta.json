@@ -1,0 +1,49 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "entity": "loc-great-hall",
+      "attribute": "announcement_by_lord_harrow",
+      "value": "Elys betrothed to Aldric of Westbrook",
+      "quote": "\"Aldric brings Westbrook's levies and a fine marriage with no scandal,\" he announced, and the words rolled across the benches like a struck bell."
+    },
+    {
+      "entity": "obj-letter-sealed",
+      "attribute": "possessed_by",
+      "value": "char-lord-harrow",
+      "quote": "\"One of the men ripped at a seam, and a scrap of paper tumbled into his palm—folded, stained at the corner with wax. Rowan took it as if it were a verdict.\""
+    },
+    {
+      "entity": "char-rowan",
+      "attribute": "ordered_to_apprehend",
+      "value": "char-garr",
+      "quote": "\"This is enough,\" he said. \"Captain Rowan—see that Garr is brought here. Take him from the yard to the courtyard. Let none hinder you.\""
+    },
+    {
+      "entity": "char-marta",
+      "attribute": "coerced_to_reveal_letter",
+      "value": "true",
+      "quote": "\"In a voice that was both a confession and a plea, she answered, 'I kept their hour like a prayer; they have asked me to unmake that prayer.'\""
+    },
+    {
+      "entity": "char-garr",
+      "attribute": "taken_to_courtyard_for_judgement",
+      "value": "true",
+      "quote": "\"The men took Garr by the arms with a practiced surety and threaded him through the servants' passages into the courtyard.\""
+    }
+  ],
+  "presentEntities": [
+    "char-lord-harrow",
+    "char-aldric",
+    "char-elys",
+    "char-garr",
+    "char-marta",
+    "char-rowan",
+    "loc-great-hall",
+    "loc-courtyard",
+    "obj-letter-sealed",
+    "loc-harrowhold"
+  ],
+  "promises": [],
+  "paysOff": []
+}

@@ -3,5 +3,9 @@ name: jun
 sketch: "Jun (12): Eloise's best friend and practical foil — cautious,
   inventive, quietly brave. He follows Eloise into her fantasies and helps solve
   real obstacles."
-identity: {}
-provenance: {}
+identity:
+  appearance: practical companion who counts risks; pockets a flashlight
+  speech: practical, snorts at dramatics
+provenance:
+  appearance: s-001
+  speech: s-001

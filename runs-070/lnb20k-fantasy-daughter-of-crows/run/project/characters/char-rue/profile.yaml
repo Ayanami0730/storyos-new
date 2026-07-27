@@ -3,5 +3,7 @@ name: rue
 sketch: "Rue: the protagonist. Sold herself into the Mercy Academy as a young
   woman. She spends decades inside and ages there; resolute, observant, versed
   in the Academy's rituals and archives."
-identity: {}
-provenance: {}
+identity:
+  name: Rue
+provenance:
+  name: s-001

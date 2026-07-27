@@ -1,0 +1,77 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "entity": "char-elder-storyteller",
+      "attribute": "role",
+      "value": "lay keeper of the temple who guards obj-elder-scroll but is not the formal priest",
+      "quote": "He was a lay keeper of the temple — guardian of the scroll, not its formal priest — and he made that distinction in the way he spoke and in the small rituals he allowed in his rooms."
+    },
+    {
+      "entity": "char-lau-apprentice",
+      "attribute": "age",
+      "value": "fifteen",
+      "quote": "Lau fidgeted with a knot of string in his hands; he was fifteen and watched Mercy with the mixture of dislike for being told what to do and the hunger of someone trying to learn a trade that might save them both."
+    },
+    {
+      "entity": "loc-temple-basement",
+      "attribute": "locked_room_history",
+      "value": "has not been opened since the occupation began",
+      "quote": "\"The room hasn't been opened since the occupation began,\" he said, as if stating a fact that would guard them from any lazy assumptions."
+    },
+    {
+      "entity": "obj-elder-scroll",
+      "attribute": "physical_state_and_handling",
+      "value": "brittle, foxed paper with marginal notes in different hands; the Elder will not let others touch it without negotiation",
+      "quote": "He hummed an old line, fingers worrying the edge of the scroll before he unfurled it. The paper was foxed and creased; marginal notes in different hands crowded some pages, and a faded thumbprint smudged one annotation. He would not let others touch it without a quiet negotiation — he set the scroll between them like a thing both alive and fragile and kept his hand over it until Mercy had bargained with the room."
+    },
+    {
+      "entity": "char-elder-storyteller",
+      "attribute": "oral_fragments",
+      "value": "\"they buried names in the under-floor\"; \"the men taken at the water's turn\"",
+      "quote": "The Elder tapped the scroll, and then, in a voice like dry paper, offered two fragments that sat like hooks in the air: \"they buried names in the under-floor,\" he said, and later, \"the men taken at the water's turn.\""
+    },
+    {
+      "entity": "group-kowloon-residents",
+      "attribute": "negotiation_conditions",
+      "value": "require talisman left under altar; promise to tell names found; two measures of rice to replace lock",
+      "quote": "An elder woman crossed her arms and said plainly: \"We will let you search, if you leave a talisman under the altar and tell us any names you find. Also — the lock must be fixed afterward. Two measures of rice for the lock, and we will close the door again.\""
+    },
+    {
+      "entity": "char-mercy-chan",
+      "attribute": "offering_given",
+      "value": "left two measures of rice on the altar and placed a folded red talisman under the altar",
+      "quote": "Mercy set two measures of rice on the altar herself, the grain bright and ordinary under candlelight. She left a folded red talisman where the smoke would settle and, in a voice meant to be heard, promised to read aloud any names she found."
+    },
+    {
+      "entity": "char-lau-apprentice",
+      "attribute": "holds",
+      "value": "obj-talisman (delegated)",
+      "quote": "\"I'll hold the talisman,\" he said quickly, eager in that messy way apprentices are when offered a task that looks important."
+    },
+    {
+      "entity": "char-elder-storyteller",
+      "attribute": "caution_note",
+      "value": "marginal notes in the scroll may hide names; 'Names rubbed thin hide the worst parts.'",
+      "quote": "The Elder watched, his fingers touching marginalia with the same careful curiosity he'd used on the scroll. He hummed again, an old note that might be a blessing or might be a warning. ... The Elder folded the scroll back to a safe page and, in the hush that followed the bargain, added, almost to himself, \"Mind what the marginal notes hide. Names rubbed thin hide the worst parts.\""
+    }
+  ],
+  "presentEntities": [
+    "char-elder-storyteller",
+    "char-lau-apprentice",
+    "char-mercy-chan",
+    "group-kowloon-residents",
+    "loc-temple-basement",
+    "obj-elder-scroll",
+    "loc-occupation-checkpoint"
+  ],
+  "promises": [
+    {
+      "id": "promise-s-003-01",
+      "promise": "Mercy will search the locked room in the temple basement with witnesses and report any names back to the hall.",
+      "quote": "\"You may search the basement locked room. But take witnesses and bring the names back to the hall.\"",
+      "dueByScene": "s-004"
+    }
+  ],
+  "paysOff": []
+}

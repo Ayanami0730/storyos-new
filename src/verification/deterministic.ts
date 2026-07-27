@@ -109,6 +109,15 @@ export interface CoverageStats {
   readonly claimsCheckedAgainstCanon: number;
   readonly canonFactsInScope: number;
   readonly presentEntities: number;
+  /**
+   * Changes absorbed because the attribute is one that changes.
+   *
+   * Reported rather than merely skipped: this is the count of findings the check
+   * *would* have raised before, and every one of them was a false positive that
+   * could block a commit. If it climbs to where it dwarfs the real contradictions,
+   * the attribute list is the thing to look at.
+   */
+  readonly volatileChanges: number;
 }
 
 export interface DeterministicResult {
@@ -131,6 +140,8 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
   );
 
   let checked = 0;
+  /** Claims whose value changed on an attribute that is supposed to change. */
+  let volatile = 0;
 
   for (const claim of delta.claims) {
     // Reference integrity. An unknown entity is fatal rather than an error:
@@ -162,6 +173,48 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
     checked += 1;
 
     if (normalise(existing.value) === normalise(claim.value)) continue;
+
+    /**
+     * A value that changed because time passed is not a contradiction.
+     *
+     * Measured on `runs-070/lbw070` s-002. Two children walk from a house to the
+     * street. The writer recorded `char-eloise.location = loc-main-street`, canon
+     * held `loc-eloise-house` from the previous scene, and this check raised
+     * `geographical_contradictions` at severity `error` — twice, once per child,
+     * with the *same finding id* because both quote the same sentence. Attempt 2
+     * produced the same two, so the stall detector fired and the scene committed
+     * carrying two recorded defects. Neither was a defect. The characters walked.
+     *
+     * Three things are wrong with treating that as a contradiction, and they
+     * compound:
+     *
+     * It punishes what the writer was told to do. `agents/writer/AGENT.md` gives
+     * `location: lighthouse` as the model example of a standing property — "ask
+     * what the event *left behind*, and record that". Recording it then produces a
+     * blocking finding whose only remedy is a `supersedes` declaration for every
+     * step anybody takes.
+     *
+     * It misuses the subtype. ConStory's `geographical_contradictions` is "a place
+     * whose properties, or whose position relative to other places, drifts between
+     * scenes" — a property of *places*, not a person being in different places at
+     * different times. The subtype for a person in two places is
+     * `simultaneity_contradictions`, and that needs a shared time, which no
+     * value comparison can establish.
+     *
+     * And it costs the scarcest thing in the loop. A false positive spends a repair
+     * round and the writer, which cannot look anything up, spends it damaging prose
+     * that was correct — the failure that already cost this project 8.4 points once.
+     *
+     * So a volatile attribute's change is absorbed silently: the later value wins,
+     * which is what `absorb` already does, and the dossier shows the verifier the
+     * move so it can still ask whether the prose accounts for it. What remains
+     * blocking is a change to something intrinsic — eye colour, a name, an age — for
+     * which "it changed" really does need a reason.
+     */
+    if (isVolatileAttribute(claim.attribute)) {
+      volatile += 1;
+      continue;
+    }
 
     // The values differ. Whether that is a defect depends entirely on whether
     // the writer said it was deliberate.
@@ -229,6 +282,7 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
       claimsCheckedAgainstCanon: checked,
       canonFactsInScope: canon.length,
       presentEntities: delta.presentEntities.length,
+      volatileChanges: volatile,
       // Note the absence of a cap. Coverage is reported, never truncated.
     },
   };
@@ -253,6 +307,71 @@ const EVENT_SHAPED = /^(last_|current_|recent_)?(action|activity|event|deed|move
 
 export function isEventShapedAttribute(attribute: string): boolean {
   return EVENT_SHAPED.test(attribute.trim().toLowerCase().replace(/[\s-]+/g, "_"));
+}
+
+/**
+ * Attributes whose whole purpose is to change as the story runs.
+ *
+ * The distinction this list draws is between a property an entity *has* and a
+ * property that records *where the story has got to*. A character's eye colour
+ * changing needs a reason; a character's location changing is a character walking.
+ * Only the first kind can be contradicted by a later value.
+ *
+ * Knowledge is on the list and it is the entry most worth justifying, because it
+ * looks like the one thing a continuity checker exists to catch. It is the
+ * opposite: a character learning something is the mechanism of nearly every plot,
+ * so `knows_about_the_ledger: false → true` is the story working. The real defect
+ * — a character *acting* on something they were never told — is not visible as a
+ * value change at all; it is visible only in the prose, which is why
+ * `knowledge_contradictions` is the verifier's job and why the dossier hands it
+ * each character's beliefs. The reverse direction, a character forgetting, is a
+ * genuine `memory_contradictions`, and it is also not detectable here: canon holds
+ * the current value, and nothing distinguishes "forgot" from "the writer recorded
+ * the earlier state again" without reading the scene.
+ *
+ * Kept as a list of stems rather than a general rule because the failure mode of
+ * getting it wrong is asymmetric. Too narrow costs a false positive, which spends a
+ * repair round; too broad costs a missed contradiction, which is one error in a
+ * book. The stems here are the ones the writer's own instructions recommend.
+ */
+const VOLATILE = [
+  "location",
+  "position",
+  "place",
+  "whereabouts",
+  "present",
+  "holds",
+  "holding",
+  "carries",
+  "carrying",
+  "possesses",
+  "possessed_by",
+  "wearing",
+  "mood",
+  "emotional_state",
+  "state",
+  "status",
+  "condition",
+  "injury",
+  "injured",
+  "health",
+  "alive",
+  "knows",
+  "knows_about",
+  "knowledge",
+  "aware",
+  "aware_of",
+  "believes",
+  "suspects",
+  "trusts",
+  "goal",
+  "intent",
+  "plan",
+] as const;
+
+export function isVolatileAttribute(attribute: string): boolean {
+  const a = attribute.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  return VOLATILE.some((stem) => a === stem || a.startsWith(`${stem}_`) || a.endsWith(`_${stem}`));
 }
 
 /**

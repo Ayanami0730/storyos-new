@@ -2,4 +2,7 @@ id: loc-kowloon-walled-city
 sketch: The claustrophobic, maze-like enclave of stacked rooms, narrow alleys
   and improvised shrines at the heart of the story; wartime Hong Kong’s densest
   urban pocket.
-first_seen: null
+notes:
+  - The City breathes through tiny vents; daily life is shaped around
+    checkpoints.
+first_seen: s-001

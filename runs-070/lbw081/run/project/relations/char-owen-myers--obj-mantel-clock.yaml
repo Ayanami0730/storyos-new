@@ -1,0 +1,16 @@
+pairId: char-owen-myers--obj-mantel-clock
+participants:
+  - char-owen-myers
+  - obj-mantel-clock
+phases:
+  - index: 1
+    relation: expert-on
+    fromScene: s-001
+    toScene: null
+    transition: Owen Myers is a clock repairman and collector, establishing a
+      relation of expertise to clocks, relevant because of Victor's mantel clock
+      and their quarrels about worth.
+    source:
+      scene: s-001
+      span: L1-L80
+openQuestions: []

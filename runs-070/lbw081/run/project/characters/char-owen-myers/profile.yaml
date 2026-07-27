@@ -2,5 +2,7 @@ id: char-owen-myers
 name: owen-myers
 sketch: Local clock repairman and collector acquaintance of Victor. Skilled with
   small mechanisms, sometimes quarrels with Victor over valuations.
-identity: {}
-provenance: {}
+identity:
+  profession: clock repairman and collector
+provenance:
+  profession: s-001

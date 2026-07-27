@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.7.1";
+export const VERSION = "0.7.2";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -46,6 +46,27 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.7.2",
+    note:
+      "a character walking somewhere stopped being a contradiction. The deterministic " +
+      "continuity check compared every claimed value against canon and blocked on any " +
+      "difference, so `char-eloise.location` going from `loc-eloise-house` to " +
+      "`loc-main-street` — two children stepping off a stoop — was reported as " +
+      "`geographical_contradictions` at severity `error`. Measured on `runs-070/lbw070` " +
+      "s-002: twice in one scene, with the *same* finding id because both quoted the same " +
+      "sentence, and the same two again on the rewrite, so the stall detector fired and the " +
+      "scene committed carrying two recorded defects that were not defects. It also punished " +
+      "the writer for following its own instructions, which give `location` as the model " +
+      "standing property. Attributes that exist to change — location, what someone is " +
+      "holding, what they know — now absorb silently and are counted in " +
+      "`coverage.volatileChanges`; the dossier shows the verifier the move so it can still " +
+      "ask whether the prose accounts for it, which is the real question and needs a reading. " +
+      "Intrinsic properties still block. Also: craft *warnings* now reach the next scene's " +
+      "writer, because a warning never opened a repair round and so was never shown to " +
+      "anyone — three on `runs-070/lbw081` s-001 went into an audit file and stopped there, " +
+      "which is an axis built to raise the quality score changing nothing.",
+  },
   {
     version: "0.7.1",
     note:

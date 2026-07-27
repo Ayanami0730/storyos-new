@@ -1,0 +1,16 @@
+pairId: char-elder-storyteller--group-kowloon-residents
+participants:
+  - char-elder-storyteller
+  - group-kowloon-residents
+phases:
+  - index: 1
+    relation: social_sanctioner
+    fromScene: s-003
+    toScene: null
+    transition: Elder Storyteller mediates the community's sanction and conditions
+      for accessing the locked room, signaling social authority over the
+      temple's secrets.
+    source:
+      scene: s-003
+      span: L18-L26
+openQuestions: []

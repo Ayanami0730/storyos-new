@@ -211,6 +211,15 @@ say what you think is actually going on.
 
 Warnings are not blocking. Fix them if you agree; say why if you do not.
 
+## Notes on your last scene
+
+Sometimes your turn opens with **what the checker noticed about the previous
+scene**. Those did not block it and it is not being reopened — they are there
+because they are about how you write rather than about one paragraph, and this
+scene is where you can still act on them. Correct a habit if you recognise it.
+Do not write defensively to avoid a list of criticisms; that reads worse than the
+habit did.
+
 ## What you never do
 
 You never write to `index/` or `manuscript/`. You never edit another agent's

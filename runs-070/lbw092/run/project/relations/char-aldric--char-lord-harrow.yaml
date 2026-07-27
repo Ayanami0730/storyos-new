@@ -1,0 +1,16 @@
+pairId: char-aldric--char-lord-harrow
+participants:
+  - char-aldric
+  - char-lord-harrow
+phases:
+  - index: 1
+    relation: betrothal-planned (lord's arrangement)
+    fromScene: s-003
+    toScene: null
+    transition: Lord Harrow announces Aldric as the chosen match, presenting Aldric
+      at the high dais as the alliance he favors; this establishes Aldric as the
+      prospective suitor in the household's public view.
+    source:
+      scene: s-003
+      span: L1-L12
+openQuestions: []

@@ -1,0 +1,15 @@
+pairId: char-eloise--obj-brooch
+participants:
+  - char-eloise
+  - obj-brooch
+phases:
+  - index: 1
+    relation: possessor
+    fromScene: s-003
+    toScene: null
+    transition: Eloise recovers the brooch in the park and holds it; the brooch
+      returns to Eloise's possession.
+    source:
+      scene: s-003
+      span: L20-L50
+openQuestions: []

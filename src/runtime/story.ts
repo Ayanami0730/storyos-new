@@ -368,6 +368,20 @@ export async function writeStory(options: {
   let committedWords = 0;
   /** The previous scene's delivered length against what it was asked for. */
   let lastCommitted: { id: string; words: number; target: number } | null = null;
+  /**
+   * Craft warnings from the scene just committed, for the next scene's writer.
+   *
+   * Only from the immediately previous scene, not accumulated. A list that grew for
+   * seventeen scenes would be a standing indictment rather than a note, and the
+   * writer would either ignore it or write to avoid all of it — and writing
+   * defensively is a quality problem of its own.
+   */
+  let craftNotes: readonly {
+    scene: string;
+    check: string;
+    why: string;
+    suggestion: string;
+  }[] = [];
 
   say(
     `plan: ${plan.scenes.length} scenes, ${plan.entities.length} entities, ` +
@@ -459,6 +473,7 @@ export async function writeStory(options: {
         // manuscript that never resolved its premise passed every gate.
         sceneTargetWords: card.targetWords,
         position: { index: i + 1, total: (planSink.plan ?? plan).scenes.length },
+        priorCraftNotes: craftNotes,
       },
       { index, collaborators, artifacts: options.artifacts },
     );
@@ -557,6 +572,14 @@ export async function writeStory(options: {
       const sceneWords = text.split(/\s+/).filter(Boolean).length;
       committedWords += sceneWords;
       lastCommitted = { id: card.id, words: sceneWords, target: card.targetWords };
+      craftNotes = outcome.findings
+        .filter((f) => f.axis === "craft" && f.severity === "warning" && f.suggestion)
+        .map((f) => ({
+          scene: card.id,
+          check: f.subtype,
+          why: f.reasoning,
+          suggestion: f.suggestion!,
+        }));
       committedScenes.push(card.id);
       committedDeltas.push(delta);
       proseByScene.set(card.id, text);

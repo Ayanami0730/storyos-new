@@ -1,0 +1,30 @@
+pairId: char-rue--loc-mercy-academy
+participants:
+  - char-rue
+  - loc-mercy-academy
+phases:
+  - index: 1
+    relation: entrants
+    fromScene: s-001
+    toScene: null
+    transition: Rue entered into the Mercy Academy's charge by selling herself and
+      signing the Contract; the Academy records entrants in the Folio and
+      asserts long-term custody.
+    asymmetry: Academy's view is institutional custody and record; Rue's view is a
+      practical bargain for shelter and work.
+    source:
+      scene: s-001
+      span: L1-L6
+  - index: 2
+    relation: entrants
+    fromScene: s-001
+    toScene: null
+    transition: Rue entered into the Mercy Academy's charge by selling herself and
+      signing the Contract; the Academy records entrants in the Folio and
+      asserts long-term custody.
+    asymmetry: Academy's view is institutional custody and record; Rue's view is a
+      practical bargain for shelter and work.
+    source:
+      scene: s-001
+      span: L1-L6
+openQuestions: []

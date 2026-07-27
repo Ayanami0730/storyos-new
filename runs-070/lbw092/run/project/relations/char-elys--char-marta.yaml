@@ -6,11 +6,20 @@ phases:
   - index: 1
     relation: confidante/sentinel
     fromScene: s-001
-    toScene: null
+    toScene: s-002
     transition: Marta is Elys's maid and confidante, watching their meeting and
       promising not to tell; she takes the role of a sentinel rather than a
       snitch.
     source:
       scene: s-001
+      span: L1-L60
+  - index: 2
+    relation: confidante/sentinel
+    fromScene: s-002
+    toScene: null
+    transition: Marta continues as Elys's confidante and watches to conceal their
+      meetings, actively delaying servants and arranging unlatched shutters.
+    source:
+      scene: s-002
       span: L1-L60
 openQuestions: []

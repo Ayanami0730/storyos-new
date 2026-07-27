@@ -557,6 +557,49 @@ function verifierBrief(finalScene: boolean): string {
 
 
 /**
+ * What the checker said about the writer's last scene, on the way into this one.
+ *
+ * A craft warning does not block, so a scene that commits on its first attempt
+ * never opens a repair round and the writer is never shown the note. Measured on
+ * `runs-070/lbw081` s-001: three craft warnings went into the audit file and
+ * stopped there, and the axis whose whole purpose is the quality score changed
+ * nothing about the next scene.
+ *
+ * Framed as an observation about the writer's habits rather than as a queue of
+ * unpaid repairs, because that is what these are — summarising instead of
+ * dramatising, or explaining the theme outright, is not a defect in one paragraph
+ * that a rewrite would remove. And framed as optional on purpose: a writer told
+ * that three things were wrong with its last scene and that it must now avoid all
+ * of them writes cautiously, which is its own quality problem.
+ */
+function renderPriorCraftNotes(
+  notes: readonly {
+    readonly scene: string;
+    readonly check: string;
+    readonly why: string;
+    readonly suggestion: string;
+  }[],
+): string {
+  if (notes.length === 0) return "";
+  return [
+    "",
+    `## What the checker noticed about ${notes[0]!.scene}`,
+    "",
+    "These did not block it — the scene is committed and is not being reopened. They are here",
+    "because they are about how you write rather than about one paragraph, and this scene is",
+    "where you can still act on them.",
+    "",
+    ...notes.flatMap((n) => [
+      `- **${n.check}**: ${n.why}`,
+      `    instead: ${n.suggestion}`,
+    ]),
+    "",
+    "Use your judgement. Correcting a habit is worth doing; writing defensively to avoid a",
+    "list of criticisms is worse than the habit, and reads like it.",
+  ].join("\n");
+}
+
+/**
  * A turn in which the model emitted nothing at all.
  *
  * Output tokens rather than text, because a turn whose whole content was tool
@@ -669,6 +712,7 @@ export function residentCollaborators(options: {
         gaps,
         words,
         allocation,
+        priorCraftNotes,
         note,
       }): Promise<Draft> {
         capture.prose = undefined;
@@ -688,6 +732,7 @@ export function residentCollaborators(options: {
                 // same policy seen from two ends, and a writer that only sees the
                 // number reads the tight one as discouragement — which is how a
                 // mechanism designed to make it ask ends up making it ask less.
+                renderPriorCraftNotes(priorCraftNotes ?? []),
                 renderAllocation(allocation),
                 allocation.repairRounds <= 1
                   ? `With one repair round, a defect you leave in this scene will probably ` +

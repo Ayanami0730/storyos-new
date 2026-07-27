@@ -146,6 +146,13 @@ export interface SceneCollaborators {
      * asked anything.
      */
     readonly allocation: SceneAllocation;
+    /** Craft warnings from the previous scene; see `SceneRequest.priorCraftNotes`. */
+    readonly priorCraftNotes?: readonly {
+      readonly scene: string;
+      readonly check: string;
+      readonly why: string;
+      readonly suggestion: string;
+    }[];
     readonly note?: string;
   }): Promise<Draft>;
 
@@ -226,6 +233,29 @@ export interface SceneRequest {
    */
   readonly sceneTargetWords?: number;
   readonly position?: { readonly index: number; readonly total: number };
+  /**
+   * Craft warnings from the previous scene, carried forward to this one.
+   *
+   * They would otherwise reach nobody. A warning does not block, so a scene that
+   * commits on its first attempt never triggers a repair round, and the writer is
+   * never shown what the checker said about it. Measured on `runs-070/lbw081`
+   * s-001: three craft warnings — `summary_not_scene`, `flat_diction`,
+   * `theme_stated` — went into the audit file and stopped there. The axis exists to
+   * raise the quality score, and a note nobody reads raises nothing.
+   *
+   * Forward rather than backward is also the better fit for what these are. A
+   * contradiction is local to the scene that contains it; summarising instead of
+   * dramatising, or explaining the theme in a sentence, are *habits*, and a habit is
+   * worth correcting on the next scene rather than by rewriting the last one. So
+   * this is not a queued repair — it is what the writer learnt about its own voice,
+   * arriving while it can still act on it.
+   */
+  readonly priorCraftNotes?: readonly {
+    readonly scene: string;
+    readonly check: string;
+    readonly why: string;
+    readonly suggestion: string;
+  }[];
 }
 
 export type SceneOutcome =

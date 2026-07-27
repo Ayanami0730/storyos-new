@@ -1,0 +1,15 @@
+pairId: char-rue--obj-contract
+participants:
+  - char-rue
+  - obj-contract
+phases:
+  - index: 1
+    relation: binding_contract
+    fromScene: s-001
+    toScene: null
+    transition: Rue signed a Contract specifying a ten-year term which binds her to
+      the Academy's charge; witnessed by the Headmistress.
+    source:
+      scene: s-001
+      span: L1-L20
+openQuestions: []

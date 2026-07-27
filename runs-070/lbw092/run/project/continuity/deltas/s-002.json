@@ -1,0 +1,61 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "char-elys",
+      "attribute": "location",
+      "value": "loc-walled-garden",
+      "quote": "\"They met first in the garden as they had the week before and the week before that—Elys slipping down the narrow stair from her chamber in the hour after vespers to sit on the old stone bench, Marta folding herself into the hedge like a knot of shadow while Garr lingered where the yew made a dark pocket.\""
+    },
+    {
+      "entity": "char-garr",
+      "attribute": "location",
+      "value": "loc-walled-garden",
+      "quote": "\"The willow-pin was in Garr's palm from the last time they'd touched it, small and warm. He watched Elys across the bench as if the space between them were a measured thing that could be kept tidy.\""
+    },
+    {
+      "entity": "obj-hairpin-ivory",
+      "attribute": "possessed_by",
+      "value": "char-garr",
+      "quote": "\"'Take it, Garr,' Elys said, the line as private as a coin counted in the dark, and he closed his hand around the ivory as if she had lent him a piece of herself.\""
+    },
+    {
+      "entity": "char-marta",
+      "attribute": "aware_of_lovers_meetings",
+      "value": "true",
+      "quote": "\"Marta's eyes flicked to the corridor and then back; when a serving girl passed, Marta tripped her with a smile and a question; the sweep was delayed, the corridor quieted.\""
+    },
+    {
+      "entity": "char-aldric",
+      "attribute": "mentioned_by_lord_harrow_as_suitor",
+      "value": "true",
+      "quote": "\"They say Lord Harrow is pleased. He said at table—'Aldric brings Westbrook's levies and a fine marriage with no scandal.'\""
+    },
+    {
+      "entity": "obj-letter-sealed",
+      "attribute": "prepared_and_possessed_by",
+      "value": "char-garr",
+      "quote": "\"He drew a scrap of paper from his pouch and with a coin pressed a warm blob of wax to the corner. The fold closed like a small decision. He slipped the sealed scrap beneath his tunic and laid a hand over it.\""
+    }
+  ],
+  "presentEntities": [
+    "char-elys",
+    "char-garr",
+    "char-marta",
+    "char-aldric",
+    "char-lord-harrow",
+    "obj-hairpin-ivory",
+    "obj-letter-sealed",
+    "loc-walled-garden",
+    "loc-harrowhold"
+  ],
+  "promises": [
+    {
+      "id": "promise-letter-prepared",
+      "promise": "Garr will draft and seal a note proposing escape; the sealed note is prepared and kept by Garr at scene end.",
+      "quote": "\"I'll write it tonight,\" he said. The sentence felt like a ladder rung offered to a hand.",
+      "dueByScene": null
+    }
+  ],
+  "paysOff": []
+}

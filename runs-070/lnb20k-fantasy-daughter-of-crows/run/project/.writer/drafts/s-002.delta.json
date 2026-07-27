@@ -1,0 +1,74 @@
+{
+  "sceneId": "s-002",
+  "claims": [
+    {
+      "entity": "loc-dormitory",
+      "attribute": "smell",
+      "value": "underside of a roof in rain and the sharp sour of too-white soap",
+      "quote": "The dormitory smelled like the underside of a roof in rain and the sharp sour of too-white soap."
+    },
+    {
+      "entity": "loc-dormitory",
+      "attribute": "layout",
+      "value": "rows of narrow two-tier bunks with trunks under lower pallets and plank floors",
+      "quote": "Light came in strips between high windows and fell on rows of narrow two-tier bunks, trunks shoved under the lower pallets as if storage and sleep had been married in haste. A plank floor muttered when you walked; voices moved around it like careful traffic."
+    },
+    {
+      "entity": "loc-dormitory",
+      "attribute": "assignment_method",
+      "value": "assigned by staff (listed on a board)",
+      "quote": "\"Assigned by staff,\" the woman who led us said when one new girl asked how it had been decided. The board held our numbers; people counted themselves into a place like a census."
+    },
+    {
+      "entity": "obj-folio",
+      "attribute": "foliolist_posted",
+      "value": "a thin list transcribed from the Folio and pinned below the names for newcomers to see; full Folio taken to Archive later",
+      "quote": "A thin list had been taken from the Folio and pinned below the names — not the full book, only the day's intake transcribed into a narrow column. ... The Folio's presence was public enough for us to see it; the Archive would take the book later, the woman said, but we had the list."
+    },
+    {
+      "entity": "obj-bell",
+      "attribute": "uses",
+      "value": "meals, lessons, curfew",
+      "quote": "The Bell's note came through the open doorway like a hand laid on your shoulder. It sounded for meals; it sounded for lessons; it sounded for curfew."
+    },
+    {
+      "entity": "group-the-hundred",
+      "attribute": "cohort_members_met_sample",
+      "value": "Lin; Mara; Kela",
+      "quote": "I met three of those who would be nearest me. Lin put her trunk on the bunk above mine... Mara watched us from the far bunk... Kela did not speak at first."
+    },
+    {
+      "entity": "loc-dormitory",
+      "attribute": "chore_types",
+      "value": "garden, laundry, kitchen, sweeping, mending, errands for the scribe",
+      "quote": "Chores were given by a rota posted beneath the intake list: garden, laundry, kitchen, and the little jobs that always sit beneath those names — sweeping, mending, running for the scribe."
+    },
+    {
+      "entity": "loc-dormitory",
+      "attribute": "rota_visibility",
+      "value": "rota posted beneath the intake list and visible to newcomers",
+      "quote": "Chores were given by a rota posted beneath the intake list... The rota smelled of wet paper and order."
+    },
+    {
+      "entity": "loc-dormitory",
+      "attribute": "discipline_tone",
+      "value": "soft-voiced instructions and unseen ledger marks indicating consequence",
+      "quote": "Discipline showed itself in small ways: the softness of the woman's voice when she told us what to do, the careful way the head of the dorm would mark a failing with a line on a ledger we could not see, the curt remark that carried the edge of consequence."
+    },
+    {
+      "entity": "char-rue",
+      "attribute": "keeps_contract_on_person",
+      "value": "Contract folded into inside pocket",
+      "quote": "I kept my contract in the inside pocket of my shirt and my humor small."
+    }
+  ],
+  "presentEntities": [
+    "char-rue",
+    "group-the-hundred",
+    "loc-dormitory",
+    "obj-bell",
+    "loc-ceremony-hall"
+  ],
+  "promises": [],
+  "paysOff": []
+}

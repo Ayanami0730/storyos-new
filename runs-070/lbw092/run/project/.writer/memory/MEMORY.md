@@ -1,3 +1,3 @@
 # Memory index
 
-(empty)
+- [explicit-location-changes](explicit-location-changes.md) — state changes: declare location shifts

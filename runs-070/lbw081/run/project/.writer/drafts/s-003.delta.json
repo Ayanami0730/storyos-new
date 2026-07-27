@@ -1,0 +1,81 @@
+{
+  "sceneId": "s-003",
+  "claims": [
+    {
+      "entity": "obj-chair-study",
+      "attribute": "hidden_padding_pocket_left_rear_seam_found",
+      "quote": "I shall be blunt where the index is not: I opened the left rear seam of Victor's chair. Beneath the worn circular spot, in a roughly two-centimetre padding pocket, I found a small bundle wrapped in an old watchcloth.",
+      "value": "present (writer-declared discovery)"
+    },
+    {
+      "entity": "obj-spring-spike-device",
+      "attribute": "components_found_in_chair_pocket",
+      "quote": "Inside were the components of what the sketches in my notebook called, without romance, a spring‑spike apparatus: a short, strong helical coil spring, a thin stiletto blade housed in a narrow cloth tube, a small trigger pin and release lever, and a fine waxed thread tied to a tiny eyelet on the release. For the avoidance of doubt: staging the discovery of these components in the chair's hidden pocket is my deliberate choice for this scene because the index did not record their provenance.",
+      "value": "true"
+    },
+    {
+      "entity": "obj-spring-spike-device",
+      "attribute": "device_components_description",
+      "quote": "Inside were the components of what the sketches in my notebook called, without romance, a spring‑spike apparatus: a short, strong helical coil spring, a thin stiletto blade housed in a narrow cloth tube, a small trigger pin and release lever, and a fine waxed thread tied to a tiny eyelet on the release.",
+      "value": "spring; blade; trigger pin; release lever; waxed thread"
+    },
+    {
+      "entity": "obj-spring-spike-device",
+      "attribute": "file_marks_on_pin_and_metal_dust",
+      "quote": "The blade was blunt with age and the spring had been tempered to a stubborn, coiled strength. There were file marks on the pin and a smear of fresh metal dust along the cloth.",
+      "value": "file_marks_present; metal_dust_present"
+    },
+    {
+      "entity": "obj-spring-spike-device",
+      "attribute": "thread_oil_smear_found",
+      "quote": "I followed the thread with my finger and found a faint line of clock oil on it where it passed near the mantel. The oil had dried in a thin ridge. I made a note of that and of how the thread ran toward the bezel gap where the clock's inner cam would sit. I say plainly in the text: I found a small smear of clock oil on the thread leading toward the mantel; this is recorded as evidence of a physical link between the chair and the clock.",
+      "value": "present"
+    },
+    {
+      "entity": "obj-spring-spike-device",
+      "attribute": "test_release_demonstrated",
+      "quote": "Then, very gently, I coaxed the mantel clock's cam with a finger until the quarter‑hour notch moved. The cam caught the thread and tugged. The trigger slipped. The blade sprang forward a fraction — nothing of gore, only a demonstration, the blade travelling the length of its cloth tube and stuttering back into it when the pin caught again. The mechanism worked. It could be set to the clock and timed to a single chime.",
+      "value": "true"
+    },
+    {
+      "entity": "char-dr-simms",
+      "attribute": "autopsy_constraints_recounted",
+      "quote": "Dr. Simms, when he looked at the body and gave me his clinical account, had already narrowed what we were seeing: a single penetrating wound consistent with a narrow stiletto-like spike; haemorrhage suggesting incapacitation and death within approximately a minute of penetration; and no defensive wounds.",
+      "value": "single_narrow_wound; death_within_approximately_one_minute; no_defensive_wounds"
+    },
+    {
+      "entity": "char-alfred-broome",
+      "attribute": "narrowing_suspect_criteria_quoted",
+      "quote": "I turned the thought toward Alfred Broome because he is the man who fits that description on paper. \"The butler: stoic, old-school, formerly a railway machinist. Knows his way around springs and clockwork. Long service to the Hales.\"",
+      "value": "steady_access_and_mechanical_skill_candidate"
+    },
+    {
+      "entity": "obj-chair-study",
+      "attribute": "hidden_pocket_contents_removed_by_narrator",
+      "quote": "When I left the study I carried the components wrapped in the same watchcloth and the thread laid flat in a paper envelope.",
+      "value": "removed_by_narrator_pending_evidence_handling"
+    }
+  ],
+  "presentEntities": [
+    "char-james-cole",
+    "char-alfred-broome",
+    "char-owen-myers",
+    "char-dr-simms",
+    "loc-study",
+    "obj-chair-study",
+    "obj-mantel-clock",
+    "obj-spring-spike-device",
+    "obj-file-rasp"
+  ],
+  "promises": [],
+  "paysOff": [
+    {
+      "contractId": "pr-missing-screw-location",
+      "quote": "I set the components on the desk and did the careful, dangerous thing a man does when he must know."
+    },
+    {
+      "contractId": "pr-promise-room-speak",
+      "quote": "I shall be blunt where the index is not: I opened the left rear seam of Victor's chair. Beneath the worn circular spot, in a roughly two-centimetre padding pocket, I found a small bundle wrapped in an old watchcloth."
+    }
+  ]
+}

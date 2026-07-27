@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import { CRAFT_CHECKS, MAX_BLOCKING_CRAFT, renderCraftChecklist } from "./craft.ts";
+import { verifyDeterministic } from "./deterministic.ts";
 import { compareClaims, renderDossier } from "./dossier.ts";
 import { blocking, capCraftBlockers, makeCraftFinding, renderRepairBrief } from "./finding.ts";
 
@@ -238,6 +239,13 @@ describe("the dossier", () => {
       value: "the quay",
       source: "s-002",
     },
+    {
+      id: "fact-2",
+      entity: "char-hale",
+      attribute: "eye_colour",
+      value: "grey",
+      source: "s-001",
+    },
   ];
 
   it("labels a first establishment as normal rather than leaving it as an absence", () => {
@@ -269,11 +277,84 @@ describe("the dossier", () => {
 
   it("hands over both sides of a real conflict", () => {
     const rows = compareClaims(
-      [{ entity: "char-hale", attribute: "location", value: "the study", quote: "q" }],
+      [{ entity: "char-hale", attribute: "eye_colour", value: "brown", quote: "q" }],
       canon,
     );
     assert.equal(rows[0]!.verdict, "conflicts");
-    assert.equal(rows[0]!.canon, "the quay");
+    assert.equal(rows[0]!.canon, "grey");
+  });
+
+  it("calls a character walking somewhere a move, not a contradiction", () => {
+    /**
+     * Measured on `runs-070/lbw070` s-002: two children walk from a house to the
+     * street, the deterministic layer raised `geographical_contradictions` at
+     * severity `error` twice — with the same finding id, because both quoted the
+     * same sentence — and the repair loop stalled and committed the scene carrying
+     * two recorded defects. Neither was one. The prompt that produced the claim is
+     * the writer's own, which gives `location` as the model standing property.
+     */
+    const rows = compareClaims(
+      [{ entity: "char-hale", attribute: "location", value: "the study", quote: "q" }],
+      canon,
+    );
+    assert.equal(rows[0]!.verdict, "moved");
+
+    const findings = verifyDeterministic({
+      delta: {
+        sceneId: "s-003",
+        claims: [
+          { entity: "char-hale", attribute: "location", value: "the study", quote: "q" },
+          { entity: "char-hale", attribute: "knows_about_note", value: "true", quote: "q" },
+        ],
+        presentEntities: ["char-hale"],
+      },
+      canon: [
+        ...canon,
+        {
+          id: "fact-3",
+          entity: "char-hale",
+          attribute: "knows_about_note",
+          value: "false",
+          source: "s-002",
+        },
+      ],
+      knownEntities: new Set(["char-hale"]),
+    });
+    assert.equal(findings.findings.length, 0);
+    // Counted rather than silently dropped: this is the number of findings that
+    // used to be raised here, every one of them a blocking false positive.
+    assert.equal(findings.coverage.volatileChanges, 2);
+  });
+
+  it("still blocks a change to something intrinsic", () => {
+    const findings = verifyDeterministic({
+      delta: {
+        sceneId: "s-003",
+        claims: [{ entity: "char-hale", attribute: "eye_colour", value: "brown", quote: "q" }],
+        presentEntities: ["char-hale"],
+      },
+      canon,
+      knownEntities: new Set(["char-hale"]),
+    });
+    assert.equal(findings.findings.length, 1);
+    assert.equal(findings.findings[0]!.severity, "error");
+    assert.equal(findings.coverage.volatileChanges, 0);
+  });
+
+  it("shows the verifier the move, since the comparison no longer reports it", () => {
+    const text = renderDossier({
+      delta: {
+        sceneId: "s-003",
+        claims: [{ entity: "char-hale", attribute: "location", value: "the study", quote: "q" }],
+        presentEntities: [],
+      },
+      canon,
+      knownEntities: new Set(["char-hale"]),
+      deterministic: [],
+      words: { draft: 900, sceneTarget: null },
+    });
+    assert.match(text, /not\*\* a contradiction and no declaration is/);
+    assert.match(text, /whether the prose \*shows\* it happening/);
   });
 
   it("distinguishes a declared change from an undeclared one", () => {

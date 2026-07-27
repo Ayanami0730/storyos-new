@@ -2,4 +2,6 @@ id: loc-main-alley-spiral
 sketch: "A notorious twisting alley where many of the hauntings concentrate:
   tight, dark, flanked by shops and apartments with overlapping doors and
   windows."
-first_seen: null
+notes:
+  - Residents gather here; a site of recent wailing after the raid.
+first_seen: s-001

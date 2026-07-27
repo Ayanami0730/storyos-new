@@ -3,5 +3,13 @@ name: mercy-chan
 sketch: A professional exorcist operating in Kowloon Walled City during the
   Japanese occupation; methodical, weary, wry, driven by a mixture of duty and
   personal loss.
-identity: {}
-provenance: {}
+identity:
+  age: "38"
+  appearance: hands precise, shoulders squared, eyes that count exits
+  profession: ritual diagnostician
+  prior_loss: younger brother killed in the early fighting
+provenance:
+  age: s-001
+  appearance: s-001
+  profession: s-001
+  prior_loss: s-001

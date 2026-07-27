@@ -2,5 +2,10 @@ id: char-eloise
 name: eloise
 sketch: "Eloise (12): small, fierce imagination, narrator-protagonist who turns
   ordinary errands into quests; keeps a hand-drawn map she updates."
-identity: {}
-provenance: {}
+identity:
+  appearance: narrator who carries a folded map and keeps a small velvet pouch in
+    her pocket
+  speech: refers to ordinary objects as quest supplies (e.g., Sword of Light)
+provenance:
+  appearance: s-001
+  speech: s-001

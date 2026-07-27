@@ -1,0 +1,16 @@
+pairId: char-james-cole--obj-file-rasp
+participants:
+  - char-james-cole
+  - obj-file-rasp
+phases:
+  - index: 1
+    relation: collected/evidenced
+    fromScene: s-002
+    toScene: null
+    transition: James Cole states he found the obj-file-rasp in a top drawer of the
+      loc-kitchen during his walk-through and later produced it at the kitchen
+      table as evidence.
+    source:
+      scene: s-002
+      span: L40-L46
+openQuestions: []

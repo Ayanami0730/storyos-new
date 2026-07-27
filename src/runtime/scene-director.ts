@@ -325,6 +325,9 @@ export class SceneDirector {
         auditPath: this.#lastAuditPath,
         gaps: this.#gaps,
         allocation: this.#request.allocation,
+        ...(this.#request.priorCraftNotes?.length
+          ? { priorCraftNotes: this.#request.priorCraftNotes }
+          : {}),
         ...(words ? { words } : {}),
         ...(note ? { note } : {}),
       });
