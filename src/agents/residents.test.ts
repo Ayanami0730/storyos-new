@@ -324,8 +324,26 @@ describe("a provider call that fails", () => {
     );
     assert.ok(isRetryableTurnError("Unexpected end of JSON input"));
     assert.ok(isRetryableTurnError("Could not parse message into JSON: {\"choices\":["));
+    /**
+     * The 401 that truncated two 40,000-word runs.
+     *
+     * Both reported `exit 0` at attainment 0.70 because the writer drew a
+     * mis-keyed upstream partition at s-021 and s-023 and spent the scene's whole
+     * allowance on one API attempt each. The key was valid throughout: a third
+     * run on the same key absorbed 110 of these in the same window and was still
+     * writing eleven hours later.
+     */
+    assert.ok(
+      isRetryableTurnError(
+        '401: {"message":"Access denied due to invalid subscription key or wrong API endpoint."}',
+      ),
+    );
     assert.ok(!isRetryableTurnError("400: invalid request: unknown field"));
     assert.ok(!isRetryableTurnError("404: model_not_found"));
+    // Narrow on purpose: an authorisation refusal that is *about us* should still
+    // fail fast rather than spending six attempts to be refused six times.
+    assert.ok(!isRetryableTurnError("401: {\"message\":\"insufficient permissions for model\"}"));
+    assert.ok(!isRetryableTurnError("403: forbidden"));
     // A content filter is a decision about the request, not a transient fault;
     // retrying it spends the budget to be refused again in the same words.
     assert.ok(!isRetryableTurnError("Provider finish_reason: content_filter"));

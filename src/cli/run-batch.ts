@@ -290,11 +290,16 @@ async function runTask(task: BatchTask): Promise<Outcome> {
   // A task that was cut short by our own stop signal did not fail — reporting it
   // as a failure would make every interrupted batch look like a broken one, and
   // the distinction is the difference between "investigate" and "run it again".
-  const label = ok ? "done" : stopping ? "interrupted" : "FAILED";
+  const short = after.kind === "done" ? after.shortfall : undefined;
+  const label = ok ? (short ? "done SHORT" : "done") : stopping ? "interrupted" : "FAILED";
   say(
     `${task.id} ${label} in ${seconds}s (exit ${exitCode})` +
       (after.kind === "done"
-        ? ` — ${after.words} words, ${after.committed} scene(s)`
+        ? ` — ${after.words} words, ${after.committed} scene(s)` +
+          (short
+            ? ` of ${short.planned} planned, attainment ${short.attainment.toFixed(2)} — ` +
+              `${short.planned - after.committed} scene(s) never landed; see summary.json failures`
+            : "")
         : after.kind === "incomplete"
           ? ` — ${after.why}`
           : ""),
@@ -307,7 +312,8 @@ async function runTask(task: BatchTask): Promise<Outcome> {
     exitCode,
     seconds,
     detail: ok
-      ? `${after.words} words, ${after.committed} scene(s)`
+      ? `${after.words} words, ${after.committed} scene(s)` +
+        (short ? ` of ${short.planned} planned (attainment ${short.attainment.toFixed(2)})` : "")
       : stopping
         ? "interrupted before it finished; rerun to continue"
         : `${after.kind}${after.kind === "incomplete" ? `: ${after.why}` : ""} — last log line: ${lastLine.slice(0, 200)}`,

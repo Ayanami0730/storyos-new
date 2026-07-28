@@ -311,8 +311,39 @@ export function isRetryableTurnError(message: string): boolean {
   return (
     /\b(429|5\d\d)\b|rate.?limit|rate_limit|too_many_requests|resource exhausted|负载已饱和|overloaded|time(?:d)?[\s_-]*out|terminated|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up/i.test(
       message,
-    ) || isTruncatedStream(message)
+    ) ||
+    isTruncatedStream(message) ||
+    isMisroutedAuth(message)
   );
+}
+
+/**
+ * A 401 that is about the gateway's routing, not about our key.
+ *
+ * This one cost two 40,000-word runs a third of their length. Both reported
+ * `exit 0` at 28,186 and 27,427 words — attainment 0.70 — because the writer hit
+ *
+ *     401: Access denied due to invalid subscription key or wrong API endpoint.
+ *
+ * at s-021 and s-023, spent all six of the scene's attempts on it (one API
+ * attempt each, since 401 was not retryable), and every later scene aborted.
+ *
+ * The key was fine. The proof is that a third run was writing through the same
+ * window on the same key: it absorbed **110** of these 401s and was still
+ * producing scenes eleven hours later, against 124 and 113 in the two that died.
+ * The gateway fans requests across upstream partitions and a mis-keyed partition
+ * answers 401, so which run dies is a question of which partition it drew — a
+ * scheduling accident, which is the classifier's existing argument for retrying
+ * a 429, unchanged.
+ *
+ * Deliberately narrow. A genuinely revoked key produces this same status, and
+ * then every call spends six attempts before failing instead of one. That is the
+ * bounded, cheap side of the trade: an expired key fails the run either way, a
+ * few minutes later, while a misrouted partition currently truncates a
+ * five-hour manuscript and calls it a success.
+ */
+function isMisroutedAuth(message: string): boolean {
+  return /\b401\b/.test(message) && /invalid subscription key|wrong API endpoint/i.test(message);
 }
 
 /**

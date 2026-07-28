@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.8.4";
+export const VERSION = "0.8.5";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,24 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.8.5",
+    note:
+      "a gateway 401 is retried, and a run that does not write the book it planned says so. " +
+      "Both 40,000-word runs returned `exit 0` with `fatal: null` at 28,186 and 27,427 words — " +
+      "**attainment 0.70** — because the writer drew a mis-keyed upstream partition at s-021 " +
+      "and s-023, `401: Access denied due to invalid subscription key or wrong API endpoint`, " +
+      "and spent the scene's whole six-attempt allowance on it at one API attempt each; every " +
+      "later scene aborted. The key was valid the whole time, and the proof is a third run on " +
+      "the same key in the same window that absorbed **110** of these 401s and was still " +
+      "producing scenes eleven hours later, against 124 and 113 in the two that died. Which " +
+      "run dies is a question of which partition it draws, which is the same scheduling " +
+      "accident the classifier already retries a 429 for. Matched narrowly on the message, so " +
+      "a genuinely revoked key still fails fast. Separately, `classify` now marks a finished " +
+      "run that committed fewer scenes than it planned, and the batch logs `done SHORT — … 23 " +
+      "scene(s) of 32 planned, attainment 0.70`: the previous line read `done — 28,186 words, " +
+      "23 scene(s)`, which is what a Table 1 cell would have been built from.",
+  },
   {
     version: "0.8.4",
     note:

@@ -130,7 +130,26 @@ export function parseTasks(text: string): readonly BatchTask[] {
 /** What the run directory says about a task, before anything is launched. */
 export type TaskState =
   /** Finished with a manuscript. Skipped on resume. */
-  | { readonly kind: "done"; readonly words: number; readonly committed: number }
+  | {
+      readonly kind: "done";
+      readonly words: number;
+      readonly committed: number;
+      /**
+       * Set when the run finished but did not write the book it planned.
+       *
+       * Both 40,000-word runs came back `exit 0`, `fatal: null`, and the batch
+       * logged `done — 28,186 words, 23 scene(s)`. Nine of thirty-two scenes had
+       * aborted on a gateway 401 and the manuscript was 70% of its target, which
+       * is the difference between a Table 1 cell and a truncated draft — and
+       * nothing in the line you actually read said so.
+       *
+       * It stays `done` rather than becoming `incomplete`, because `incomplete`
+       * means "delete the directory and start over" and a five-hour manuscript
+       * is not something a status classifier should throw away on its own. The
+       * label is loud; the decision to rerun stays with the caller.
+       */
+      readonly shortfall?: { readonly planned: number; readonly attainment: number };
+    }
   /** Started and never finished, or finished with nothing. Rerun from scratch. */
   | { readonly kind: "incomplete"; readonly why: string }
   /** Another live process holds the directory. Left alone. */
@@ -202,6 +221,11 @@ export function classify(input: {
       kind: "incomplete",
       why: `the previous run produced ${committed} committed scene(s) and ${words} word(s)`,
     };
+  }
+  const planned = Number(input.summary.scenes_planned ?? 0);
+  const attainment = Number(input.summary.attainment ?? 0);
+  if (planned > 0 && committed < planned) {
+    return { kind: "done", words, committed, shortfall: { planned, attainment } };
   }
   return { kind: "done", words, committed };
 }

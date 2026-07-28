@@ -219,6 +219,64 @@ describe("classifying what is on disk", () => {
     assert.equal(state.kind, "incomplete");
     assert.match((state as { why: string }).why, /0 committed scene/);
   });
+
+  /**
+   * The 40,000-word runs, exactly as they came back: `exit 0`, `fatal: null`, and
+   * a third of the book missing. Nine scenes had aborted on a gateway 401 and the
+   * batch logged `done — 28,186 words, 23 scene(s)`, which reads like a success
+   * and was the number a Table 1 cell would have been built from.
+   */
+  it("marks a run that finished without writing the book it planned", () => {
+    const state = classify({
+      summary: {
+        fatal: null,
+        scenes_committed: 23,
+        scenes_planned: 32,
+        words: 28186,
+        attainment: 0.705,
+      },
+      lockPid: null,
+      lockHolderAlive: false,
+      hasIndex: true,
+    });
+    assert.deepEqual(state, {
+      kind: "done",
+      words: 28186,
+      committed: 23,
+      shortfall: { planned: 32, attainment: 0.705 },
+    });
+  });
+
+  /**
+   * It stays `done`, because `incomplete` means "delete the directory and start
+   * over" and a five-hour manuscript is not something a status classifier should
+   * discard on its own. The label is loud; the rerun is the caller's call.
+   */
+  it("does not throw away a short run by calling it incomplete", () => {
+    const state = classify({
+      summary: { fatal: null, scenes_committed: 23, scenes_planned: 32, words: 28186 },
+      lockPid: null,
+      lockHolderAlive: false,
+      hasIndex: true,
+    });
+    assert.equal(state.kind, "done");
+  });
+
+  it("leaves a run that wrote every scene unmarked", () => {
+    const state = classify({
+      summary: {
+        fatal: null,
+        scenes_committed: 32,
+        scenes_planned: 32,
+        words: 40100,
+        attainment: 1.0,
+      },
+      lockPid: null,
+      lockHolderAlive: false,
+      hasIndex: true,
+    });
+    assert.deepEqual(state, { kind: "done", words: 40100, committed: 32 });
+  });
 });
 
 describe("planning a batch", () => {
