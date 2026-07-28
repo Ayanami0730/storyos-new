@@ -52,6 +52,17 @@ export interface Supply {
   readonly name: string;
   readonly baseUrl: string;
   readonly keyEnv: readonly string[];
+  /**
+   * What this route calls a model, when that differs from what we call it.
+   *
+   * The `openai/…` route is a different upstream group behind the same host, and
+   * the name is how you reach it: with the key unchanged, `openai/gpt-5-mini`
+   * answers 200 while plain `gpt-5-mini` answers
+   * `当前分组上游负载已饱和` on both the public and the internal address.
+   * Kept as a mapping rather than a rename so `summary.json`, the tables and the
+   * personas all keep saying `gpt-5-mini`, which is the model that actually ran.
+   */
+  readonly modelNames?: Readonly<Record<string, string>>;
 }
 
 export const SUPPLIES: Readonly<Record<string, Supply>> = {
@@ -66,6 +77,23 @@ export const SUPPLIES: Readonly<Record<string, Supply>> = {
     name: "zhizengzeng (OpenAI-compatible)",
     baseUrl: "https://api.zhizengzeng.com/v1",
     keyEnv: ["ZZZ_KEY"],
+  },
+  /**
+   * The same gateway and the same key, on an upstream group that is not full.
+   *
+   * Probed with 4, 8, 16, 24 and 32 parallel requests: **zero failures at every
+   * level and a flat p50 of 3.0–3.7s**. 429s begin at 48 (1 of 48), reach 16 of
+   * 64 and 36 of 96, while throughput plateaus around 3.8 req/s throughout — so
+   * past 32 the extra workers buy errors rather than work, and 32 is the number
+   * to plan against. That is four times what the old group tolerated on the day
+   * it was measured, when concurrency 2 was killing runs outright.
+   */
+  ys2: {
+    id: "yuanshi-sg-openai",
+    name: "YuanShi SG gateway (openai/ group, internal)",
+    baseUrl: "https://ai-prod-sg-internal.wenxiaobai.com/v1",
+    keyEnv: ["YS_KEY"],
+    modelNames: { "gpt-5-mini": "openai/gpt-5-mini" },
   },
 };
 
@@ -160,8 +188,11 @@ export function installGateway(): GatewayHandle {
   if (installed) return installed;
 
   const supply = selectedSupply();
+  // Register under the name the route answers to; `model()` below translates on
+  // the way in, so nothing outside this file has to know the difference.
+  const wireName = (id: string) => supply.modelNames?.[id] ?? id;
   const modelDefs = Object.entries(MODELS).map(([id, limits]) => ({
-    id,
+    id: wireName(id),
     name: `${id} (${supply.name})`,
     api: "openai-completions" as const,
     provider: supply.id,
@@ -232,7 +263,7 @@ export function installGateway(): GatewayHandle {
     // `yuanshi-sg` is how every run on the alternate route died at its first
     // turn with `Unknown provider: unknown`.
     model: (id: ModelId) =>
-      (models as never as { getModel: Function }).getModel(supply.id, id),
+      (models as never as { getModel: Function }).getModel(supply.id, wireName(id)),
   };
   return installed;
 }
