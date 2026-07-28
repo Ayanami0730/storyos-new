@@ -24,7 +24,11 @@ for p in runs-lnb runs-ch21; do
     proj="$d/run/project"
     [ -d "$proj" ] || continue
     sc=$(find "$proj/novel/chapters" -name '*.md' 2>/dev/null | wc -l)
-    w=$(find "$proj/novel/chapters" -name '*.md' -exec cat {} + 2>/dev/null | wc -w)
+    # The benchmark's own count: CJK codepoints plus Latin word tokens. `wc -w`
+    # reads a finished 1,850-character Chinese scene as twenty words, which is
+    # the bug this tool was used to diagnose and then reproduced in its own output.
+    w=$(find "$proj/novel/chapters" -name '*.md' -exec cat {} + 2>/dev/null \
+      | python3 -c 'import sys,re; t=sys.stdin.read(); print(len(re.findall(r"[\u4e00-\u9fff]",t))+len(re.findall(r"\b[a-zA-Z]+\b",t)))')
     plan=$(grep -c '^  - id:' "$proj/novel/outline/beats.yaml" 2>/dev/null || echo 0)
     [ "$sc" = "0" ] && [ "$w" = "0" ] && [ "$plan" = "0" ] && continue
     printf '  %-46s %3s/%-3s scenes %7s words\n' "$(basename "$d")" "$sc" "$plan" "$w"
