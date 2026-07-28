@@ -24,8 +24,13 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BATCHES = ["runs-lbw21", "runs-60kv2", "runs-40kv2", "runs-lnb20k", "runs-lnb"]
-LIVE_VERSION = "0.9.11"
+BATCHES = ["runs-lbw21", "runs-60kv2", "runs-40kv2", "runs-20kv2", "runs-lnb20k", "runs-lnb"]
+#: Versions currently producing manuscripts. A list rather than one string because
+#: a batch that outlives a tag pick up the newer code on its next spawned cell:
+#: `runs-lbw21` produced seventeen cells on 0.9.11 and four on 0.9.12 without
+#: anything being restarted, and a deadlock check keyed on one of them would have
+#: stopped watching the other.
+LIVE_VERSIONS = {"0.9.11", "0.9.12"}
 EVENT = re.compile(r" (done|FAILED) in ")
 
 
@@ -59,7 +64,7 @@ def cells_running(batch: str) -> int:
 
 
 def deadlocked_on_live_version() -> list[str]:
-    """Runs that hit the VALIDATING deadlock *on the version now in use*.
+    """Runs that hit the VALIDATING deadlock *on a version now in use*.
 
     The version test is the whole point. Two summaries on disk carry the deadlock
     from 0.9.10, and their mere existence is not evidence about 0.9.11.
@@ -71,7 +76,7 @@ def deadlocked_on_live_version() -> list[str]:
                 d = json.loads(p.read_text())
             except (json.JSONDecodeError, OSError):
                 continue
-            if d.get("harness_version") != LIVE_VERSION:
+            if d.get("harness_version") not in LIVE_VERSIONS:
                 continue
             blob = json.dumps(d.get("failures", []), ensure_ascii=False)
             if "no fresh draft" in blob or "ended in VALIDATING" in blob:
@@ -135,7 +140,7 @@ def main() -> int:
         for cell in deadlocked_on_live_version():
             if cell not in announced_deadlock:
                 announced_deadlock.add(cell)
-                say(f"ALERT the VALIDATING deadlock is back on {LIVE_VERSION}: {cell}")
+                say(f"ALERT the VALIDATING deadlock is back on a live version: {cell}")
 
         for cell in checker_crashes():
             if cell not in announced_crash:
