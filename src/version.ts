@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.8";
+export const VERSION = "0.9.9";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,19 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.9",
+    note:
+      "a stream that closes without saying why is retried. `Stream ended without finish_reason` " +
+      "is the same transport accident as the JSON truncation retried since 0.9.x, with none of " +
+      "the JSON wording, so no matcher covered it. Measured on `lnbcustom-horror-molka-ch24`: " +
+      "its planning turn spent **thirty-one minutes** — six request-level attempts — and then " +
+      "died `TurnFailed after 1 attempt(s)`, killing the cell, because the turn-level " +
+      "classifier did not recognise the message. That cell had already failed twice for two " +
+      "other reasons, each a different mechanism. A stream that stops without a finish reason " +
+      "is a transport failure by definition: there is no differently-phrased request that " +
+      "avoids it, which is the classifier's standing argument for retrying a 429.",
+  },
   {
     version: "0.9.8",
     note:

@@ -325,6 +325,16 @@ describe("a provider call that fails", () => {
     assert.ok(isRetryableTurnError("Unexpected end of JSON input"));
     assert.ok(isRetryableTurnError("Could not parse message into JSON: {\"choices\":["));
     /**
+     * The same accident with none of the JSON wording, which is why it was missed.
+     *
+     * Measured on `lnbcustom-horror-molka-ch24`: the planning turn spent
+     * thirty-one minutes — six request-level attempts — and then died
+     * `TurnFailed after 1 attempt(s)`, because the turn-level classifier did not
+     * recognise this message. A stream that closes without saying why it stopped
+     * is a transport failure by definition.
+     */
+    assert.ok(isRetryableTurnError("Stream ended without finish_reason"));
+    /**
      * The 401 that truncated two 40,000-word runs.
      *
      * Both reported `exit 0` at attainment 0.70 because the writer drew a

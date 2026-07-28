@@ -365,9 +365,17 @@ function isMisroutedAuth(message: string): boolean {
  * every time, which would spend six attempts instead of one. That is bounded and
  * cheap next to what happens otherwise: a lost orchestrator turn on a scene whose
  * transaction is mid-flight.
+ *
+ * `Stream ended without finish_reason` is the same accident with none of the JSON
+ * wording, and it was not covered: measured on `lnbcustom-horror-molka-ch24`,
+ * whose planning turn spent thirty-one minutes — six request-level attempts — and
+ * then died `TurnFailed after 1 attempt(s)`, because the turn-level classifier
+ * did not recognise the message. A stream that closes without saying why it
+ * stopped is a transport failure by definition; there is no request that could
+ * be phrased differently to avoid it.
  */
 function isTruncatedStream(message: string): boolean {
-  return /(?:Expected .*after property name|Unexpected end of JSON input|Unterminated string in JSON|Unexpected (?:token|non-whitespace character).*JSON|is not valid JSON|Could not parse message into JSON)/i.test(
+  return /(?:Expected .*after property name|Unexpected end of JSON input|Unterminated string in JSON|Unexpected (?:token|non-whitespace character).*JSON|is not valid JSON|Could not parse message into JSON|Stream ended without finish_reason)/i.test(
     message,
   );
 }
