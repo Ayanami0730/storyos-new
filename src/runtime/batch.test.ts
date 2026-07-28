@@ -262,6 +262,29 @@ describe("classifying what is on disk", () => {
     assert.equal(state.kind, "done");
   });
 
+  /**
+   * What a forty-minute gateway auth outage produced: three runs at 1/17, 2/30
+   * and 2/32 scenes, each `fatal: null` and `exit 0` because no individual scene
+   * failure is fatal. Left in `done` they would be silently skipped by the next
+   * batch, which is how three one-scene stubs become "nothing to do".
+   */
+  it("reruns a run that delivered less than half the book", () => {
+    const state = classify({
+      summary: {
+        fatal: null,
+        scenes_committed: 1,
+        scenes_planned: 17,
+        words: 1211,
+        attainment: 0.06,
+      },
+      lockPid: null,
+      lockHolderAlive: false,
+      hasIndex: true,
+    });
+    assert.equal(state.kind, "incomplete");
+    assert.match((state as { why: string }).why, /less than half the book/);
+  });
+
   it("leaves a run that wrote every scene unmarked", () => {
     const state = classify({
       summary: {

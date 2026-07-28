@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.8.8";
+export const VERSION = "0.8.9";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,20 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.8.9",
+    note:
+      "a run that delivered less than half its scenes is rerun, not kept. The gateway lost " +
+      "authentication for about forty minutes \u2014 `401 Invalid token`, on a key that answered " +
+      "200 again afterwards \u2014 and three runs came back at **1/17, 2/30 and 2/32 scenes, " +
+      "attainment 0.05\u20130.06**, each with `fatal: null` and `exit 0`, because every scene " +
+      "after the first aborts individually and no single scene failure is fatal. They landed " +
+      "in `done`, which is the state the batch skips, so the next invocation would have " +
+      "preserved three one-scene stubs and reported nothing to do. Keeping a short run is the " +
+      "right trade for a manuscript \u2014 five hours of work is not something a status " +
+      "classifier should discard on its own \u2014 and a story with a twentieth of its scenes is " +
+      "not one.",
+  },
   {
     version: "0.8.8",
     note:

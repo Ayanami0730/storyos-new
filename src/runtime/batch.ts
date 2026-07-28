@@ -225,6 +225,30 @@ export function classify(input: {
   const planned = Number(input.summary.scenes_planned ?? 0);
   const attainment = Number(input.summary.attainment ?? 0);
   if (planned > 0 && committed < planned) {
+    /**
+     * Below half the book, "keep it and label it loudly" is the wrong trade.
+     *
+     * The gateway lost authentication for about forty minutes and three runs
+     * came back at **1/17, 2/30 and 2/32 scenes — attainment 0.05 to 0.06** —
+     * each with `fatal: null` and `exit 0`, because every scene after the first
+     * aborted individually and no single scene failure is fatal. They landed in
+     * `done`, which is the state the batch *skips*, so the next invocation would
+     * have preserved three one-scene stubs and reported nothing to do.
+     *
+     * The argument for keeping a short run is that a five-hour manuscript is not
+     * something a status classifier should throw away on its own. That argument
+     * is about a manuscript. A story that delivered a twentieth of its scenes is
+     * not one, and rerunning it is strictly better than keeping it.
+     */
+    if (committed * 2 < planned) {
+      return {
+        kind: "incomplete",
+        why:
+          `the previous run committed ${committed} of ${planned} planned scene(s) ` +
+          `(attainment ${attainment.toFixed(2)}) — less than half the book, so it is being ` +
+          `rerun rather than kept`,
+      };
+    }
     return { kind: "done", words, committed, shortfall: { planned, attainment } };
   }
   return { kind: "done", words, committed };
