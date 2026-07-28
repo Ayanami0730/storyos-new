@@ -269,7 +269,11 @@ export function planBatch(
       (skipped as BatchPlan["skipped"][number][]).push({
         task,
         state,
-        reason: `already finished: ${state.words} words, ${state.committed} scene(s)`,
+        reason: state.shortfall
+          ? `finished SHORT and is being kept: ${state.words} words, ${state.committed} of ` +
+            `${state.shortfall.planned} scene(s), attainment ` +
+            `${state.shortfall.attainment.toFixed(2)} — rerun with --force to replace it`
+          : `already finished: ${state.words} words, ${state.committed} scene(s)`,
       });
       continue;
     }
