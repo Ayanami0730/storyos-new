@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.3";
+export const VERSION = "0.9.4";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,24 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.4",
+    note:
+      "the \"intent names an entity it does not list as present\" check applies to characters " +
+      "only. Measured across 44 runs: it flagged **locations 197 times, objects 122 and " +
+      "characters 94**, and **25 of 44 plans needed at least one retry** \u2014 " +
+      "`lnb40k-fantasy-the-tapestry-of-fate` spent seven `submit_plan` calls with 107 scenes " +
+      "flagged, and twice a run died outright with `the orchestrator produced no plan`. Two " +
+      "thirds of that pressure was entities the rejection\'s own argument does not reach: it " +
+      "says the writer only receives *state and beliefs* for what is present, and a location " +
+      "has no beliefs. It also removed a false-positive class \u2014 the stem is the first " +
+      "hyphen-separated segment, which is what lets `char-elias-warden` be found in an intent " +
+      "saying \"Elias\", and it made `loc-windsor-castle` match every scene of a story *set in " +
+      "Windsor* and `char-war-envoy` match \"the approaching war\". The character case the check " +
+      "was built for is untouched. Planning round-trips are iteration speed, and this check was " +
+      "spending up to five of them per run pushing back against 0.8.4\'s ceiling on how much a " +
+      "scene may list.",
+  },
   {
     version: "0.9.3",
     note:

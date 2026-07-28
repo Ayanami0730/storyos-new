@@ -313,6 +313,47 @@ describe("planTool", () => {
     assert.equal(sceneCountFor(500), 1);
   });
 
+  /**
+   * The narrowing that cost five planning round-trips before it was measured.
+   * Across 44 runs the check flagged locations 197 times and objects 122, against
+   * 94 for characters, and 25 of 44 plans needed at least one retry — while the
+   * rejection's own argument is about state and beliefs, which a location has
+   * none of.
+   */
+  it("does not demand a location be listed present because the intent says where it is", async () => {
+    const { sink, run } = tool();
+    await run({
+      ...good,
+      entities: [
+        { id: "char-mira", sketch: "the cartographer" },
+        { id: "loc-windsor-castle", sketch: "the castle" },
+      ],
+      scenes: Array.from({ length: 10 }, (_, i) => ({
+        intent: `Establish Windsor in the summer of 1956, beat ${i + 1}`,
+        present: ["char-mira"],
+      })),
+    });
+    assert.ok(sink.plan, "a story set in Windsor may say so without listing the castle");
+  });
+
+  it("still demands a character the intent puts in the scene", async () => {
+    const { sink, run } = tool();
+    const reply = await run({
+      ...good,
+      entities: [
+        { id: "char-mira", sketch: "the cartographer" },
+        { id: "char-elias-warden", sketch: "the keeper" },
+      ],
+      scenes: Array.from({ length: 10 }, (_, i) => ({
+        intent: i === 3 ? "Elias meets Mira at the Watchhouse" : `beat ${i + 1}`,
+        present: ["char-mira"],
+      })),
+    });
+    assert.equal(sink.plan, undefined);
+    assert.match(reply.content[0]!.text, /char-elias-warden/);
+    assert.match(reply.content[0]!.text, /scene 4/);
+  });
+
   it("leaves a genuinely small cast alone", async () => {
     const { sink, run } = tool();
     await run(good);

@@ -287,22 +287,39 @@ export function planTool(
         );
       }
 
-      // An intent that names a character the scene does not list as present is
-      // an instruction the writer cannot follow safely. It happened on the first
-      // run with the tree: scene 1's intent said "Elias meets Mira at the
-      // Watchhouse" while `present` listed neither, so the writer invented what
-      // it had not been given and the scene was rejected three times over
-      // entities that were in the plan all along.
+      /**
+       * An intent that names a *character* the scene does not list as present is
+       * an instruction the writer cannot follow safely. It happened on the first
+       * run with the tree: scene 1's intent said "Elias meets Mira at the
+       * Watchhouse" while `present` listed neither, so the writer invented what
+       * it had not been given and the scene was rejected three times over
+       * entities that were in the plan all along.
+       *
+       * Characters only, and that narrowing is measured. Across 44 runs this
+       * check flagged **loc 197, obj 122, char 94** times and **25 of 44 plans
+       * needed at least one retry** — `lnb40k-fantasy-the-tapestry-of-fate` took
+       * seven `submit_plan` calls with 107 scenes flagged. Two thirds of that
+       * pressure was locations and objects, and the rejection's own argument does
+       * not reach them: it says the writer only receives *state and beliefs* for
+       * what is present, and a location has no beliefs. Naming a place in an
+       * intent is usually saying where the scene is, not adding a cast member.
+       *
+       * It also removed a false-positive class. The stem is the first
+       * hyphen-separated segment, which is what lets `char-elias-warden` be found
+       * in an intent that says "Elias" — but it made `loc-windsor-castle` match
+       * every scene of a story *set in Windsor*, and `char-war-envoy` match
+       * "the approaching war" and "the war recedes" in two scenes the envoy is
+       * not in. Restricting to characters leaves that last case, so a role-noun
+       * stem can still misfire; at two flags per run it is worth one round-trip,
+       * where 197 location flags were worth five.
+       */
       const missing = scenes.flatMap((s, i) => {
         const present = new Set(s.present ?? []);
         const named = [...ids].filter(
           (id) =>
+            id.startsWith("char-") &&
             !present.has(id) &&
-            // Match on the distinctive part of the id, so `char-elias-warden`
-            // is found in prose that says "Elias".
-            new RegExp(`\\b${id.replace(/^(char|loc|obj|fac)-/, "").split("-")[0]}\\b`, "i").test(
-              s.intent ?? "",
-            ),
+            new RegExp(`\\b${id.replace(/^char-/, "").split("-")[0]}\\b`, "i").test(s.intent ?? ""),
         );
         return named.map((id) => `scene ${i + 1} (${s.intent?.slice(0, 40)}…) names ${id}`);
       });
