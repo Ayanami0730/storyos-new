@@ -60,6 +60,26 @@ export const RATES: Readonly<Record<string, ModelRate>> = {
   },
 };
 
+/**
+ * The rate for a model name, tolerating a gateway's routing prefix.
+ *
+ * `openai/gpt-5-mini` is not a different model from `gpt-5-mini`; it is the same
+ * model behind a gateway that requires the vendor segment to pick an upstream
+ * group. Without this, every run on that route priced at **$0.00** with the
+ * model listed as `unpriced` — a number that reads as valid and is not, which is
+ * the same failure shape as counting a Chinese manuscript as twenty words.
+ *
+ * Only the prefix is normalised. A genuinely unknown model still returns null
+ * and still lands in `unpriced`, because the alternative is guessing, and the
+ * header's promise is that nothing here is guessed.
+ */
+export function rateFor(model: string): ModelRate | null {
+  const direct = RATES[model];
+  if (direct) return direct;
+  const slash = model.indexOf("/");
+  return slash === -1 ? null : (RATES[model.slice(slash + 1)] ?? null);
+}
+
 export interface Usage {
   readonly input: number;
   readonly output: number;
@@ -83,7 +103,7 @@ export interface CostBreakdown {
  * than summed first.
  */
 export function costOf(model: string, usage: Usage): CostBreakdown {
-  const rate = RATES[model] ?? null;
+  const rate = rateFor(model);
   if (!rate) {
     return { usd: 0, inputUsd: 0, cachedUsd: 0, outputUsd: 0, rate: null };
   }

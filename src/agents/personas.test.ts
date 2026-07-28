@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 
 import type { AgentRole } from "../transaction/types.ts";
+import { indexManagerTools } from "./index-manager-tools.ts";
 import {
   DELEGATION_TOOLS,
   PERSONAS,
@@ -170,6 +171,47 @@ describe("the allowlist check", () => {
       toolNamesFor("writer").filter((t) => t !== "propose_state_delta"),
     );
     assert.deepEqual(mismatch?.missing, ["propose_state_delta"]);
+  });
+
+  /**
+   * The three tests above compare the list against `toolNamesFor`, which is the
+   * list. They cannot fail on the drift the check exists to catch, and that is
+   * not hypothetical — it is how 0.9.1 shipped.
+   *
+   * `fold_scene` was added to the factory and not to the persona, so
+   * `allowlistMismatch` refused the index-manager at construction on every scene
+   * of every run for four versions. The scene loop treats a failed backfill as a
+   * warning and commits anyway, which is right for a transient failure and made
+   * a total one invisible: 26 runs delivered manuscripts with **zero state
+   * entries, zero beliefs, zero relations and zero events**, against 11–101
+   * state entries in every run from 0.7.1 to 0.8.2. Nothing failed, so nothing
+   * was looked at.
+   *
+   * Comparing against what the factory actually builds is the assertion that was
+   * missing. It is the same argument the runtime check makes, moved to where it
+   * costs a test run instead of a batch.
+   */
+  it("agrees with the tools the index-manager factory actually builds", () => {
+    const built = (
+      indexManagerTools(() => {
+        throw new Error("a live writer is not needed to enumerate tool names");
+      }) as { readonly name: string }[]
+    ).map((t) => t.name);
+    const mismatch = allowlistMismatch("index-manager", [
+      ...built,
+      // The rest of the role's surface comes from shared factories, which this
+      // test is not about; only the write tools are role-specific.
+      ...toolNamesFor("index-manager").filter(
+        (t) => !personaFor("index-manager").writeTools.includes(t),
+      ),
+    ]);
+    assert.equal(
+      mismatch,
+      null,
+      `personas.ts and index-manager-tools.ts disagree: ` +
+        `granted but not listed ${mismatch?.unlisted.join(", ") || "none"}, ` +
+        `listed but not granted ${mismatch?.missing.join(", ") || "none"}`,
+    );
   });
 });
 

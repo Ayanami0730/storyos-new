@@ -47,6 +47,38 @@ describe("pricing a run at list price", () => {
     assert.equal(priced.totalUsd, 0.25);
   });
 
+  /**
+   * The route prefix that made every run on the internal gateway report $0.00.
+   *
+   * That gateway needs `openai/gpt-5-mini` to reach an unsaturated upstream group
+   * — the bare name returns "上游负载已饱和" — and the prefixed name matched no
+   * rate, so the cost column read zero with the model filed under `unpriced`. A
+   * zero that means "unknown" is the failure the word counter had: it looks like
+   * a measurement.
+   */
+  it("prices a model reached through a gateway's routing prefix", () => {
+    const prefixed = costOf("openai/gpt-5-mini", {
+      input: 1_000_000,
+      output: 0,
+      cacheRead: 0,
+    });
+    const bare = costOf("gpt-5-mini", { input: 1_000_000, output: 0, cacheRead: 0 });
+    assert.equal(prefixed.usd, bare.usd);
+    assert.notEqual(prefixed.rate, null);
+  });
+
+  it("still refuses to guess when the name after the prefix is unknown", () => {
+    // Stripping the prefix must not become a licence to price anything: the
+    // promise the table makes is that no number in it is invented.
+    const cost = costOf("somevendor/some-unreleased-model", {
+      input: 1_000_000,
+      output: 0,
+      cacheRead: 0,
+    });
+    assert.equal(cost.rate, null);
+    assert.equal(cost.usd, 0);
+  });
+
   it("keeps the verifier on the standard Gemini tier it actually runs in", () => {
     // Gemini 3.1 Pro reprices the *whole* request above 200k prompt tokens
     // ($4/$18). Our peak context is around 64k, so the standard tier is right —

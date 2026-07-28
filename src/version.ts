@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.5";
+export const VERSION = "0.9.6";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,37 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.6",
+    note:
+      "the index-manager can write the index again. `fold_scene` was added to the factory in " +
+      "0.9.1 and never to the persona allowlist, so `allowlistMismatch` refused the role at " +
+      "construction \u2014 correctly, by its own argument \u2014 on **every scene of every run for " +
+      "four versions**. Measured across 26 runs on 0.9.1\u20130.9.4: **zero state entries, zero " +
+      "beliefs, zero relations, zero events, in all of them**, against 11\u2013101 state entries " +
+      "in all 15 runs from 0.7.1 to 0.8.2. On disk each character kept only `profile.yaml` and " +
+      "`relations/` was empty, so the committed index held identities and nothing else. The " +
+      "writer was not blind \u2014 P0 and P1 come from the in-memory canon the deltas build, and " +
+      "`canon_facts` stayed at 3\u2013148, which is exactly why this looked like a normal run \u2014 " +
+      "but everything the context-builder searches for was absent, which is what its 2\u20135 " +
+      "recorded gaps per scene were reporting. Every number measured on 0.9.1\u20130.9.4 is a " +
+      "number for a harness with its central mechanism switched off, the chapter-length A/B " +
+      "included. Three things changed, and the permission is the least of them. The role now " +
+      "lists the tool. `allowlistMismatch` is tested against the tools the factory *actually " +
+      "builds*, because the three tests that existed compared the list with `toolNamesFor` \u2014 " +
+      "the list itself \u2014 and could not fail on this drift by construction. And a backfill " +
+      "failing on **three consecutive scenes** now ends the run instead of warning: per-scene " +
+      "tolerance is right for a transient failure and is what made a permanent one invisible, " +
+      "since the scene commits anyway and the batch reads `done`. `backfill_failures` is in " +
+      "every summary beside `canon_facts`, which is the pair that distinguishes the two cases. " +
+      "Separately, the cost column stopped reading **$0.00** on the internal gateway: that route " +
+      "needs `openai/gpt-5-mini` to reach an unsaturated upstream group, the prefixed name " +
+      "matched no rate, and the run reported zero with the model filed under `unpriced`. A zero " +
+      "that means \"unknown\" is the same failure as reading a Chinese manuscript as twenty " +
+      "words \u2014 it looks like a measurement. Only the vendor prefix is normalised; a name that " +
+      "is genuinely unknown after stripping it still returns no rate, because nothing in that " +
+      "table may be guessed.",
+  },
   {
     version: "0.9.5",
     note:

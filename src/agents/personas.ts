@@ -144,7 +144,21 @@ export const PERSONAS: readonly PersonaSpec[] = [
   {
     role: "index-manager",
     model: "gpt-5-mini",
+    /**
+     * `fold_scene` first, because leaving it out of this list is what made 0.9.1
+     * through 0.9.4 build an index of identities only.
+     *
+     * The factory granted it and this list did not name it, so
+     * `allowlistMismatch` refused the whole invocation — correctly, by its own
+     * argument — and the index-manager failed on *every scene of every run*.
+     * The per-partition tools below are still granted, but the role never got as
+     * far as calling one: the refusal happens at construction. Measured across
+     * 26 runs on 0.9.1–0.9.4: **zero state entries, zero beliefs, zero
+     * relations, zero events, in all of them**, against 11–101 state entries in
+     * all 15 runs from 0.7.1 to 0.8.2.
+     */
     writeTools: [
+      "fold_scene",
       "upsert_character",
       "upsert_entity",
       "append_state",

@@ -268,6 +268,17 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
           : [],
       ),
     canon_facts: result?.canon.length ?? 0,
+    /**
+     * Committed scenes whose index backfill failed.
+     *
+     * `canon_facts` counts what the *writer declared*, so it stays healthy when
+     * the index-manager never runs — which is how a total backfill failure
+     * looked like a normal run for four versions. This is the number that
+     * distinguishes them, and it belongs beside `canon_facts` for exactly that
+     * reason: 26 runs on 0.9.1–0.9.4 reported 3–148 canon facts and **zero**
+     * state entries, beliefs, relations and events.
+     */
+    backfill_failures: result?.backfillFailures ?? 0,
     promises_declared: result ? result.revision.coverage.contractsChecked : 0,
     promises_unpaid: result ? result.revision.coverage.contractsOpen : 0,
     revision_tasks: result?.revision.tasks.length ?? 0,

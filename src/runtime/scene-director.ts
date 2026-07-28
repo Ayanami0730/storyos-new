@@ -71,6 +71,17 @@ import {
 /** Which delegation a step corresponds to, for the report and the refusal text. */
 export type StepName = "context" | "draft" | "verify" | "commit" | "abandon";
 
+/**
+ * How a failed index backfill announces itself in a scene's warnings.
+ *
+ * Shared with the story loop, which counts these to distinguish a scene that
+ * went badly from a mechanism that is not working at all. Written once because
+ * the coupling is the risk: the same failure was invisible for four versions,
+ * and a counter keyed on a literal reworded in one of two places fails the same
+ * silent way.
+ */
+export const BACKFILL_FAILURE_PREFIX = "backfill failed";
+
 export interface StepReport {
   /** False when the step refused; the transaction is unchanged in that case. */
   readonly ok: boolean;
@@ -638,8 +649,14 @@ export class SceneDirector {
         // A backfill that fails does not lose the scene: the prose and the
         // declared delta still land, and the gap shows up in the reference
         // check rather than being silently absent.
+        //
+        // The story loop counts these to tell one bad scene from a broken
+        // mechanism, and it matches on this prefix — so the prefix is a shared
+        // constant rather than the same literal written twice. Rewording it in
+        // one place would have set that counter to zero permanently, which is
+        // the same shape as the defect the counter exists to catch.
         const message = error instanceof Error ? error.message : String(error);
-        this.#warnings.push(`backfill failed: ${message}`);
+        this.#warnings.push(`${BACKFILL_FAILURE_PREFIX}: ${message}`);
         backfillNote = ` Backfill failed (${message}); prose and delta still committed.`;
       }
     }

@@ -33,7 +33,7 @@ import {
   planFiles,
   planStory,
 } from "./plan.ts";
-import { SceneDirector } from "./scene-director.ts";
+import { BACKFILL_FAILURE_PREFIX, SceneDirector } from "./scene-director.ts";
 import type { SceneCollaborators, SceneOutcome } from "./scene-loop.ts";
 import { countWords } from "./words.ts";
 
@@ -78,6 +78,17 @@ export interface StoryResult {
     readonly sceneId: string;
     readonly allocation: SceneAllocation;
   }[];
+  /**
+   * Scenes whose index backfill failed, out of those that committed.
+   *
+   * Reported because the absence of this number is what let a total failure of
+   * the index-manager ship for four versions. A failed backfill is a per-scene
+   * warning and the scene commits anyway — the right trade for a transient
+   * failure, and the reason a permanent one was invisible: 26 runs across
+   * 0.9.1–0.9.4 delivered manuscripts whose index held identities and nothing
+   * else, every one of them reporting `done`.
+   */
+  readonly backfillFailures: number;
 }
 
 function toolText(text: string) {
@@ -400,6 +411,18 @@ export async function writeStory(options: {
   const proseByScene = new Map<string, string>();
   const driving = { scenesDriven: 0, stepsByOrchestrator: 0, stepsRescuedByEngine: 0 };
   const allocations: { sceneId: string; allocation: SceneAllocation }[] = [];
+  /**
+   * Committed scenes whose backfill failed, and how many in a row.
+   *
+   * The run-level count is reported; the consecutive count is what stops the run.
+   * A backfill failure is per-scene and non-fatal by design, so a *permanent*
+   * cause — a misconfiguration, a permission the role does not have — presents as
+   * every scene warning identically while the book is written anyway. Three in a
+   * row is the threshold because transient failures are independent and a
+   * configuration error is not: it fails 100% of the time from the first scene.
+   */
+  let backfillFailures = 0;
+  let consecutiveBackfillFailures = 0;
   /** Words actually on the page, recounted from committed prose after each scene. */
   let committedWords = 0;
   /** The previous scene's delivered length against what it was asked for. */
@@ -607,6 +630,30 @@ export async function writeStory(options: {
 
     if (outcome.status === "COMMITTED") {
       for (const warning of outcome.warnings) say(`${card.id} warning — ${warning}`);
+
+      const backfillFailed = outcome.warnings.some((w) =>
+        w.startsWith(BACKFILL_FAILURE_PREFIX),
+      );
+      if (backfillFailed) {
+        backfillFailures += 1;
+        consecutiveBackfillFailures += 1;
+        if (consecutiveBackfillFailures >= 3) {
+          // Not a scene failure — a broken mechanism. Continuing produces a
+          // complete manuscript whose index holds identities and nothing else,
+          // which is the artefact the whole design exists to avoid and the one
+          // it reported as `done` for four versions.
+          throw new Error(
+            `the index backfill failed on ${consecutiveBackfillFailures} consecutive ` +
+              `scenes, so this is a configuration failure and not a scene that went ` +
+              `badly: every later scene would be written against an index missing ` +
+              `state, beliefs, relations and events. Last cause — ` +
+              `${outcome.warnings.find((w) => w.startsWith(BACKFILL_FAILURE_PREFIX))}`,
+          );
+        }
+      } else {
+        consecutiveBackfillFailures = 0;
+      }
+
       const text = await index.read(options.prosePathFor?.(card.id) ?? `manuscript/${card.id}.md`);
       prose.push(text);
       recentProse.push({ sceneId: card.id, text });
@@ -728,6 +775,7 @@ export async function writeStory(options: {
     revision,
     driving,
     allocations,
+    backfillFailures,
   };
 }
 
