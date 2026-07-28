@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.8.5";
+export const VERSION = "0.8.6";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,21 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.8.6",
+    note:
+      "the declared voice is written to the file everything is told to read. Since 0.8.0 the " +
+      "packet has carried `Narration: <person>, <tense> tense … decided for the whole book " +
+      "before any of it was written and does not change`, citing `novel/style/voice.md` as its " +
+      "source — while that file still held its seed text, *\"(Established by the first " +
+      "committed scenes; the writer may propose changes.)\"*, which is the opposite claim at " +
+      "the address the claim points to. It matters because of who reads it: the verifier\'s " +
+      "brief sends it to this file by name to check register drift, and register drift is " +
+      "**seven of the nine** consistency errors measured in the first 20,000-word manuscript " +
+      "(4.93 per 10k words, worst of the nine systems at that tier). An agent asked to enforce " +
+      "a constraint, sent to the file that holds it, and shown a note saying the constraint is " +
+      "not settled yet, has been told there is nothing to enforce.",
+  },
   {
     version: "0.8.5",
     note:

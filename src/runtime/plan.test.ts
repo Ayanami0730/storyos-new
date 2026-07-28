@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { type StoryPlan, planStory, planTool, sceneCountFor } from "./plan.ts";
+import { type StoryPlan, planFiles, planStory, planTool, sceneCountFor } from "./plan.ts";
 
 describe("scene count", () => {
   it("scales with the target rather than being left to the model", () => {
@@ -237,6 +237,25 @@ describe("planTool", () => {
    * which is why this is stated as a share of the whole roster and floored on
    * roster size rather than measured as similarity between scenes.
    */
+  /**
+   * The packet's voice constraint cites `novel/style/voice.md`, and that file held
+   * the seed note saying the opposite — that voice is settled by the first scenes
+   * and the writer may propose changes. The verifier's brief sends it to this file
+   * by name to check register drift, which is seven of the nine consistency errors
+   * measured in the first 20,000-word manuscript.
+   */
+  it("writes the declared voice to the file everything is told to read", async () => {
+    const { sink, run } = tool();
+    await run({ ...good, narrative_person: "first person, Rue", tense: "past" });
+    const voice = planFiles(sink.plan!, "a premise").find((f) =>
+      f.relPath.endsWith("novel/style/voice.md"),
+    );
+    assert.ok(voice, "the plan projects a voice file");
+    assert.match(voice!.content, /first person, Rue/);
+    assert.match(voice!.content, /past tense/);
+    assert.doesNotMatch(voice!.content, /may propose changes/);
+  });
+
   it("leaves a genuinely small cast alone", async () => {
     const { sink, run } = tool();
     await run(good);

@@ -477,6 +477,32 @@ export function planFiles(plan: StoryPlan, premise: string): readonly FileWrite[
         rules: plan.worldRules,
       }),
     },
+    /**
+     * The declared voice, written where everything is told to look for it.
+     *
+     * The packet has carried `Narration: <person>, <tense> tense … decided for
+     * the whole book before any of it was written and does not change` since
+     * 0.8.0, and it cites this path as its source. This path held the seed text:
+     * *"(Established by the first committed scenes; the writer may propose
+     * changes.)"* — the opposite claim, at the address the claim points to.
+     *
+     * That is not a tidiness problem, because of who reads it. The verifier's
+     * brief sends it here by name to check register drift — *"Narrative style —
+     * voice, tense, register drift. `novel/style/voice.md` and the previous
+     * scene are the comparison"* — and register drift is the defect that
+     * accounts for **seven of the nine** consistency errors measured in the
+     * first 20,000-word manuscript. An agent asked to enforce a constraint, sent
+     * to the file that holds it, and shown a note saying the constraint is not
+     * settled yet, has been told there is nothing to enforce.
+     */
+    {
+      relPath: paths.voice(),
+      content:
+        `# Voice\n\nNarration: ${plan.voice.person}, ${plan.voice.tense} tense.\n\n` +
+        `Decided for the whole book before any of it was written, and held. A scene that ` +
+        `slips into another person or tense is wrong against this file, not proposing a ` +
+        `change to it.\n`,
+    },
     {
       relPath: paths.beats(),
       content: toYaml({
