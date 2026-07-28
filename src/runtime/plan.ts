@@ -209,6 +209,36 @@ export function planTool(
             `Rue" is checkable and "intimate and lyrical" is not.`,
         );
       }
+      /**
+       * A story may alternate viewpoints. It may not leave the switch unlocated.
+       *
+       * The 40,000-word historical cell declared *"third person limited,
+       * alternating between the Queen and the Actress, past tense"*, which passes
+       * every check above and still fails this tool's own stated bar: the writer
+       * has to be able to check a sentence against it, and under that declaration
+       * a sentence inside either woman's head is correct anywhere in the book. So
+       * is a sentence that moves between them mid-paragraph — which is what the
+       * consistency detector reports as `perspective_confusions`, the subtype
+       * holding seven of the nine errors this constraint exists to prevent.
+       *
+       * Naming the unit fixes it without banning the technique: "one viewpoint per
+       * scene, alternating between the Queen and the Actress" makes every sentence
+       * checkable again, because the scene it is in has an owner.
+       */
+      if (/\b(alternat\w*|shifting|rotating|switch\w*|multiple viewpoints)\b/i.test(args.narrative_person)) {
+        if (!/\bper (?:scene|chapter|section)\b|\beach (?:scene|chapter|section)\b|\bone .{0,24}per\b|\bby (?:scene|chapter)\b/i.test(args.narrative_person)) {
+          return toolText(
+            `rejected: narrative_person "${args.narrative_person}" alternates viewpoint without ` +
+              `saying where it is allowed to switch, so no sentence can be checked against it — ` +
+              `either head is correct anywhere, including in the middle of a paragraph. Name the ` +
+              `unit that owns a viewpoint: "third person limited, one viewpoint per scene, ` +
+              `alternating between the Queen and the Actress". Alternating is fine; unlocated ` +
+              `alternation is the defect the consistency detector reports as ` +
+              `perspective_confusions, and that subtype was seven of the nine errors in the ` +
+              `first 20,000-word manuscript this harness wrote.`,
+          );
+        }
+      }
       if (!/^(past|present)$/i.test(args.tense.trim())) {
         return toolText(`rejected: tense must be "past" or "present"; got "${args.tense}".`);
       }

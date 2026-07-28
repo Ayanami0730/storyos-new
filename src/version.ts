@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.8.6";
+export const VERSION = "0.8.7";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,20 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.8.7",
+    note:
+      "an alternating viewpoint must say where it is allowed to switch. The 40,000-word " +
+      "historical cell declared *\"third person limited, alternating between the Queen and the " +
+      "Actress, past tense\"*, which passes every other check and still fails this tool\'s own " +
+      "stated bar — the writer has to be able to check a sentence against it, and under that " +
+      "declaration a sentence in either woman\'s head is correct anywhere in the book, " +
+      "including mid-paragraph. That is exactly what the detector reports as " +
+      "`perspective_confusions`, the subtype holding **seven of the nine** errors the voice " +
+      "constraint exists to prevent. Naming the unit keeps the technique and restores the " +
+      "check: \"one viewpoint per scene, alternating between the Queen and the Actress\" makes " +
+      "every sentence answerable again, because the scene it sits in has an owner.",
+  },
   {
     version: "0.8.6",
     note:

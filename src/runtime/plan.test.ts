@@ -256,6 +256,34 @@ describe("planTool", () => {
     assert.doesNotMatch(voice!.content, /may propose changes/);
   });
 
+  /**
+   * The declaration the 40,000-word historical cell actually submitted. It passes
+   * every other check and still leaves no sentence checkable: under it, either
+   * woman's head is correct anywhere, including mid-paragraph — which is what the
+   * detector reports as `perspective_confusions`.
+   */
+  it("refuses an alternating viewpoint that does not say where it may switch", async () => {
+    const { sink, run } = tool();
+    const reply = await run({
+      ...good,
+      narrative_person: "third person limited, alternating between the Queen and the Actress",
+    });
+    assert.equal(sink.plan, undefined);
+    assert.match(reply.content[0]!.text, /where it is allowed to switch/);
+    assert.match(reply.content[0]!.text, /perspective_confusions/);
+  });
+
+  it("accepts alternation once the unit that owns a viewpoint is named", async () => {
+    const { sink, run } = tool();
+    await run({
+      ...good,
+      narrative_person:
+        "third person limited, one viewpoint per scene, alternating between the Queen and the Actress",
+    });
+    assert.ok(sink.plan, "a located alternation is a legitimate technique, not a defect");
+    assert.match(sink.plan!.voice.person, /one viewpoint per scene/);
+  });
+
   it("leaves a genuinely small cast alone", async () => {
     const { sink, run } = tool();
     await run(good);
