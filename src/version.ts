@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.12";
+export const VERSION = "0.9.13";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,22 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.13",
+    note:
+      "The orchestrator's plan retry clears its session first, which the writer's retry has done " +
+      "since 0.9.7 and this one did not. Measured on `runs-40kv2/lnbcustom-mystery-whidbey`: " +
+      "three attempts returned `I'm sorry, but I cannot assist with that request.` verbatim in " +
+      "**51 seconds** and the cell produced no plan and no manuscript \u2014 fast identical " +
+      "wording is what asking again inside a refused conversation looks like from outside. That " +
+      "a refusal is a session state rather than a property of the premise is already measured: " +
+      "`a-far-flung-life-ch24` refused on its first reply and then planned normally on a fresh " +
+      "sample. Resetting is safe for the schema-failure case too, which is the one that appears " +
+      "to need the history \u2014 `retryAsk` quotes the last reply and names all six required " +
+      "top-level fields in the prompt, and it does that because the validator's own message read " +
+      "as though `world_rules` were nested and the model deleted half its scenes to satisfy it. " +
+      "The corrective information is in the ask, not the transcript.",
+  },
   {
     version: "0.9.12",
     note:

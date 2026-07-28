@@ -120,6 +120,7 @@ describe("asking again for a plan", () => {
           if (calls === 2) sink.plan = planFor();
           return { text: "I'm sorry, but I cannot assist with that request." };
         },
+        resetSession: () => {},
       } as never,
       premise: "a locked room",
       targetWords: 1_200,
@@ -140,6 +141,45 @@ describe("asking again for a plan", () => {
     assert.match(asks[1]!, /Do not shorten the scene list/);
   });
 
+  /**
+   * A refusal is a state the session fell into, so the retry must not inherit it.
+   *
+   * The writer got this in 0.9.7 and the orchestrator did not, and the gap showed
+   * up on `runs-40kv2/lnbcustom-mystery-whidbey`: three attempts inside one
+   * session returned the identical sentence in **51 seconds** and the cell
+   * produced nothing. Asking again in a conversation that already contains "I
+   * cannot assist" can only draw the same reply, and the fast identical wording is
+   * what that looks like from outside.
+   *
+   * Safe for the schema-failure case too, which is the one that seems to need the
+   * transcript: `retryAsk` already quotes the last reply and names all six
+   * required fields in the prompt, and it does that precisely because the
+   * validator's own message was misleading. The corrective information lives in
+   * the ask, not in the history.
+   */
+  it("clears the orchestrator's session before asking again", async () => {
+    const sink: { plan?: StoryPlan } = {};
+    const events: string[] = [];
+    let calls = 0;
+    await planStory({
+      residents: {
+        invoke: async () => {
+          calls += 1;
+          events.push(`invoke-${calls}`);
+          if (calls === 2) sink.plan = planFor();
+          return { text: "I'm sorry, but I cannot assist with that request." };
+        },
+        resetSession: (role: string) => events.push(`reset-${role}`),
+      } as never,
+      premise: "a locked room",
+      targetWords: 1_200,
+      txid: "tx-plan",
+      sink,
+    });
+
+    assert.deepEqual(events, ["invoke-1", "reset-orchestrator", "invoke-2"]);
+  });
+
   it("fails after the last attempt, naming what came back", async () => {
     const sink: { plan?: StoryPlan } = {};
     let calls = 0;
@@ -150,6 +190,7 @@ describe("asking again for a plan", () => {
             calls += 1;
             return { text: "I'm sorry, but I cannot assist with that request." };
           },
+          resetSession: () => {},
         } as never,
         premise: "a bereaved family",
         targetWords: 1_200,

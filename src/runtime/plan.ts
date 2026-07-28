@@ -550,6 +550,27 @@ export async function planStory(options: {
 
   const replies: string[] = [];
   for (let attempt = 1; attempt <= PLAN_ATTEMPTS && !sink.plan; attempt += 1) {
+    if (attempt > 1) {
+      /**
+       * A retry must not inherit the session that produced the last failure.
+       *
+       * The writer got this in 0.9.7 for exactly this reason and the orchestrator
+       * did not. The gap showed up on `runs-40kv2/lnbcustom-mystery-whidbey`:
+       * three attempts inside one conversation returned `I'm sorry, but I cannot
+       * assist with that request.` verbatim in **51 seconds**, and the cell
+       * produced no plan and no manuscript. A refusal is a state the session fell
+       * into rather than a property of the premise — the proof is that
+       * `a-far-flung-life-ch24` refused on its first reply and then planned
+       * normally on a fresh sample — and asking again inside that state can only
+       * draw the same sentence.
+       *
+       * Safe for the schema-failure case, which is the one that looks like it
+       * needs the history: `retryAsk` quotes the last reply and names all six
+       * required fields in the prompt, and it does that because the validator's
+       * own message was misleading. The corrective information is in the ask.
+       */
+      residents.resetSession("orchestrator");
+    }
     const { text } = await residents.invoke(
       "orchestrator",
       attempt === 1 ? ask : retryAsk(replies.at(-1) ?? ""),
