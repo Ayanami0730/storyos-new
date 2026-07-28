@@ -40,6 +40,7 @@ import {
   pool,
   parseTasks,
 } from "../runtime/batch.ts";
+import { selectedSupply } from "../runtime/gateway.ts";
 
 const argv = process.argv.slice(2);
 const flag = (name: string): string | undefined => {
@@ -172,7 +173,17 @@ if (plan.toRun.length === 0) {
   say("nothing to do");
   process.exit(0);
 }
-if (!process.env.YS_KEY) throw new Error("YS_KEY is required");
+// Whichever supply this process is pointed at, its key has to be present here —
+// the children inherit the environment, and finding out per child means finding
+// out once per run directory instead of once.
+{
+  const supply = selectedSupply();
+  if (!supply.keyEnv.some((name) => process.env[name])) {
+    throw new Error(
+      `${supply.keyEnv.join(" or ")} is required for STORYOS_SUPPLY=${supply.id} (${supply.baseUrl})`,
+    );
+  }
+}
 
 /**
  * Children currently running, so a stop signal can be forwarded to them.

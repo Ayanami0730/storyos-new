@@ -24,6 +24,7 @@ import { personaFor } from "../agents/personas.ts";
 import type { SkillLibrary } from "../agents/skills.ts";
 import type { LedgerEntry, ResidentAgents } from "../agents/residents.ts";
 import { committedScenes, partitionReport } from "../index/tree.ts";
+import { selectedSupply } from "./gateway.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import type { ReferenceReport } from "../verification/references.ts";
 import { SCHEDULE } from "./allocation.ts";
@@ -154,6 +155,19 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
      * disagree with the run it describes is worse than an absent one.
      */
     verifier_model: args.verifierModel ?? personaFor("verifier").model,
+    /**
+     * Which route bought the tokens.
+     *
+     * Every baseline in both tables came through the YuanShi gateway, so a run
+     * served by a different endpoint is not automatically comparable with them —
+     * same model name, different deployment, and nothing else in the artefact
+     * would say so. This project has already lost a batch to a provenance field
+     * that silently stopped changing.
+     */
+    supply: (() => {
+      const s = selectedSupply();
+      return { id: s.id, base_url: s.baseUrl };
+    })(),
     allocation: allocationReport(input),
     elapsed_ms: input.elapsedMs,
     fatal: input.fatal,

@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.1";
+export const VERSION = "0.9.2";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,26 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.2",
+    note:
+      "the route that buys the tokens is selectable, and recorded. The reference gateway spent " +
+      "a morning refusing us \u2014 a forty-minute `401 Invalid token` window that truncated three " +
+      "runs to attainment 0.05\u20130.06, then sustained `429 \u2026 swedencentral has exceeded rate " +
+      "limit` that killed four more during planning at concurrency **2**, because the quota is " +
+      "shared with another lane on the same machine. `STORYOS_SUPPLY=zzz` points the provider " +
+      "registration at an OpenAI-compatible endpoint serving the same model. Probed at rising " +
+      "concurrency it took 1, 2, 4 and 8 parallel requests with **zero failures** and flat " +
+      "latency (p50 3.5\u20135.0s, which is the reference gateway\'s own p50); at 12 and 16 the " +
+      "median doubled to ~7.5s while throughput stopped rising, so eight is the knee. The " +
+      "default is unchanged and stays the reference gateway, because every baseline in both " +
+      "tables came through it and a run served by a different deployment of the same model " +
+      "name is not automatically comparable \u2014 so the route lands in `summary.json`, an unknown " +
+      "`STORYOS_SUPPLY` throws instead of falling back, and the model is looked up under the " +
+      "provider that was actually registered. That last one is not hypothetical: registering " +
+      "as `zhizengzeng` while still fetching `yuanshi-sg` killed all eight runs of the first " +
+      "attempt at their first turn with `Unknown provider: unknown`.",
+  },
   {
     version: "0.9.1",
     note:

@@ -22,6 +22,67 @@ export const GATEWAY_BASE_URL = "https://ai-prod-sg.wenxiaobai.com/v1";
 export const PROVIDER_ID = "yuanshi-sg";
 
 /**
+ * Where the models are actually bought, when the default supply will not sell.
+ *
+ * The YuanShi gateway is the reference route and stays the default: every
+ * baseline in both tables was generated through it, so changing it silently
+ * would make our rows incomparable with theirs on an axis nobody declared.
+ *
+ * It is also, on measurement, not always available. In one morning it produced a
+ * forty-minute `401 Invalid token` window that truncated three runs to
+ * attainment 0.05–0.06, and then sustained `429 … swedencentral has exceeded
+ * rate limit` that killed four more during planning — at concurrency **2**. The
+ * quota is not ours alone; another lane on the same machine draws on the same
+ * `gpt-5-mini` group, so the ceiling is whatever is left over rather than a
+ * number we can plan against.
+ *
+ * The alternate route is the same model over an OpenAI-compatible endpoint.
+ * Probed at rising concurrency it took 1, 2, 4 and 8 parallel requests with
+ * **zero failures** and flat latency (p50 3.5–5.0s, which is the primary
+ * gateway's own p50); at 12 and 16 the median doubled to ~7.5s while throughput
+ * stopped rising, so eight is the knee and the reason the launcher caps there.
+ *
+ * Selected by environment rather than by a flag, because it has to reach the
+ * provider registration that happens before any argument is parsed. Which route
+ * a run used is recorded in its summary — an undeclared supply change is exactly
+ * the kind of thing that makes two numbers look comparable when they are not.
+ */
+export interface Supply {
+  readonly id: string;
+  readonly name: string;
+  readonly baseUrl: string;
+  readonly keyEnv: readonly string[];
+}
+
+export const SUPPLIES: Readonly<Record<string, Supply>> = {
+  yuanshi: {
+    id: PROVIDER_ID,
+    name: "YuanShi Singapore gateway",
+    baseUrl: GATEWAY_BASE_URL,
+    keyEnv: ["YS_KEY"],
+  },
+  zzz: {
+    id: "zhizengzeng",
+    name: "zhizengzeng (OpenAI-compatible)",
+    baseUrl: "https://api.zhizengzeng.com/v1",
+    keyEnv: ["ZZZ_KEY"],
+  },
+};
+
+/** The route this process will use. `STORYOS_SUPPLY=zzz` to switch. */
+export function selectedSupply(env: NodeJS.ProcessEnv = process.env): Supply {
+  const wanted = env.STORYOS_SUPPLY?.trim() || "yuanshi";
+  const supply = SUPPLIES[wanted];
+  if (!supply) {
+    throw new Error(
+      `STORYOS_SUPPLY=${JSON.stringify(wanted)} is not a known route; ` +
+        `expected one of ${Object.keys(SUPPLIES).join(", ")}`,
+    );
+  }
+  return supply;
+}
+
+/**
  * Per HTTP request. Well above the slowest legitimate single call we have
  * measured and well below the twenty-plus minutes a stalled socket will happily
  * wait, which is the failure this exists for.
@@ -98,12 +159,13 @@ let installed: GatewayHandle | null = null;
 export function installGateway(): GatewayHandle {
   if (installed) return installed;
 
+  const supply = selectedSupply();
   const modelDefs = Object.entries(MODELS).map(([id, limits]) => ({
     id,
-    name: `${id} (yuanshi SG gateway)`,
+    name: `${id} (${supply.name})`,
     api: "openai-completions" as const,
-    provider: PROVIDER_ID,
-    baseUrl: GATEWAY_BASE_URL,
+    provider: supply.id,
+    baseUrl: supply.baseUrl,
     reasoning: true,
     input: ["text"] as const,
     // The gateway publishes no verified per-model rates, so cost stays zero by
@@ -113,10 +175,10 @@ export function installGateway(): GatewayHandle {
   }));
 
   const provider = createProvider({
-    id: PROVIDER_ID,
-    name: "YuanShi Singapore gateway",
-    baseUrl: GATEWAY_BASE_URL,
-    auth: { apiKey: envApiKeyAuth("YuanShi gateway key", ["YS_KEY"]) },
+    id: supply.id,
+    name: supply.name,
+    baseUrl: supply.baseUrl,
+    auth: { apiKey: envApiKeyAuth(`${supply.name} key`, supply.keyEnv as string[]) },
     models: modelDefs as never,
     api: openAICompletionsApi(),
   });
@@ -165,8 +227,12 @@ export function installGateway(): GatewayHandle {
 
   installed = {
     models,
+    // Look the model up under the provider that was actually registered, not
+    // under the default one. Registering as `zhizengzeng` and then fetching
+    // `yuanshi-sg` is how every run on the alternate route died at its first
+    // turn with `Unknown provider: unknown`.
     model: (id: ModelId) =>
-      (models as never as { getModel: Function }).getModel(PROVIDER_ID, id),
+      (models as never as { getModel: Function }).getModel(supply.id, id),
   };
   return installed;
 }
