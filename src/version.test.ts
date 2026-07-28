@@ -61,4 +61,29 @@ describe("the version stamp", () => {
   it("carries a note a reader of a six-month-old summary could use", () => {
     assert.ok(VERSION_NOTE.length > 100);
   });
+
+  /**
+   * The same family as the bump no-op above: a note that is wrong in a way no
+   * tool reports.
+   *
+   * These notes are multi-line string concatenations, and `VERSION_NOTE` lost a
+   * single `+` in the middle of one. That is not a syntax error — semicolon
+   * insertion ended the assignment at the gap, and the remaining lines became a
+   * concatenation expression whose value is discarded — so typecheck and lint
+   * both passed while the note stamped into every summary stopped, mid-sentence,
+   * at "declared in the plan and". It was 247 characters of an intended 1,100,
+   * and the existing length assertion only asked for 100.
+   *
+   * A length floor cannot catch this, because the truncation point is arbitrary.
+   * Ending on a dangling connective is the observable signature of it.
+   */
+  it("does not end mid-clause, which is what a dropped '+' looks like", () => {
+    const dangling = /\b(and|or|but|with|the|a|an|of|in|to|for|from|by|that|which|because|so)\s*$/i;
+    for (const note of [VERSION_NOTE, ...VERSION_HISTORY.map((e) => e.note)]) {
+      assert.ok(
+        !dangling.test(note.trim()),
+        `a note ends on a connective, so it was cut off: "…${note.trim().slice(-70)}"`,
+      );
+    }
+  });
 });

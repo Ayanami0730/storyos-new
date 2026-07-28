@@ -118,6 +118,21 @@ export function planRevisions(input: {
   readonly deltas: readonly SceneDelta[];
   readonly proseByScene: ReadonlyMap<string, string>;
 }): RevisionPlan {
+  // A run in which no scene survived has nothing to audit globally, and it is
+  // the one case where `verifyGlobal`'s empty-span refusal is wrong to apply.
+  // That refusal is right for a direct caller — auditing a zero-scene span is a
+  // programming error. Here it converted "every scene failed, and the failure
+  // list is the result" into a fatal crash that reported nothing at all, which
+  // is precisely the outcome the scene loop's own failure handling exists to
+  // prevent. Measured on `lbw102-ch`: a single-scene plan whose one scene
+  // failed, ending the run with `exit 1` and no record of why.
+  if (input.scenes.length === 0) {
+    return {
+      findings: [],
+      tasks: [],
+      coverage: { scenes: 0, contractsChecked: 0, contractsOpen: 0, capabilitiesChecked: 0 },
+    };
+  }
   const result = verifyGlobal({
     scenes: input.scenes,
     contracts: contractsFrom(input.deltas),

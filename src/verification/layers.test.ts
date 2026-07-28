@@ -7,6 +7,7 @@ import {
   verifyDeterministic,
 } from "./deterministic.ts";
 import { verifyGlobal } from "./global.ts";
+import { planRevisions } from "../runtime/revision.ts";
 
 const canon: readonly CanonFact[] = [
   {
@@ -379,5 +380,16 @@ describe("global pass over a finished span", () => {
       () => verifyGlobal({ scenes: [], contracts: [], capabilities: [] }),
       /at least one scene/,
     );
+  });
+
+  // The story loop reaches the global pass whether or not any scene survived,
+  // so the refusal above must not travel up as a fatal error: a run whose every
+  // scene failed has a failure list to report, and `lbw102-ch` reported nothing
+  // because this threw instead.
+  it("reports an empty plan, not a crash, when no scene committed", () => {
+    const plan = planRevisions({ scenes: [], deltas: [], proseByScene: new Map() });
+    assert.deepEqual(plan.tasks, []);
+    assert.deepEqual(plan.findings, []);
+    assert.equal(plan.coverage.scenes, 0);
   });
 });

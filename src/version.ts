@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.4";
+export const VERSION = "0.9.5";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -25,7 +25,7 @@ export const VERSION = "0.9.4";
 export const VERSION_NOTE =
   "orchestrator-driven scene loop with per-scene compute allocated by position in " +
   "the story (2/3/5 repair rounds and follow-ups across the opening, middle and " +
-  "final 40%, with recall depth 1/2/3), a narrative person and tense declared in the plan and "
+  "final 40%, with recall depth 1/2/3), a narrative person and tense declared in the plan and " +
   "carried as a hard constraint in every packet, path-addressed artefacts, OS-enforced " +
   "write gate (docker read-only mount), cost-triggered level-1 compaction, " +
   "baseline-comparable token accounting (input+output, cache reads excluded), and a " +
@@ -47,6 +47,26 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.5",
+    note:
+      "a run in which no scene survived reports its failures instead of crashing. The global " +
+      "pass refuses an empty span \u2014 correctly, for a direct caller, since auditing nothing " +
+      "is a programming error \u2014 but the story loop reaches it unconditionally, so when the " +
+      "last scene failed too the refusal travelled up as fatal. Measured on `lbw102-ch`, a " +
+      "single-scene plan whose one scene failed: `exit 1`, `Error: a global pass needs at " +
+      "least one scene of span`, and no record of *why* the scene failed. That is the exact " +
+      "outcome the scene loop\'s own failure handling exists to prevent \u2014 its comment says a " +
+      "failed scene does not stop the story because \"the failure rate is a result, and a " +
+      "harness that halts on the first hard scene reports nothing at all\" \u2014 and the " +
+      "all-scenes-failed case was the one path that contradicted it. `planRevisions` now " +
+      "returns an empty plan for an empty span; `verifyGlobal` keeps its refusal. Also fixes " +
+      "`VERSION_NOTE`, which was silently **truncated to 247 characters of 1,100**: a dropped " +
+      "`+` mid-concatenation is not a syntax error, semicolon insertion ended the assignment " +
+      "at the gap and the rest became a discarded expression, so the sentence stamped into " +
+      "every summary stopped at \"declared in the plan and\" while typecheck, lint and a " +
+      "`length > 100` assertion all passed.",
+  },
   {
     version: "0.9.4",
     note:
