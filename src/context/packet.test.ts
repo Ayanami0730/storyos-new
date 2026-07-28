@@ -15,7 +15,10 @@ function item(
     id,
     priority,
     source: `index/story/${id}`,
-    content: Array.from({ length: words }, (_, i) => `w${i}`).join(" "),
+    // Letters only. `w0 w1 …` counts zero under the benchmark's own definition,
+    // because a digit is a word character and so `\b[a-zA-Z]+\b` finds no
+    // boundary between `w` and `0` — the fixture, not the counter, was wrong.
+    content: Array.from({ length: words }, (_, i) => `word${"abcdefghij"[i % 10]}`).join(" "),
   };
 }
 
@@ -30,9 +33,15 @@ function request(over: Partial<PacketRequest> = {}): PacketRequest {
 }
 
 describe("countWords", () => {
-  it("splits on whitespace and ignores empties", () => {
+  it("counts Latin words and ignores empties", () => {
     assert.equal(countWords("  a   b\nc\t d "), 4);
     assert.equal(countWords(""), 0);
+  });
+
+  // The packet budget is a proxy for how much text an agent must read, so it has
+  // to see Chinese too. `runtime/words.test.ts` pins the definition.
+  it("counts a Chinese packet by character rather than as one token", () => {
+    assert.equal(countWords("提兰海岸"), 4);
   });
 });
 

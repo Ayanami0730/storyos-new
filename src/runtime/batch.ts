@@ -224,6 +224,32 @@ export function classify(input: {
   }
   const planned = Number(input.summary.scenes_planned ?? 0);
   const attainment = Number(input.summary.attainment ?? 0);
+
+  /**
+   * A run can commit every scene it planned and still not have written the book.
+   *
+   * The scene-count rule below cannot see that, and something got through it:
+   * three Chinese LongBench-Write cells reported `done — 1 scene(s) of 1 planned,
+   * 20 words` against a 2,000-character target. The prose was fine; the harness
+   * was counting Chinese by whitespace, so `attainment` read 0.01. The counter is
+   * fixed in `words.ts`, and this is the check that would have caught it anyway —
+   * because "delivered a tenth of the target" is a failure whatever the cause,
+   * and a status classifier that only counts scenes will keep missing it.
+   *
+   * The floor is the same one the scene rule uses. Above it a short run is kept
+   * and labelled, because a manuscript is not something to discard on a
+   * classifier's own initiative; below it there is no manuscript to protect.
+   */
+  if (attainment > 0 && attainment < 0.5 && committed >= planned && planned > 0) {
+    return {
+      kind: "incomplete",
+      why:
+        `the previous run committed all ${planned} planned scene(s) but delivered ` +
+        `${words} word(s) against its target — attainment ${attainment.toFixed(2)}, ` +
+        `less than half, so it is being rerun rather than kept`,
+    };
+  }
+
   if (planned > 0 && committed < planned) {
     /**
      * Below half the book, "keep it and label it loudly" is the wrong trade.

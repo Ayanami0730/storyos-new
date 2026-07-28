@@ -285,6 +285,45 @@ describe("classifying what is on disk", () => {
     assert.match((state as { why: string }).why, /less than half the book/);
   });
 
+  /**
+   * The shape three Chinese LongBench-Write cells came back in: every planned
+   * scene committed, and a twentieth of the target delivered. The scene-count
+   * rule is blind to it by construction.
+   */
+  it("reruns a run that committed every scene and still delivered almost nothing", () => {
+    const state = classify({
+      summary: {
+        fatal: null,
+        scenes_committed: 1,
+        scenes_planned: 1,
+        words: 20,
+        attainment: 0.01,
+      },
+      lockPid: null,
+      lockHolderAlive: false,
+      hasIndex: true,
+    });
+    assert.equal(state.kind, "incomplete");
+    assert.match((state as { why: string }).why, /committed all 1 planned scene/);
+    assert.match((state as { why: string }).why, /less than half/);
+  });
+
+  it("keeps a run that came in short but well above the floor", () => {
+    const state = classify({
+      summary: {
+        fatal: null,
+        scenes_committed: 4,
+        scenes_planned: 4,
+        words: 1800,
+        attainment: 0.9,
+      },
+      lockPid: null,
+      lockHolderAlive: false,
+      hasIndex: true,
+    });
+    assert.equal(state.kind, "done");
+  });
+
   it("leaves a run that wrote every scene unmarked", () => {
     const state = classify({
       summary: {

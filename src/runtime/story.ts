@@ -35,6 +35,7 @@ import {
 } from "./plan.ts";
 import { SceneDirector } from "./scene-director.ts";
 import type { SceneCollaborators, SceneOutcome } from "./scene-loop.ts";
+import { countWords } from "./words.ts";
 
 export type { SceneCard, StoryPlan };
 
@@ -613,7 +614,7 @@ export async function writeStory(options: {
         await index.read(`continuity/deltas/${card.id}.json`),
       ) as SceneDelta;
       canon = absorb(canon, card.id, delta);
-      const sceneWords = text.split(/\s+/).filter(Boolean).length;
+      const sceneWords = countWords(text);
       committedWords += sceneWords;
       lastCommitted = { id: card.id, words: sceneWords, target: card.targetWords };
       craftNotes = outcome.findings
@@ -719,7 +720,7 @@ export async function writeStory(options: {
   const manuscript = prose.join("\n\n");
   return {
     manuscript,
-    words: manuscript.split(/\s+/).filter(Boolean).length,
+    words: countWords(manuscript),
     plan: planSink.plan ?? plan,
     scenes,
     canon,

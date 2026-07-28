@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.2";
+export const VERSION = "0.9.3";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,27 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.3",
+    note:
+      "words are counted the way the benchmarks count them. Ours was " +
+      "`text.split(/\\s+/)`, and Chinese has no spaces \u2014 so a finished " +
+      "1,850-character Chinese story was measured as **twenty words**. Three " +
+      "LongBench-Write cells reported `done \u2014 1 scene(s) of 1 planned, 20 words` " +
+      "against a 2,000-character target, and roughly half of that bench is Chinese. " +
+      "The prose was never the problem and the score was never wrong (the scorer " +
+      "uses the official counter) \u2014 what was wrong is every decision the harness " +
+      "made on the way: the target handed to the writer, the length checks, the " +
+      "`thin_for_its_length` craft check, and the `attainment` each run reports. " +
+      "`runtime/words.ts` now transcribes upstream `evaluation/pred.py` \u2014 CJK " +
+      "codepoints plus Latin word tokens \u2014 and every site measuring delivered " +
+      "length uses it, including the packet budget, which is a proxy for how much " +
+      "text an agent has to read and was reading a Chinese packet at a fiftieth of " +
+      "its size. Separately, `classify` now reruns a run that committed every scene " +
+      "it planned and still delivered under half its target: the scene-count rule " +
+      "added in 0.8.9 is blind to that by construction, and it is a failure worth " +
+      "catching whatever the cause.",
+  },
   {
     version: "0.9.2",
     note:

@@ -59,6 +59,7 @@ import {
 import { type ArtifactStore, artifactPaths, renderAudit } from "./artifacts.ts";
 import { BudgetExhausted } from "./budget.ts";
 import { type ContextGap, renderGaps } from "./packet-builder.ts";
+import { countWords } from "./words.ts";
 import {
   type Draft,
   type SceneCollaborators,
@@ -405,7 +406,7 @@ export class SceneDirector {
       );
     }
 
-    const draftWords = draft.prose.split(/\s+/).filter(Boolean).length;
+    const draftWords = countWords(draft.prose);
     return report(
       "draft",
       this.state,
@@ -464,7 +465,7 @@ export class SceneDirector {
             knownEntities: this.#request.knownEntities,
             deterministic: deterministic.findings,
             words: {
-              draft: this.#lastDraft!.prose.split(/\s+/).filter(Boolean).length,
+              draft: countWords(this.#lastDraft!.prose),
               sceneTarget: this.#request.sceneTargetWords ?? null,
             },
           }),

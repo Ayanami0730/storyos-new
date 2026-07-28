@@ -19,10 +19,17 @@ import {
   PacketBuildError,
 } from "./types.ts";
 
-/** Word count, matching ConStory's whitespace split so budgets are comparable. */
-export function countWords(text: string): number {
-  return text.split(/\s+/).filter(Boolean).length;
-}
+/**
+ * Word count, as the benchmarks count words. See `runtime/words.ts`.
+ *
+ * Re-exported here rather than left as its own whitespace split, because the
+ * packet budget is a proxy for how much text an agent has to read and a Chinese
+ * packet was being measured at a fiftieth of its real size — the same defect that
+ * made a finished 1,850-character manuscript report `20 words`.
+ */
+import { countWords } from "../runtime/words.ts";
+
+export { countWords };
 
 function emptyByPriority(): Record<Priority, { included: number; excluded: number; words: number }> {
   return Object.fromEntries(

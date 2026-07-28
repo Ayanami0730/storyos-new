@@ -25,6 +25,7 @@ import type { SkillLibrary } from "../agents/skills.ts";
 import type { LedgerEntry, ResidentAgents } from "../agents/residents.ts";
 import { committedScenes, partitionReport } from "../index/tree.ts";
 import { selectedSupply } from "./gateway.ts";
+import { countWords } from "./words.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import type { ReferenceReport } from "../verification/references.ts";
 import { SCHEDULE } from "./allocation.ts";
@@ -48,9 +49,7 @@ export async function committedOnDisk(
   let words = 0;
   for (const scene of scenes) {
     try {
-      words += (await readFile(path.join(projectRoot, scene.relPath), "utf8"))
-        .split(/\s+/)
-        .filter(Boolean).length;
+      words += countWords(await readFile(path.join(projectRoot, scene.relPath), "utf8"));
     } catch {
       // A scene listed but unreadable is worth zero words and worth not crashing.
     }
@@ -103,7 +102,7 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
      */
     harness_version: VERSION,
     harness_version_note: VERSION_NOTE,
-    premise_words: args.premise.split(/\s+/).filter(Boolean).length,
+    premise_words: countWords(args.premise),
     target_words: args.target,
     backbone: args.backbone ?? "default (no --backbone override)",
     /**

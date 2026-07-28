@@ -31,6 +31,7 @@ import { type Draft, type SceneCollaborators, VerificationUnavailable } from "./
 import { type ResidentAgents, TurnFailed } from "../agents/residents.ts";
 import { renderAllocation } from "./allocation.ts";
 import { renderGaps } from "./packet-builder.ts";
+import { countWords } from "./words.ts";
 
 export class CollaboratorError extends Error {}
 
@@ -157,7 +158,7 @@ function writerTools(live: () => Capture, sceneId: () => string): unknown[] {
         }
         live().prose = args.prose;
         return toolText(
-          `staged ${args.prose.split(/\s+/).filter(Boolean).length} words. ` +
+          `staged ${countWords(args.prose)} words. ` +
             `Now call propose_state_delta with everything this scene established.`,
         );
       },
