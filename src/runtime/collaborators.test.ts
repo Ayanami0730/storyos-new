@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { SceneToolBus, copiedFromPacket } from "./collaborators.ts";
+import { SceneToolBus, copiedFromPacket, residentCollaborators } from "./collaborators.ts";
+import { allocate } from "./allocation.ts";
 
 interface Tool {
   name: string;
@@ -142,5 +143,45 @@ describe("copiedFromPacket", () => {
     } as never);
     assert.match(result.content[0]!.text, /^rejected: this passage is copied verbatim/);
     assert.equal(capture.prose, undefined, "nothing may be staged");
+  });
+});
+
+describe("a writer that will not stage anything", () => {
+  /**
+   * Why clearing the session is the fix rather than another ask.
+   *
+   * Measured on `lbw081-ch`: the writer replied *"I'm sorry, but I cannot assist
+   * with that request"* **eight times** — four scene attempts times the two asks
+   * each makes — and the scene was lost. The same task on the same backbone had
+   * delivered 2,679 words at attainment 0.96 two versions earlier, so the refusal
+   * was a state the conversation reached, and every retry inside it drew the same
+   * reply. The retry was already there; what it inherited was the problem.
+   */
+  it("clears the writer's session so the retry does not inherit the refusal", async () => {
+    const resets: string[] = [];
+    let asks = 0;
+    const { collaborators } = residentCollaborators({
+      residents: {
+        invoke: async () => {
+          asks += 1;
+          return { text: "I'm sorry, but I cannot assist with that request." };
+        },
+        resetSession: (role: string) => resets.push(role),
+      } as never,
+      sceneId: "s-001",
+      txid: "tx-s-001",
+    });
+
+    await assert.rejects(
+      collaborators.draft({
+        packet: { rendered: "a packet" } as never,
+        attempt: 0,
+        repairBrief: "",
+        allocation: allocate({ sceneIndex: 0, total: 4 }),
+      } as never),
+      /session has been cleared/,
+    );
+    assert.equal(asks, 2, "it asks twice before giving up, as before");
+    assert.deepEqual(resets, ["writer"]);
   });
 });

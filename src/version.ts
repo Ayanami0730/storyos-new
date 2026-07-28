@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.6";
+export const VERSION = "0.9.7";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,37 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.7",
+    note:
+      "a planning turn that ends without a plan is asked again, three times, and only then a " +
+      "failure. It was fatal on the first occurrence, and both causes measured in one batch are " +
+      "worth another sample. On `lnbcustom-horror-molka-ch24` the orchestrator called " +
+      "`submit_plan` twice, was refused both times for **omitting `tense` and `world_rules`**, " +
+      "and then answered *\"I'm sorry, but I cannot assist with that request\"* \u2014 a model that " +
+      "is stuck, not one with an objection. Worse, its response to the refusal was to cut the " +
+      "scene list from eight to four, because the validator said `world_rules: must have " +
+      "required properties world_rules, tense`, which reads as though `world_rules` were an " +
+      "object missing sub-properties. So the re-ask names the six required top-level fields and " +
+      "says outright not to shorten the plan to get past a validation error. On " +
+      "`lnbcustom-historical-a-far-flung-life-ch24` that same sentence was the *first* reply " +
+      "with no tool call at all, on a premise about a bereaved family \u2014 a content refusal, " +
+      "which is partly a sampling accident and is the other reason to resample. Three attempts, " +
+      "because a premise refused three times running is a fact about the task worth recording " +
+      "rather than retrying forever, and the error now carries the last reply: without it a " +
+      "content refusal and a schema loop are the same line in the batch log, which is how both " +
+      "of these were first read as one thing. The same sentence cost a whole scene on the " +
+      "writer's side, and there the retry already existed: on `lbw081-ch` the writer answered it " +
+      "**eight times running** \u2014 four scene attempts times the two asks each makes \u2014 and the " +
+      "run delivered 0 of 1 scenes, while that same task on that same backbone had produced " +
+      "2,679 words at attainment 0.96 two versions earlier. So the refusal is a state the " +
+      "session reached rather than a property of the request, and a retry inside that session " +
+      "can only draw the same reply: the writer's transcript is now cleared before the scene-" +
+      "level retry, which is safe because the retry re-sends the whole packet and a follow-up " +
+      "answer already lives in the packet file. The comment justifying that retry called a " +
+      "failed turn \"retryable, of the same kind as a 429\" \u2014 the difference it missed is that " +
+      "a 429 is not in the conversation.",
+  },
   {
     version: "0.9.6",
     note:

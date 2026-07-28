@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { type StoryPlan, planFiles, planStory, planTool, sceneCountFor } from "./plan.ts";
+import {
+  PLAN_ATTEMPTS,
+  type StoryPlan,
+  planFiles,
+  planStory,
+  planTool,
+  sceneCountFor,
+} from "./plan.ts";
 
 describe("scene count", () => {
   it("scales with the target rather than being left to the model", () => {
@@ -81,6 +88,84 @@ describe("the per-scene word target", () => {
     // plan, so it does not matter which one a caller happens to read.
     assert.equal(sink.plan!.scenes[0]!.targetWords, 700);
     assert.equal(sink.plan, returned);
+  });
+});
+
+describe("asking again for a plan", () => {
+  /** A plan the tool would have stored, for a fake that succeeds on cue. */
+  function planFor(): StoryPlan {
+    return {
+      logline: "a locked room",
+      entities: [{ id: "char-holt", sketch: "the detective" }],
+      worldRules: [],
+      narrativePerson: "third person limited, Holt",
+      tense: "past",
+      scenes: [{ id: "s-001", intent: "something happens", presentEntities: ["char-holt"], targetWords: 0 }],
+    } as unknown as StoryPlan;
+  }
+
+  it("asks again when a turn ends without submit_plan", async () => {
+    // Measured twice in one batch: the orchestrator answered "I'm sorry, but I
+    // cannot assist with that request" — once after two calls refused for
+    // omitting `tense` and `world_rules`, once on its very first reply. Both were
+    // fatal on the first occurrence, and both are worth another sample.
+    const sink: { plan?: StoryPlan } = {};
+    const asks: string[] = [];
+    let calls = 0;
+    const returned = await planStory({
+      residents: {
+        invoke: async (_role: string, task: string) => {
+          asks.push(task);
+          calls += 1;
+          if (calls === 2) sink.plan = planFor();
+          return { text: "I'm sorry, but I cannot assist with that request." };
+        },
+      } as never,
+      premise: "a locked room",
+      targetWords: 1_200,
+      txid: "tx-plan",
+      sink,
+    });
+
+    assert.equal(calls, 2, "it should have asked a second time");
+    // The plan that arrives late is resolved exactly like one that arrives first:
+    // the per-scene target is derived from the task, not from the plan's length.
+    assert.equal(
+      returned.scenes[0]!.targetWords,
+      Math.round(1_200 / sceneCountFor(1_200)),
+    );
+    // The re-ask has to say what was missing, because the validator's own message
+    // read as though `world_rules` were nested and the model deleted scenes.
+    assert.match(asks[1]!, /tense/);
+    assert.match(asks[1]!, /Do not shorten the scene list/);
+  });
+
+  it("fails after the last attempt, naming what came back", async () => {
+    const sink: { plan?: StoryPlan } = {};
+    let calls = 0;
+    await assert.rejects(
+      planStory({
+        residents: {
+          invoke: async () => {
+            calls += 1;
+            return { text: "I'm sorry, but I cannot assist with that request." };
+          },
+        } as never,
+        premise: "a bereaved family",
+        targetWords: 1_200,
+        txid: "tx-plan",
+        sink,
+      }),
+      (error: Error) => {
+        assert.match(error.message, /no plan in 3 attempts/);
+        // Without the reply in the message, a content refusal and a schema loop
+        // are indistinguishable from the batch log, which is how both were read
+        // as the same thing.
+        assert.match(error.message, /cannot assist/);
+        return true;
+      },
+    );
+    assert.equal(calls, PLAN_ATTEMPTS);
   });
 });
 

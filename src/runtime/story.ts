@@ -391,6 +391,7 @@ export async function writeStory(options: {
     targetWords,
     txid: "tx-plan",
     sink: planSink,
+    log: say,
     ...(options.wordsPerScene ? { wordsPerScene: options.wordsPerScene } : {}),
   });
 

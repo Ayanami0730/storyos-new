@@ -4,6 +4,8 @@
 # own command line in `pgrep`/`rg` or counted the shell that ran it.
 cd "$(dirname "$0")/.."
 
+BATCHES=(runs-lnb runs-lnb2 runs-lnbch runs-ch21)
+
 echo "== running =="
 ps -u "$USER" -o pid=,etime=,args= \
   | grep 'cli/write-story' \
@@ -18,7 +20,7 @@ echo "  total: $n"
 
 echo
 echo "== progress =="
-for p in runs-lnb runs-ch21; do
+for p in "${BATCHES[@]}"; do
   [ -d "$p" ] || continue
   for d in "$p"/*/; do
     proj="$d/run/project"
@@ -37,7 +39,7 @@ done
 
 echo
 echo "== gateway pushback (429 / saturated / quota) =="
-for p in runs-lnb runs-ch21; do
+for p in "${BATCHES[@]}"; do
   [ -d "$p" ] || continue
   n=$(grep -rhoE '429|上游负载已饱和|quota_not_enough|rate limit' "$p" --include='*.log' 2>/dev/null | wc -l)
   printf '  %-10s %s\n' "$p" "$n"

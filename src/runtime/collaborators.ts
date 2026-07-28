@@ -937,8 +937,28 @@ export function residentCollaborators(options: {
           );
         }
         if (!capture.prose) {
+          /**
+           * Clear the writer's transcript before the scene-level retry.
+           *
+           * The retry exists because "a failed turn is a retryable condition of
+           * the same kind as a 429" — but a 429 is not in the conversation and
+           * this failure is. Measured on `lbw081-ch`: the writer answered *"I'm
+           * sorry, but I cannot assist with that request"* **eight times in a
+           * row** — four scene attempts times two asks — and the scene was lost,
+           * while the same task on the same backbone had produced 2,679 words at
+           * attainment 0.96 two versions earlier. So the refusal is a state the
+           * session fell into, not a property of the request, and asking again
+           * inside that session can only draw the same reply.
+           *
+           * Safe because nothing needed is only in the transcript: the retry
+           * re-sends the whole packet, and a follow-up answer already lives in
+           * the packet file, which the writer is told the path of.
+           */
+          residents.resetSession("writer");
           throw new CollaboratorError(
-            `writer finished without calling write_staged_scene for ${sceneId}, twice`,
+            `writer finished without calling write_staged_scene for ${sceneId}, twice; ` +
+              `its session has been cleared so a retry does not inherit the state that ` +
+              `produced that`,
           );
         }
         if (!capture.delta) {

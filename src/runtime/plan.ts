@@ -471,6 +471,61 @@ export function updatePlanTool(state: {
   };
 }
 
+/**
+ * How many times to ask for a plan before the run is a failure.
+ *
+ * A turn that ends without `submit_plan` used to kill the run on the first
+ * occurrence, and both observed causes are worth another ask rather than a
+ * fatal. On `lnbcustom-horror-molka-ch24` the orchestrator called the tool
+ * twice, was refused both times by schema validation for **omitting `tense` and
+ * `world_rules`**, and then answered *"I'm sorry, but I cannot assist with that
+ * request"* — a model that is stuck, not a model with an objection. On
+ * `lnbcustom-historical-a-far-flung-life-ch24` the very first reply was that
+ * same sentence with no tool call at all, on a premise about a bereaved family,
+ * which is a content refusal and is partly a sampling accident.
+ *
+ * Three, because the failure mode this exists for is a bad first sample and the
+ * cost of each attempt is one planning turn — and because a premise that draws a
+ * refusal three times running is a result about the task, which is worth
+ * recording rather than retrying forever.
+ */
+export const PLAN_ATTEMPTS = 3;
+
+/** First line of a reply, for a log line and an error message. */
+function summarise(text: string): string {
+  const line = text.trim().split("\n")[0] ?? "";
+  return line.length > 160 ? `${line.slice(0, 157)}…` : line || "(no text)";
+}
+
+/**
+ * The re-ask, which names the fields the tool requires.
+ *
+ * Deliberately concrete rather than "try again". The validator's message for the
+ * measured failure was `world_rules: must have required properties world_rules,
+ * tense` — which reads as though `world_rules` were an object missing
+ * sub-properties, and the orchestrator responded by deleting half its scenes
+ * instead of adding the two fields it had left out. Naming them is what the
+ * previous turn's feedback failed to do.
+ */
+function retryAsk(lastReply: string): string {
+  return [
+    "That turn ended without a plan. What you sent back was:",
+    `  ${summarise(lastReply)}`,
+    "",
+    "`submit_plan` requires all of these at the top level, and a missing one is the",
+    "most common reason a call is refused — the validator names them together, which",
+    "reads as though one of them were nested inside another:",
+    "  logline, entities, world_rules, narrative_person, tense, scenes",
+    "and every scene needs both `intent` and `present`.",
+    "",
+    "If a previous call was refused, the fix is to add what was missing and resend the",
+    "whole plan. Do not shorten the scene list to get past a validation error — the",
+    "scene count comes from the word target and a shorter plan cannot reach it.",
+    "",
+    "Call submit_plan now.",
+  ].join("\n");
+}
+
 export async function planStory(options: {
   readonly residents: ResidentAgents;
   readonly premise: string;
@@ -479,22 +534,42 @@ export async function planStory(options: {
   readonly sink: { plan?: StoryPlan };
   /** See `AssemblyOptions.wordsPerScene`; the chapter-length experiment. */
   readonly wordsPerScene?: number;
+  /** Progress, so a retried plan is visible in the run log rather than inferred. */
+  readonly log?: (line: string) => void;
 }): Promise<StoryPlan> {
   const { residents, premise, targetWords, txid, sink } = options;
   const sceneCount = sceneCountFor(targetWords, options.wordsPerScene);
   const perScene = Math.round(targetWords / sceneCount);
 
-  await residents.invoke(
-    "orchestrator",
+  const ask =
     `Plan a story of about ${targetWords} words from this premise.\n\n${premise}\n\n` +
-      `Propose about ${sceneCount} scenes of roughly ${perScene} words each. Give every ` +
-      `character, location and significant object a stable id now — later scenes can only ` +
-      `refer to entities that exist. State the world rules the story must not break. ` +
-      `Then call submit_plan.`,
-    { txid, caller: "orchestrator", selfCall: true },
-  );
+    `Propose about ${sceneCount} scenes of roughly ${perScene} words each. Give every ` +
+    `character, location and significant object a stable id now — later scenes can only ` +
+    `refer to entities that exist. State the world rules the story must not break. ` +
+    `Then call submit_plan.`;
 
-  if (!sink.plan) throw new Error("the orchestrator produced no plan");
+  const replies: string[] = [];
+  for (let attempt = 1; attempt <= PLAN_ATTEMPTS && !sink.plan; attempt += 1) {
+    const { text } = await residents.invoke(
+      "orchestrator",
+      attempt === 1 ? ask : retryAsk(replies.at(-1) ?? ""),
+      { txid, caller: "orchestrator", selfCall: true },
+    );
+    replies.push(text);
+    options.log?.(
+      sink.plan
+        ? `plan accepted on attempt ${attempt} of ${PLAN_ATTEMPTS}`
+        : `plan attempt ${attempt} of ${PLAN_ATTEMPTS} produced none — ` +
+            `last reply: ${summarise(text)}`,
+    );
+  }
+
+  if (!sink.plan) {
+    throw new Error(
+      `the orchestrator produced no plan in ${PLAN_ATTEMPTS} attempts. ` +
+        `Last reply: ${summarise(replies.at(-1) ?? "(nothing)")}`,
+    );
+  }
   /**
    * Write the finished plan back into the sink, not just return it.
    *

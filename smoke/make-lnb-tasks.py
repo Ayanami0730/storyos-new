@@ -27,6 +27,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -72,13 +73,26 @@ def main() -> int:
     ap.add_argument("--target-words", type=int, help="override; only with --ids")
     ap.add_argument("--limit", type=int, default=0, help="take the first N ids")
     ap.add_argument("--flags", nargs="*", default=[], help="extra write-story flags per task")
+    ap.add_argument("--suffix", default="", help="appended to each run directory name, e.g. -ch24")
+    # Which frozen copy of the benchmark to read. There is more than one on this
+    # machine and they are not identical: the main worktree's `tasks.jsonl` hashes
+    # to b21faff… while `tiers-v2.json` declares its source as 02fb0f2…, which is
+    # the copy in the livenovelbench worktree — and the scorer reads that one.
+    # Six of the fifty tasks differ, `task-romance-star-shipped` among them, in
+    # `required_elements`, which is exactly the field Expectation Fulfillment is
+    # graded on. A run generated from the stale copy is graded on material it was
+    # never shown, so the path is a flag and its hash is recorded per task.
+    ap.add_argument("--bench", default=str(BENCH), help="benchmark directory to read")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
-    tasks = {json.loads(line)["task_id"]: json.loads(line) for line in open(BENCH / "tasks.jsonl")}
+    bench = Path(args.bench)
+    tasks_file = bench / "tasks.jsonl"
+    tasks_sha = hashlib.sha256(tasks_file.read_bytes()).hexdigest()
+    tasks = {json.loads(line)["task_id"]: json.loads(line) for line in tasks_file.open()}
 
     if args.tier:
-        manifest = json.loads((BENCH / f"tier-{args.tier}.json").read_text())
+        manifest = json.loads((bench / f"tier-{args.tier}.json").read_text())
         ids = manifest["ids"]
         target = manifest["target_words_override"]
         provenance = f"tier-{args.tier}.json (target_words_override={target})"
@@ -107,19 +121,24 @@ def main() -> int:
                 # The run directory name. Shortened because the batch runner uses it
                 # as a directory and `task-science_fiction-seek-the-traitor-s-son`
                 # would make every path in the trace unreadable.
-                "task_id": short_id(task_id, args.tier or "custom"),
+                "task_id": short_id(task_id, args.tier or "custom") + args.suffix,
                 "prompt": render_prompt(task, target),
                 "target_words": target,
                 "flags": args.flags,
                 "bench": "livenovelbench",
                 "bench_task_id": task_id,
                 "target_provenance": provenance,
+                "source_tasks": str(tasks_file),
+                "source_tasks_sha256": tasks_sha,
                 "raw": task,
             }
             fh.write(json.dumps(record, ensure_ascii=False) + "\n")
             written += 1
 
-    print(f"{written} task(s) -> {args.out} at {target:,} words each ({provenance})")
+    print(
+        f"{written} task(s) -> {args.out} at {target:,} words each ({provenance})\n"
+        f"  from {tasks_file}\n  sha256 {tasks_sha}"
+    )
     return 0
 
 
