@@ -115,6 +115,53 @@ function stateOf(): Parameters<typeof sceneBrief>[0]["state"] {
   };
 }
 
+describe("the length projection", () => {
+  /**
+   * The numbers are the chapter arm's own. `lnb20k-crows-ch` planned six scenes
+   * for 20,000 words, was asked for 3,600 a scene, delivered about 2,050, and
+   * finished at 12,305 — attainment 0.61, with every individual scene looking
+   * fine on the way there. The raw totals were already in the brief; what was
+   * missing is the arithmetic that turns them into a decision.
+   */
+  it("says where the book lands and names the lever the orchestrator alone holds", () => {
+    const text = brief({
+      position: { index: 4, total: 6 },
+      committed: ["s-001", "s-002", "s-003"],
+      words: { committed: 6150, target: 20000 },
+    });
+    assert.match(text, /Projection/);
+    assert.match(text, /average 2050 words/);
+    // 6150 + 3 remaining x 2050 = 12300, against 20000.
+    assert.match(text, /about 12300 words/);
+    assert.match(text, /shortfall of 7700/);
+    assert.match(text, /update_plan and add about \d+ more scene/);
+    // Adding scenes must not be framed as free: quality is scored as well.
+    assert.match(text, /reads worse than a short one/);
+  });
+
+  it("stays silent when the plan will land, and when there is no rate yet", () => {
+    // On target: nothing to decide, and a block printed on every scene of every
+    // run is noise that trains the reader to skip it.
+    assert.doesNotMatch(
+      brief({
+        position: { index: 5, total: 10 },
+        committed: ["s-001", "s-002", "s-003", "s-004"],
+        words: { committed: 4800, target: 12000 },
+      }),
+      /Projection/,
+    );
+    // One scene is not a rate.
+    assert.doesNotMatch(
+      brief({
+        position: { index: 2, total: 6 },
+        committed: ["s-001"],
+        words: { committed: 500, target: 20000 },
+      }),
+      /Projection/,
+    );
+  });
+});
+
 describe("open promises", () => {
   it("drops a promise once some scene pays it off", () => {
     const open = openPromisesFrom([

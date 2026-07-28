@@ -291,6 +291,60 @@ function renderStoryState(
 }
 
 /** The brief for one scene, addressed to the orchestrator. */
+/**
+ * Where the book lands if the remaining scenes deliver what the finished ones did.
+ *
+ * The raw numbers were already in the brief and were not enough, because the
+ * decision needs an arithmetic the orchestrator was left to do: a scene *target*
+ * is what the writer was asked for, and what it delivers is a different number.
+ * Measured on the chapter-length arm, where scenes are asked for 2,400–3,600
+ * words: delivery settles around **2,050 per scene regardless of the ask**, so a
+ * six-scene plan for a 20,000-word book finishes at 12,300 — attainment 0.61 —
+ * and every individual scene looks fine on its way there. Nothing in the run
+ * could notice, because the only actor able to add scenes was never told it was
+ * heading for a shortfall.
+ *
+ * Adding scenes is a real lever and already works: `update_plan` replaces the
+ * scenes ahead, may return more of them than it was given, and the scene loop
+ * re-reads the plan's length every iteration, so an eighth scene appended at
+ * scene four does get written.
+ *
+ * Silent until there are two committed scenes to average, because one scene is
+ * not a rate. Silent when the projection is within 10% of target, since a plan
+ * that will land is not a problem and this block would then be noise on every
+ * scene of every run.
+ */
+export function renderLengthProjection(input: {
+  readonly words: { readonly committed: number; readonly target: number };
+  readonly position: { readonly index: number; readonly total: number };
+  readonly committed: readonly string[];
+}): string {
+  const done = input.committed.length;
+  if (done < 2) return "";
+  const perScene = input.words.committed / done;
+  const remaining = input.position.total - input.position.index + 1;
+  const projected = Math.round(input.words.committed + remaining * perScene);
+  if (projected >= input.words.target * 0.9) return "";
+
+  const extra = Math.ceil((input.words.target * 0.95 - projected) / perScene);
+  return [
+    "",
+    `Projection: the ${done} committed scene(s) average ${Math.round(perScene)} words each. At ` +
+      `that rate the remaining ${remaining} will finish the book at about ${projected} words ` +
+      `against a target of ${input.words.target} — a shortfall of ` +
+      `${input.words.target - projected}.`,
+    `Two levers, and the second is yours alone. Ask the writer for more in its brief, which ` +
+      `works only as far as it actually delivers more — across this arm it has settled near ` +
+      `${Math.round(perScene)} words a scene whatever target it was given. Or call ` +
+      `update_plan and add about ${extra} more scene(s), which is the lever that does not ` +
+      `depend on the writer changing its behaviour. Scenes already committed are untouchable; ` +
+      `you are proposing the ones ahead, and you may return more of them than there are now.`,
+    `Added scenes have to earn their place in the story — a book padded to length reads worse ` +
+      `than a short one, and the quality dimensions are scored too. Split what the plan is ` +
+      `already compressing rather than appending filler at the end.`,
+  ].join("\n");
+}
+
 export function sceneBrief(input: {
   readonly sceneId: string;
   readonly intent: string;
@@ -372,6 +426,7 @@ export function sceneBrief(input: {
       `the score on this kind of task is length compliance, so if the committed scenes are ` +
       `running short of their targets, say so in the writer's brief — it cannot see this ` +
       `number and will otherwise keep writing to the same length.`,
+    renderLengthProjection(input),
     "",
     "The sequence is fixed and enforced: call_context_builder, then call_writer, then",
     "call_verifier, then call_index_manager once it is approved. A call out of order comes",

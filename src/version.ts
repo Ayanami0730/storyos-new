@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.7";
+export const VERSION = "0.9.8";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,27 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.8",
+    note:
+      "the orchestrator is told where the book will land, not just where it is. It already " +
+      "received words committed, the target and the remainder, and that was not enough, because " +
+      "the decision needs an arithmetic nothing performed: a scene *target* is what the writer " +
+      "was asked for and delivery is a different number. Measured across the chapter-length arm, " +
+      "where scenes are asked for 2,400\u20133,600 words, **delivery settles near 2,050 a scene " +
+      "whatever the ask** \u2014 so `lnb20k-crows-ch` planned six scenes for 20,000 words and " +
+      "finished at 12,305, **attainment 0.61**, with every individual scene looking fine on the " +
+      "way there. Nothing in the run could notice, because the only actor able to add scenes was " +
+      "never shown the projection. The brief now averages the committed scenes, states where that " +
+      "rate finishes the book, and names `update_plan` as the lever that does not depend on the " +
+      "writer changing its behaviour \u2014 adding scenes already works and was never used: " +
+      "`update_plan` returns the scenes ahead and may return more of them, and the scene loop " +
+      "re-reads the plan's length every iteration, so a scene appended at scene four does get " +
+      "written. Silent below two committed scenes, because one scene is not a rate, and silent " +
+      "within 10% of target, because a block printed on every scene of every run is one the " +
+      "reader learns to skip. It also says outright that padding costs the quality dimensions, " +
+      "since the cheap way to satisfy a length instruction is filler.",
+  },
   {
     version: "0.9.7",
     note:
