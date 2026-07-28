@@ -53,6 +53,16 @@ interface Args {
    * two runs of one binary rather than with two versions of the harness.
    */
   pinnedRepairs: number | null;
+  /**
+   * How long a scene is asked to be, which decides how many there are.
+   *
+   * The chapter-length arm, and the same trick as `--max-repairs`: one binary
+   * answers "is it better to write in bigger units" rather than two versions of
+   * the harness. A scene is already the unit of one packet, one writer call, one
+   * verifier pass and one commit, so `--words-per-scene 3600` runs a third as
+   * many of all four. Recorded in the summary; null means the measured default.
+   */
+  wordsPerScene: number | null;
   /** `parity` to sit in a table with the baselines, `generous` to find out if it works. */
   profile: string;
   /**
@@ -116,6 +126,26 @@ function pinnedRepairsFrom(raw: string | undefined): number | null {
   return n;
 }
 
+/**
+ * Refuse a scene length that is not a scene, at the flag rather than at the plan.
+ *
+ * The floor is the one already measured: a 500-word task cut into four 125-word
+ * scenes took the best length score in its table and the worst quality, below a
+ * single unstructured call to the same model. The ceiling is where a scene stops
+ * being one writer call worth reasoning about in a single pass.
+ */
+function wordsPerSceneFrom(raw: string | undefined): number | null {
+  if (raw === undefined) return null;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 500 || n > 8_000) {
+    throw new Error(
+      `--words-per-scene must be an integer between 500 and 8000; got ${JSON.stringify(raw)}. ` +
+        `Omit it for the measured default of 1200.`,
+    );
+  }
+  return n;
+}
+
 async function parseArgs(argv: readonly string[]): Promise<Args> {
   const get = (flag: string) => {
     const i = argv.indexOf(flag);
@@ -133,6 +163,7 @@ async function parseArgs(argv: readonly string[]): Promise<Args> {
     out: get("--out") ?? `runs/story-${Date.now()}`,
     backbone: (get("--backbone") as ModelId | undefined) ?? null,
     pinnedRepairs: pinnedRepairsFrom(get("--max-repairs")),
+    wordsPerScene: wordsPerSceneFrom(get("--words-per-scene")),
     profile: get("--profile") ?? "parity",
     memoryDir: get("--memory-dir") ?? null,
     sandbox: (get("--sandbox") as SandboxId | undefined) ?? "none",
@@ -353,6 +384,7 @@ const harness = await assembleHarness({
   profile,
   budget,
   targetWords: args.target,
+  ...(args.wordsPerScene ? { wordsPerScene: args.wordsPerScene } : {}),
   backbone: args.backbone,
   verifierModel: args.verifierModel,
   memoryRoot: args.memoryDir ? path.resolve(args.memoryDir) : projectRoot,
@@ -384,6 +416,7 @@ try {
     premise: args.premise,
     targetWords: args.target,
     pinnedRepairs: args.pinnedRepairs,
+    ...(args.wordsPerScene ? { wordsPerScene: args.wordsPerScene } : {}),
     allocationState: harness.allocation,
     freshEachScene: args.freshEachScene,
     log: say,

@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.0";
+export const VERSION = "0.9.1";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,32 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.1",
+    note:
+      "three changes aimed at the round-trip count, which is what wall clock is made of. " +
+      "(1) **`fold_scene`** takes a whole scene\'s index writes \u2014 identities, entities, state, " +
+      "beliefs, relations, events, rhythm, promises, payoffs, retcons \u2014 in one call, applied " +
+      "in dependency order, each section validated on its own so a bad entry costs that entry " +
+      "and not the scene. Folding a scene used to mean `record_relation_phase` 29 times, " +
+      "`append_event` 26, `append_state` 23, `append_beliefs` 22: **228 tool calls in 228 " +
+      "replies** on a 20,000-word run, 24% of its wall clock. The array parameters were " +
+      "already there but scoped to one character, which is a signature limit rather than a " +
+      "choice the model was making \u2014 and this project has twice measured that signatures move " +
+      "behaviour where instructions do not. The per-partition tools stay, for corrections; the " +
+      "typed separation that stops a state observation being filed as identity is unchanged, " +
+      "because each partition keeps its own field and validator. (2) **Concrete shell recipes " +
+      "in the shared contract**, because ids are the links here and nothing said so: " +
+      "`cat relations/char-rue--*.yaml` is every relation Rue is in, " +
+      "`tail -n 3 characters/*/state.jsonl` is the current state of the entire cast in one " +
+      "call. (3) **`--words-per-scene`**, the chapter-length arm: a scene is already the unit " +
+      "of one packet, one writer call, one verifier pass and one commit, so 3,600 runs a third " +
+      "as many of all four, and the arm is recorded in the summary. A test caught that the " +
+      "floor of four was unconditional, so on a 2,000-word task the arm returned the control\'s " +
+      "own plan \u2014 every LongBench-Write task is 500 to 3,500 words, so the whole experiment " +
+      "would have measured as \"no effect\" there. An explicit length now outranks the floor; " +
+      "the 500-word minimum still binds.",
+  },
   {
     version: "0.9.0",
     note:

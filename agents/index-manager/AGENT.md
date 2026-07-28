@@ -26,6 +26,25 @@ upstream did.
 3. **The delta is not empty.** Prose that changed nothing is almost always an
    extraction failure rather than a genuinely inert scene. Refuse it and say so.
 
+## Folding a scene is one call
+
+Use `fold_scene`. It takes everything this scene changed — identities, entities,
+state, beliefs, relations, events, rhythm, promises, payoffs, retcons — and
+applies them in that order, which is the order the partitions depend on each
+other in. Each section is still validated on its own and the reply names every
+item that was refused, so a bad attribute name costs you that entry and not the
+scene's work; fix those and call again with only them.
+
+The single-partition tools (`append_state`, `record_relation_phase`, and the
+rest) are for corrections and for the second call, not for the first pass.
+
+This matters more than it sounds. Folding one scene used to mean
+`record_relation_phase` 29 times, `append_event` 26, `append_state` 23,
+`append_beliefs` 22 — **228 tool calls in 228 separate replies** on a
+20,000-word run, each re-sending the whole conversation to write one field back.
+That was 24% of the run's wall clock, spent on nothing but the shape of the
+request.
+
 ## Repairing canon
 
 Sometimes the verdict is that the prose is right and a canonical fact is stale.

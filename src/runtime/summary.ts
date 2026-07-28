@@ -63,6 +63,8 @@ export interface SummaryInput {
     readonly target: number;
     readonly backbone: string | null;
     readonly pinnedRepairs: number | null;
+    /** Null means the measured default; a number is the chapter-length arm. */
+    readonly wordsPerScene: number | null;
     readonly freshEachScene: readonly string[];
     readonly verifierModel: string | null;
     readonly memoryDir: string | null;
@@ -158,6 +160,10 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     words: result?.words ?? onDisk.words,
     attainment: Number(((result?.words ?? onDisk.words) / args.target).toFixed(3)),
     scenes_planned: result?.plan.scenes.length ?? 0,
+    // The arm this run belongs to. Without it the two sides of the
+    // chapter-length experiment are indistinguishable in the artefact, and this
+    // project has already spent seven versions with a stamp that said 0.7.5.
+    words_per_scene: args.wordsPerScene ?? "default (1200)",
     scenes_committed:
       result?.scenes.filter((s) => s.outcome.status === "COMMITTED").length ??
       onDisk.scenes.length,

@@ -284,6 +284,35 @@ describe("planTool", () => {
     assert.match(sink.plan!.voice.person, /one viewpoint per scene/);
   });
 
+  /**
+   * The chapter-length arm, at the derivation that produces it. A scene is the
+   * unit of one packet, one writer call, one verifier pass and one commit, so
+   * asking for 3,600-word scenes runs a third as many of all four.
+   */
+  it("derives a third as many scenes when a scene is asked to be three times as long", () => {
+    assert.equal(sceneCountFor(40_000), 33);
+    assert.equal(sceneCountFor(40_000, 3_600), 11);
+    assert.equal(sceneCountFor(20_000, 3_600), 6);
+  });
+
+  /**
+   * The floor still binds. A 500-word task cannot become one 3,600-word scene,
+   * and it must not become four 125-word ones either — that arm took the best
+   * length score in its table and the worst quality in it.
+   */
+  it("lets an explicit scene length outrank the floor of four", () => {
+    // The bug this pins: the floor is unconditional, so a 2,000-word task asked
+    // for 3,600-word scenes came back with 4 — the control's plan exactly. Every
+    // LongBench-Write task is 500 to 3,500 words, so the whole arm would have
+    // measured as "no effect" on that bench.
+    assert.equal(sceneCountFor(2_000, 3_600), 1);
+    assert.equal(sceneCountFor(500, 3_600), 1);
+    // The default keeps its floor: 2,000 words wants ~1.7 scenes and gets 4.
+    assert.equal(sceneCountFor(2_000), 4);
+    // And the 500-word affordability floor still binds in both modes.
+    assert.equal(sceneCountFor(500), 1);
+  });
+
   it("leaves a genuinely small cast alone", async () => {
     const { sink, run } = tool();
     await run(good);

@@ -91,6 +91,27 @@ export interface AssemblyOptions {
   readonly profile: BudgetProfile;
   readonly budget: TokenBudget;
   readonly targetWords: number;
+  /**
+   * How long a scene is asked to be, which is what decides how many there are.
+   *
+   * A knob rather than the constant it used to be, because it is the cheapest
+   * available form of "write a chapter at a time": the scene already *is* the
+   * unit of one packet build, one writer call, one verifier pass and one commit,
+   * so tripling its size divides all four by three without a second state
+   * machine to get wrong.
+   *
+   * It is an experiment, not a tuning parameter, and the evidence points both
+   * ways. For: `lbw029` written as one scene instead of four scored 93.6 against
+   * 88.0 with S_q 4.50 against 3.83, at $0.46 against $1.31 — fewer, larger
+   * units were better *and* cheaper there. Against: per-scene session resets are
+   * what stopped the writer's context reaching 209,891 tokens and dying at 40k,
+   * and a longer scene grows it again within the unit.
+   *
+   * So it defaults to the measured value and is recorded per run, and the arms
+   * are compared at n≥3 — two same-code samples of one task have come back 6.5
+   * S-bar points apart, so nothing smaller than that is readable at n=1.
+   */
+  readonly wordsPerScene?: number;
   readonly backbone: ModelId | null;
   /** Override the verifier's model. Recorded in the summary; see `withVerifier`. */
   readonly verifierModel?: ModelId | null;
@@ -310,7 +331,11 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
         ...bus.toolsFor(role),
         ...(role === "orchestrator"
           ? [
-              planTool(planState, sceneCountFor(options.targetWords), options.targetWords),
+              planTool(
+                planState,
+                sceneCountFor(options.targetWords, options.wordsPerScene),
+                options.targetWords,
+              ),
               updatePlanTool(planState),
               ...orchestratorTools(stage),
             ]

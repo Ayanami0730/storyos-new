@@ -53,9 +53,311 @@ async function reporting(work: () => Promise<string>): Promise<{ content: { type
   }
 }
 
+interface FoldSceneArgs {
+  characters?: { id: string; name: string; sketch: string; identity: { attribute: string; value: string }[] }[];
+  entities?: { kind: string; id: string; sketch: string; notes?: string }[];
+  state?: { character: string; entries: { attribute: string; value: string; quote: string }[] }[];
+  beliefs?: { character: string; entries: { proposition: string; stance: string; quote: string }[] }[];
+  relations?: {
+    participants: string[];
+    relation: string;
+    transition: string;
+    span: string;
+    asymmetry?: string;
+    closes_previous?: boolean;
+    supersedes?: number;
+  }[];
+  events?: { summary: string; participants: string[]; location?: string; when?: string }[];
+  rhythm?: { beat: string; tension_target: number; tension_actual: number; note: string };
+  promises?: { id: string; promise: string; quote: string; due_by_scene?: string }[];
+  payoffs?: { contract_id: string; quote: string }[];
+  retcons?: { entity: string; attribute: string; from: string; to: string; reason: string }[];
+}
+
+/**
+ * Fold a whole scene in one round-trip.
+ *
+ * The single-partition tools above stay, and the reason they were fine-grained
+ * stands: a blob `update_index(everything)` lets a state observation be filed as
+ * identity, and that confusion cost 80% of the failed scenes in the first long
+ * run. This is not that. Every partition keeps its own typed field with its own
+ * validator, so the distinction that mattered is still enforced by the schema —
+ * what changes is only how many requests carrying it cross the network.
+ *
+ * That number was the problem. Folding one scene meant `record_relation_phase`
+ * 29 times, `append_event` 26, `append_state` 23, `append_beliefs` 22 and so on:
+ * **228 tool calls in 228 separate replies** on a 20,000-word run, each one
+ * re-sending the conversation and waiting about five seconds, for 24% of the
+ * run's wall clock. The array parameters were already there — but scoped to one
+ * character or one pair, so five characters meant five calls. That is a
+ * signature limit, not a choice the model was making, and this project has twice
+ * measured that signatures move behaviour where instructions do not: `read_index`
+ * taking a list dropped this role from 29.8 round-trips per turn to 4.0, while
+ * the same request written into the shared prompt was simply ignored by the
+ * context-builder.
+ *
+ * Order is fixed rather than left to the caller because the partitions depend on
+ * each other: an identity must exist before state is appended against it, and a
+ * promise must be registered before it can be paid off in the same scene.
+ */
+async function foldScene(writer: () => PartitionWriter, args: FoldSceneArgs): Promise<string> {
+  const done: string[] = [];
+  const refused: string[] = [];
+
+  // Each item is attempted on its own so one malformed entry costs that entry.
+  // A single call that fails whole would be worse than the per-partition tools
+  // it replaces: the model would lose a scene's work to one bad attribute name.
+  const attempt = async (what: string, work: () => Promise<string>) => {
+    try {
+      done.push(await work());
+    } catch (error) {
+      if (error instanceof BackfillError) {
+        refused.push(`${what}: ${error.problems.join("; ")}`);
+      } else if (error instanceof RelationRecordError) {
+        refused.push(`${what} (relation record): ${error.problems.join("; ")}`);
+      } else {
+        throw error;
+      }
+    }
+  };
+
+  for (const c of args.characters ?? []) {
+    await attempt(`character ${c.id}`, async () => {
+      const { conflicts } = await writer().upsertCharacter({
+        id: c.id,
+        name: c.name,
+        sketch: c.sketch,
+        identity: Object.fromEntries((c.identity ?? []).map((a) => [a.attribute, a.value])),
+      });
+      return conflicts.length > 0
+        ? `${paths.profile(c.id)} written, ${conflicts.length} attribute(s) not applied: ${conflicts.join("; ")}`
+        : `${paths.profile(c.id)} written`;
+    });
+  }
+  for (const e of args.entities ?? []) {
+    await attempt(`entity ${e.id}`, async () => {
+      if (!["location", "object", "faction"].includes(e.kind)) {
+        throw new BackfillError(["kind must be location, object or faction"]);
+      }
+      await writer().upsertEntity(e.kind as "location" | "object" | "faction", {
+        id: e.id,
+        sketch: e.sketch,
+        ...(e.notes ? { notes: e.notes } : {}),
+      });
+      return `${e.kind} ${e.id} written`;
+    });
+  }
+  for (const s of args.state ?? []) {
+    await attempt(`state for ${s.character}`, async () => {
+      await writer().appendState(s.character, s.entries ?? []);
+      return `${s.entries?.length ?? 0} state entr(ies) for ${s.character}`;
+    });
+  }
+  for (const b of args.beliefs ?? []) {
+    await attempt(`beliefs for ${b.character}`, async () => {
+      await writer().appendBeliefs(b.character, b.entries ?? []);
+      return `${b.entries?.length ?? 0} belief entr(ies) for ${b.character}`;
+    });
+  }
+  for (const r of args.relations ?? []) {
+    await attempt(`relation ${(r.participants ?? []).join("--")}`, async () => {
+      const [a, b] = r.participants ?? [];
+      if (!a || !b) throw new BackfillError(["participants must be exactly two entity ids"]);
+      const { pairId, phaseIndex } = await writer().recordRelationPhase({
+        participants: [a, b],
+        relation: r.relation,
+        transition: r.transition,
+        span: r.span,
+        ...(r.asymmetry ? { asymmetry: r.asymmetry } : {}),
+        ...(r.closes_previous ? { closesPrevious: true } : {}),
+        ...(r.supersedes ? { supersedes: r.supersedes } : {}),
+      });
+      return `phase ${phaseIndex} in ${paths.relation(pairId)}`;
+    });
+  }
+  for (const e of args.events ?? []) {
+    await attempt(`event "${e.summary.slice(0, 40)}"`, async () => {
+      await writer().appendEvent({
+        summary: e.summary,
+        participants: e.participants ?? [],
+        location: e.location ?? null,
+        when: e.when ?? null,
+      });
+      return "event appended";
+    });
+  }
+  if (args.rhythm) {
+    const r = args.rhythm;
+    await attempt("rhythm", async () => {
+      await writer().recordRhythm({
+        beat: r.beat,
+        tensionTarget: r.tension_target,
+        tensionActual: r.tension_actual,
+        note: r.note,
+      });
+      return "rhythm row written";
+    });
+  }
+  for (const p of args.promises ?? []) {
+    await attempt(`promise ${p.id}`, async () => {
+      await writer().registerPromise({
+        id: p.id,
+        promise: p.promise,
+        quote: p.quote,
+        dueByScene: p.due_by_scene ?? null,
+      });
+      return `promise ${p.id} registered`;
+    });
+  }
+  for (const p of args.payoffs ?? []) {
+    await attempt(`payoff ${p.contract_id}`, async () => {
+      await writer().payOffPromise(p.contract_id, p.quote);
+      return `promise ${p.contract_id} paid off`;
+    });
+  }
+  for (const r of args.retcons ?? []) {
+    await attempt(`retcon ${r.entity}.${r.attribute}`, async () => {
+      await writer().recordRetcon(r);
+      return `retcon on ${r.entity}.${r.attribute}`;
+    });
+  }
+
+  const head = `folded: ${done.length} write(s) applied`;
+  const body = done.length > 0 ? `\n- ${done.join("\n- ")}` : "";
+  const tail =
+    refused.length > 0
+      ? `\n\n${refused.length} refused — fix these and call again with only them:\n- ${refused.join("\n- ")}`
+      : "";
+  return head + body + tail;
+}
+
 export function indexManagerTools(writer: () => PartitionWriter): unknown[] {
   const identityNames = IDENTITY_ATTRIBUTES.filter((a) => /^[a-z]/.test(a)).join(" | ");
   return [
+    {
+      label: "Fold the whole scene",
+      name: "fold_scene",
+      executionMode: SEQUENTIAL,
+      description:
+        "Fold this entire scene into the index in one call: identities, state, beliefs, " +
+        "relations, events, rhythm, promises, payoffs and retcons together, applied in that " +
+        "order. Prefer this over the single-partition tools, which exist for corrections. " +
+        "Each section is validated on its own and the reply names every item that was " +
+        "refused, so one bad entry costs you that entry and not the call.",
+      parameters: Type.Object({
+        characters: Type.Optional(
+          Type.Array(
+            Type.Object({
+              id: Type.String(),
+              name: Type.String(),
+              sketch: Type.String(),
+              identity: Type.Array(
+                Type.Object({
+                  attribute: Type.String({ description: identityNames }),
+                  value: Type.String(),
+                }),
+              ),
+            }),
+          ),
+        ),
+        entities: Type.Optional(
+          Type.Array(
+            Type.Object({
+              kind: Type.String({ description: "location | object | faction" }),
+              id: Type.String(),
+              sketch: Type.String(),
+              notes: Type.Optional(Type.String()),
+            }),
+          ),
+        ),
+        state: Type.Optional(
+          Type.Array(
+            Type.Object({
+              character: Type.String(),
+              entries: Type.Array(
+                Type.Object({
+                  attribute: Type.String({ description: STATE_ATTRIBUTES.join(" | ") }),
+                  value: Type.String(),
+                  quote: Type.String(),
+                }),
+              ),
+            }),
+          ),
+        ),
+        beliefs: Type.Optional(
+          Type.Array(
+            Type.Object({
+              character: Type.String(),
+              entries: Type.Array(
+                Type.Object({
+                  proposition: Type.String(),
+                  stance: Type.String({
+                    description: "knows | suspects | wrong-about | ignorant-of",
+                  }),
+                  quote: Type.String(),
+                }),
+              ),
+            }),
+          ),
+        ),
+        relations: Type.Optional(
+          Type.Array(
+            Type.Object({
+              participants: Type.Array(Type.String(), { minItems: 2, maxItems: 2 }),
+              relation: Type.String(),
+              transition: Type.String(),
+              span: Type.String(),
+              asymmetry: Type.Optional(Type.String()),
+              closes_previous: Type.Optional(Type.Boolean()),
+              supersedes: Type.Optional(Type.Number()),
+            }),
+          ),
+        ),
+        events: Type.Optional(
+          Type.Array(
+            Type.Object({
+              summary: Type.String(),
+              participants: Type.Array(Type.String()),
+              location: Type.Optional(Type.String()),
+              when: Type.Optional(Type.String()),
+            }),
+          ),
+        ),
+        rhythm: Type.Optional(
+          Type.Object({
+            beat: Type.String(),
+            tension_target: Type.Number(),
+            tension_actual: Type.Number(),
+            note: Type.String(),
+          }),
+        ),
+        promises: Type.Optional(
+          Type.Array(
+            Type.Object({
+              id: Type.String(),
+              promise: Type.String(),
+              quote: Type.String(),
+              due_by_scene: Type.Optional(Type.String()),
+            }),
+          ),
+        ),
+        payoffs: Type.Optional(
+          Type.Array(Type.Object({ contract_id: Type.String(), quote: Type.String() })),
+        ),
+        retcons: Type.Optional(
+          Type.Array(
+            Type.Object({
+              entity: Type.String(),
+              attribute: Type.String(),
+              from: Type.String(),
+              to: Type.String(),
+              reason: Type.String(),
+            }),
+          ),
+        ),
+      }),
+      execute: async (_id: string, args: FoldSceneArgs) => toolText(await foldScene(writer, args)),
+    },
     {
       label: "Upsert character",
       name: "upsert_character",

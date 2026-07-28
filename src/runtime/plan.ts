@@ -109,15 +109,31 @@ const MAX_CAST_SHARE_PER_SCENE = 0.7;
 const CAST_SHARE_MIN_SCENES = 8;
 const CAST_SHARE_MIN_ENTITIES = 10;
 
+/** The measured scene length, used when the caller does not state one. */
+const DEFAULT_WORDS_PER_SCENE = 1_200;
+
 /**
  * How many scenes a target length gets.
  *
  * Derived rather than left to the model: asked for "a plan for 40,000 words" a
  * model reliably proposes a dozen scenes and then has to write 3,000 words each,
- * which is where single-call length limits bite.
+ * which is where single-call length limits bite. The floor of four exists for
+ * the same reason — it stops a mid-length target being planned as one or two
+ * enormous calls.
+ *
+ * That floor does **not** apply when the caller states a scene length, and the
+ * distinction is what makes the chapter-length arm testable at all. A test
+ * caught it: `sceneCountFor(2_000, 3_600)` returned 4, because the floor
+ * outranked the request — so on every LongBench-Write task, which are 500 to
+ * 3,500 words, the experimental arm would have produced exactly the control's
+ * plan and the comparison would have read as "no effect". A default is a guess
+ * worth defending; an explicit argument is an instruction, and the 500-word
+ * affordability floor below is the one that still binds either way.
  */
-export function sceneCountFor(targetWords: number, wordsPerScene = 1_200): number {
-  const preferred = Math.max(4, Math.round(targetWords / wordsPerScene));
+export function sceneCountFor(targetWords: number, wordsPerScene?: number): number {
+  const size = wordsPerScene ?? DEFAULT_WORDS_PER_SCENE;
+  const asked = Math.round(targetWords / size);
+  const preferred = wordsPerScene === undefined ? Math.max(4, asked) : Math.max(1, asked);
   const affordable = Math.floor(targetWords / MIN_WORDS_PER_SCENE);
   return Math.max(1, Math.min(preferred, affordable));
 }
@@ -444,9 +460,11 @@ export async function planStory(options: {
   readonly targetWords: number;
   readonly txid: string;
   readonly sink: { plan?: StoryPlan };
+  /** See `AssemblyOptions.wordsPerScene`; the chapter-length experiment. */
+  readonly wordsPerScene?: number;
 }): Promise<StoryPlan> {
   const { residents, premise, targetWords, txid, sink } = options;
-  const sceneCount = sceneCountFor(targetWords);
+  const sceneCount = sceneCountFor(targetWords, options.wordsPerScene);
   const perScene = Math.round(targetWords / sceneCount);
 
   await residents.invoke(

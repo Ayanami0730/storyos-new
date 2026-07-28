@@ -321,6 +321,8 @@ export async function writeStory(options: {
   readonly index: CanonicalIndex;
   readonly premise: string;
   readonly targetWords: number;
+  /** See `AssemblyOptions.wordsPerScene`; the chapter-length experiment. */
+  readonly wordsPerScene?: number;
   /**
    * Pin every scene to one repair round instead of allocating by position.
    *
@@ -377,6 +379,7 @@ export async function writeStory(options: {
     targetWords,
     txid: "tx-plan",
     sink: planSink,
+    ...(options.wordsPerScene ? { wordsPerScene: options.wordsPerScene } : {}),
   });
 
   // The initial index, before any scene is built against it.

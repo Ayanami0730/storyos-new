@@ -92,6 +92,40 @@ this read returns, that has to be a second round-trip, and it is worth one. What
 not worth one is reading a list of files you already decided on, one file at a
 time.
 
+### How to actually do it here
+
+Two tools already collapse a list into one round-trip, and both are
+under-used — `read_index` was called *once* in a seventeen-scene run while 78
+single-file `read`s went out beside it:
+
+- **`read_index` takes a list of paths.** Ten files, one call, one budget charge.
+- **`fold_scene` takes the whole scene's index writes** — identities, state,
+  beliefs, relations, events, rhythm, promises, payoffs, retcons — in one call,
+  applied in that order. The single-partition tools are for corrections.
+
+The layout is built so one shell command answers a whole question. **Ids are the
+links.** A relation file is named `relations/<a>--<b>.yaml`, a character's whole
+record is `characters/<id>/`, so you rarely need a filename in advance — you need
+the id, and the ids are in the roster you were given:
+
+```sh
+ls characters/ locations/ objects/                  # the whole cast, one call
+cat characters/char-rue/*.yaml characters/char-rue/*.jsonl   # her entire record
+cat relations/char-rue--*.yaml                      # every relation she is in
+grep -l "signet" characters/*/beliefs.jsonl         # who knows about the signet
+tail -n 3 characters/*/state.jsonl                  # current state of everyone
+grep -h "s-012" events/timeline.jsonl continuity/*.jsonl     # one scene, all ledgers
+```
+
+`tail -n 3 characters/*/state.jsonl` is the shape worth internalising: state is
+append-only and the newest entry wins, so the current state of *every* character
+is one command, not one command per character.
+
+A shell call can also do the joining for you rather than sending you back for a
+second pass — `grep -l` to find which files matter and `cat` them in the same
+line, `for f in …; do …; done` when a loop is genuinely needed. And several
+independent commands can go in one reply; they run in parallel.
+
 **Batching applies to reads and writes, never to asking another agent.** A tool that
 delegates — the writer's `ask_context_builder`, the orchestrator's `call_*` — runs
 one at a time by construction, because the agent on the other end can only hold one
