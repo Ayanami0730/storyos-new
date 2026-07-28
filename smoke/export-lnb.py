@@ -44,6 +44,10 @@ def main() -> int:
     ap.add_argument("--task-id", required=True)
     ap.add_argument("--tier", required=True, help="20k | 40k | 60k | 80k | 100k")
     ap.add_argument("--dest", default=str(DEST))
+    # Three scene-length arms run the same twelve tasks, so they cannot share a
+    # destination: the layout is keyed by `task_id` and the second export would
+    # overwrite the first, silently scoring one arm's manuscript as the other's.
+    ap.add_argument("--system", default="storyos", help="system name in metadata.jsonl")
     ap.add_argument("--force-off-manifest", action="store_true",
                     help="export a task the tier does not list; it is not a Table 1 cell")
     args = ap.parse_args()
@@ -94,7 +98,7 @@ def main() -> int:
                 row = json.loads(line)
                 rows[row["task_id"]] = row
     rows[args.task_id] = {
-        "system": "storyos",
+        "system": args.system,
         "bench": "novelbench",
         "task_id": args.task_id,
         "target_words": target,

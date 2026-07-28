@@ -17,6 +17,11 @@
 
 import { type Finding, makeFinding } from "./finding.ts";
 import { type DeclaredVoice, findPersonDrift } from "./person.ts";
+import {
+  type OrthographyConvention,
+  findOrthographyDrift,
+  renderConvention,
+} from "./orthography.ts";
 import { paths } from "../index/tree.ts";
 
 /** A fact already in canon, as the context packet supplied it. */
@@ -96,6 +101,18 @@ export interface DeterministicInput {
    */
   readonly prose?: string;
   readonly voice?: DeclaredVoice;
+  /**
+   * The spelling and quotation convention the committed scenes established.
+   *
+   * The same shape of defect as the person, one layer down, and the one that took
+   * its place once the person was fixed: `style_shifts` is the largest subtype
+   * across every manuscript on the fixed harness, 30 of 87 kept instances, and on
+   * `task-literary-yesteryear` five of its six were `memorised`/`memorized`,
+   * `labour`/`labor`, `realised`/`realized`, `practised`/`practiced`,
+   * `flavour`/`flavor`. The writer resets per scene, so eight scenes each chose.
+   * Absent on the first scene, which is what establishes it. See `orthography.ts`.
+   */
+  readonly convention?: OrthographyConvention;
 }
 
 /**
@@ -354,6 +371,34 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
           evidence: { quote: drift.quote, source: delta.sceneId },
           contradicts: {
             quote: `Narration: ${input.voice.person}, ${input.voice.tense} tense.`,
+            source: paths.voice(),
+          },
+          editLocus: { kind: "draft", quote: drift.quote },
+        }),
+      );
+    }
+  }
+
+  // The spelling convention, against what the committed scenes established. Same
+  // argument as the person above and the same cap: a scene that uses four
+  // wrong-system spellings is one habit, not four defects.
+  if (input.prose && input.convention) {
+    const drifts = findOrthographyDrift(input.prose, input.convention);
+    for (const drift of drifts.slice(0, MAX_PERSON_DRIFT_FINDINGS)) {
+      findings.push(
+        makeFinding({
+          subtype: "style_shifts",
+          validator: "voice",
+          severity: "error",
+          reasoning:
+            `${drift.why}` +
+            (drifts.length > MAX_PERSON_DRIFT_FINDINGS
+              ? `. ${drifts.length} words in this scene are in the other system, so fix the ` +
+                `habit rather than this one word`
+              : ""),
+          evidence: { quote: drift.quote, source: delta.sceneId },
+          contradicts: {
+            quote: renderConvention(input.convention),
             source: paths.voice(),
           },
           editLocus: { kind: "draft", quote: drift.quote },

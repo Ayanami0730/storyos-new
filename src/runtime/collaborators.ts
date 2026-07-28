@@ -91,6 +91,43 @@ interface Capture {
  * copying from those is also a defect, a different one — the graders penalise a
  * long story that restates itself — so the refusal names both cases.
  */
+/**
+ * A note the writer wrote to the harness and left in the manuscript.
+ *
+ * Same family as `copiedFromPacket` and a different channel: there the writer
+ * quoted its packet, here it composes its own bookkeeping. Measured on
+ * `task-fantasy-daughter-of-crows`, ten of these reached the finished page and
+ * the frozen consistency judge charged every one as `style_shifts`, the largest
+ * subtype in the audit:
+ *
+ *     [staging folio A-0001 — Gate Ritual and Plaque]
+ *     [bracketed provenance: unnamed in builder]
+ *     [see s-001]
+ *     (staging: invented by writer — debt amount specified as 'twelve crowns'.)
+ *     The press_podium gave her a footing; the roster_sheet lay in front of Rachel
+ *
+ * Deliberately narrow. Fiction uses brackets and italic asides, so only bracketed
+ * spans naming harness vocabulary are refused, plus `snake_case` identifiers,
+ * which are filing keys and cannot occur in English prose.
+ */
+export function harnessAnnotation(prose: string): string | null {
+  const patterns: readonly RegExp[] = [
+    /[[(][^\])\n]{0,140}\b(?:staging|provenance|invented by (?:the )?writer|established by this scene|unnamed in builder|context-builder|index-manager|packet)\b[^\])\n]{0,140}[\])]/i,
+    /[[(]\s*(?:see|cf\.?|ref)\s+s-\d{3}[^\])\n]{0,40}[\])]/i,
+    /[[(][^\])\n]{0,60}\bfolio\s+[A-Z]-\d{3,}[^\])\n]{0,80}[\])]/,
+    // An index id used as a noun. Two or more lowercase words joined by
+    // underscores; `char-rue` style ids cannot be confused with hyphenation here
+    // because they carry their partition prefix.
+    /\b[a-z]{3,}(?:_[a-z]{3,})+\b/,
+    /\b(?:char|loc|obj)-[a-z]{2,}(?:-[a-z]+)*\b/,
+  ];
+  for (const p of patterns) {
+    const m = p.exec(prose);
+    if (m) return m[0].slice(0, 160);
+  }
+  return null;
+}
+
 export function copiedFromPacket(
   prose: string,
   packetText: string,
@@ -154,6 +191,21 @@ function writerTools(live: () => Capture, sceneId: () => string): unknown[] {
               `mark this system has recorded. If it came from an earlier scene's prose, that is ` +
               `restatement, which the graders penalise in a long story for good reason. Say the ` +
               `same fact in your own narration and call this again.`,
+          );
+        }
+        const annotation = harnessAnnotation(args.prose);
+        if (annotation) {
+          return toolText(
+            `rejected: this is a note to the harness, not narration —\n  "${annotation}"\n` +
+              `Everything you stage is the finished manuscript; there is no separate draft that ` +
+              `gets cleaned up later. Provenance, scene ids and what you invented belong in ` +
+              `propose_state_delta, which is the channel built for them and which the index ` +
+              `reads. An entity id is a filing key, never a word in the prose: the thing is a ` +
+              `roster sheet, not a roster_sheet. Measured on a finished manuscript, ten of these ` +
+              `reached the page — bracketed folio ids, "[see s-001]", "invented by writer" — and ` +
+              `the consistency judge charged every one as a register break. Delete the ` +
+              `annotation, say it in narration if it belongs in the story at all, and call this ` +
+              `again.`,
           );
         }
         live().prose = args.prose;

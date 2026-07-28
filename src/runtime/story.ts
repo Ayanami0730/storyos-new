@@ -28,6 +28,11 @@ import { type SceneStage, driveScene, sceneBrief } from "./orchestration.ts";
 import { type RevisionPlan, planRevisions } from "./revision.ts";
 import type { SceneDelta } from "../verification/deterministic.ts";
 import {
+  type OrthographyConvention,
+  conventionOf,
+  renderConvention,
+} from "../verification/orthography.ts";
+import {
   type SceneCard,
   type StoryPlan,
   planFiles,
@@ -424,6 +429,14 @@ export async function writeStory(options: {
    */
   let backfillFailures = 0;
   let consecutiveBackfillFailures = 0;
+  /**
+   * The spelling and quotation convention, established by the first scene that
+   * shows evidence of one and then fixed.
+   *
+   * Not reset afterwards: the point is that the whole book agrees, and letting a
+   * later scene re-establish it would reproduce the defect the check exists for.
+   */
+  let convention: OrthographyConvention | null = null;
   /** Words actually on the page, recounted from committed prose after each scene. */
   let committedWords = 0;
   /** The previous scene's delivered length against what it was asked for. */
@@ -543,6 +556,11 @@ export async function writeStory(options: {
         // checked by nothing until seven of nine measured errors turned out to
         // be exactly this.
         voice: (planSink.plan ?? plan).voice,
+        // Derived from what is already on the page, not planned: a spelling
+        // convention is not a judgement worth a model call, and `submit_plan`
+        // already refuses often enough to cost planning round-trips. Absent on
+        // the first scene, which is the one that establishes it.
+        ...(convention ? { convention } : {}),
       },
       { index, collaborators, artifacts: options.artifacts },
     );
@@ -677,6 +695,26 @@ export async function writeStory(options: {
       committedDeltas.push(delta);
       proseByScene.set(card.id, text);
       earlierIntents.push(card.intent);
+
+      // The first scene with evidence of a spelling system decides it for the
+      // book, and the decision goes into the file every role is told to read —
+      // the same fix as 0.8.6, where the packet asserted a constraint while the
+      // file it cited still held its seed text.
+      if (!convention) {
+        convention = conventionOf(text);
+        if (convention) {
+          say(`convention established by ${card.id}: ${renderConvention(convention)}`);
+          await index.seed([
+            {
+              relPath: paths.voice(),
+              content:
+                `Narration: ${(planSink.plan ?? plan).voice?.person ?? "(not declared)"}, ` +
+                `${(planSink.plan ?? plan).voice?.tense ?? "?"} tense.\n\n` +
+                `${renderConvention(convention)}\n`,
+            },
+          ]);
+        }
+      }
     } else {
       // A failed scene does not stop the story. It is recorded, the narrative
       // moves on, and the failure rate is a result — a harness that halts on

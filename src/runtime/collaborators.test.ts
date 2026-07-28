@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { SceneToolBus, copiedFromPacket, residentCollaborators } from "./collaborators.ts";
+import {
+  SceneToolBus,
+  copiedFromPacket,
+  harnessAnnotation,
+  residentCollaborators,
+} from "./collaborators.ts";
 import { allocate } from "./allocation.ts";
 
 interface Tool {
@@ -143,6 +148,39 @@ describe("copiedFromPacket", () => {
     } as never);
     assert.match(result.content[0]!.text, /^rejected: this passage is copied verbatim/);
     assert.equal(capture.prose, undefined, "nothing may be staged");
+  });
+});
+
+describe("harness notes left in the manuscript", () => {
+  /**
+   * All five shapes are from one finished manuscript, where ten of them reached
+   * the page and the frozen consistency judge charged every one as
+   * `style_shifts` — the largest subtype in the audit, 30 of 87 kept instances.
+   */
+  it("catches the shapes that were measured on the page", () => {
+    for (const prose of [
+      "Above, a plaque caught the light. [staging folio A-0001 — Gate Ritual and Plaque]",
+      "The Tall Clerk [bracketed provenance: unnamed in builder] said the id aloud.",
+      "The press had a modest sound, the same as Rue had felt [see s-001].",
+      "(staging: invented by writer — debt amount specified as 'twelve crowns'.)",
+      "The press_podium gave her a footing and she did not look away.",
+      "She lifted char-rue's letter from the folder.",
+    ]) {
+      assert.ok(harnessAnnotation(prose), `should have been refused: ${prose}`);
+    }
+  });
+
+  it("leaves fiction that merely uses brackets alone", () => {
+    // Narrow on purpose: fiction uses parentheses and asides, and a check that
+    // refused them would cost far more than the defect.
+    for (const prose of [
+      "She counted the coins (there were twelve) and pushed them across the table.",
+      "The letter — unsigned, undated — lay where he had dropped it.",
+      "He said it twice, the second time more quietly, as though to himself.",
+      "A well-worn, hand-me-down coat hung by the door.",
+    ]) {
+      assert.equal(harnessAnnotation(prose), null, `should have passed: ${prose}`);
+    }
   });
 });
 

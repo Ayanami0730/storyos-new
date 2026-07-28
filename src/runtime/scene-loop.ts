@@ -37,6 +37,7 @@ import { CanonicalIndex } from "../index/commit.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
 import type { CanonFact, SceneDelta } from "../verification/deterministic.ts";
 import type { DeclaredVoice } from "../verification/person.ts";
+import type { OrthographyConvention } from "../verification/orthography.ts";
 import type { SceneAllocation } from "./allocation.ts";
 import type { ContextGap } from "./packet-builder.ts";
 import { type DirectorDeps, SceneDirector } from "./scene-director.ts";
@@ -268,6 +269,16 @@ export interface SceneRequest {
    * requests with no plan around them.
    */
   readonly voice?: DeclaredVoice;
+  /**
+   * The spelling and quotation convention the committed scenes established.
+   *
+   * Derived rather than planned, and absent on the first scene because that scene
+   * is what establishes it. The subtype it catches, `style_shifts`, became the
+   * largest one measured the moment `perspective_confusions` was fixed — 30 of 87
+   * kept instances across ten manuscripts — and five of six on one of them were
+   * `memorised`/`memorized`, `labour`/`labor`, `realised`/`realized`.
+   */
+  readonly convention?: OrthographyConvention;
 }
 
 export type SceneOutcome =

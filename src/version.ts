@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.9";
+export const VERSION = "0.9.10";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,34 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.10",
+    note:
+      "one book, one spelling \u2014 and harness notes stop reaching the page. Both are the " +
+      "subtype that took over the moment `perspective_confusions` was fixed. Measured across " +
+      "ten manuscripts on the repaired harness, `style_shifts` is the **largest consistency " +
+      "subtype, 30 of 87 kept instances, 1.83 per 10k**, while perspective drift fell from 7 in " +
+      "one pre-fix manuscript to **1 across 163,000 words**. Reading the instances, none of it " +
+      "is a literary judgement. Five of six on `task-literary-yesteryear` are " +
+      "`memorised`/`memorized`, `labour`/`labor`, `realised`/`realized`, " +
+      "`practised`/`practiced`, `flavour`/`flavor`, plus one quotation convention \u2014 the " +
+      "writer resets per scene, nothing had ever decided the orthography, so eight scenes each " +
+      "chose. That is the pre-0.8.0 narrative-person defect one layer down, so it gets the same " +
+      "treatment and no plan field: the first committed scene with evidence establishes the " +
+      "convention, it is written into `novel/style/voice.md` where every role is told to look, " +
+      "and the deterministic layer reports later scenes that contradict it, capped at two " +
+      "findings because four wrong-system spellings are one habit. Deriving it rather than " +
+      "planning it is deliberate \u2014 `submit_plan` already refuses often enough to cost " +
+      "planning round-trips, and a convention is not a judgement worth a model call. The rest " +
+      "are the writer leaving its own bookkeeping in the manuscript: `[staging folio A-0001]`, " +
+      "`[bracketed provenance: unnamed in builder]`, `[see s-001]`, `(staging: invented by " +
+      "writer)`, and index ids used as nouns \u2014 `press_podium`, `roster_sheet`. Same family " +
+      "as 0.7.3, where the writer quoted its packet, and a different channel because here it " +
+      "composes the note itself; so `write_staged_scene` refuses it beside the verbatim-copy " +
+      "check, pointing at `propose_state_delta` as the channel built for provenance. Narrow by " +
+      "construction: replayed over all twelve finished manuscripts it refuses exactly the two " +
+      "that carry the defect and passes the ten that do not.",
+  },
   {
     version: "0.9.9",
     note:
