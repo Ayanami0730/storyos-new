@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.8.9";
+export const VERSION = "0.9.0";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,26 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.0",
+    note:
+      "the index contract stopped lying about what a read costs. It said *\"read as much as " +
+      "you need. The index is the cheap thing\"*, which is true in tokens and false in the " +
+      "dimension that decides wall clock: a 20,000-word run made **703 sequential model " +
+      "round-trips, 96% of them carrying exactly one tool call**, and the two roles that only " +
+      "look things up \u2014 context-builder and index-manager \u2014 spent **64% of the run\'s wall " +
+      "clock** without writing a word of prose. `read_index` has taken a list of paths since " +
+      "0.7.6 and was called **once** in seventeen scenes, while the builder issued 78 " +
+      "single-file `read`s; nothing had told it the list existed or why it mattered. The " +
+      "contract now states the round-trip cost, names the batch signature, says independent " +
+      "calls in one reply run in parallel, and points at the layout that makes one shell call " +
+      "answer a whole question \u2014 ids are the links, so `relations/char-rue--*.yaml` is every " +
+      "relation Rue is in. Timing is not the only thing this buys: the gateway fans requests " +
+      "across upstream partitions that each hold their own prefix cache, so a round-trip is " +
+      "also a fresh chance to land on a cold one. Measured within a single turn, cache hit " +
+      "oscillates between 99% and 0% on an unchanged prefix, averaging 30\u201358% \u2014 fewer " +
+      "round-trips is the only lever we hold over that.",
+  },
   {
     version: "0.8.9",
     note:

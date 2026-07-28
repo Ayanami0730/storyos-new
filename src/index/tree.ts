@@ -346,9 +346,34 @@ continuity failure.
 
 ## Reading
 
-Read with the shell — \`grep\`, \`ls\`, \`sed\` — and read as much as you need. The
-index is the cheap thing; guessing is the expensive thing. Facts you assert must
-name the file they came from.
+Read as much of the index as you need — guessing is far more expensive than
+looking. But read it in **as few calls as you can**, because the cost is not
+where this contract used to say it was.
+
+A read is cheap in tokens and expensive in round-trips. Every tool call is a
+separate request that re-sends this whole conversation and waits about five
+seconds for a reply. Measured on a 20,000-word run: 703 round-trips, **96% of
+them carrying exactly one tool call**, and the two roles doing the looking spent
+64% of the run's wall clock without writing a word of prose.
+
+So decide what you need, then fetch it in one move:
+
+- \`read_index\` takes a **list** of paths. Ten files in one call is one
+  round-trip and one budget charge; ten \`read\` calls is ten of each.
+- **Issue independent calls together in a single reply.** They run in parallel.
+  This does not apply to delegating to another agent, which can only hold one
+  turn at a time.
+- A shell one-liner can answer in one call what would otherwise take ten:
+  \`ls characters/\`, \`grep -l signet characters/*/beliefs.jsonl\`,
+  \`cat relations/char-rue--*.yaml\`.
+
+The layout is built for that last one. Ids are the links: a relation file is
+named \`relations/<a>--<b>.yaml\`, so \`relations/char-rue--*.yaml\` is every
+relation Rue is in, and \`characters/char-rue/\` is her whole record. You rarely
+need a filename in advance — you need the id, and the ids are in the entity
+roster you were given.
+
+Facts you assert must name the file they came from.
 `;
 
 export interface InitOptions {
