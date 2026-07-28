@@ -306,10 +306,20 @@ export class TurnFailed extends Error {
  * everything else on it, so 429 is a scheduling accident rather than a
  * statement about the request. A 400 or a 404 will fail identically forever and
  * retrying only spends the budget slower.
+ *
+ * The transport half of this pattern has now been extended three times, each time
+ * because one event arrived under a name the previous list did not carry:
+ * `ECONNRESET` and `socket hang up` name it from the socket, `Stream ended without
+ * finish_reason` from the stream, and `Connection error` is what the
+ * OpenAI-compatible client says when it has no errno to report. That third one
+ * cost `runs-lbw21/lbw106` its whole cell — a fatal 65 seconds in, no plan and no
+ * manuscript, `after 1 attempt(s)`. Adding wordings one at a time is the wrong
+ * shape and worth naming as such: the reliable version of this classifier would
+ * ask the client for a typed cause rather than read its prose.
  */
 export function isRetryableTurnError(message: string): boolean {
   return (
-    /\b(429|5\d\d)\b|rate.?limit|rate_limit|too_many_requests|resource exhausted|负载已饱和|overloaded|time(?:d)?[\s_-]*out|terminated|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up/i.test(
+    /\b(429|5\d\d)\b|rate.?limit|rate_limit|too_many_requests|resource exhausted|负载已饱和|overloaded|time(?:d)?[\s_-]*out|terminated|ECONNRESET|ETIMEDOUT|ECONNREFUSED|EAI_AGAIN|socket hang up|connection error|connection closed|fetch failed|network error|premature close/i.test(
       message,
     ) ||
     isTruncatedStream(message) ||

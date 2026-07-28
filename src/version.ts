@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.11";
+export const VERSION = "0.9.12";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,22 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.12",
+    note:
+      "`Connection error.` counts as a transport failure and is retried. Measured on " +
+      "`runs-lbw21/lbw106`: the orchestrator's first turn died 65 seconds in with " +
+      "`TurnFailed: orchestrator's turn failed after 1 attempt(s): Connection error.`, and the " +
+      "cell produced no plan and no manuscript at all. This is the third wording of one event " +
+      "to be added one at a time \u2014 `ECONNRESET` and `socket hang up` name it from the " +
+      "socket, `Stream ended without finish_reason` from the stream (0.9.9), and this is what " +
+      "the OpenAI-compatible client says when it has no errno to hand. Also covered: " +
+      "`fetch failed`, `ECONNREFUSED`, `connection closed`, `premature close`. The shape of " +
+      "this fix is wrong and is recorded as wrong: a classifier that reads a client's prose " +
+      "will keep missing the next phrasing, and the version that stops needing edits would " +
+      "read a typed cause instead. Kept as a pattern for now because the deadline is closer " +
+      "than the refactor is safe.",
+  },
   {
     version: "0.9.11",
     note:

@@ -335,6 +335,19 @@ describe("a provider call that fails", () => {
      */
     assert.ok(isRetryableTurnError("Stream ended without finish_reason"));
     /**
+     * The third wording of the same accident, and the plainest.
+     *
+     * Measured on `runs-lbw21/lbw106` at 0.9.11: the orchestrator's first turn
+     * died 65 seconds in with `TurnFailed: orchestrator's turn failed after 1
+     * attempt(s): Connection error.` and the cell produced no plan and no
+     * manuscript. The classifier already retries `ECONNRESET`, `socket hang up`
+     * and `terminated`, which are the same event named by a lower layer; this is
+     * what the OpenAI-compatible client calls it when it does not have the errno.
+     * There is no request that could be phrased differently to avoid it.
+     */
+    assert.ok(isRetryableTurnError("Connection error."));
+    assert.ok(isRetryableTurnError("TypeError: fetch failed"));
+    /**
      * The 401 that truncated two 40,000-word runs.
      *
      * Both reported `exit 0` at attainment 0.70 because the writer drew a
