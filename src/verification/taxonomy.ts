@@ -164,9 +164,27 @@ export const SUBTYPES: readonly SubtypeSpec[] = [
     lookFor: "ages, dates, counts, distances or prices that do not add up across passages",
   },
   {
+    /**
+     * Moved out of `stylistic`, where it could never block, on measurement.
+     *
+     * It was tiered stylistic on the reasonable-sounding argument that voice is
+     * subjective. Then LiveNovelBench scored our first 20,000-word manuscript at
+     * 4.93 errors per 10k words — worst of nine systems at that tier — and
+     * **seven of the nine were this subtype**. So the class the architecture had
+     * decided was too soft to refuse prose over was 78% of everything we were
+     * being charged for.
+     *
+     * It is also not, in fact, the soft kind. Six of the seven had both sides
+     * quoted inside a single scene, 18 to 167 words apart, one of them in one
+     * sentence — *"The board … showed **our** names … and gave **Rue** a
+     * particular, domestic kind of relief."* And since 0.8.0 the plan declares
+     * the narrative person before any prose exists, so there is now a written
+     * constraint for a sentence to contradict. Two passages that cannot both be
+     * right, both in text: that is the definition of `explicit-pair`.
+     */
     subtype: "perspective_confusions",
     category: "narrative_style",
-    tier: "stylistic",
+    tier: "explicit-pair",
     lookFor: "narrative person or focal character switching without a transition",
   },
   {

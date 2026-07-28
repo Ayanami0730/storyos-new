@@ -510,6 +510,11 @@ export async function writeStory(options: {
         sceneTargetWords: card.targetWords,
         position: { index: i + 1, total: (planSink.plan ?? plan).scenes.length },
         priorCraftNotes: craftNotes,
+        // The same voice the packet hands the writer, given to the layer that
+        // can refuse a draft over it. Carried to the writer since 0.8.0 and
+        // checked by nothing until seven of nine measured errors turned out to
+        // be exactly this.
+        voice: (planSink.plan ?? plan).voice,
       },
       { index, collaborators, artifacts: options.artifacts },
     );

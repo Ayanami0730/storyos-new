@@ -446,6 +446,8 @@ export class SceneDirector {
       delta: this.#lastDraft!.delta,
       canon: this.#request.canon,
       knownEntities: this.#request.knownEntities,
+      prose: this.#lastDraft!.prose,
+      ...(this.#request.voice ? { voice: this.#request.voice } : {}),
     });
 
     let findings: readonly Finding[] = deterministic.findings;

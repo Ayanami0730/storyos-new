@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.8.7";
+export const VERSION = "0.8.8";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,31 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.8.8",
+    note:
+      "the narrative person is checked, not merely declared, and the subtype can block. " +
+      "Tracing all nine consistency errors LiveNovelBench charged the first 20,000-word " +
+      "manuscript with: **every one originates in scenes 1\u20133 of 17**, and six of the seven " +
+      "`perspective_confusions` have *both sides inside the same scene*, 18 to 167 words apart " +
+      "\u2014 one inside a single sentence, *\"The board \u2026 showed **our** names \u2026 and gave **Rue** " +
+      "a particular, domestic kind of relief.\"* The evidence was in the draft the verifier was " +
+      "holding. Across those seventeen scenes it called the consistency tool **twice** and the " +
+      "craft tool seventeen times; on s-001 it produced one round-trip and no tool calls, and " +
+      "on s-002, which contains five of the nine errors, three craft findings and zero " +
+      "contradictions. Two things had told it not to bother: `perspective_confusions` was " +
+      "tiered `stylistic` \u2014 *\"the most subjective; never a hard block\"* \u2014 so 78% of our " +
+      "measured error mass sat in the one tier that cannot stop a scene, and " +
+      "`novel/style/voice.md`, the file its brief names for register drift, still held its " +
+      "seed text (fixed in 0.8.6). So the subtype moves to `explicit-pair`, and the " +
+      "deterministic layer now takes the draft and the declared voice and reports narration " +
+      "that contradicts it. Scored against the judge\'s own findings the check recovers **7 of " +
+      "7** at 5.47 hits per 10k words against a ground truth of 3.83, while the manuscripts " +
+      "the same judge measured near-clean give 0.00\u20131.91. Dialogue is blanked first \u2014 " +
+      "characters say \"we\", and a first attempt that paired quote marks as one character class " +
+      "ran to 43.78 per 10k. Capped at two findings per scene: nine drifting sentences are one " +
+      "defect the writer needs told once, and the opening tier has two repair rounds.",
+  },
   {
     version: "0.8.7",
     note:

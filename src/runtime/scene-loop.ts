@@ -36,6 +36,7 @@ import type { CommitResult, FileWrite } from "../index/commit.ts";
 import { CanonicalIndex } from "../index/commit.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
 import type { CanonFact, SceneDelta } from "../verification/deterministic.ts";
+import type { DeclaredVoice } from "../verification/person.ts";
 import type { SceneAllocation } from "./allocation.ts";
 import type { ContextGap } from "./packet-builder.ts";
 import { type DirectorDeps, SceneDirector } from "./scene-director.ts";
@@ -256,6 +257,17 @@ export interface SceneRequest {
     readonly why: string;
     readonly suggestion: string;
   }[];
+  /**
+   * The narration the plan declared, so the deterministic layer can check it.
+   *
+   * The packet has carried this to the *writer* since 0.8.0. Nothing checked it.
+   * LiveNovelBench then scored the first 20,000-word manuscript at 4.93 errors
+   * per 10k — worst of nine systems — and **seven of the nine were
+   * `perspective_confusions`**, all of them in scenes 1–3, six with both sides
+   * inside a single scene. Optional because the deterministic unit tests build
+   * requests with no plan around them.
+   */
+  readonly voice?: DeclaredVoice;
 }
 
 export type SceneOutcome =

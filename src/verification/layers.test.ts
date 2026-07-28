@@ -166,6 +166,63 @@ describe("deterministic scene checks", () => {
     assert.match(result.findings[0]!.evidence.quote, /char-ghost/);
   });
 
+  /**
+   * The wiring, not the detector. `person.test.ts` covers the sentences; this
+   * covers the thing that was actually broken — that nothing passed the draft and
+   * the declared voice to a layer able to refuse the scene over them.
+   */
+  it("blocks a draft whose narration contradicts the declared person", () => {
+    const result = verifyDeterministic({
+      canon,
+      knownEntities: known,
+      delta: delta({}),
+      prose:
+        "The board under the entry light showed our names in their neat column " +
+        "and gave Rue a particular, domestic kind of relief.",
+      voice: { person: "third person limited, Rue", tense: "past" },
+    });
+    const drift = result.findings.filter((f) => f.subtype === "perspective_confusions");
+    assert.equal(drift.length, 1);
+    assert.equal(drift[0]!.severity, "error");
+    assert.match(drift[0]!.contradicts!.quote, /third person limited, Rue/);
+    assert.match(drift[0]!.contradicts!.source, /voice\.md/);
+  });
+
+  /**
+   * One defect, not nine findings. A scene that drifts throughout needs the
+   * instruction once, and the repair budget is two rounds in the opening tier —
+   * which is where all seven measured errors were.
+   */
+  it("caps the drift findings so one scene cannot spend the whole repair budget", () => {
+    const drifting = Array.from(
+      { length: 9 },
+      (_, i) => `We crossed the yard for the ${i}th time and Rue counted the bells.`,
+    ).join(" ");
+    const result = verifyDeterministic({
+      canon,
+      knownEntities: known,
+      delta: delta({}),
+      prose: drifting,
+      voice: { person: "third person limited, Rue", tense: "past" },
+    });
+    const drift = result.findings.filter((f) => f.subtype === "perspective_confusions");
+    assert.equal(drift.length, 2);
+    assert.match(drift[0]!.reasoning, /9 sentences in this scene do it/);
+  });
+
+  it("says nothing about person when the plan declared none", () => {
+    const result = verifyDeterministic({
+      canon,
+      knownEntities: known,
+      delta: delta({}),
+      prose: "We came in and the list was already up.",
+    });
+    assert.deepEqual(
+      result.findings.filter((f) => f.subtype === "perspective_confusions"),
+      [],
+    );
+  });
+
   it("reports coverage without capping it, unlike v2's five-claim audit", () => {
     const claims = Array.from({ length: 40 }, (_, i) => ({
       entity: "char-mira",

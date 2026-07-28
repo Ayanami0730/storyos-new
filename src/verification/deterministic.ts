@@ -16,6 +16,8 @@
  */
 
 import { type Finding, makeFinding } from "./finding.ts";
+import { type DeclaredVoice, findPersonDrift } from "./person.ts";
+import { paths } from "../index/tree.ts";
 
 /** A fact already in canon, as the context packet supplied it. */
 export interface CanonFact {
@@ -83,7 +85,27 @@ export interface DeterministicInput {
   readonly canon: readonly CanonFact[];
   /** Every entity id the index knows about, for reference integrity. */
   readonly knownEntities: ReadonlySet<string>;
+  /**
+   * The staged prose and the person the plan declared for the whole book.
+   *
+   * Optional so the many call sites that check a delta alone are unaffected, but
+   * supplying it is the difference between catching the largest single class of
+   * error this system produces and not: `perspective_confusions` was seven of
+   * the nine errors in the first 20,000-word manuscript, and the model verifier
+   * reported none of them. See `person.ts`.
+   */
+  readonly prose?: string;
+  readonly voice?: DeclaredVoice;
 }
+
+/**
+ * How many person-drift findings one scene may raise.
+ *
+ * A scene that slips in nine sentences is one defect with nine symptoms, and the
+ * writer needs the instruction once. Two, so the repair brief can show the
+ * pattern rather than a single line that might read as a one-off.
+ */
+const MAX_PERSON_DRIFT_FINDINGS = 2;
 
 const normalise = (value: string) => value.trim().replace(/\s+/g, " ").toLowerCase();
 
@@ -308,6 +330,36 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
         },
       }),
     );
+  }
+
+  // The narrative person, against the one constraint that was decided before any
+  // prose existed. Last because it reads the draft rather than the delta, and
+  // because a scene with a dangling entity reference has a worse problem.
+  if (input.prose && input.voice) {
+    const drifts = findPersonDrift(input.prose, input.voice);
+    for (const drift of drifts.slice(0, MAX_PERSON_DRIFT_FINDINGS)) {
+      findings.push(
+        makeFinding({
+          subtype: "perspective_confusions",
+          validator: "voice",
+          severity: "error",
+          reasoning:
+            `${drift.why}. The narration this book was planned in is ` +
+            `"${input.voice.person}", decided before the first scene and not a ` +
+            `per-scene choice` +
+            (drifts.length > MAX_PERSON_DRIFT_FINDINGS
+              ? `. ${drifts.length} sentences in this scene do it, so treat it as the ` +
+                `scene's register rather than as this one line`
+              : ""),
+          evidence: { quote: drift.quote, source: delta.sceneId },
+          contradicts: {
+            quote: `Narration: ${input.voice.person}, ${input.voice.tense} tense.`,
+            source: paths.voice(),
+          },
+          editLocus: { kind: "draft", quote: drift.quote },
+        }),
+      );
+    }
   }
 
   return {
