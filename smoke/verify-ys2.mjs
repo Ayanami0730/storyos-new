@@ -1,0 +1,10 @@
+import fs from "node:fs";
+process.env.STORYOS_SUPPLY = "ys2";
+process.env.YS_KEY = fs.readFileSync(process.env.HOME + "/.config/ys/key", "utf8").trim();
+const mod = await import("/home/dumingxuan/storyos-v3/src/runtime/gateway.ts");
+const s = mod.selectedSupply();
+console.log("supply:", s.id, "|", s.baseUrl, "| maps to:", s.modelNames?.["gpt-5-mini"]);
+const g = mod.installGateway();
+const m = g.model("gpt-5-mini");
+console.log("model resolved:", m ? (m.id ?? JSON.stringify(Object.keys(m)).slice(0, 80)) : "NULL");
+process.exit(0);
