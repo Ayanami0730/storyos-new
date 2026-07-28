@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { verifyDeterministic } from "./deterministic.ts";
+import { makeFinding } from "./finding.ts";
 import {
   conventionOf,
   findOrthographyDrift,
@@ -71,5 +73,66 @@ describe("one book, one spelling", () => {
     assert.match(text, /British English/);
     assert.match(text, /single quotation marks/);
     assert.match(text, /fixed for the whole book/);
+  });
+
+  /**
+   * The check reaching the layer that runs it, which the tests above cannot see.
+   *
+   * Every test above calls the pure functions, and all of them passed while the
+   * wiring threw on the first scene that actually drifted: `style_shifts` is a
+   * `stylistic` subtype, `makeFinding` refuses a non-warning severity for one, and
+   * the throw landed inside `verifyDeterministic` — after `verify()` had already
+   * moved the scene to VALIDATING, so every later verification call was refused
+   * with "there is no fresh draft to check" and the scene could never commit.
+   * Two of five runs on 0.9.10 delivered a quarter of their planned scenes that
+   * way, against zero occurrences in the sixty runs before it.
+   */
+  it("reaches the deterministic layer instead of throwing on the way there", () => {
+    const result = verifyDeterministic({
+      canon: [],
+      knownEntities: new Set<string>(),
+      delta: { sceneId: "s-002", claims: [], presentEntities: [] },
+      convention: { spelling: "american", quotes: "double" },
+      prose:
+        "She had memorised the route before the labour of the crossing began, " +
+        "and the grey light realised nothing for her.",
+    });
+    const drift = result.findings.filter((f) => f.subtype === "style_shifts");
+    assert.ok(drift.length > 0, "a drifting draft must produce a style_shifts finding");
+    assert.match(drift[0]!.reasoning, /British spelling/);
+  });
+
+  it("blocks the commit, because a spelling pair is mechanical and not a judgement", () => {
+    // The taxonomy holds `style_shifts` non-blocking on the grounds that "a
+    // stylistic judgement is too soft to refuse prose over". That reasoning is
+    // about judgements. `labour` against `labor` is a fact, and a warning would
+    // leave the drift on the page — which is the whole defect being fixed.
+    const [finding] = verifyDeterministic({
+      canon: [],
+      knownEntities: new Set<string>(),
+      delta: { sceneId: "s-002", claims: [], presentEntities: [] },
+      convention: { spelling: "american", quotes: "double" },
+      prose: "The harbour was grey with labour that morning.",
+    }).findings;
+    assert.equal(finding!.subtype, "style_shifts");
+    assert.equal(finding!.severity, "error");
+    assert.equal(finding!.validator, "voice");
+  });
+
+  it("still refuses a stylistic severity that no mechanism stands behind", () => {
+    // The allowance must not become a general escape from the taxonomy: a
+    // stylistic finding from the model verifier stays a warning.
+    assert.throws(
+      () =>
+        makeFinding({
+          subtype: "style_shifts",
+          validator: "llm",
+          severity: "error",
+          reasoning: "the register drops in the second half",
+          evidence: { quote: "the register drops", source: "s-002" },
+          editLocus: { kind: "draft", quote: "the register drops" },
+        }),
+      /may only be a warning/,
+    );
   });
 });

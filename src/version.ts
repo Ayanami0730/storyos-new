@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.10";
+export const VERSION = "0.9.11";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,36 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.11",
+    note:
+      "0.9.10 shipped a checker that could not run, and the way it failed was worse than the " +
+      "defect it was fixing. `style_shifts` is a `stylistic` subtype, which the taxonomy holds " +
+      "non-blocking on the grounds that \u201ca stylistic judgement is too soft to refuse prose " +
+      "over\u201d; the orthography check constructed it with `severity: \"error\"`, and " +
+      "`makeFinding` refuses that pairing. The throw landed inside `verifyDeterministic`, which " +
+      "`verify()` calls **after** moving the scene to VALIDATING \u2014 a state `verify()` itself " +
+      "refuses to re-enter. So every later verification call came back \u201cthere is no fresh " +
+      "draft to check\u201d, index-manager would not commit without an approval, and the " +
+      "orchestrator abandoned the scene. The blast radius: **2 of the first 5 runs on 0.9.10 " +
+      "delivered 1 of 4 planned scenes** (attainment 0.28 and 0.35), against **zero occurrences " +
+      "of that state in the 60 runs from 0.7.1 through 0.9.7**, and the batch's own rerun hit it " +
+      "again because the trigger is the manuscript's spelling rather than chance. It survived 540 " +
+      "tests because every orthography test called the pure functions; none drove the layer that " +
+      "runs them. Three fixes, and the first is the least important. (1) A deterministic checker " +
+      "may block on a subtype the model verifier may only warn about, because the distinction the " +
+      "taxonomy is protecting is judgement against comparison \u2014 `labour` against `labor` is " +
+      "a fact with one fix, and a warning would leave it on the page, which was the whole point. " +
+      "The tiers themselves are untouched, so nothing about the frozen metric or the model path " +
+      "changes. (2) A crash in the deterministic layer no longer strands a scene: it degrades to " +
+      "the trade already made for an unreachable verifier \u2014 the checks that ran stand, the " +
+      "scene proceeds, and it is recorded. A defect in our own checker must not be able to look " +
+      "like a defect in the manuscript. (3) `deterministic_failures` goes into `summary.json` " +
+      "beside `backfill_failures`, and failed scenes now carry their warnings at all \u2014 they " +
+      "did not, so a crash was reported only on scenes that survived it, which is the one case it " +
+      "could not. Same shape as the index-manager incident four versions earlier: the mechanism " +
+      "was dead, every run said `done`, and nothing counted it.",
+  },
   {
     version: "0.9.10",
     note:

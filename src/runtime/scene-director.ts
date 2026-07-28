@@ -45,7 +45,11 @@ import {
 } from "../index/commit.ts";
 import { SceneTransaction } from "../transaction/machine.ts";
 import type { Finding, SceneState } from "../transaction/types.ts";
-import { verifyDeterministic } from "../verification/deterministic.ts";
+import {
+  type DeterministicResult,
+  emptyCoverage,
+  verifyDeterministic,
+} from "../verification/deterministic.ts";
 import { MAX_BLOCKING_CRAFT } from "../verification/craft.ts";
 import { renderDossier } from "../verification/dossier.ts";
 import {
@@ -81,6 +85,17 @@ export type StepName = "context" | "draft" | "verify" | "commit" | "abandon";
  * silent way.
  */
 export const BACKFILL_FAILURE_PREFIX = "backfill failed";
+
+/**
+ * How a crash inside the deterministic layer announces itself.
+ *
+ * Same reason as the constant above, and the same class of incident behind it: a
+ * defect in one of our own checkers must be countable, because the alternative is
+ * that it presents as a clean run. The story loop counts these into the summary
+ * beside the findings, so "the checks passed" and "the checks did not run" cannot
+ * be read as the same result.
+ */
+export const DETERMINISTIC_LAYER_FAILED = "deterministic layer failed";
 
 export interface StepReport {
   /** False when the step refused; the transaction is unchanged in that case. */
@@ -454,14 +469,42 @@ export class SceneDirector {
 
     this.#tx.transition("VALIDATING", "orchestrator");
 
-    const deterministic = verifyDeterministic({
-      delta: this.#lastDraft!.delta,
-      canon: this.#request.canon,
-      knownEntities: this.#request.knownEntities,
-      prose: this.#lastDraft!.prose,
-      ...(this.#request.voice ? { voice: this.#request.voice } : {}),
-      ...(this.#request.convention ? { convention: this.#request.convention } : {}),
-    });
+    /**
+     * A defect in our own checker is not a defect in the manuscript.
+     *
+     * The transition above already happened, so anything that throws here leaves
+     * the scene in VALIDATING — a state `verify` itself refuses to re-enter, so
+     * every later attempt comes back "there is no fresh draft to check" and the
+     * scene can never commit. That is not hypothetical: `style_shifts` was
+     * constructed with a severity its tier forbids, and the two runs whose first
+     * scene happened to establish a spelling convention delivered one scene of
+     * four each, while the sixty runs before them had never seen the state.
+     *
+     * So a throw here degrades to the trade already made for a verifier that
+     * cannot be reached: the checks that did run stand, the scene proceeds, and
+     * the failure is recorded loudly enough that it cannot be read as a clean
+     * result. What must never happen again is that our own bug looks like the
+     * manuscript's.
+     */
+    let deterministic: DeterministicResult = { findings: [], coverage: emptyCoverage() };
+    let checkerFailed: string | null = null;
+    try {
+      deterministic = verifyDeterministic({
+        delta: this.#lastDraft!.delta,
+        canon: this.#request.canon,
+        knownEntities: this.#request.knownEntities,
+        prose: this.#lastDraft!.prose,
+        ...(this.#request.voice ? { voice: this.#request.voice } : {}),
+        ...(this.#request.convention ? { convention: this.#request.convention } : {}),
+      });
+    } catch (error) {
+      checkerFailed = error instanceof Error ? error.message : String(error);
+      this.#unverified = true;
+      this.#warnings.push(
+        `${DETERMINISTIC_LAYER_FAILED}: ${checkerFailed}. The scene was checked by the ` +
+          `model verifier only; this is a harness defect, not a finding about the prose.`,
+      );
+    }
 
     let findings: readonly Finding[] = deterministic.findings;
     let unavailable: string | null = null;
@@ -800,6 +843,12 @@ export class SceneDirector {
       attempts,
       history,
       findings: this.#findings,
+      // A failed scene carries its warnings too, because the ones worth counting
+      // are the ones that describe a broken mechanism rather than a bad draft —
+      // and those are likeliest on exactly the scenes that did not commit. Only
+      // the committed branch reported warnings, so a checker crash that also
+      // failed the scene was counted nowhere.
+      warnings: [...this.#warnings],
     };
   }
 }

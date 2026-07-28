@@ -279,6 +279,13 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
      * state entries, beliefs, relations and events.
      */
     backfill_failures: result?.backfillFailures ?? 0,
+    /**
+     * Scenes whose deterministic checks crashed. Beside `backfill_failures` for
+     * the same reason it sits beside `canon_facts`: a run reporting no blocking
+     * findings because the checker threw is indistinguishable, in every other
+     * column, from one reporting it because the prose was clean.
+     */
+    deterministic_failures: result?.deterministicFailures ?? 0,
     promises_declared: result ? result.revision.coverage.contractsChecked : 0,
     promises_unpaid: result ? result.revision.coverage.contractsOpen : 0,
     revision_tasks: result?.revision.tasks.length ?? 0,

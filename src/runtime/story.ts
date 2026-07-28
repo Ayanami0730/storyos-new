@@ -38,7 +38,11 @@ import {
   planFiles,
   planStory,
 } from "./plan.ts";
-import { BACKFILL_FAILURE_PREFIX, SceneDirector } from "./scene-director.ts";
+import {
+  BACKFILL_FAILURE_PREFIX,
+  DETERMINISTIC_LAYER_FAILED,
+  SceneDirector,
+} from "./scene-director.ts";
 import type { SceneCollaborators, SceneOutcome } from "./scene-loop.ts";
 import { countWords } from "./words.ts";
 
@@ -94,6 +98,14 @@ export interface StoryResult {
    * else, every one of them reporting `done`.
    */
   readonly backfillFailures: number;
+  /**
+   * Scenes whose deterministic checks threw instead of running.
+   *
+   * The same argument one field up, one layer in. A checker crash used to be
+   * unrepresented anywhere, so the run it destroyed reported the same shape as a
+   * healthy one — `0 finding(s)` on every scene, which reads as clean prose.
+   */
+  readonly deterministicFailures: number;
 }
 
 function toolText(text: string) {
@@ -430,6 +442,14 @@ export async function writeStory(options: {
   let backfillFailures = 0;
   let consecutiveBackfillFailures = 0;
   /**
+   * Scenes whose deterministic checks crashed rather than ran.
+   *
+   * Reported next to the findings for the same reason `backfillFailures` is: a run
+   * that says "0 blocking findings" because the checker threw looks exactly like a
+   * run that says it because the prose was clean, and one of those is a result.
+   */
+  let deterministicFailures = 0;
+  /**
    * The spelling and quotation convention, established by the first scene that
    * shows evidence of one and then fixed.
    *
@@ -647,6 +667,21 @@ export async function writeStory(options: {
         `${run.orchestratorSteps} step(s) driven, ${committedWords}/${targetWords} words so far`,
     );
 
+    /**
+     * Counted on every scene, committed or not, and outside the branch below.
+     *
+     * A checker that throws does not care whether the scene went on to commit, and
+     * the incident that motivated the count is precisely the one where it did not:
+     * the throw stranded the scene in VALIDATING, so every occurrence was on a
+     * failed scene and a counter inside the COMMITTED branch would have read zero.
+     */
+    const outcomeWarnings: readonly string[] = "warnings" in outcome ? outcome.warnings : [];
+    const checkerCrash = outcomeWarnings.find((w) => w.startsWith(DETERMINISTIC_LAYER_FAILED));
+    if (checkerCrash) {
+      deterministicFailures += 1;
+      say(`${card.id} — ${checkerCrash}`);
+    }
+
     if (outcome.status === "COMMITTED") {
       for (const warning of outcome.warnings) say(`${card.id} warning — ${warning}`);
 
@@ -815,6 +850,7 @@ export async function writeStory(options: {
     driving,
     allocations,
     backfillFailures,
+    deterministicFailures,
   };
 }
 

@@ -136,6 +136,23 @@ export function makeFinding(input: {
   readonly suggestion?: string;
   readonly canonContext?: string;
   readonly editLocus: EditLocus;
+  /**
+   * This finding was decided by a comparison, not by a judgement.
+   *
+   * The severity rule below exists because "a stylistic judgement is too soft to
+   * refuse prose over" — and that reasoning is about judgements. `labour` against
+   * `labor` in a book whose committed scenes chose American is a fact with one
+   * fix, and a warning would leave it on the page, which is the entire defect
+   * being addressed. So a deterministic checker may block on a subtype the model
+   * verifier may only warn about, and the distinction is the source rather than
+   * the subtype: the taxonomy's tiers stay exactly as the frozen metric defines
+   * them, and nothing about the model path changes.
+   *
+   * Narrow on purpose. Only `deterministic.ts` sets it, and the model verifier's
+   * own path through this function cannot: a stylistic finding it raises stays a
+   * warning, which is what keeps a soft judgement from burning a repair round.
+   */
+  readonly mechanical?: boolean;
 }): Finding {
   const spec = subtypeSpec(input.subtype);
 
@@ -177,7 +194,7 @@ export function makeFinding(input: {
         `nothing.`,
     );
   }
-  if (input.severity !== "warning" && !isBlockingSubtype(input.subtype)) {
+  if (input.severity !== "warning" && !isBlockingSubtype(input.subtype) && !input.mechanical) {
     throw new FindingError(
       `${input.subtype} is ${spec.tier}; it may only be a warning, because at scene time it is not yet an error`,
     );

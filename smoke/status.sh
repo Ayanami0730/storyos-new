@@ -4,7 +4,7 @@
 # own command line in `pgrep`/`rg` or counted the shell that ran it.
 cd "$(dirname "$0")/.."
 
-BATCHES=(runs-lnb runs-lnb2 runs-lnbch runs-ch21)
+BATCHES=(runs-lnb runs-lnb2 runs-lnbch runs-lnb20k runs-ch21 runs-lbw21 runs-r1 runs-60k)
 
 echo "== running =="
 ps -u "$USER" -o pid=,etime=,args= \

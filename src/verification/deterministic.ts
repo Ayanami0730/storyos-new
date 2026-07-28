@@ -164,6 +164,23 @@ export interface DeterministicResult {
   readonly coverage: CoverageStats;
 }
 
+/**
+ * What the layer covered when it could not run at all.
+ *
+ * Zeroes rather than omission: the coverage numbers exist so the relationship
+ * between how much was checked and how many defects survived can be measured, and
+ * a missing row would quietly average as if the scene had been checked.
+ */
+export function emptyCoverage(): CoverageStats {
+  return {
+    claims: 0,
+    claimsCheckedAgainstCanon: 0,
+    canonFactsInScope: 0,
+    presentEntities: 0,
+    volatileChanges: 0,
+  };
+}
+
 export function verifyDeterministic(input: DeterministicInput): DeterministicResult {
   const { delta, canon, knownEntities } = input;
   const findings: Finding[] = [];
@@ -390,6 +407,14 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
           subtype: "style_shifts",
           validator: "voice",
           severity: "error",
+          // `style_shifts` is a `stylistic` subtype, which the taxonomy holds
+          // non-blocking because a stylistic *judgement* is too soft to refuse
+          // prose over. A spelling pair is a comparison, so it may block; see the
+          // field's own note. Without this the construction throws, and the throw
+          // lands after `verify()` has moved the scene to VALIDATING — which is
+          // how two of the first five runs on 0.9.10 lost three quarters of their
+          // scenes to a state the state machine could not leave.
+          mechanical: true,
           reasoning:
             `${drift.why}` +
             (drifts.length > MAX_PERSON_DRIFT_FINDINGS

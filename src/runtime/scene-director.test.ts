@@ -23,7 +23,7 @@ import { allocate } from "./allocation.ts";
 import { ArtifactStore, artifactPaths } from "./artifacts.ts";
 import type { ContextGap } from "./packet-builder.ts";
 import { SceneStage, driveScene, orchestratorTools } from "./orchestration.ts";
-import { SceneDirector } from "./scene-director.ts";
+import { DETERMINISTIC_LAYER_FAILED, SceneDirector } from "./scene-director.ts";
 import { runScene } from "./scene-loop.ts";
 import {
   type Draft,
@@ -165,6 +165,58 @@ describe("steps refuse to run out of order", () => {
     assert.equal(verified.ok, false);
     assert.match(verified.text, /call_writer/);
     assert.equal(director.state, "CONTEXT_BUILT");
+  });
+
+  /**
+   * A crash inside our own checker must not be able to strand a scene.
+   *
+   * `verify` moves the scene to VALIDATING before the deterministic layer runs,
+   * and refuses to re-enter from that state — so anything that throws in between
+   * used to make the scene permanently unverifiable: every later call came back
+   * "there is no fresh draft to check", index-manager would not commit without an
+   * approval, and the orchestrator abandoned the scene. Measured on 0.9.10, where
+   * `style_shifts` was constructed with a severity its tier forbids: two of the
+   * first five runs delivered one scene of four, against zero occurrences of that
+   * state in the sixty runs before it.
+   *
+   * The trigger here is a different throw on purpose. The guarantee is about any
+   * defect in the layer, not about the one that happened to expose it.
+   */
+  it("does not strand a scene when the deterministic layer throws", async () => {
+    const { index, artifacts } = await freshIndex();
+    // An unknown entity with no quote: the reference check builds a finding and
+    // `makeFinding` refuses empty evidence, so the layer throws mid-scene.
+    const throwing: Draft = {
+      prose: "She waited on the quay.",
+      delta: {
+        sceneId: "s-011",
+        presentEntities: ["char-mira"],
+        claims: [{ entity: "char-nobody", attribute: "mood", value: "impatient", quote: "" }],
+      },
+    };
+    const director = new SceneDirector(request(), {
+      index,
+      artifacts,
+      collaborators: collaborators({ drafts: [throwing] }),
+    });
+    await director.buildContext();
+    await director.draft();
+
+    const verified = await director.verify();
+    assert.equal(verified.ok, true, "verify must resolve rather than throw");
+    assert.notEqual(
+      director.state,
+      "VALIDATING",
+      "a scene left in VALIDATING can never be verified again or committed",
+    );
+    // And it must be loud: a checker that did not run is not a clean scene.
+    const committed = await director.commit();
+    assert.equal(committed.ok, true);
+    const outcome = director.outcome() as { warnings: readonly string[] };
+    assert.ok(
+      outcome.warnings.some((w) => w.startsWith(DETERMINISTIC_LAYER_FAILED)),
+      "the crash must be recorded, not absorbed",
+    );
   });
 
   it("will not commit a scene the verifier has not approved", async () => {

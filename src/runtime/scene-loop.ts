@@ -315,6 +315,16 @@ export type SceneOutcome =
       readonly attempts: number;
       readonly history: readonly SceneState[];
       readonly findings: readonly Finding[];
+      /**
+       * The same warnings the committed branch reports.
+       *
+       * Present here because the warnings that matter most describe a broken
+       * mechanism rather than a poor draft, and a broken mechanism is likeliest to
+       * have failed the scene as well: a crash in the deterministic layer used to
+       * be reported only when the scene survived it, which is the one case it
+       * could not.
+       */
+      readonly warnings: readonly string[];
     }
   | {
       readonly status: "STALE_BASE";
