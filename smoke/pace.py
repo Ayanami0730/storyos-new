@@ -20,12 +20,15 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BATCHES = ["runs-lbw21", "runs-60kv2", "runs-40kv2", "runs-lnb20k", "runs-lnb", "runs-lnbch"]
+BATCHES = ["runs-lbw21", "runs-20kv2", "runs-40kv2", "runs-60kv2", "runs-lnb20k", "runs-lnb", "runs-lnbch"]
 
 #: Which route a batch is on. Read from a finished summary where one exists;
 #: otherwise from how the batch was launched, since a live cell has no summary.
 LAUNCH_ROUTE = {
     "runs-lnb20k": "zzz (zhizengzeng key2)",
+    "runs-20kv2": "ys2 (internal openai group)",
+    "runs-40kv2": "ys2 (internal openai group)",
+    "runs-60kv2": "ys2 (internal openai group)",
     "runs-lbw21": "ys2 (internal openai group)",
     "runs-60kv2": "ys2 (internal openai group)",
     "runs-40kv2": "ys2 (internal openai group)",

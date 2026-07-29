@@ -31,6 +31,12 @@ BATCHES = ["runs-lbw21", "runs-60kv2", "runs-40kv2", "runs-20kv2", "runs-lnb20k"
 #: anything being restarted, and a deadlock check keyed on one of them would have
 #: stopped watching the other.
 LIVE_VERSIONS = {"0.9.11", "0.9.12"}
+POLL_SECONDS = 120
+#: Refusals per minute worth interrupting for. Measured baseline: 34 cells on the
+#: internal route produced about 340 refusals over four hours (~1.4/min) with
+#: per-scene pace unchanged at 11.2 min against 9.2-11.8 before, so that rate is
+#: absorbed. Ten a minute is not.
+PUSHBACK_PER_MIN_ALERT = 10.0
 EVENT = re.compile(r" (done|FAILED) in ")
 
 
@@ -99,6 +105,21 @@ def checker_crashes() -> list[str]:
     return out
 
 
+PUSHBACK = re.compile(r"429|上游负载已饱和|quota_not_enough")
+
+
+def pushback_count() -> int:
+    """Gateway refusals across the live batches, cumulative."""
+    n = 0
+    for batch in BATCHES:
+        for log in (ROOT / batch).glob("*.log"):
+            try:
+                n += len(PUSHBACK.findall(log.read_text(errors="replace")))
+            except OSError:
+                continue
+    return n
+
+
 def say(text: str) -> None:
     print(f"EVENT {time.strftime('%H:%M:%S')} {text}", flush=True)
 
@@ -114,6 +135,7 @@ def main() -> int:
     drained: set[str] = set()
     announced_deadlock: set[str] = set()
     announced_crash: set[str] = set()
+    last429 = -1
 
     while True:
         for b in BATCHES:
@@ -147,10 +169,25 @@ def main() -> int:
                 announced_crash.add(cell)
                 say(f"ALERT deterministic layer crashed (scene survived): {cell}")
 
+        # Gateway pushback, by rate rather than by total. A cumulative count crosses
+        # any fixed threshold eventually just by the run being long, which is how the
+        # first version of this alert fired on a fleet whose per-scene pace was
+        # unchanged — 340 refusals fully absorbed by request-level retries. What
+        # matters is acceleration: refusals arriving faster than the fleet is
+        # committing scenes means concurrency has turned into backoff.
+        now429 = pushback_count()
+        rate = (now429 - last429) / (POLL_SECONDS / 60.0)
+        if last429 >= 0 and rate > PUSHBACK_PER_MIN_ALERT:
+            say(
+                f"ALERT gateway pushback at {rate:.0f}/min ({now429} total) — "
+                f"check smoke/pace.py before adding load"
+            )
+        last429 = now429
+
         if all(b in drained for b in BATCHES):
             say("ALL BATCHES DRAINED")
             return 0
-        time.sleep(120)
+        time.sleep(POLL_SECONDS)
 
 
 if __name__ == "__main__":

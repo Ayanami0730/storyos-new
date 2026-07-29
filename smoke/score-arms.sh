@@ -33,7 +33,16 @@ JUDGE_WORKERS=16
 AUDIT_WORKERS=8
 
 mkdir -p /tmp/lnb-queue
-MANIFEST="/tmp/lnb-queue/eval-arms-${TIER}.jsonl"
+MANIFEST="/tmp/lnb-queue/eval-ours-${TIER}.jsonl"
+
+#: Output directories are per tier, never shared.
+#:
+#: The first version wrote every tier into `*-arms`, and the aggregation is keyed on
+#: system rather than on tier — so a 40k row and a 20k row would sit in one table
+#: with nothing distinguishing them, and a reader taking a number from it would have
+#: no way to know which target it was measured against. That is the same failure the
+#: eval manifest builder exists to prevent, reproduced one layer up.
+SUFFIX="ours-${TIER}"
 
 "$PY" experiments/novelbench-run/build_eval_manifest.py \
   --tier "$TIER" --systems $SYSTEMS --out "$MANIFEST" || exit 1
@@ -42,20 +51,20 @@ echo "##### manifest $(wc -l < "$MANIFEST") row(s) $(date -Is) #####"
 # The audit is the metric this architecture is built around, so it starts first
 # and runs beside the summariser rather than after the judge.
 "$PY" experiments/fact_metric/run_consistency.py \
-  --manifest "$MANIFEST" --out "${DATA}/fact-metric/consistency-arms" \
-  --workers "$AUDIT_WORKERS" > "/tmp/lnb-queue/audit-arms-${TIER}.log" 2>&1 &
+  --manifest "$MANIFEST" --out "${DATA}/fact-metric/consistency-${SUFFIX}" \
+  --workers "$AUDIT_WORKERS" > "/tmp/lnb-queue/audit-${SUFFIX}.log" 2>&1 &
 AUDIT_PID=$!
 
 "$PY" experiments/quality_judge/scripts/summarise_story.py \
-  --manifest "$MANIFEST" --out "${DATA}/quality-judge/summaries-arms" \
+  --manifest "$MANIFEST" --out "${DATA}/quality-judge/summaries-${SUFFIX}" \
   --model gpt-5-mini --workers "$SUMMARY_WORKERS"
-echo "##### arms-${TIER} SUMMARIES exit=$? $(date -Is) #####"
+echo "##### ${SUFFIX} SUMMARIES exit=$? $(date -Is) #####"
 
 "$PY" experiments/quality_judge/scripts/judge_story_aggregation.py \
-  --summaries "${DATA}/quality-judge/summaries-arms" \
-  --out "${DATA}/quality-judge/aggregation-arms" \
+  --summaries "${DATA}/quality-judge/summaries-${SUFFIX}" \
+  --out "${DATA}/quality-judge/aggregation-${SUFFIX}" \
   --model gpt-5.6-sol --runs 3 --workers "$JUDGE_WORKERS"
-echo "##### arms-${TIER} JUDGE exit=$? $(date -Is) #####"
+echo "##### ${SUFFIX} JUDGE exit=$? $(date -Is) #####"
 
 wait "$AUDIT_PID"
-echo "##### arms-${TIER} AUDIT exit=$? $(date -Is) #####"
+echo "##### ${SUFFIX} AUDIT exit=$? $(date -Is) #####"

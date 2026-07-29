@@ -30,11 +30,13 @@ LATIN = re.compile(r"\b[a-zA-Z]+\b")
 
 BATCHES = [
     "runs-lbw21",
+    "runs-20kv2",
+    "runs-40kv2",
+    "runs-60kv2",
     "runs-lnb20k",
     "runs-lnb",
     "runs-lnbch",
     "runs-ch21",
-    "runs-60k",
 ]
 
 

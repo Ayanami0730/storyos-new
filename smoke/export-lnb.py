@@ -38,6 +38,29 @@ BENCH = pathlib.Path.home() / "lane" / "livenovelbench" / "benchmarks" / "novelb
 DEST = pathlib.Path.home() / "storyos-data" / "outputs" / "storyos" / "novelbench"
 
 
+def load_tiers() -> dict[str, tuple[set[str], int]]:
+    """Tier -> (task ids, target words), from the one file that holds all four.
+
+    Previously read as `tier-<tier>.json`, and there is no `tier-40k.json`: that
+    tier is two files, the ten pinned tuning ids plus a two-id top-up, kept apart
+    so adding the top-up cannot change the config digest of the ten already
+    generated. The effect was that every 40k export was refused with "no tier
+    manifest", which reads like a missing file rather than a naming assumption.
+
+    `tiers-v2.json` carries all four tiers with their `topup_ids` folded in and is
+    what the task generator already reads, so the two agree by construction rather
+    than by both being edited.
+    """
+    payload = json.loads((BENCH / "tiers-v2.json").read_text())
+    out: dict[str, tuple[set[str], int]] = {}
+    for tier, spec in payload["tiers"].items():
+        ids = set(spec["ids"]) | set(spec.get("topup_ids", []))
+        if len(ids) != 12:
+            raise SystemExit(f"tier {tier} resolves to {len(ids)} ids, expected 12")
+        out[tier] = (ids, int(spec["target_words"]))
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("run", help="a run directory containing story.md")
@@ -52,19 +75,17 @@ def main() -> int:
                     help="export a task the tier does not list; it is not a Table 1 cell")
     args = ap.parse_args()
 
-    manifest_path = BENCH / f"tier-{args.tier}.json"
-    if not manifest_path.exists():
-        print(f"no tier manifest at {manifest_path}", file=sys.stderr)
+    tiers = load_tiers()
+    if args.tier not in tiers:
+        print(
+            f"tier {args.tier} is not in tiers-v2.json (have: {', '.join(sorted(tiers))})",
+            file=sys.stderr,
+        )
         return 2
-    manifest = json.loads(manifest_path.read_text())
-    target = manifest["target_words_override"]
+    ids, target = tiers[args.tier]
 
-    if args.task_id not in manifest["ids"]:
-        where = [
-            t for t in ("20k", "40k-topup", "60k", "80k", "100k")
-            if (BENCH / f"tier-{t}.json").exists()
-            and args.task_id in json.loads((BENCH / f"tier-{t}.json").read_text())["ids"]
-        ]
+    if args.task_id not in ids:
+        where = [t for t, (other, _) in tiers.items() if args.task_id in other]
         msg = (
             f"{args.task_id} is not in the {args.tier} tier"
             + (f" — it is in {', '.join(where)}" if where else "")
