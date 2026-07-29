@@ -26,10 +26,82 @@
 /** Spelling systems we can tell apart from evidence, not from a locale name. */
 export type Orthography = "british" | "american";
 
+/**
+ * The script a scene is written in.
+ *
+ * A coarser and more serious version of the same defect, and it happens: on
+ * `lbw119` — a Chinese request to write in the manner of 《明朝那些事儿》 — **seven
+ * of seventeen committed scenes came out in English**, and the frozen judge said
+ * so in as many words, "switches inexplicably between Chinese and English", scoring
+ * Accuracy 2. Five of twenty-one manuscripts drift this way.
+ *
+ * Same cause as the spelling and the narrative person before it: the writer's
+ * session resets per scene, the plan has no field for the language, and each
+ * scene decides for itself. So it gets the same treatment rather than a new one —
+ * observed from the first committed scene, written into `voice.md`, checked
+ * deterministically.
+ */
+export type Script = "han" | "latin";
+
 export interface OrthographyConvention {
   readonly spelling: Orthography;
   /** Which quotation mark opens direct speech, as observed. */
   readonly quotes: "double" | "single";
+  /**
+   * The script the book is written in.
+   *
+   * Optional so that every existing caller and every stored convention stays
+   * valid; absent means "not established", which is what a scene with too little
+   * text to judge produces.
+   */
+  readonly script?: Script;
+}
+
+const HAN = /[\u4e00-\u9fff]/g;
+/** Latin words of two letters or more, so stray initialisms do not count as prose. */
+const LATIN_WORD = /\b[a-zA-Z]{2,}\b/g;
+
+/**
+ * Which script carries this text, or null when there is too little to tell.
+ *
+ * Counted rather than detected by locale, and compared by weight rather than by
+ * presence: a Chinese novel may legitimately carry an English name or a quoted
+ * term, and an English one may carry a Chinese title. What is not legitimate is a
+ * scene of a Chinese book written in English.
+ *
+ * The book's script is read from **the request**, not from the first committed
+ * scene, and that distinction was found by replay rather than by reasoning. On
+ * `lbw068` — a Chinese prompt asking for five diary entries — the first scene came
+ * out in English and the rest in Chinese; a convention taken from scene one would
+ * have locked the book to English and then demanded a rewrite of the three correct
+ * scenes. Deriving it from the request also lets the very first scene be checked,
+ * which is the one that would otherwise establish whatever it happened to choose.
+ */
+export function scriptOf(text: string, minTokens = SCENE_MIN_TOKENS): Script | null {
+  const han = (text.match(HAN) ?? []).length;
+  const latin = (text.match(LATIN_WORD) ?? []).length;
+  if (han + latin < minTokens) return null;
+  return han > latin ? "han" : "latin";
+}
+
+/**
+ * How much text is enough to call a scene's script.
+ *
+ * Fifty tokens because the cost of guessing wrong on a scene is a rewrite demanded
+ * of correct prose, and a very short scene carries little.
+ */
+const SCENE_MIN_TOKENS = 50;
+
+/**
+ * The same call for a request, which needs far less.
+ *
+ * A prompt is categorical evidence in a way a scene fragment is not: "请写一份有五个
+ * 人搞笑的青春校园剧本" is unambiguously a Chinese request at thirty characters, and
+ * there is no longer version of it coming. The scene threshold applied here simply
+ * returned null for most real prompts, which silently disabled the check.
+ */
+export function requestScriptOf(request: string): Script | null {
+  return scriptOf(request, 12);
 }
 
 /**
@@ -113,6 +185,30 @@ export function conventionOf(text: string): OrthographyConvention | null {
   };
 }
 
+/**
+ * The scene is written in the other script, or null when it agrees.
+ *
+ * Returned as one finding rather than per sentence: a scene in the wrong language
+ * is one decision, and the repair is to rewrite the scene, not to fix a line.
+ */
+export function findScriptDrift(
+  draft: string,
+  convention: OrthographyConvention,
+): OrthographyDrift | null {
+  if (!convention.script) return null;
+  const actual = scriptOf(draft);
+  if (!actual || actual === convention.script) return null;
+  const name = (s: Script) => (s === "han" ? "Chinese" : "English");
+  return {
+    quote: draft.trim().slice(0, 200),
+    why:
+      `this scene is written in ${name(actual)} while the book is in ` +
+      `${name(convention.script)}, established by its first committed scene. A ` +
+      `manuscript that changes language partway is graded as one that changes ` +
+      `language partway — rewrite this scene in ${name(convention.script)}`,
+  };
+}
+
 export interface OrthographyDrift {
   readonly quote: string;
   readonly why: string;
@@ -161,7 +257,14 @@ export function findOrthographyDrift(
 
 /** How the convention is stated in the packet and in `novel/style/voice.md`. */
 export function renderConvention(c: OrthographyConvention): string {
+  const language =
+    c.script === "han"
+      ? "Language: Chinese. "
+      : c.script === "latin"
+        ? "Language: English. "
+        : "";
   return (
+    language +
     `Spelling: ${c.spelling === "british" ? "British" : "American"} English. ` +
     `Direct speech takes ${c.quotes} quotation marks. Established by the first ` +
     `committed scene and fixed for the whole book.`

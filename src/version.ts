@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.13";
+export const VERSION = "0.9.14";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,35 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.14",
+    note:
+      "Two defects the frozen LongBench-Write judge named in its own words, which we had never " +
+      "read: the scorer parses its six scores and discards the `Analysis` it is asked to write " +
+      "first. Re-running the same judge, same prompt, purely to read that analysis, on the tasks " +
+      "where we lose most. **(1) The writer never sees the request.** On `lbw112` \u2014 " +
+      "\u8bf7\u5199\u4e00\u4efd\u6709\u4e94\u4e2a\u4eba\u641e\u7b11\u7684\u9752\u6625" +
+      "\u6821\u56ed\u5267\u672c\uff0c\u660e\u786e\u5404\u89d2\u8272\u6240\u8bf4\u8bdd" +
+      "\u8bed\uff0c\u5171\u4e94\u5e55 \u2014 the strings for \u4e94\u5e55 and " +
+      "\u5404\u89d2\u8272\u6240\u8bf4\u8bdd\u8bed appear twice and once in the " +
+      "orchestrator's transcript and **zero times in the writer's**, and the judge scored " +
+      "Relevance 2 against agentwrite's 4 saying the piece reads as continuous prose rather than " +
+      "a script. `submit_plan` can state entities, scenes, person and tense and has no field for " +
+      "*form*, so a request whose form it cannot express is silently converted. The request now " +
+      "rides in P0 verbatim; five of twenty-one tasks ask for a form the plan cannot state and " +
+      "their S_q deficit is -0.97 against -0.44 for the eleven with no known mechanical defect. " +
+      "**(2) The book changes language.** On `lbw119`, 7 of 17 committed scenes came out in " +
+      "English for a Chinese request \u2014 \"switches inexplicably between Chinese and " +
+      "English\", Accuracy 2 \u2014 and `lbw066` and `lbw069` answered Chinese prompts with " +
+      "manuscripts entirely in English, which **every one of the eight baselines got right**. " +
+      "Same shape as the narrative person (0.8.8) and the spelling (0.9.11) one level coarser, so " +
+      "it gets the same mechanism rather than a new one. The script is taken from **the request**, " +
+      "not from the first committed scene, and replay is why: on `lbw068` the first scene was the " +
+      "one that drifted, so a convention read from it would have fixed the book to English and " +
+      "demanded a rewrite of the three scenes that were right. Replayed over all twenty-one " +
+      "manuscripts the request-derived rule flags 24 scenes across 7, every one of them genuinely " +
+      "in the other language.",
+  },
   {
     version: "0.9.13",
     note:

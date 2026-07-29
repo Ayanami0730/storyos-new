@@ -4,9 +4,13 @@ import { describe, it } from "node:test";
 import { verifyDeterministic } from "./deterministic.ts";
 import { makeFinding } from "./finding.ts";
 import {
+  type OrthographyConvention,
   conventionOf,
   findOrthographyDrift,
+  findScriptDrift,
   renderConvention,
+  requestScriptOf,
+  scriptOf,
 } from "./orthography.ts";
 
 /**
@@ -117,6 +121,91 @@ describe("one book, one spelling", () => {
     assert.equal(finding!.subtype, "style_shifts");
     assert.equal(finding!.severity, "error");
     assert.equal(finding!.validator, "voice");
+  });
+
+  /**
+   * The same defect one level coarser, and the one the judge named outright.
+   *
+   * `lbw119` asked for a popular history of the Qing in the manner of 《明朝那些事儿》
+   * and **seven of its seventeen committed scenes came out in English**. The frozen
+   * gpt-5.5 judge scored Accuracy 2 and wrote "switches inexplicably between
+   * Chinese and English". Five of twenty-one manuscripts drift this way, and their
+   * S_q deficit against agentwrite is -0.67 where the eleven with no known
+   * mechanical defect sit at -0.44.
+   */
+  it("reads the book's language off the request, not off a scene", () => {
+    assert.equal(requestScriptOf("请写一份有五个人搞笑的青春校园剧本，明确各角色所说话语，共五幕。"), "han");
+    assert.equal(
+      requestScriptOf("Write a first-person detective story featuring a locked room. ".repeat(3)),
+      "latin",
+    );
+  });
+
+  /**
+   * The false positive that replay caught, and the reason the source is the
+   * request rather than the first committed scene.
+   *
+   * `lbw068` asks in Chinese for five diary entries. Its first scene came out in
+   * English and the remaining three in Chinese. A convention established from
+   * scene one would have fixed the book to English and then demanded a rewrite of
+   * the three scenes that were right — turning a one-scene defect into a
+   * three-scene one. Replayed over all twenty-one manuscripts, taking the script
+   * from the request instead flags that first scene and leaves the rest alone.
+   */
+  it("does not invert the book's language when the first scene is the one that drifted", () => {
+    const fromRequest: OrthographyConvention = {
+      spelling: "american",
+      quotes: "double",
+      script: requestScriptOf("创作五篇关于独自旅行去日本的日记，每篇400字。")!,
+    };
+    assert.equal(fromRequest.script, "han");
+    // The drifted opening is caught...
+    assert.ok(
+      findScriptDrift("Day one. The train to Kyoto left before dawn. ".repeat(8), fromRequest),
+    );
+    // ...and the correct scenes after it are not.
+    assert.equal(
+      findScriptDrift("第二天。清晨的列车驶向京都，窗外是连绵的稻田。".repeat(8), fromRequest),
+      null,
+    );
+  });
+
+  it("says nothing about script when there is too little text to tell", () => {
+    // Guessing here would make every later scene wrong half the time, which is the
+    // same reason the spelling convention refuses to guess.
+    assert.equal(scriptOf("短。"), null);
+  });
+
+  it("reports a scene written in the other language, once", () => {
+    const drift = findScriptDrift(
+      "The emperor received the embassy in the garden pavilion at Rehe. ".repeat(8),
+      { spelling: "american", quotes: "double", script: "han" },
+    );
+    assert.ok(drift, "an English scene in a Chinese book must be reported");
+    assert.match(drift!.why, /written in English while the book is in Chinese/);
+  });
+
+  it("leaves a scene in the book's own language alone", () => {
+    // A Chinese book may quote an English name; weight decides, not presence.
+    const drift = findScriptDrift(
+      "马戛尔尼（George Macartney）的船队抵达天津，随行的礼品堆满了甲板。".repeat(6),
+      { spelling: "american", quotes: "double", script: "han" },
+    );
+    assert.equal(drift, null);
+  });
+
+  it("blocks the commit and states the language in the convention", () => {
+    const [finding] = verifyDeterministic({
+      canon: [],
+      knownEntities: new Set<string>(),
+      delta: { sceneId: "s-004", claims: [], presentEntities: [] },
+      convention: { spelling: "american", quotes: "double", script: "han" },
+      prose: "The emperor received the embassy in the garden pavilion. ".repeat(8),
+    }).findings;
+    assert.equal(finding!.subtype, "style_shifts");
+    assert.equal(finding!.severity, "error");
+    assert.match(renderConvention({ spelling: "american", quotes: "double", script: "han" }),
+      /Language: Chinese/);
   });
 
   it("still refuses a stylistic severity that no mechanism stands behind", () => {

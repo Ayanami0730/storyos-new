@@ -20,6 +20,7 @@ import { type DeclaredVoice, findPersonDrift } from "./person.ts";
 import {
   type OrthographyConvention,
   findOrthographyDrift,
+  findScriptDrift,
   renderConvention,
 } from "./orthography.ts";
 import { paths } from "../index/tree.ts";
@@ -400,6 +401,27 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
   // argument as the person above and the same cap: a scene that uses four
   // wrong-system spellings is one habit, not four defects.
   if (input.prose && input.convention) {
+    // The script first, because a scene in the wrong language makes every
+    // spelling finding beneath it meaningless — and because it is one decision,
+    // reported once, where the spellings are a habit reported twice.
+    const scriptDrift = findScriptDrift(input.prose, input.convention);
+    if (scriptDrift) {
+      findings.push(
+        makeFinding({
+          subtype: "style_shifts",
+          validator: "voice",
+          severity: "error",
+          mechanical: true,
+          reasoning: scriptDrift.why,
+          evidence: { quote: scriptDrift.quote, source: delta.sceneId },
+          contradicts: {
+            quote: renderConvention(input.convention),
+            source: paths.voice(),
+          },
+          editLocus: { kind: "draft", quote: scriptDrift.quote },
+        }),
+      );
+    }
     const drifts = findOrthographyDrift(input.prose, input.convention);
     for (const drift of drifts.slice(0, MAX_PERSON_DRIFT_FINDINGS)) {
       findings.push(

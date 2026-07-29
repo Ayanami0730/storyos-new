@@ -31,6 +31,7 @@ import {
   type OrthographyConvention,
   conventionOf,
   renderConvention,
+  requestScriptOf,
 } from "../verification/orthography.ts";
 import {
   type SceneCard,
@@ -135,9 +136,47 @@ export function contextFor(input: {
    */
   readonly recentProse: readonly { readonly sceneId: string; readonly text: string }[];
   readonly earlierIntents: readonly string[];
+  /**
+   * What the user actually asked for, verbatim.
+   *
+   * The writer has never seen it. The orchestrator reads it once at planning time
+   * and everything downstream gets the plan's paraphrase, which is lossy in one
+   * specific way: `submit_plan` can state entities, scenes, narrative person and
+   * tense, and it has no field at all for the *form* of the thing being written.
+   * So a request whose form the schema cannot express is silently converted into
+   * the form it can.
+   *
+   * Measured on `lbw112`, "请写一份有五个人搞笑的青春校园剧本，明确各角色所说话语，共
+   * 五幕": the strings `五幕` and `各角色所说话语` appear **twice and once in the
+   * orchestrator's transcript and zero times in the writer's**, and the frozen
+   * judge scored Relevance 2 against agentwrite's 4 with the words
+   * "没有明确标注五幕，整体更像连续小说片段而非规范剧本". Five of twenty-one tasks
+   * ask for a form the plan cannot state, and their S_q deficit is -0.97 against
+   * -0.44 for the eleven with no known mechanical defect.
+   *
+   * Deliberately the whole prompt rather than an extracted "requirements" field.
+   * Extraction is a judgement, it would be made by the same layer that already
+   * drops the form, and the prompt is a few hundred tokens against a 60,000-word
+   * budget.
+   */
+  readonly request?: string;
 }): readonly ContextItem[] {
   const { card, plan, canon, recentProse, earlierIntents } = input;
   const items: ContextItem[] = [
+    ...(input.request?.trim()
+      ? [
+          {
+            id: "task-request",
+            priority: "P0" as const,
+            source: paths.premise(),
+            content:
+              `The request this book must satisfy, as it was written. The plan below is ` +
+              `an interpretation of it; where the two differ, this is what is being ` +
+              `graded — including any form it asks for (a script, acts, diary entries, ` +
+              `an essay in parts) and any element it names.\n\n${input.request.trim()}`,
+          },
+        ]
+      : []),
     {
       id: "scene-card",
       priority: "P0",
@@ -456,7 +495,19 @@ export async function writeStory(options: {
    * Not reset afterwards: the point is that the whole book agrees, and letting a
    * later scene re-establish it would reproduce the defect the check exists for.
    */
-  let convention: OrthographyConvention | null = null;
+  /**
+   * The script comes from the request and is known before any prose exists; the
+   * spelling and quote style come from the first committed scene, because the
+   * request says nothing about British against American. So the convention is
+   * built in two stages and the language half is enforced from scene one — which
+   * is the scene that would otherwise establish whatever it happened to choose.
+   */
+  const requestScript = requestScriptOf(premise);
+  let convention: OrthographyConvention | null = requestScript
+    ? { spelling: "american", quotes: "double", script: requestScript }
+    : null;
+  /** True once a committed scene has settled the spelling, not just the script. */
+  let spellingSettled = false;
   /** Words actually on the page, recounted from committed prose after each scene. */
   let committedWords = 0;
   /** The previous scene's delivered length against what it was asked for. */
@@ -558,6 +609,7 @@ export async function writeStory(options: {
           // The tail, as deep as this scene's tier asks for.
           recentProse: recentProse.slice(-allocation.recentScenes),
           earlierIntents,
+          request: premise,
         }),
         canon,
         knownEntities,
@@ -735,9 +787,11 @@ export async function writeStory(options: {
       // book, and the decision goes into the file every role is told to read —
       // the same fix as 0.8.6, where the packet asserted a constraint while the
       // file it cited still held its seed text.
-      if (!convention) {
-        convention = conventionOf(text);
-        if (convention) {
+      if (!spellingSettled) {
+        const spelling = conventionOf(text);
+        if (spelling) {
+          spellingSettled = true;
+          convention = { ...spelling, ...(requestScript ? { script: requestScript } : {}) };
           say(`convention established by ${card.id}: ${renderConvention(convention)}`);
           await index.seed([
             {
