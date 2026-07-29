@@ -36,6 +36,7 @@ import { CanonicalIndex } from "../index/commit.ts";
 import type { AgentRole } from "../transaction/types.ts";
 import { chapterFor, initialiseProject, paths, sceneIndexOf } from "../index/tree.ts";
 import { checkReferences, renderReferenceReport } from "../verification/references.ts";
+import { requestScriptOf } from "../verification/orthography.ts";
 
 interface Args {
   premise: string;
@@ -385,6 +386,12 @@ const harness = await assembleHarness({
   budget,
   targetWords: args.target,
   ...(args.wordsPerScene ? { wordsPerScene: args.wordsPerScene } : {}),
+  // Read off the request, which is the only authority for it. `requestScriptOf`
+  // uses a lower evidence threshold than the scene check for the reason given
+  // there: a prompt is categorical where a scene fragment is not.
+  ...(requestScriptOf(args.premise) === "han"
+    ? { manuscriptLanguage: "chinese" as const }
+    : {}),
   backbone: args.backbone,
   verifierModel: args.verifierModel,
   memoryRoot: args.memoryDir ? path.resolve(args.memoryDir) : projectRoot,

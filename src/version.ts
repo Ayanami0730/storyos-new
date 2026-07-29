@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.14";
+export const VERSION = "0.9.15";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,26 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.15",
+    note:
+      "A Chinese request gets a Chinese directive at the head of every role's system prompt. " +
+      "This is the largest single finding about our LongBench-Write quality and it took splitting " +
+      "the scores by task language to see: 58 of the benchmark's 120 tasks are Chinese (11 of our " +
+      "21), and on those tasks **every other system scores the same or better than it does in " +
+      "English while only ours scores worse** \u2014 raw gpt-5-mini 4.26 zh against 3.87 en, " +
+      "bare-long-context 3.94/3.72, agentwrite 4.02/4.03, ours **3.24/3.55**. Against our own " +
+      "backbone with no scaffold the harness costs 1.02 on Chinese tasks and 0.32 on English " +
+      "ones, so roughly two thirds of the quality deficit is Chinese-specific and appears when " +
+      "the scaffold is added. The visible end of it: two of twenty-one manuscripts answered a " +
+      "Chinese prompt entirely in English, which none of the eight baselines did. Not a " +
+      "translation of the five role files \u2014 they carry the tool contract, a day's careful " +
+      "work to translate and worse than useless done badly, since a mistranslated refusal rule " +
+      "breaks the gate rather than the prose. What the evidence implicates is register: the model " +
+      "is asked, at length and in English, to produce Chinese literary prose. So the directive is " +
+      "short, in Chinese, and first, and it says explicitly that tool names and entity ids stay in " +
+      "English because they are filing keys.",
+  },
   {
     version: "0.9.14",
     note:

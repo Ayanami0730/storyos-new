@@ -112,6 +112,15 @@ export interface AssemblyOptions {
    * S-bar points apart, so nothing smaller than that is readable at n=1.
    */
   readonly wordsPerScene?: number;
+  /**
+   * The language the manuscript must be in, when the request settles it.
+   *
+   * Derived by the caller from the request rather than configured, because it is
+   * a property of the commission. See `CHINESE_MANUSCRIPT_DIRECTIVE`: half of
+   * LongBench-Write is Chinese, and it is the one axis on which this harness makes
+   * its own backbone measurably worse.
+   */
+  readonly manuscriptLanguage?: "chinese";
   readonly backbone: ModelId | null;
   /** Override the verifier's model. Recorded in the summary; see `withVerifier`. */
   readonly verifierModel?: ModelId | null;
@@ -281,6 +290,9 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
 
   const residents = new ResidentAgents({
     agentsRoot: options.agentsRoot,
+    ...(options.manuscriptLanguage
+      ? { manuscriptLanguage: options.manuscriptLanguage }
+      : {}),
     personas,
     budget,
     promptSuffix: (role) =>

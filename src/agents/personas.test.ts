@@ -245,3 +245,40 @@ describe("system prompts", () => {
     }
   });
 });
+
+/**
+ * The Chinese directive, and the reason it exists rather than a translation.
+ *
+ * Half of LongBench-Write is Chinese and it is the one axis on which this harness
+ * makes its own backbone worse: raw gpt-5-mini scores 4.26 on the Chinese tasks
+ * and 3.87 on the English ones, while through the harness the same backbone scores
+ * 3.24 and 3.55. Every other system in the table scores the same or better in
+ * Chinese; only ours scores worse.
+ */
+describe("the manuscript language directive", () => {
+  it("puts the Chinese instruction before the English contract", () => {
+    const root = path.join(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "../../agents",
+    );
+    const plain = systemPromptFor("writer", root);
+    const chinese = systemPromptFor("writer", root, { manuscriptLanguage: "chinese" });
+    assert.ok(!plain.includes("本书的语言"), "an English task must not carry it");
+    assert.ok(chinese.startsWith("# 本书的语言：中文"), "it has to come first to set register");
+    // The contract itself is untouched: the directive is additive, and a
+    // mistranslated tool rule would break the gate rather than the prose, which
+    // is exactly why the role files are not translated.
+    assert.ok(chinese.endsWith(plain), "the English contract must survive verbatim");
+  });
+
+  it("keeps harness identifiers out of the translation", () => {
+    const root = path.join(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "../../agents",
+    );
+    const chinese = systemPromptFor("orchestrator", root, { manuscriptLanguage: "chinese" });
+    // Entity ids are filing keys; a directive that told the model to translate
+    // them would break reference integrity on every scene.
+    assert.match(chinese, /char-、loc-、obj-/);
+  });
+});

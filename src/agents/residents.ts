@@ -429,6 +429,7 @@ export class ResidentAgents {
   readonly #ledger: LedgerEntry[] = [];
   readonly #factory: AgentFactory;
   readonly #agentsRoot: string;
+  readonly #manuscriptLanguage: "chinese" | null;
   readonly #personas: readonly PersonaSpec[];
   readonly #now: () => number;
   readonly #compaction: CompactionConfig | null;
@@ -522,8 +523,19 @@ export class ResidentAgents {
      * retry happened rather than sit through eighty-five seconds of it.
      */
     readonly retryBackoffMs?: readonly number[];
+    /**
+     * The language the manuscript must be written in, when the request settles it.
+     *
+     * Composed into every role's system prompt rather than passed per turn: it is
+     * a property of the commission, not of a scene, and the measurement says it
+     * behaves like one — on Chinese tasks our backbone scores 4.26 bare and 3.24
+     * through this harness, while every other system scores the same or better in
+     * Chinese than in English.
+     */
+    readonly manuscriptLanguage?: "chinese";
   }) {
     this.#agentsRoot = options.agentsRoot;
+    this.#manuscriptLanguage = options.manuscriptLanguage ?? null;
     this.#factory = options.factory;
     this.#personas = options.personas ?? [];
     this.#now = options.now ?? (() => Date.now());
@@ -547,7 +559,9 @@ export class ResidentAgents {
   }
 
   #systemPrompt(role: AgentRole): string {
-    const base = systemPromptFor(role, this.#agentsRoot);
+    const base = systemPromptFor(role, this.#agentsRoot, {
+      ...(this.#manuscriptLanguage ? { manuscriptLanguage: this.#manuscriptLanguage } : {}),
+    });
     const suffix = this.#promptSuffix?.(role)?.trim();
     return suffix ? `${base}\n\n---\n\n${suffix}` : base;
   }

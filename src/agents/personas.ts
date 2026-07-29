@@ -237,11 +237,61 @@ export function allowlistMismatch(
  * Composed at load rather than duplicated into five files, because the shared
  * half is the part most likely to drift out of agreement with itself if copied.
  */
-export function systemPromptFor(role: AgentRole, agentsRoot: string): string {
+export function systemPromptFor(
+  role: AgentRole,
+  agentsRoot: string,
+  options: { readonly manuscriptLanguage?: "chinese" } = {},
+): string {
   const shared = readFileSync(path.join(agentsRoot, "SHARED.md"), "utf8");
   const own = readFileSync(path.join(agentsRoot, role, "AGENT.md"), "utf8");
-  return `${shared.trim()}\n\n---\n\n${own.trim()}`;
+  const base = `${shared.trim()}\n\n---\n\n${own.trim()}`;
+  return options.manuscriptLanguage === "chinese"
+    ? `${CHINESE_MANUSCRIPT_DIRECTIVE}\n\n---\n\n${base}`
+    : base;
 }
+
+/**
+ * What a Chinese task needs said, in Chinese, before twenty-five thousand
+ * characters of English instructions.
+ *
+ * Measured, and it is the largest single finding about our quality on
+ * LongBench-Write. Half the benchmark is Chinese (58 of 120 tasks; 11 of the 21
+ * we run), and on those tasks:
+ *
+ *     raw gpt-5-mini   zh 4.26   en 3.87   +0.39
+ *     agentwrite       zh 4.02   en 4.03   -0.02
+ *     bare-long-ctx    zh 3.94   en 3.72   +0.22
+ *     ours             zh 3.24   en 3.55   -0.31
+ *
+ * **Every other system does as well or better in Chinese; only ours does worse.**
+ * Against our own backbone with no scaffold at all, the harness costs 1.02 on
+ * Chinese tasks and 0.32 on English ones — so roughly two thirds of our quality
+ * deficit is Chinese-specific, and it appears when the scaffold is added. Two of
+ * twenty-one manuscripts answered a Chinese prompt entirely in English, which
+ * none of the eight baselines did.
+ *
+ * Prepended rather than translated. A faithful translation of five role files is
+ * a day's careful work and a rushed one would be worse than none: the prompts
+ * carry the tool contract, and a mistranslated refusal rule breaks the gate rather
+ * than the prose. What the evidence actually implicates is register — the model is
+ * being asked, at length and in English, to produce Chinese literary prose — so
+ * the directive is short, in Chinese, and first.
+ */
+const CHINESE_MANUSCRIPT_DIRECTIVE = [
+  "# 本书的语言：中文",
+  "",
+  "这部作品的委托是用中文写的，因此**正文必须全部是中文**——叙述、对白、内心独白，",
+  "无一例外。下面那份英文说明只规定工作流程与工具契约，不规定作品的语言；把它读成",
+  "「用英文写」是本项目实测过的、最常见也最昂贵的误解：二十一篇稿子里有两篇整本用",
+  "英文回答了中文命题，另有五篇中途换了语言。",
+  "",
+  "语言不只是转写。中文文学散文有它自己的节奏、意象习惯与标点（「」《》，、。），",
+  "请按中文的写法写，而不是把英文句式译成中文。专有名词、术语、引用的外文原名可以",
+  "保留原文，那是自然的；成段的英文不是。",
+  "",
+  "工具名、参数名、实体 id（char-、loc-、obj-）以及一切写给 harness 的字段仍用英文，",
+  "它们是文件系统的键，不是作品的一部分。",
+].join("\n");
 
 /**
  * Backbone override for the second experimental arm.
