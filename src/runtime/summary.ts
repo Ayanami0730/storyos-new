@@ -74,6 +74,8 @@ export interface SummaryInput {
   readonly taskBudget: number;
   readonly budget: TokenBudget;
   readonly residents: ResidentAgents;
+  /** Set when the request settled the manuscript's language; see the field below. */
+  readonly manuscriptLanguage?: "chinese";
   readonly harness: Harness;
   readonly result: StoryResult | null;
   readonly fatal: string | null;
@@ -116,6 +118,15 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
      * against `roll_up` rather than a sentence that cannot be wrong.
      */
     models: input.residents.models(),
+    /**
+     * Whether the roles were given the Chinese manuscript directive.
+     *
+     * Recorded for the same reason the route is: it changes every system prompt in
+     * the run, and a comparison between a run that had it and one that did not is
+     * not a comparison of the harness. Half of LongBench-Write is Chinese, so this
+     * field separates two thirds of the tasks in that table.
+     */
+    manuscript_language: input.manuscriptLanguage ?? "as written",
     /**
      * How the per-scene allowance was decided, and what it bought.
      *

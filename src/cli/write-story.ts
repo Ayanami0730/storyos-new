@@ -464,7 +464,9 @@ await writeFile(
   "utf8",
 );
 
+const manuscriptLanguage = requestScriptOf(args.premise) === "han" ? ("chinese" as const) : null;
 const summary = await buildSummary({
+  ...(manuscriptLanguage ? { manuscriptLanguage } : {}),
   args,
   projectRoot,
   profile,
