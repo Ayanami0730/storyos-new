@@ -17,8 +17,8 @@ import {
 
 const T: CompactionThresholds = { ...DEFAULT_THRESHOLDS };
 
-/** The `generous` profile's shape, which is what the live runs use. */
-const GENEROUS_LIKE = { inputCeiling: 256_000, maxCompletionTokens: 64_000 };
+/** The one configuration every system runs under; see `budget.ts`. */
+const SHARED_LIKE = { inputCeiling: 256_000, maxCompletionTokens: 32_768 };
 
 function msg(over: Partial<CompactableMessage> = {}): CompactableMessage {
   return {
@@ -44,8 +44,8 @@ function toolResult(i: number, tokens = 5_000): CompactableMessage {
 
 describe("thresholds", () => {
   it("reserves output room before measuring anything", () => {
-    // 400k window, 128k max output, capped at 20k: 380k to work in.
-    assert.equal(effectiveBudget(T), 380_000);
+    // 256k ceiling less the output reservation, which is capped at 20k: 236k.
+    assert.equal(effectiveBudget(T), 236_000);
   });
 
   it("escalates through the three tiers", () => {
@@ -93,7 +93,7 @@ describe("the cost trigger, which asks a different question than headroom", () =
     // re-sends the whole prompt. Headroom said fine; the bill said 81% of the
     // run. The two questions are different and only one of them was being asked.
     const history = bulky(40, 4_000);
-    assert.equal(levelFor(154_000, thresholdsFor(GENEROUS_LIKE)), "none");
+    assert.equal(levelFor(154_000, thresholdsFor(SHARED_LIKE)), "none");
     assert.ok(evictablePayloadTokens(history, T) > T.level1PayloadTokens);
   });
 });
@@ -336,5 +336,34 @@ describe("the per-role summary schema", () => {
     // summary exists for at all.
     const p = summaryPrompt({ ...input, role: "writer" });
     assert.ok(p.indexOf("NEVER compress") < p.indexOf("As the writer"));
+  });
+});
+
+describe("the orchestrator compacts on its own schedule", () => {
+  /**
+   * Measured on a 25-scene 60k run: its transcript reached 131,181 tokens and
+   * stopped there, below the 165,200 that trips the shared level 1, so it was never
+   * compacted while billing 36% of the run's tokens. The brief re-supplies its state
+   * every scene, so the history it keeps is largely a staler copy of that.
+   */
+  it("trips level 1 at a size the shared schedule ignores", () => {
+    const shared = thresholdsFor(SHARED_LIKE);
+    const orch = thresholdsFor(SHARED_LIKE, "orchestrator");
+    const measured = 131_181;
+    assert.equal(levelFor(measured, shared), "none", "this is the bug being fixed");
+    assert.notEqual(levelFor(measured, orch), "none");
+  });
+
+  it("leaves every other role on the shared schedule", () => {
+    for (const role of ["writer", "verifier", "context-builder", "index-manager"]) {
+      assert.deepEqual(thresholdsFor(SHARED_LIKE, role), thresholdsFor(SHARED_LIKE));
+    }
+  });
+
+  it("evicts stale payload sooner, since a turn re-sends it once per tool call", () => {
+    assert.ok(
+      thresholdsFor(SHARED_LIKE, "orchestrator").level1PayloadTokens <
+        thresholdsFor(SHARED_LIKE).level1PayloadTokens,
+    );
   });
 });

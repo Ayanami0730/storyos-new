@@ -78,11 +78,14 @@ export interface CompactionThresholds {
  * model refusing the request — and 256k of prompt plus 64k of output still fits
  * the real window, which is why the two can be set independently.
  */
-export function thresholdsFor(profile: {
-  readonly inputCeiling: number;
-  readonly maxCompletionTokens: number;
-}): CompactionThresholds {
-  return {
+export function thresholdsFor(
+  profile: {
+    readonly inputCeiling: number;
+    readonly maxCompletionTokens: number;
+  },
+  role?: string,
+): CompactionThresholds {
+  const base: CompactionThresholds = {
     contextWindow: profile.inputCeiling,
     maxOutput: profile.maxCompletionTokens,
     level1Fraction: 0.7,
@@ -92,6 +95,31 @@ export function thresholdsFor(profile: {
     keepRecentToolResults: 10,
     keepRecentMessages: 12,
     level1PayloadTokens: 20_000,
+  };
+  if (role !== "orchestrator") return base;
+  /**
+   * The orchestrator is the only session that spans scenes, and the thresholds
+   * above never fire on it.
+   *
+   * Measured on a 25-scene 60k run: its transcript grew 20,551 → 131,181 tokens and
+   * stopped there, short of the 165,200 that trips level 1, so it was never
+   * compacted once. It made 6.2 tool calls per turn, each re-sending the transcript,
+   * and billed **15.1M of the run's 42.3M input tokens — 36%, for a role that writes
+   * no prose**. Its final turn alone re-sent 262k.
+   *
+   * What makes that safe to cut is `renderStoryState`: every scene brief already
+   * re-supplies the last scene's closing lines, the open promises, the plan ahead
+   * and the delivery notes, assembled deterministically. The history is largely a
+   * second, staler copy of material the next brief hands over anyway — which is why
+   * the fix is to compact earlier rather than to shorten the brief.
+   */
+  return {
+    ...base,
+    level1Fraction: 0.25,
+    level2Fraction: 0.5,
+    keepRecentToolResults: 6,
+    keepRecentMessages: 8,
+    level1PayloadTokens: 8_000,
   };
 }
 

@@ -330,9 +330,18 @@ const CHINESE_MANUSCRIPT_DIRECTIVE = [
  * run meant to measure something else.
  */
 export function withBackbone(backbone: ModelId): readonly PersonaSpec[] {
-  return PERSONAS.map((p) =>
-    p.role === "verifier" ? p : { ...p, model: backbone },
-  );
+  /**
+   * Every role, the verifier included.
+   *
+   * It used to exclude the verifier, on the reasoning that swapping the writer's
+   * model and swapping the judge of its work are different questions. That is true
+   * of an ablation and wrong as a default: the backbone is the one column that has
+   * to be held constant across systems, so a run described as "the harness on
+   * gpt-5.6" whose verifier is still gpt-5-mini is not that run, and the mixture is
+   * invisible in the row. `--verifier-model` remains for the ablation, which is the
+   * right place to vary one role on purpose.
+   */
+  return PERSONAS.map((p) => ({ ...p, model: backbone }));
 }
 
 /**

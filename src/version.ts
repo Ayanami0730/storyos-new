@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.18";
+export const VERSION = "0.9.20";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,44 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.20",
+    note:
+      "Token spend, measured and then reduced. A 25-scene 60k run billed 42.3M tokens for " +
+      "51,646 words \u2014 **818 per delivered word, of which 96.8% is input**: a turn re-sends " +
+      "its whole prompt once per tool call, and that run made 1,167 tool round-trips averaging " +
+      "35,046 input tokens each. The largest single item was the orchestrator, which writes no " +
+      "prose and cost 15.1M of it (36%): it is the only session that spans scenes, its " +
+      "transcript grew 20,551 \u2192 131,181 tokens, and the shared level-1 trigger sits at " +
+      "165,200 \u2014 so it was **never compacted once in the whole run**. It now has its own " +
+      "schedule (level 1 at 0.25 of the effective budget, payload eviction at 8k), which is safe " +
+      "because every scene brief already re-supplies its state deterministically. Also found and " +
+      "reported rather than fixed: the `openai/` group returns no `cached_tokens` field at all " +
+      "while the plain `gpt-5-mini` group does, and historical runs there recorded cache reads " +
+      "worth 60\u2013189% of fresh input \u2014 so switching group for throughput silently " +
+      "changed what `tokens` means. `cache_reporting_available`, `input_share` and " +
+      "`tool_round_trips` are now in every summary so a cost claim has to state it. The sandbox " +
+      "image is pinned by digest instead of `alpine:latest`, and containers carry the owning pid " +
+      "so `smoke/reap-sandboxes.sh` can tell an abandoned sandbox from a live one.",
+  },
+  {
+    version: "0.9.19",
+    note:
+      "One token configuration for every system, and the backbone flag moves every role. " +
+      "The two named budget profiles are gone: every run of ours had gone out under the larger " +
+      "of them (64,000 tokens per call against the baselines' 32,768) while the name travelled " +
+      "in a summary field nobody read, and the comparison it invalidated got made anyway. Now " +
+      "there is nothing to choose \u2014 32,768 per call, which is `WRITER_TOKEN_CAP` in " +
+      "`run_nbrun.py` and LongBench-Write's official `max_new_tokens`, and 256,000 of working " +
+      "context. **No per-task ceiling**, because no baseline has one that binds: their " +
+      "`TOKEN_BUDGET = 20_000_000` is headroom by its own comment and measured baseline spend " +
+      "is 65k\u20131.6M per cell, so total cost is established from the ledger afterwards and " +
+      "reported beside the score. Every number produced before this is at 64,000 per call and " +
+      "is not comparable with a baseline row. `withBackbone` now also moves the verifier: " +
+      "excluding it made \u201cthe harness on gpt-5.6\u201d a run whose judge was still " +
+      "gpt-5-mini, a mixture invisible in the row, and `--verifier-model` remains for the " +
+      "ablation where varying one role is the point.",
+  },
   {
     version: "0.9.18",
     note:

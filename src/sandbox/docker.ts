@@ -38,7 +38,19 @@ const run = promisify(execFile);
  * Small, present on the host already, and has the tools an agent reads with.
  * BusyBox `grep`, `sed`, `find` and `ls` cover everything our briefs suggest.
  */
-export const DEFAULT_IMAGE = "alpine:latest";
+/**
+ * Pinned by digest, not by tag.
+ *
+ * `alpine:latest` is a moving target, and the sandbox is where the agents' `grep`,
+ * `find` and `awk` come from — a busybox that changes behaviour changes what the
+ * context-builder can read, in a run that reports no configuration change at all.
+ * The digest is what makes a six-month-old result reproducible.
+ *
+ * Resolved 2026-07-29 from the image the runs to date used, so pinning does not
+ * itself change anything.
+ */
+export const DEFAULT_IMAGE =
+  "alpine@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659";
 
 export class DockerUnavailable extends Error {}
 
@@ -91,6 +103,25 @@ export class DockerSandbox implements SandboxBackend {
         "512m",
         "--cpus",
         "1",
+        /**
+         * Labelled with the owning process, so an orphan is identifiable.
+         *
+         * `stop()` kills the container, but nothing calls it when the harness is
+         * SIGKILLed — and a batch that gets killed is normal, not exceptional. The
+         * result was 35 containers on this host, the oldest up 30 hours, each
+         * holding a read-only mount of a run directory that may since have been
+         * deleted. They cost almost nothing in memory and they are still wrong:
+         * `docker ps` stops being a list of what is running.
+         *
+         * With the pid on the container, `smoke/reap-sandboxes.sh` can tell a live
+         * sandbox from an abandoned one without guessing from uptime.
+         */
+        "--label",
+        "storyos.sandbox=1",
+        "--label",
+        `storyos.pid=${process.pid}`,
+        "--label",
+        `storyos.root=${this.#root}`,
         this.#image,
         "sleep",
         "infinity",

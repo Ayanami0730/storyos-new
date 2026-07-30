@@ -1,124 +1,84 @@
 /**
- * The token budget a run is held to, and the two profiles it can be held to.
+ * One token configuration, the same for every system in the table.
  *
- * There are two different questions and they need two different settings, which
- * is why this file has profiles instead of constants.
+ * There used to be two named profiles and a rule that their numbers must never
+ * appear in one table. The rule held; the naming is what failed. Every run of ours
+ * went out under the larger of the two, the name travelled in the summary where
+ * nobody read it, and the comparison it invalidated got made anyway. A setting that
+ * has to be remembered is a setting that will be forgotten, so there is now nothing
+ * to choose.
  *
- * **"Is our architecture better than theirs?"** has to be asked under the
- * budget the baselines run under, because a harness that quietly allowed itself
- * a larger per-call output or an unbounded total would be winning on budget
- * rather than on architecture, and the difference would be invisible in the
- * results table. That is `parity`: 32,768 tokens per call (the official
- * `evaluation/pred.py` `max_new_tokens`, and what
- * `experiments/novelbench-run/run_nbrun.py` sets as `WRITER_TOKEN_CAP`) and
- * 3,000,000 per task (its `TOKEN_BUDGET`).
+ * **32,768 tokens per call**, which is what every baseline uses:
+ * `experiments/novelbench-run/run_nbrun.py` sets `WRITER_TOKEN_CAP = 32_768` and
+ * passes it to every harness adapter, and it is also LongBench-Write's official
+ * `evaluation/pred.py` `max_new_tokens`.
  *
- * **"Does the architecture work at all at novel length?"** cannot be asked
- * under that budget, because the first run to reach the end of a 4,000-word
- * story spent 997k tokens — 213 per output word — and 40,000 words at that rate
- * is 8.5M. Under `parity` every long run dies of budget exhaustion before it
- * can tell us whether the design is sound, and we learn nothing except that it
- * is expensive, which we already know. `generous` exists to get the behaviour
- * right first; cutting the cost is a separate, later problem with its own
- * levers (fewer verifier rounds, smaller packets, cache-aware ordering).
+ * **256,000 tokens of working context**, the point at which compaction intervenes.
+ * The baselines do not cap input at all — they send what they have, and measured
+ * they never come close — so this binds only on us and only to keep a resident
+ * agent's transcript from growing without limit.
  *
- * The one thing that must never happen is a `generous` number appearing in a
- * table next to a `parity` number. So the profile is not a flag hidden in a
- * config file: it is written into every run summary along with
- * `comparableWithBaselines`, and the summary says so in words.
+ * **No total-task ceiling.** The baselines carry `TOKEN_BUDGET = 20_000_000`, and
+ * its own comment calls it headroom: measured spend across every baseline cell is
+ * 65k to 1.6M, so it never binds and total cost is established afterwards from the
+ * ledger rather than enforced during the run. Ours is accounted the same way. What
+ * remains is the obligation that came with that decision — every table carrying a
+ * metric carries measured tokens beside it — which is the honest form of this
+ * control and the only one that survived contact with a deadline.
  */
 
-export type BudgetProfileId = "parity" | "generous";
+/** Per model call, reasoning tokens included. Matches every baseline. */
+export const MAX_COMPLETION_TOKENS = 32_768;
 
+/**
+ * Working context ceiling: how much prompt an agent carries before compaction
+ * intervenes. Below the model's real window on purpose — the window is what fits,
+ * this is what we choose to spend.
+ */
+export const INPUT_CEILING = 256_000;
+
+/**
+ * What a run reports about its own spend.
+ *
+ * Kept as a record rather than a limit. `enforced` is false and stays false: the
+ * number that matters is what a run cost, printed beside what it scored.
+ */
 export interface BudgetProfile {
-  readonly id: BudgetProfileId;
-  /** Per model call, reasoning tokens included. */
+  readonly id: "shared";
   readonly maxCompletionTokens: number;
-  /**
-   * The working context ceiling — how much prompt we let an agent carry before
-   * compaction intervenes. Deliberately below the model's real window: the
-   * window is what fits, this is what we choose to spend.
-   */
   readonly inputCeiling: number;
-  /** Floor for the per-task total, whatever the target length. */
   readonly minTaskBudget: number;
-  /**
-   * Per target word, so the ceiling grows with the work instead of being one
-   * number that is too small at 80k and absurd at 4k. Zero means fixed.
-   */
   readonly tokensPerTargetWord: number;
   readonly comparableWithBaselines: boolean;
   readonly rationale: string;
 }
 
-/** Per model call under parity. Matches the baselines and LongBench-Write. */
-export const MAX_COMPLETION_TOKENS = 32_768;
+/** Retained only so an old summary still parses; nothing enforces it. */
+export const TASK_TOKEN_BUDGET = 0;
 
-/** Per task under parity, across every agent and every retry. */
-export const TASK_TOKEN_BUDGET = 3_000_000;
-
-export const PROFILES: Readonly<Record<BudgetProfileId, BudgetProfile>> = {
-  parity: {
-    id: "parity",
-    maxCompletionTokens: MAX_COMPLETION_TOKENS,
-    // Effectively the model window: under parity nothing about context is ours
-    // to choose, and compaction should only fire where the model would break.
-    inputCeiling: 400_000,
-    minTaskBudget: TASK_TOKEN_BUDGET,
-    tokensPerTargetWord: 0,
-    comparableWithBaselines: true,
-    rationale:
-      "the baselines' own numbers; the only setting under which our rows may " +
-      "share a table with theirs",
-  },
-  generous: {
-    id: "generous",
-    // 64k rather than the model's 128k because the measured need is reasoning
-    // headroom, not longer prose: in runs/v1 the writer never exceeded 4.9k
-    // output tokens while one verifier call spent 23.6k, 23.1k of it reasoning.
-    // A cap that truncates a verifier mid-reasoning produces a silent pass.
-    maxCompletionTokens: 64_000,
-    // 256k of prompt plus 64k of output still fits the 400k window with room to
-    // spare, so the ceiling is a policy choice about spend and attention rather
-    // than a limit imposed by the model.
-    inputCeiling: 256_000,
-    minTaskBudget: 8_000_000,
-    /**
-     * Measured, not extrapolated — and the first estimate here was wrong by 3×.
-     *
-     * It began at 400, doubling the 213 tokens-per-output-word seen in the
-     * four-scene `runs/v1`. A nineteen-scene run then spent 11.6M against a 9.6M
-     * ceiling and was cut off at scene 18 (`runs/v4-24k`): 485 tokens per
-     * *target* word, and 1,216 per word actually delivered, because rejected
-     * scenes cost their full price and contribute nothing to the word count.
-     * The rate rises with scene count for two compounding reasons — each scene
-     * carries more index than the last, and each resident agent carries more
-     * transcript.
-     *
-     * 1,500 is that measured 485 with room for the repair rounds a harder
-     * premise will need. It is deliberately expensive: the honest number for
-     * this design today, which is what makes "did the extra spend pay for
-     * itself" answerable later instead of hidden behind a ceiling that truncates
-     * every long run at the same place.
-     */
-    tokensPerTargetWord: 1_500,
-    comparableWithBaselines: false,
-    rationale:
-      "get the behaviour right before optimising cost; NOT comparable with any " +
-      "baseline row, and any table mixing the two is wrong",
-  },
+export const SHARED_BUDGET: BudgetProfile = {
+  id: "shared",
+  maxCompletionTokens: MAX_COMPLETION_TOKENS,
+  inputCeiling: INPUT_CEILING,
+  // No task ceiling: spend is accounted after the fact, as it is for every
+  // baseline. Zero here means "not enforced" everywhere downstream.
+  minTaskBudget: 0,
+  tokensPerTargetWord: 0,
+  comparableWithBaselines: true,
+  rationale:
+    "32,768 tokens per call and 256,000 of working context, the same as every " +
+    "baseline; total spend is measured and reported, never capped",
 };
 
-export const DEFAULT_PROFILE: BudgetProfile = PROFILES.parity;
+export const DEFAULT_PROFILE: BudgetProfile = SHARED_BUDGET;
 
+/**
+ * Kept so `--profile` on an old command line does not fail, and so an archived
+ * summary naming a profile still resolves. There is one configuration now; asking
+ * for another gets it, with a line in the log saying so.
+ */
 export function profileById(id: string): BudgetProfile {
-  const profile = PROFILES[id as BudgetProfileId];
-  if (!profile) {
-    throw new Error(
-      `unknown budget profile ${JSON.stringify(id)}; known: ${Object.keys(PROFILES).join(", ")}`,
-    );
-  }
-  return profile;
+  return SHARED_BUDGET;
 }
 
 /**

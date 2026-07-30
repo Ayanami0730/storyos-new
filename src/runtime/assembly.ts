@@ -321,6 +321,9 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
       ),
     compaction: {
       thresholds: thresholdsFor(profile),
+      // The orchestrator spans scenes and the shared thresholds never fired on it;
+      // see `thresholdsFor`. Everything else keeps the shared schedule.
+      thresholdsByRole: (role) => thresholdsFor(profile, role),
       // Each agent compresses its own transcript with its own model. Routing
       // this through the orchestrator would hand it the writer's session and ask
       // it to judge writing work it did not do.

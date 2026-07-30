@@ -6,6 +6,8 @@ import {
   MAX_COMPLETION_TOKENS,
   TASK_TOKEN_BUDGET,
   TokenBudget,
+  INPUT_CEILING,
+  SHARED_BUDGET,
 } from "./budget.ts";
 
 describe("counting by default, stopping only when asked", () => {
@@ -64,11 +66,21 @@ describe("the hard stop actually stopping", () => {
 
 describe("the shared budget", () => {
   it("matches the values the baseline runners already fixed", () => {
-    // experiments/novelbench-run/run_nbrun.py: WRITER_TOKEN_CAP / TOKEN_BUDGET.
-    // LongBench-Write uses the same 32,768, which is the official
-    // evaluation/pred.py max_new_tokens. Ours are not free parameters.
+    // experiments/novelbench-run/run_nbrun.py: WRITER_TOKEN_CAP = 32_768, passed
+    // to every harness adapter. LongBench-Write uses the same number as the
+    // official evaluation/pred.py max_new_tokens. Not a free parameter.
     assert.equal(MAX_COMPLETION_TOKENS, 32_768);
-    assert.equal(TASK_TOKEN_BUDGET, 3_000_000);
+    assert.equal(INPUT_CEILING, 256_000);
+  });
+
+  it("does not cap the per-task total, because no baseline does either", () => {
+    // Their `TOKEN_BUDGET = 20_000_000` is headroom by its own comment, and
+    // measured baseline spend is 65k to 1.6M — it never binds. Total cost is
+    // established from the ledger afterwards and reported beside the score.
+    assert.equal(TASK_TOKEN_BUDGET, 0);
+    assert.equal(SHARED_BUDGET.minTaskBudget, 0);
+    assert.equal(SHARED_BUDGET.tokensPerTargetWord, 0);
+    assert.equal(SHARED_BUDGET.comparableWithBaselines, true);
   });
 
   it("tracks spend and remaining room", () => {

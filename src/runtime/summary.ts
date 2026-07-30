@@ -314,6 +314,37 @@ export async function buildSummary(input: SummaryInput): Promise<Record<string, 
     tokens_reported_including_cache: ledger.reduce((n, e) => n + e.usage.total, 0),
     tokens_cache_read: ledger.reduce((n, e) => n + e.usage.cacheRead, 0),
     /**
+     * Whether this route told us anything about caching at all.
+     *
+     * Not a performance note — a comparability one. The `openai/` group returns
+     * `prompt_tokens_details: {}` with no `cached_tokens` field, while the plain
+     * `gpt-5-mini` group returns the field and historical runs on it recorded cache
+     * reads worth 60–189% of their fresh input. So a run on the `openai/` group
+     * counts every re-sent transcript at full price and a run on the other group may
+     * not, which makes their token totals incomparable in a way nothing was
+     * reporting: the switch to that group for throughput silently changed what
+     * `tokens` means.
+     *
+     * `false` here does not mean the provider did not cache. It means we cannot say,
+     * and any cost claim from this run has to say so too.
+     */
+    cache_reporting_available: ledger.some((e) => e.usage.cacheRead > 0),
+    /**
+     * Input as a share of billable tokens, because that is where the money is and
+     * a summary that only prints a total hides it.
+     *
+     * Measured on a 25-scene 60k run: 96.8% input, 1,167 tool round-trips, a mean of
+     * 35,046 input tokens per round-trip. A turn re-sends its whole prompt once per
+     * tool call, so the bill is roughly transcript size times round-trips — which is
+     * why the levers are compaction and batching, not shorter prompts.
+     */
+    input_share: (() => {
+      const input = ledger.reduce((n, e) => n + e.usage.input, 0);
+      const billable = ledger.reduce((n, e) => n + e.usage.billable, 0);
+      return billable > 0 ? Number((input / billable).toFixed(3)) : 0;
+    })(),
+    tool_round_trips: ledger.reduce((n, e) => n + (e.toolCalls ?? 0), 0),
+    /**
      * What this run would cost at the providers' public list prices.
      *
      * Not a bill. The company gateway publishes no rate card, so nothing here

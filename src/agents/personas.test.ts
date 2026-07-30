@@ -220,15 +220,16 @@ describe("the allowlist check", () => {
 describe("backbone override", () => {
   it("moves every role onto the new backbone", () => {
     const swapped = withBackbone("gpt-5.6-terra");
-    for (const p of swapped) {
-      if (p.role !== "verifier") assert.equal(p.model, "gpt-5.6-terra");
-    }
+    for (const p of swapped) assert.equal(p.model, "gpt-5.6-terra");
   });
 
-  it("leaves the verifier alone, so the arm does not silently lose cross-family checking", () => {
-    const swapped = withBackbone("gpt-5.6-terra");
-    const verifier = swapped.find((p) => p.role === "verifier");
-    assert.equal(verifier!.model, personaFor("verifier").model);
+  it("moves the verifier too, so the row describes the run", () => {
+    // It used to be excluded, which made "the harness on gpt-5.6" a run whose
+    // judge was still gpt-5-mini — a mixture invisible in the reported row.
+    // Varying one role on purpose is what `--verifier-model` is for.
+    const verifier = withBackbone("gpt-5.6-terra").find((p) => p.role === "verifier");
+    assert.equal(verifier!.model, "gpt-5.6-terra");
+    assert.equal(personaFor("verifier").model, "gpt-5-mini", "the default is unchanged");
   });
 });
 

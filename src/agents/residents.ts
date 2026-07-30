@@ -199,6 +199,14 @@ export interface CompactionRecord {
 export interface CompactionConfig {
   readonly thresholds: CompactionThresholds;
   /**
+   * Per-role thresholds, when one role needs compacting on a different schedule.
+   *
+   * The orchestrator does: it is the only session that spans scenes, and the shared
+   * thresholds never fired on it across a whole 25-scene run while it billed 36% of
+   * the tokens. See `thresholdsFor` in `compaction.ts`.
+   */
+  readonly thresholdsByRole?: (role: AgentRole) => CompactionThresholds;
+  /**
    * Summarise with the agent's **own** model, over its own transcript.
    *
    * An earlier version routed this through the orchestrator, which is wrong
@@ -800,7 +808,9 @@ export class ResidentAgents {
     // never reached, which is exactly how a latent infinite loop survives.
     if (this.#compacting.has(role)) return;
     const used = entry.contextTokens;
-    let level = levelFor(used, this.#compaction.thresholds);
+    const thresholds =
+      this.#compaction.thresholdsByRole?.(role) ?? this.#compaction.thresholds;
+    let level = levelFor(used, thresholds);
 
     if (level === "none") {
       // The overflow thresholds ask whether this session will run out of room.
@@ -811,9 +821,9 @@ export class ResidentAgents {
       // overflow trigger. Level 1 is lossless, so there is nothing to weigh.
       const bulk = evictablePayloadTokens(
         agent.state.messages.map((m, i) => toCompactable(m, i)),
-        this.#compaction.thresholds,
+        thresholds,
       );
-      if (bulk < this.#compaction.thresholds.level1PayloadTokens) return;
+      if (bulk < thresholds.level1PayloadTokens) return;
       level = "level1";
     }
 
@@ -838,7 +848,8 @@ export class ResidentAgents {
     // Level 1 runs first at every level, including level 2 and block: folding a
     // transcript that still contains megabytes of grep output means paying a
     // model to summarise payloads that the index can hand back for free.
-    const stage1 = compactLevel1(compactable, compaction.thresholds);
+    const thresholds = compaction.thresholdsByRole?.(role) ?? compaction.thresholds;
+    const stage1 = compactLevel1(compactable, thresholds);
     const result =
       level === "level1"
         ? stage1
@@ -846,7 +857,7 @@ export class ResidentAgents {
             stage1.messages,
             (input) => compaction.summarise(role, input),
             compaction.context(),
-            compaction.thresholds,
+            thresholds,
           );
 
     // Pair each survivor with the message it came from by its recorded index,
