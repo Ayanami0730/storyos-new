@@ -15,6 +15,7 @@
  * go to layer 2, and the negative inferences go to the global layer.
  */
 
+import { findEchoes } from "./echo.ts";
 import { type Finding, makeFinding } from "./finding.ts";
 import { type DeclaredVoice, findPersonDrift } from "./person.ts";
 import {
@@ -114,6 +115,15 @@ export interface DeterministicInput {
    * Absent on the first scene, which is what establishes it. See `orthography.ts`.
    */
   readonly convention?: OrthographyConvention;
+  /**
+   * The scene before this one, for the restatement check in `echo.ts`.
+   *
+   * The largest external consistency subtype charged against us is a beat
+   * narrated twice at 94–800 words' distance, which is inside a scene or across
+   * its seam — so the draft is compared with itself and with the scene it
+   * follows. Absent on the first scene.
+   */
+  readonly preceding?: { readonly sceneId: string; readonly prose: string };
 }
 
 /**
@@ -124,6 +134,9 @@ export interface DeterministicInput {
  * pattern rather than a single line that might read as a one-off.
  */
 const MAX_PERSON_DRIFT_FINDINGS = 2;
+
+/** Same argument: a draft that restates three beats needs telling once, twice at most. */
+const MAX_ECHO_FINDINGS = 2;
 
 const normalise = (value: string) => value.trim().replace(/\s+/g, " ").toLowerCase();
 
@@ -449,6 +462,40 @@ export function verifyDeterministic(input: DeterministicInput): DeterministicRes
             source: paths.voice(),
           },
           editLocus: { kind: "draft", quote: drift.quote },
+        }),
+      );
+    }
+  }
+
+  // Restatement, against the draft itself and the scene it follows. Mechanical
+  // for the same reason a spelling pair is: a shared run of seven or more words
+  // is a comparison, not a judgement about style.
+  if (input.prose) {
+    const echoes = findEchoes(input.prose, {
+      ...(input.preceding ? { preceding: input.preceding.prose } : {}),
+      max: MAX_ECHO_FINDINGS,
+    });
+    for (const echo of echoes) {
+      findings.push(
+        makeFinding({
+          subtype: "style_shifts",
+          validator: "continuity",
+          severity: "error",
+          mechanical: true,
+          reasoning:
+            `this passage repeats ${echo.runWords} consecutive words already narrated in ` +
+            `${echo.from}, ${echo.distanceWords} words earlier — the same beat told twice. ` +
+            `The shared run is "${echo.run}"`,
+          evidence: { quote: echo.quote, source: delta.sceneId },
+          contradicts: {
+            quote: echo.earlier,
+            source: echo.from === "this scene" ? delta.sceneId : input.preceding!.sceneId,
+          },
+          suggestion:
+            `Cut the later passage or replace it with what happens next: the reader has ` +
+            `already had this beat. If the scene has to return to it, refer back in a ` +
+            `clause rather than narrating the action again.`,
+          editLocus: { kind: "draft", quote: echo.quote },
         }),
       );
     }

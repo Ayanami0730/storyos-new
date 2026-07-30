@@ -444,7 +444,7 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
         initialState: {
           systemPrompt,
           model: gateway.model(persona.model as ModelId),
-          thinkingLevel: "off",
+          thinkingLevel: persona.thinkingLevel ?? "off",
           maxTokens: profile.maxCompletionTokens,
           tools,
         },

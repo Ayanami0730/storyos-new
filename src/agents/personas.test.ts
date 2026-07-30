@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
@@ -256,7 +258,7 @@ describe("system prompts", () => {
  * Chinese; only ours scores worse.
  */
 describe("the manuscript language directive", () => {
-  it("puts the Chinese instruction before the English contract", () => {
+  it("puts the Chinese instruction first, then the Chinese role files", () => {
     const root = path.join(
       path.dirname(fileURLToPath(import.meta.url)),
       "../../agents",
@@ -265,10 +267,13 @@ describe("the manuscript language directive", () => {
     const chinese = systemPromptFor("writer", root, { manuscriptLanguage: "chinese" });
     assert.ok(!plain.includes("本书的语言"), "an English task must not carry it");
     assert.ok(chinese.startsWith("# 本书的语言：中文"), "it has to come first to set register");
-    // The contract itself is untouched: the directive is additive, and a
-    // mistranslated tool rule would break the gate rather than the prose, which
-    // is exactly why the role files are not translated.
-    assert.ok(chinese.endsWith(plain), "the English contract must survive verbatim");
+    // From 0.9.16 the role files themselves are Chinese (`agents-zh/`). The
+    // machine contract — tool names, paths, identifiers — must still appear
+    // verbatim; the surrounding prose does not.
+    assert.match(chinese, /`write_staged_scene`/);
+    assert.match(chinese, /你写正文/);
+    assert.notEqual(chinese, `# 本书的语言：中文\n\n---\n\n${plain}`,
+      "a full Chinese contract must replace the English role text, not only prepend");
   });
 
   it("keeps harness identifiers out of the translation", () => {
@@ -280,5 +285,29 @@ describe("the manuscript language directive", () => {
     // Entity ids are filing keys; a directive that told the model to translate
     // them would break reference integrity on every scene.
     assert.match(chinese, /char-、loc-、obj-/);
+  });
+});
+
+describe("the translated role files", () => {
+  const english = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../agents");
+
+  it("prefers a Chinese role file and falls back to English per file", async () => {
+    // A half-translated directory is a real state while the translation is being
+    // done, and failing the run over it would be worse than composing a mixed
+    // prompt: the directive states the language either way, so the fallback still
+    // produces Chinese prose from an English contract.
+    const tmp = await mkdtemp(path.join(tmpdir(), "storyos-zh-"));
+    const zh = path.join(tmp, "agents-zh");
+    await mkdir(path.join(zh, "writer"), { recursive: true });
+    await cp(english, path.join(tmp, "agents"), { recursive: true });
+    await writeFile(path.join(zh, "writer", "AGENT.md"), "# 译文占位\n\n`write_staged_scene`\n");
+
+    const prompt = systemPromptFor("writer", path.join(tmp, "agents"), {
+      manuscriptLanguage: "chinese",
+    });
+    assert.match(prompt, /译文占位/, "the translated role file must be used");
+    // SHARED.md was not translated in this fixture, so its English text stands.
+    assert.match(prompt, /`write_staged_scene`/);
+    await rm(tmp, { recursive: true, force: true });
   });
 });

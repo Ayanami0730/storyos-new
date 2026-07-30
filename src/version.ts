@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.15";
+export const VERSION = "0.9.17";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,38 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.17",
+    note:
+      "Two changes aimed at the quality axis. **The verifier reasons.** Every role ran " +
+      "`thinkingLevel: \"off\"` until now, including the one whose output is a judgement rather " +
+      "than prose and which is measured to share the writer's blind spots \u2014 a cross-family " +
+      "verifier scored 6.7 higher on the same task, all of it in factual accuracy. It is also " +
+      "the cheapest role to slow down, since its turn reads a draft and reports rather than " +
+      "generating manuscript. **And restatement is caught mechanically.** `style_shifts` is the " +
+      "largest external consistency subtype charged against us (18 of ~80 kept instances at " +
+      "60k), and reading the detector's own instances is what identified it: not spelling, which " +
+      "is what our own verifier reports, but \u201cduplicated scene exit and narrative restart\u201d " +
+      "\u2014 the same beat narrated twice, 94 to 800 words apart. Nothing could see it: " +
+      "`copiedFromPacket` compares a draft against its packet, never against itself, and the " +
+      "craft axis's `restates_prior_scene` is an LLM judgement that fired 2\u20133 times per " +
+      "25-scene run. `echo.ts` compares the draft with itself and with the scene it follows, and " +
+      "the twelve-word threshold is calibrated on 551 committed scenes rather than chosen: seven " +
+      "words fires on 21% of them and catches deliberate callbacks, twelve fires on 9% and what " +
+      "it catches is a duplicated document header or a sentence repeated verbatim.",
+  },
+  {
+    version: "0.9.16",
+    note:
+      "Full Chinese role prompts under `agents-zh/` (SHARED + five AGENT.md), checked by " +
+      "`smoke/check-zh-prompts.py` so every tool name, path, identifier, fenced block and " +
+      "heading survives verbatim. 0.9.15 only prepended a short Chinese language directive " +
+      "to the English contract; that was enough to stop whole-manuscript English answers on " +
+      "Chinese tasks but not a register fix \u2014 the model still read twenty-five thousand " +
+      "characters of English craft instructions while writing Chinese prose. Chinese tasks " +
+      "now load `agents-zh/` first (fallback per file to English), with the 0.9.15 directive " +
+      "kept as a first-line reinforcement. Machine-contract tokens are untranslated by design.",
+  },
   {
     version: "0.9.15",
     note:

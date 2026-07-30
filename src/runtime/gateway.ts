@@ -79,6 +79,21 @@ export const SUPPLIES: Readonly<Record<string, Supply>> = {
     keyEnv: ["ZZZ_KEY"],
   },
   /**
+   * The second zhizengzeng key. The first is out of credit
+   * (`quota_not_enough`, "亲，余额不足哦~") and answers nothing.
+   *
+   * Slower than either YuanShi route and with a nearer knee: zero failures at 4, 8
+   * and 16 parallel requests, but p50 4.6–5.9s against ys2's 3.0s and throughput
+   * peaking at 8 (1.13 req/s) before p90 goes to 20s at 16. So it is the third
+   * lane, sized at 8, not a substitute for the first two.
+   */
+  zzz2: {
+    id: "zhizengzeng-2",
+    name: "zhizengzeng (second key)",
+    baseUrl: "https://api.zhizengzeng.com/v1",
+    keyEnv: ["ZZZ_KEY2"],
+  },
+  /**
    * The same gateway and the same key, on an upstream group that is not full.
    *
    * Probed with 4, 8, 16, 24 and 32 parallel requests: **zero failures at every
@@ -92,6 +107,23 @@ export const SUPPLIES: Readonly<Record<string, Supply>> = {
     id: "yuanshi-sg-openai",
     name: "YuanShi SG gateway (openai/ group, internal)",
     baseUrl: "https://ai-prod-sg-internal.wenxiaobai.com/v1",
+    keyEnv: ["YS_KEY"],
+    modelNames: { "gpt-5-mini": "openai/gpt-5-mini" },
+  },
+  /**
+   * The same `openai/` group on the public address, for splitting a fleet.
+   *
+   * Added when two benchmarks needed to run at once and `zzz` had gone to
+   * `quota_not_enough`. Probed while ~60 of our own runs were already drawing on
+   * `ys2`: 8/8 and 16/16 with zero failures and p50 2.8–2.9s, which is `ys2`'s own
+   * p50 — so it is at least not the same queue at the same depth. The plain
+   * `gpt-5-mini` group on this address is a different matter and stays unused: it
+   * returned 429 on 1 of 4 parallel requests and 5 of 8.
+   */
+  ys3: {
+    id: "yuanshi-sg-openai-public",
+    name: "YuanShi SG gateway (openai/ group, public)",
+    baseUrl: GATEWAY_BASE_URL,
     keyEnv: ["YS_KEY"],
     modelNames: { "gpt-5-mini": "openai/gpt-5-mini" },
   },

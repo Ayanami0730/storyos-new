@@ -633,6 +633,16 @@ export async function writeStory(options: {
         // already refuses often enough to cost planning round-trips. Absent on
         // the first scene, which is the one that establishes it.
         ...(convention ? { convention } : {}),
+        // The seam. Half the restatement pairs measured straddle it, and the
+        // other half are inside the draft, which needs no input.
+        ...(recentProse.at(-1)
+          ? {
+              preceding: {
+                sceneId: recentProse.at(-1)!.sceneId,
+                prose: recentProse.at(-1)!.text,
+              },
+            }
+          : {}),
       },
       { index, collaborators, artifacts: options.artifacts },
     );

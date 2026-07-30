@@ -48,6 +48,8 @@ import path from "node:path";
 import type { AgentRole } from "../transaction/types.ts";
 import type { ModelId } from "../runtime/gateway.ts";
 
+export type ThinkingLevel = "off" | "minimal" | "low" | "medium" | "high";
+
 export interface PersonaSpec {
   readonly role: AgentRole;
   readonly model: ModelId;
@@ -55,6 +57,8 @@ export interface PersonaSpec {
   readonly writeTools: readonly string[];
   /** True only for the orchestrator. */
   readonly mayDelegate: boolean;
+  /** Reasoning effort. Defaults to "off", which is what every role ran until 0.9.17. */
+  readonly thinkingLevel?: ThinkingLevel;
 }
 
 /**
@@ -140,6 +144,13 @@ export const PERSONAS: readonly PersonaSpec[] = [
      */
     writeTools: ["write_findings", "write_craft_finding"],
     mayDelegate: false,
+    /**
+     * The one role whose output is a judgement rather than prose, and the one
+     * measured to share the writer's blind spots (a cross-family verifier scored
+     * 6.7 higher, all of it in factual accuracy). It is also off the critical
+     * path for length: it reads a draft and reports, so its turn is short.
+     */
+    thinkingLevel: "high",
   },
   {
     role: "index-manager",
@@ -242,12 +253,32 @@ export function systemPromptFor(
   agentsRoot: string,
   options: { readonly manuscriptLanguage?: "chinese" } = {},
 ): string {
-  const shared = readFileSync(path.join(agentsRoot, "SHARED.md"), "utf8");
-  const own = readFileSync(path.join(agentsRoot, role, "AGENT.md"), "utf8");
+  const chinese = options.manuscriptLanguage === "chinese";
+  /**
+   * The translated role files, when they exist beside the English ones.
+   *
+   * Falls back to English per file rather than all-or-nothing: a half-translated
+   * directory is a state that will exist while the translation is being done, and
+   * failing the run over it would be worse than composing a mixed prompt. The
+   * directive below states the language either way, so the fallback still writes
+   * Chinese prose — it just does it while reading an English contract.
+   */
+  const root = chinese ? path.join(path.dirname(agentsRoot), "agents-zh") : agentsRoot;
+  const shared = readOr(path.join(root, "SHARED.md"), path.join(agentsRoot, "SHARED.md"));
+  const own = readOr(
+    path.join(root, role, "AGENT.md"),
+    path.join(agentsRoot, role, "AGENT.md"),
+  );
   const base = `${shared.trim()}\n\n---\n\n${own.trim()}`;
-  return options.manuscriptLanguage === "chinese"
-    ? `${CHINESE_MANUSCRIPT_DIRECTIVE}\n\n---\n\n${base}`
-    : base;
+  return chinese ? `${CHINESE_MANUSCRIPT_DIRECTIVE}\n\n---\n\n${base}` : base;
+}
+
+function readOr(preferred: string, fallback: string): string {
+  try {
+    return readFileSync(preferred, "utf8");
+  } catch {
+    return readFileSync(fallback, "utf8");
+  }
 }
 
 /**
@@ -270,18 +301,15 @@ export function systemPromptFor(
  * twenty-one manuscripts answered a Chinese prompt entirely in English, which
  * none of the eight baselines did.
  *
- * Prepended rather than translated. A faithful translation of five role files is
- * a day's careful work and a rushed one would be worse than none: the prompts
- * carry the tool contract, and a mistranslated refusal rule breaks the gate rather
- * than the prose. What the evidence actually implicates is register — the model is
- * being asked, at length and in English, to produce Chinese literary prose — so
- * the directive is short, in Chinese, and first.
+ * From 0.9.16 the five role files also exist under `agents-zh/`, checked so every
+ * tool name / path / identifier survives. The directive stays first either way:
+ * it is the one sentence that must win if anything in the contract is still English.
  */
 const CHINESE_MANUSCRIPT_DIRECTIVE = [
   "# 本书的语言：中文",
   "",
   "这部作品的委托是用中文写的，因此**正文必须全部是中文**——叙述、对白、内心独白，",
-  "无一例外。下面那份英文说明只规定工作流程与工具契约，不规定作品的语言；把它读成",
+  "无一例外。下面的角色说明规定工作流程与工具契约，不规定作品的语言；把它读成",
   "「用英文写」是本项目实测过的、最常见也最昂贵的误解：二十一篇稿子里有两篇整本用",
   "英文回答了中文命题，另有五篇中途换了语言。",
   "",

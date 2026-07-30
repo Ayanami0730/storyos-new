@@ -496,6 +496,7 @@ export class SceneDirector {
         prose: this.#lastDraft!.prose,
         ...(this.#request.voice ? { voice: this.#request.voice } : {}),
         ...(this.#request.convention ? { convention: this.#request.convention } : {}),
+        ...(this.#request.preceding ? { preceding: this.#request.preceding } : {}),
       });
     } catch (error) {
       checkerFailed = error instanceof Error ? error.message : String(error);

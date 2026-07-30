@@ -279,6 +279,14 @@ export interface SceneRequest {
    * `memorised`/`memorized`, `labour`/`labor`, `realised`/`realized`.
    */
   readonly convention?: OrthographyConvention;
+  /**
+   * The committed scene immediately before this one.
+   *
+   * For the restatement check: the largest external consistency subtype charged
+   * against us is a beat narrated twice at 94–800 words' distance, which is inside
+   * a scene or across its seam. Absent on the first scene.
+   */
+  readonly preceding?: { readonly sceneId: string; readonly prose: string };
 }
 
 export type SceneOutcome =
