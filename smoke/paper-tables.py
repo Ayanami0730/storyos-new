@@ -67,7 +67,13 @@ LNB_ROWS = {
     ],
 }
 
-LBW_BANDS = ("0-500", "500-2k", "2k-4k", "4k-10k", "10k-20k")
+ALL_LBW_BANDS = ("0-500", "500-2k", "2k-4k", "4k-10k", "10k-20k")
+#: The 21-task row covers nothing below 2,000 words, so the first two bands are
+#: structurally empty for it and a column of `--` says only that the column exists.
+#: Dropped from both backbones rather than from one, because two tables of the same
+#: quantity with different columns invite reading a band difference as a system
+#: difference. `--all-bands` restores them; the terra subset does have cells there.
+LBW_BANDS = tuple(b for b in ALL_LBW_BANDS if b not in {"0-500", "500-2k"})
 LBW_ROWS = {
     "gpt-5-mini": [
         ("One shot", [
@@ -158,15 +164,15 @@ def errors(row) -> float | None:
     return None
 
 
-def lnb_tier(tier: str) -> tuple[dict[str, list[float]], dict[str, list[float]]]:
-    q: dict[str, list[float]] = {}
-    e: dict[str, list[float]] = {}
+def lnb_tier_raw(tier: str):
+    q: dict[str, dict[str, float]] = {}
+    e: dict[str, dict[str, float]] = {}
     for suffix in (tier, f"ours-{tier}"):
         for row in records(QUAL / f"aggregation-{suffix}/stories-gpt-5.6-sol.jsonl"):
             k = sys_task(row)
             v = quality(row)
             if k and v is not None:
-                q.setdefault(k[0], []).append(v)
+                q.setdefault(k[0], {})[k[1]] = v
         d = FACT / f"consistency-{suffix}"
         if d.is_dir():
             for p in sorted(d.glob("stories/*.json")):
@@ -174,7 +180,7 @@ def lnb_tier(tier: str) -> tuple[dict[str, list[float]], dict[str, list[float]]]
                     k = sys_task(row)
                     v = errors(row)
                     if k and v is not None:
-                        e.setdefault(k[0], []).append(v)
+                        e.setdefault(k[0], {})[k[1]] = v
     return q, e
 
 
@@ -231,8 +237,26 @@ def n_of(vals: list[float]) -> str:
     return f"{len(vals)}" if vals else "-"
 
 
+def lnb_paired(tier: str, backbone: str):
+    """Restrict a tier to the tasks every shown row has, and say how many that is.
+
+    Averaging whatever each row happens to hold is not a comparison: at 40k our
+    gpt-5-mini row covers eight tasks and each baseline twelve, and this benchmark's
+    tasks differ enough that the four we are missing can move a column on their own.
+    """
+    qs, es = lnb_tier_raw(tier)
+    ids = [sid.format(tier=tier) if "{tier}" in sid else sid
+           for _, rows in LNB_ROWS[backbone] for _, sid in rows]
+    present = [i for i in ids if qs.get(i)]
+    common = set.intersection(*(set(qs[i]) for i in present)) if present else set()
+    q = {i: [v for t, v in qs.get(i, {}).items() if t in common] for i in ids}
+    e = {i: [v for t, v in es.get(i, {}).items() if t in common] for i in ids}
+    full = {i: len(qs.get(i, {})) for i in ids}
+    return q, e, common, full
+
+
 def print_lnb(backbone: str) -> None:
-    per_tier = {t: lnb_tier(t) for t in TIERS}
+    per_tier = {t: lnb_paired(t, backbone) for t in TIERS}
     print(f"\n{'='*104}")
     print(f"LiveNovelBench — backbone {backbone}   (Qual. 越高越好, Err./10k 越低越好, n = 题数)")
     print("=" * 104)
@@ -245,12 +269,16 @@ def print_lnb(backbone: str) -> None:
         for display, sid in rows:
             line = f"{display:<26}"
             for t in TIERS:
-                q, e = per_tier[t]
+                q, e, common, full = per_tier[t]
                 key = sid.format(tier=t) if "{tier}" in sid else sid
                 qv, ev = q.get(key, []), e.get(key, [])
-                line += f"{cell(qv):>7}{cell(ev):>7}{n_of(qv):>5}"
+                mark = "*" if full.get(key, 0) > len(qv) > 0 else ""
+                line += f"{cell(qv):>7}{cell(ev):>7}{n_of(qv)+mark:>5}"
             print(line)
     print("-" * 104)
+    cov = " | ".join(f"{t}: {len(per_tier[t][2])} 题" for t in TIERS)
+    print(f"每档取所有行的题目交集 — {cov}")
+    print("n 后的 * 表示该系统自己跑了更多题，但为配对而只算了交集内的")
 
 
 def print_lbw(backbone: str) -> None:
@@ -267,11 +295,15 @@ def print_lbw(backbone: str) -> None:
     # differ enormously in difficulty — the same system scores 96 on a 2,000-word
     # prompt and 56 on a 20,000-word one. The count in `n` is then also the honest
     # statement of how much of the benchmark our row still owes.
-    scope = set(ours)
+    # Overall is recomputed over the bands actually shown, so the composite cannot
+    # be carried by tasks that no column accounts for.
+    scope = {t for t in ours if lbw_band_of(t) in LBW_BANDS}
+    dropped = len(ours) - len(scope)
     print(f"\n{'='*104}")
     print(f"LongBench-Write — backbone {backbone}   (S_q 0-5 越高越好, S_l 0-100 越高越好)")
     print(f"{note}")
-    print(f"所有行均限制到我们跑过的 {len(scope)} 题（benchmark 全量 120 题）")
+    print(f"所有行均限制到我们跑过的 {len(scope)} 题（benchmark 全量 120 题）"
+          + (f"；另有 {dropped} 题落在已隐藏的 <2k 档" if dropped else ""))
     print("=" * 104)
     print(f"{'System':<26}{'S-bar':>7}{'S_q':>6}{'S_l':>6}{'n':>4}"
           + "".join(f"{b:>15}" for b in LBW_BANDS))
@@ -282,7 +314,7 @@ def print_lbw(backbone: str) -> None:
         print(f"  -- {section} --")
         for display, sid in rows:
             if sid.startswith("__ours"):
-                rows_by_task = ours
+                rows_by_task = {t: r for t, r in ours.items() if t in scope}
             else:
                 rows_by_task = {
                     t: r for t, r in lbw_rows(base_dir / f"{sid}.jsonl").items()
@@ -307,7 +339,10 @@ def print_lbw(backbone: str) -> None:
     print("-" * 104)
 
 
-which = sys.argv[1] if len(sys.argv) > 1 else "all"
+args = [a for a in sys.argv[1:] if a != "--all-bands"]
+if "--all-bands" in sys.argv:
+    LBW_BANDS = ALL_LBW_BANDS
+which = args[0] if args else "all"
 if which in ("all", "lnb"):
     for bb in ("gpt-5-mini", "gpt-5.6-terra"):
         print_lnb(bb)
