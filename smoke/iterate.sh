@@ -40,6 +40,35 @@ esac
 
 [ -f "$TASKS" ] || { echo "no subset at $TASKS — run smoke/make-iter-subsets.py" >&2; exit 1; }
 
+# `BACKBONE=gpt-5.6-sol smoke/iterate.sh lbw fast` swaps the model under all five
+# roles. The flag goes into a derived subset rather than being appended by the
+# launcher, so the exact task list a run was given is on disk beside its results;
+# and the backbone is in the run directory name, because a row whose model is only
+# recoverable from a summary field is a row that will be compared with the wrong
+# one. `--backbone` moves the verifier too, as of 0.9.19.
+BACKBONE="${BACKBONE:-}"
+if [ -n "$BACKBONE" ]; then
+  DERIVED="${TASKS%.jsonl}-${BACKBONE//\//_}.jsonl"
+  "$HOME/miniconda3/envs/pipeline/bin/python" - "$TASKS" "$DERIVED" "$BACKBONE" <<'PY' || exit 1
+import json, sys
+src, dst, backbone = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(src) as fh, open(dst, "w") as out:
+    for line in fh:
+        line = line.strip()
+        if not line:
+            continue
+        task = json.loads(line)
+        flags = list(task.get("flags") or [])
+        if "--backbone" not in flags:
+            flags += ["--backbone", backbone]
+        task["flags"] = flags
+        out.write(json.dumps(task, ensure_ascii=False) + "\n")
+PY
+  TASKS="$DERIVED"
+  RUNS="${RUNS}-${BACKBONE//\//_}"
+  echo "### backbone $BACKBONE on all five roles — tasks $TASKS"
+fi
+
 echo "### $BENCH $SIZE on $VERSION — $(wc -l < "$TASKS") cell(s), $PAR at a time, route ys2"
 echo "### runs -> $RUNS"
 mkdir -p "$RUNS"
