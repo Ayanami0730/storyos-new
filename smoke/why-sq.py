@@ -36,7 +36,7 @@ from urllib.request import Request, urlopen
 LBW = Path(os.environ.get("LBW_ROOT", Path.home() / "storyos/experiments/longbench-write"))
 REPO = Path(__file__).resolve().parent.parent
 BASE_URL = "https://ai-prod-sg.wenxiaobai.com"
-JUDGE_MODEL = "gpt-5.5"
+JUDGE_MODEL = os.environ.get("LBW_JUDGE_WIRE_MODEL", "gpt-5.5")
 MAX_COMPLETION_TOKENS = 4_096
 
 

@@ -220,7 +220,9 @@ def main() -> None:
         left = max(0, (r["planned"] or r["scenes"]) - r["scenes"])
         eta = per * left / 60
         etas.append((eta, r, per / 60))
-    for eta, r, per in sorted(etas):
+    # Sort on the eta alone. Two cells finishing in the same rounded minute made
+    # the tuple comparison fall through to the dict beside it and raise.
+    for eta, r, per in sorted(etas, key=lambda e: e[0]):
         print(
             f"  {r['batch']:<12} {r['cell']:<44} "
             f"{r['scenes']:>2}/{r['planned']:<2} "

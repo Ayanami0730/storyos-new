@@ -6,3 +6,5 @@ workspace/
 runs/
 .env
 node_modules/
+runs-*/
+__pycache__/

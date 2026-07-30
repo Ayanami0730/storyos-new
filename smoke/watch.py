@@ -30,7 +30,7 @@ BATCHES = ["runs-lbw21", "runs-60kv2", "runs-40kv2", "runs-20kv2", "runs-lnb20k"
 #: `runs-lbw21` produced seventeen cells on 0.9.11 and four on 0.9.12 without
 #: anything being restarted, and a deadlock check keyed on one of them would have
 #: stopped watching the other.
-LIVE_VERSIONS = {"0.9.11", "0.9.12"}
+LIVE_VERSIONS = {"0.9.11", "0.9.12", "0.9.13"}
 POLL_SECONDS = 120
 #: Refusals per minute worth interrupting for. Measured baseline: 34 cells on the
 #: internal route produced about 340 refusals over four hours (~1.4/min) with

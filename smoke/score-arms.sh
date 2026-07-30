@@ -28,9 +28,16 @@ DATA=/home/dumingxuan/storyos-data
 export YS_KEY="$(cat /home/dumingxuan/.config/ys/key)"
 export LNB_MODEL_ALIAS="gpt-5-mini=openai/gpt-5-mini"
 
-SUMMARY_WORKERS=6
-JUDGE_WORKERS=16
-AUDIT_WORKERS=8
+# Overridable, and the asymmetry between them is the point rather than an
+# oversight. The summariser is the one stage still on `gpt-5-mini`, which is the
+# group generation is also drawing on, so raising it steals throughput from the
+# thing on the critical path. The judge is `gpt-5.6-sol` and the auditor its own
+# detector — different upstreams entirely, so widening those costs generation
+# nothing. Concurrency is not part of the protocol: the model, the prompt and
+# `--runs 3` are what make rows comparable, and none of them move here.
+SUMMARY_WORKERS="${SUMMARY_WORKERS:-6}"
+JUDGE_WORKERS="${JUDGE_WORKERS:-16}"
+AUDIT_WORKERS="${AUDIT_WORKERS:-8}"
 
 mkdir -p /tmp/lnb-queue
 MANIFEST="/tmp/lnb-queue/eval-ours-${TIER}.jsonl"
