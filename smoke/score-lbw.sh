@@ -27,6 +27,17 @@ if [[ ! -f "$LBW/score_lbw.py" ]]; then
 fi
 SYSTEM="storyos-v3"
 
+# The scorer's own interpreter, not whatever `python3` resolves to. The system
+# python here is 3.6, which cannot parse `from __future__ import annotations` —
+# so a caller that has not activated the conda env gets a SyntaxError written
+# into its score file and a batch that reports "scoring done" with no scores in
+# it. Two finished LongBench-Write batches sat unscored overnight that way.
+SCORER_PY="${LBW_PYTHON:-$HOME/miniconda3/envs/pipeline/bin/python}"
+if [[ ! -x "$SCORER_PY" ]]; then
+  echo "no interpreter at $SCORER_PY — set LBW_PYTHON to a python >= 3.9" >&2
+  exit 1
+fi
+
 if [[ ! -f "$RUN_DIR/story.md" ]]; then
   echo "no story.md in $RUN_DIR — the run did not produce a manuscript" >&2
   exit 1
@@ -47,14 +58,14 @@ export PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 # inherited, because the caller may have passed it only to the generation step —
 # which is exactly how a finished run ended up with an empty score file.
 export YS_KEY="${YS_KEY:-$(cat ~/.config/ys/key)}"
-python3 score_lbw.py \
+"$SCORER_PY" score_lbw.py \
   --systems "$SYSTEM" \
   --tasks "$TASK_ID" \
   --output-root "$OUT_ROOT" \
   --judgements "$OUT_ROOT/judgements" \
   --concurrency 1
 
-python3 - "$OUT_ROOT/judgements/gpt-5.5/$SYSTEM.jsonl" "$TASK_ID" "$OUT_ROOT/$SYSTEM/longbench-write/$TASK_ID.txt" <<'PY'
+"$SCORER_PY" - "$OUT_ROOT/judgements/gpt-5.5/$SYSTEM.jsonl" "$TASK_ID" "$OUT_ROOT/$SYSTEM/longbench-write/$TASK_ID.txt" <<'PY'
 import hashlib, json, sys
 path, task, text_file = sys.argv[1], sys.argv[2], sys.argv[3]
 rows = [json.loads(l) for l in open(path) if l.strip()]
