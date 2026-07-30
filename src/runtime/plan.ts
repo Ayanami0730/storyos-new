@@ -21,6 +21,7 @@ import { stringify as toYaml } from "yaml";
 import type { FileWrite } from "../index/commit.ts";
 import { chapterFor, paths, sceneIndexOf } from "../index/tree.ts";
 import type { ResidentAgents } from "../agents/residents.ts";
+import { sceneCountForRequest } from "./parts.ts";
 
 function toolText(text: string) {
   return { content: [{ type: "text", text }] };
@@ -72,7 +73,7 @@ export interface StoryPlan {
  * have been scored, and silently altering their scene counts would invalidate
  * every comparison in the table while looking like an improvement.
  */
-const MIN_WORDS_PER_SCENE = 500;
+export const MIN_WORDS_PER_SCENE = 500;
 
 /**
  * A scene happens somewhere. Above this many locations it is a list of places.
@@ -538,14 +539,44 @@ export async function planStory(options: {
   readonly log?: (line: string) => void;
 }): Promise<StoryPlan> {
   const { residents, premise, targetWords, txid, sink } = options;
-  const sceneCount = sceneCountFor(targetWords, options.wordsPerScene);
+  const derived = sceneCountFor(targetWords, options.wordsPerScene);
+  /**
+   * A part count the request states outright outranks the one length implies.
+   *
+   * See `parts.ts`. `lbw068` asked for 五篇日记 and got four scenes because 2,000
+   * words at the 500-word floor is four; the judge's first objection was the
+   * missing fifth entry. Only fires when the request names its own structure, and
+   * only when each part still clears the floor.
+   */
+  const { count: sceneCount, parts } = sceneCountForRequest(
+    derived,
+    targetWords,
+    premise,
+    MIN_WORDS_PER_SCENE,
+  );
   const perScene = Math.round(targetWords / sceneCount);
+  if (parts) {
+    options.log?.(
+      parts.count === sceneCount
+        ? `the request states its own structure ("${parts.quote}"): planning ${sceneCount} ` +
+          `scene(s) rather than the ${derived} the length implies`
+        : `the request states "${parts.quote}" but ${targetWords} words cannot hold ` +
+          `${parts.count} scene(s) above the ${MIN_WORDS_PER_SCENE}-word floor; planning ` +
+          `${sceneCount} and the division is the writer's to make inside them`,
+    );
+  }
 
   const ask =
     `Plan a story of about ${targetWords} words from this premise.\n\n${premise}\n\n` +
-    `Propose about ${sceneCount} scenes of roughly ${perScene} words each. Give every ` +
-    `character, location and significant object a stable id now — later scenes can only ` +
-    `refer to entities that exist. State the world rules the story must not break. ` +
+    (parts && parts.count === sceneCount
+      ? `The request states its own structure — "${parts.quote}" — so plan exactly ` +
+        `${sceneCount} scenes, one per part, of roughly ${perScene} words each. That count is ` +
+        `a requirement of the task and not a suggestion from me: a manuscript that delivers ` +
+        `four of five asked-for parts is marked down for the missing one however good the ` +
+        `four are. `
+      : `Propose about ${sceneCount} scenes of roughly ${perScene} words each. `) +
+    `Give every character, location and significant object a stable id now — later scenes ` +
+    `can only refer to entities that exist. State the world rules the story must not break. ` +
     `Then call submit_plan.`;
 
   const replies: string[] = [];

@@ -120,6 +120,20 @@ export function harnessAnnotation(prose: string): string | null {
     // because they carry their partition prefix.
     /\b[a-z]{3,}(?:_[a-z]{3,})+\b/,
     /\b(?:char|loc|obj)-[a-z]{2,}(?:-[a-z]+)*\b/,
+    /**
+     * A scene-boundary marker, which is this system's vocabulary and not the
+     * book's.
+     *
+     * The patterns above all need a bracket or an underscore, so a bare
+     * `END OF SCENE` walked straight through. It reached a finished manuscript
+     * three times on `lbw068` and the frozen judge named it in its own words —
+     * *"'END OF SCENE'明显像剧本或生成残留，严重影响沉浸感"* — on the task where
+     * we scored 2.67 against agentwrite's 4.17. The manuscript is continuous
+     * prose; a scene is a transaction boundary in the harness, invisible to a
+     * reader. A task that genuinely wants act divisions has its own convention
+     * (`第一幕`, `ACT I`), which this does not match.
+     */
+    /^\s*(?:[[(*#-]{0,3}\s*)?(?:end of scene|scene ends?|end scene|scene break|end of chapter)\b.{0,40}$/im,
   ];
   for (const p of patterns) {
     const m = p.exec(prose);

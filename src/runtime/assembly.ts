@@ -71,7 +71,8 @@ import {
   followUpBrief,
   readContextTool,
 } from "./packet-builder.ts";
-import { type StoryPlan, planTool, sceneCountFor, updatePlanTool } from "./plan.ts";
+import { MIN_WORDS_PER_SCENE, type StoryPlan, planTool, sceneCountFor, updatePlanTool } from "./plan.ts";
+import { sceneCountForRequest } from "./parts.ts";
 import type { BuildResult, Draft } from "./scene-loop.ts";
 
 /** One shell read, with who ran it and during which scene. */
@@ -112,6 +113,17 @@ export interface AssemblyOptions {
    * S-bar points apart, so nothing smaller than that is readable at n=1.
    */
   readonly wordsPerScene?: number;
+  /**
+   * The request itself, so the plan tool's scene-count ceiling agrees with what
+   * the planner was asked for.
+   *
+   * Both are derived from the length alone unless the request names its own
+   * structure — and when it does, the two must move together: `submit_plan` refuses
+   * more scenes than the ceiling when they fall below the 500-word floor, so a
+   * request for 五篇 at 2,000 words would have the planner asked for five and the
+   * tool rejecting five. See `parts.ts`.
+   */
+  readonly request?: string;
   /**
    * The language the manuscript must be in, when the request settles it.
    *
@@ -345,7 +357,12 @@ export async function assembleHarness(options: AssemblyOptions): Promise<Harness
           ? [
               planTool(
                 planState,
-                sceneCountFor(options.targetWords, options.wordsPerScene),
+                sceneCountForRequest(
+                  sceneCountFor(options.targetWords, options.wordsPerScene),
+                  options.targetWords,
+                  options.request ?? "",
+                  MIN_WORDS_PER_SCENE,
+                ).count,
                 options.targetWords,
               ),
               updatePlanTool(planState),

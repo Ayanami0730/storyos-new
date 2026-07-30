@@ -239,6 +239,28 @@ function renderStoryState(
     lines.push("Nothing committed yet — this is the first scene.");
   }
 
+  const delivery = state.delivery ?? [];
+  if (delivery.length > 0) {
+    const leaks = delivery.filter((d) => d.leak);
+    lines.push("", "Delivered against the ask, where the two differ:");
+    for (const d of delivery.slice(-6)) {
+      lines.push(
+        d.leak
+          ? `- ${d.scene}: harness vocabulary reached the prose — "${d.leak}"`
+          : `- ${d.scene}: ${d.words} words against a target of ${d.target}`,
+      );
+    }
+    if (leaks.length > 0) {
+      lines.push(
+        "",
+        "A marker like that is this system's vocabulary, not the book's, and a reader is graded",
+        "as having seen it: the frozen judge called one out by name as ruining immersion. Tell",
+        "the writer in its brief not to produce another, and put its removal in the revision",
+        "pass — the scene is committed and reopening it costs more than the marker does.",
+      );
+    }
+  }
+
   if (state.lastSceneClose) {
     lines.push(
       "",
@@ -324,6 +346,42 @@ export function renderLengthProjection(input: {
   const perScene = input.words.committed / done;
   const remaining = input.position.total - input.position.index + 1;
   const projected = Math.round(input.words.committed + remaining * perScene);
+
+  /**
+   * Overrun, which this block was blind to until 0.9.18 and which costs more per
+   * word than the shortfall it did warn about.
+   *
+   * LongBench-Write's length score is asymmetric: under target it divides the
+   * relative error by 2, over target by 3, so 150% of target is a 16.7-point S_l
+   * loss and S_l is half of S-bar. Measured across eleven paired tasks, attainment
+   * ranged 0.79–1.53 with identical plan targets — the variance, not a bias, is what
+   * costs, and nothing in the loop was reporting the upper half of it. `lbw066` came
+   * in at 153% and lost 16.3 points of S_l while its quality score did not move.
+   */
+  if (projected > input.words.target * 1.1) {
+    const over = projected - input.words.target;
+    const perSceneCap = Math.max(
+      1,
+      Math.round((input.words.target * 1.02 - input.words.committed) / Math.max(1, remaining)),
+    );
+    return [
+      "",
+      `Projection: the ${done} committed scene(s) average ${Math.round(perScene)} words each. At ` +
+        `that rate the remaining ${remaining} will finish the book at about ${projected} words ` +
+        `against a target of ${input.words.target} — an overrun of ${over}.`,
+      `Overrun is scored, not forgiven: this task's length score divides the relative error by ` +
+        `3 above target, so landing at ${Math.round((projected / input.words.target) * 100)}% ` +
+        `costs about ${Math.round((100 * (projected / input.words.target - 1)) / 3)} points of ` +
+        `the half of the score that is length compliance — and it buys nothing on the other half.`,
+      `Two levers. Tell the writer a word ceiling in its brief — about ${perSceneCap} words for ` +
+        `this scene, stated as a limit rather than a target, since it has been delivering past ` +
+        `the target it was given. Or call update_plan and merge the scenes ahead into fewer, ` +
+        `which is the lever that does not depend on the writer changing its behaviour.`,
+      `Do not solve it by stopping early: a story that ends because the words ran out is ` +
+        `graded as one that ends because the words ran out. Cut what the plan is padding.`,
+    ].join("\n");
+  }
+
   if (projected >= input.words.target * 0.9) return "";
 
   const extra = Math.ceil((input.words.target * 0.95 - projected) / perScene);
@@ -406,6 +464,20 @@ export function sceneBrief(input: {
     readonly upcoming: readonly { readonly id: string; readonly intent: string }[];
     /** True when this scene is the first in its allocation tier. */
     readonly tierBoundary: boolean;
+    /**
+     * What the committed scenes delivered, where it differed from the ask.
+     *
+     * Checked on the committed text rather than trusted from the gate that was
+     * supposed to prevent it: `END OF SCENE` reached a finished manuscript three
+     * times and the judge named the string as ruining immersion. You are the only
+     * role that sees the book as a whole, so a habit belongs here.
+     */
+    readonly delivery?: readonly {
+      readonly scene: string;
+      readonly words: number;
+      readonly target: number;
+      readonly leak?: string;
+    }[];
   };
 }): string {
   return [
@@ -423,9 +495,10 @@ export function sceneBrief(input: {
     `Length so far: ${input.words.committed} words committed of ${input.words.target} for the ` +
       `whole task; ${Math.max(0, input.words.target - input.words.committed)} still to write ` +
       `across ${input.position.total - input.position.index + 1} remaining scene(s). Half of ` +
-      `the score on this kind of task is length compliance, so if the committed scenes are ` +
-      `running short of their targets, say so in the writer's brief — it cannot see this ` +
-      `number and will otherwise keep writing to the same length.`,
+      `the score on this kind of task is length compliance, and it is scored in both ` +
+      `directions — short of target and past it both lose points. The writer cannot see this ` +
+      `number, so if the committed scenes are missing their targets either way, say so in its ` +
+      `brief as a floor or a ceiling; otherwise it keeps writing to the same length.`,
     renderLengthProjection(input),
     "",
     "The sequence is fixed and enforced: call_context_builder, then call_writer, then",

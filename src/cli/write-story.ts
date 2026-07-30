@@ -385,6 +385,7 @@ const harness = await assembleHarness({
   profile,
   budget,
   targetWords: args.target,
+  request: args.premise,
   ...(args.wordsPerScene ? { wordsPerScene: args.wordsPerScene } : {}),
   // Read off the request, which is the only authority for it. `requestScriptOf`
   // uses a lower evidence threshold than the scene check for the reason given

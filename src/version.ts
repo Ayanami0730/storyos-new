@@ -13,7 +13,7 @@
  */
 
 /** Semantic version of the harness. */
-export const VERSION = "0.9.17";
+export const VERSION = "0.9.18";
 
 /**
  * What this version is, in one line, for a reader who has only the artefact.
@@ -47,6 +47,28 @@ export const VERSION_HISTORY: readonly {
   readonly version: string;
   readonly note: string;
 }[] = [
+  {
+    version: "0.9.18",
+    note:
+      "Four fixes, three of them named by the frozen judge in its own words on the tasks we " +
+      "score worst on. **A part count the request states outright now sets the scene count.** " +
+      "`lbw068` asked for \u4e94\u7bc7\u65e5\u8bb0 and got four scenes, because 2,000 words at " +
+      "the 500-word floor is four; the judge's first sentence about it was " +
+      "\u201c\u53ea\u6709\u56db\u7bc7\u65e5\u8bb0\uff0c\u7f3a\u7b2c\u4e94\u7bc7\u201d and it " +
+      "scored S_q 2.67 against agentwrite's 4.17. `parts.ts` reads a numeral bound to a unit " +
+      "that names a division of the work, never to a cast or to days or pages, and it moves " +
+      "exactly three of twenty-one tasks \u2014 the three with the worst S_q. **The length " +
+      "projection is two-sided.** It fired only on shortfall, so overrun had no signal at all " +
+      "anywhere in the loop, and LongBench-Write divides the relative error by 3 above target: " +
+      "`lbw066` landed at 153% and lost 16.3 points of S_l with its quality unchanged. Measured " +
+      "across eleven paired tasks, attainment ran 0.79\u20131.53 on identical plan targets, and " +
+      "S_l is half of S-bar. **A bare scene marker is refused at the tool boundary.** " +
+      "`END OF SCENE` reached a finished manuscript three times because every pattern before it " +
+      "needed a bracket or an underscore; the judge called the string out as ruining immersion. " +
+      "**And the committed text is checked rather than the gate trusted**: a leak that gets " +
+      "through anyway is reported into the orchestrator's next brief, since it is the only role " +
+      "that sees the book whole and the only one that can have it removed in the revision pass.",
+  },
   {
     version: "0.9.17",
     note:

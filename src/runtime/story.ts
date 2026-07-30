@@ -23,7 +23,7 @@ import type { ResidentAgents } from "../agents/residents.ts";
 import { type AllocationState, type SceneAllocation, allocate } from "./allocation.ts";
 import { type ArtifactStore, artifactPaths } from "./artifacts.ts";
 import { BudgetExhausted } from "./budget.ts";
-import { type SceneToolBus, residentCollaborators } from "./collaborators.ts";
+import { type SceneToolBus, harnessAnnotation, residentCollaborators } from "./collaborators.ts";
 import { type SceneStage, driveScene, sceneBrief } from "./orchestration.ts";
 import { type RevisionPlan, planRevisions } from "./revision.ts";
 import type { SceneDelta } from "../verification/deterministic.ts";
@@ -527,6 +527,18 @@ export async function writeStory(options: {
     suggestion: string;
   }[] = [];
 
+  /**
+   * What the committed scenes actually delivered, where it differs from what was
+   * asked. Accumulates across the run, so the orchestrator sees a habit rather
+   * than one scene, and so the whole-story pass has the list.
+   */
+  let deliveryNotes: readonly {
+    scene: string;
+    words: number;
+    target: number;
+    leak?: string;
+  }[] = [];
+
   say(
     `plan: ${plan.scenes.length} scenes, ${plan.entities.length} entities, ` +
       `${plan.worldRules.length} world rules`,
@@ -677,6 +689,7 @@ export async function writeStory(options: {
               .slice(i + 1)
               .map((s) => ({ id: s.id, intent: s.intent })),
             tierBoundary: allocation.tier !== previousTier,
+            ...(deliveryNotes.length > 0 ? { delivery: deliveryNotes } : {}),
           },
         }),
         log: say,
@@ -788,6 +801,41 @@ export async function writeStory(options: {
           why: f.reasoning,
           suggestion: f.suggestion!,
         }));
+
+      /**
+       * What actually landed, checked against what may never land.
+       *
+       * The staging tool refuses harness vocabulary, so this should find nothing —
+       * and it is here because it did. Three `END OF SCENE` markers reached a
+       * finished `lbw068` manuscript through the gap between the patterns and a
+       * bare marker, and the frozen judge named the string in its own words as
+       * ruining immersion. A check at the tool boundary is a claim; a check on the
+       * committed text is the evidence for it, and the difference is what a run
+       * can be trusted to report about itself.
+       *
+       * Reported into the next scene's brief rather than raised as a finding: the
+       * scene is committed and reopening it costs more than the marker does, while
+       * the orchestrator can have it removed in the revision pass and can tell the
+       * writer not to produce another.
+       */
+      const leaked = harnessAnnotation(text);
+      if (leaked) {
+        say(`${card.id} committed carrying harness vocabulary in the prose: "${leaked}"`);
+        deliveryNotes = [
+          ...deliveryNotes,
+          {
+            scene: card.id,
+            leak: leaked,
+            words: sceneWords,
+            target: card.targetWords,
+          },
+        ];
+      } else if (sceneWords > card.targetWords * 1.35 || sceneWords < card.targetWords * 0.65) {
+        deliveryNotes = [
+          ...deliveryNotes,
+          { scene: card.id, words: sceneWords, target: card.targetWords },
+        ];
+      }
       committedScenes.push(card.id);
       committedDeltas.push(delta);
       proseByScene.set(card.id, text);
