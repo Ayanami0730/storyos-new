@@ -1,1 +1,0 @@
-When Eloise is asked to deliver a lunchbox and a small silver brooch to her elderly neighbor, she and her best friend Jun turn the ordinary errand into an Arthurian-style quest across their neighborhood — a journey that tests their bravery, cements their friendship, and shows how imagination can make everyday courage legendary.

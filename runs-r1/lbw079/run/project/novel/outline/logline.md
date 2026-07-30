@@ -1,1 +1,0 @@
-After moving into a cheap room in an old house, a cautious young woman discovers the small, persistent traces of an eight‑year‑old who won't leave — and as she pieces together the child's life from locket, diary and marks in the attic, the house forces her to choose whether to confront the living truth kept under its floorboards or become another thing the walls keep.

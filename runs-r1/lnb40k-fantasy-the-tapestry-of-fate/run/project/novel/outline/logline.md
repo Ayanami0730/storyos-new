@@ -1,1 +1,0 @@
-Coerced by an immortal peri council and bound by a silver token, pirate captain Amina al-Sirafi must sail to the inescapable Island of Qarrah and steal a single spindle capable of rewriting fate — a heist through shifting woods, memory-lands, and moral thorns that forces her to choose between her freedom and the lives she would reorder.

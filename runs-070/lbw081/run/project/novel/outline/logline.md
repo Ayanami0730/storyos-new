@@ -1,1 +1,0 @@
-A private detective is called to a provincial manor where a clock‑obsessed collector is found stabbed in a study locked from the inside; with suspects trapped by circumstance and a corpse bearing a single, inexplicable wound, the detective must untangle mechanical cunning from human motive before the murderer can cover the last, smallest clue.

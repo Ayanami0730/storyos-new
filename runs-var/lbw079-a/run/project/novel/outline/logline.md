@@ -1,1 +1,0 @@
-A pragmatic restorer inherits her reclusive aunt's cliffside house and, while cataloguing its attic, discovers a gilt mirror, a child's things and a diary; what begins as an explanation-seeking investigation becomes a precise, escalating confrontation with a drowned child's ghost whose release demands a costlier truth than Lena is prepared to pay.

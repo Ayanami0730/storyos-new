@@ -1,1 +1,0 @@
-In the austere halls of Harrowhold, Lord Harrow's daughter Elys falls for Garr, a stable-hand; their tender, clandestine love collides with duty and status when a marriage is arranged for Elys. A betrayed plan and an intercepted letter force a cruel choice: order will be upheld at the expense of the two who loved across the divide.

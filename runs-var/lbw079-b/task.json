@@ -1,8 +1,0 @@
-{
-  "task_id": "lbw079-b",
-  "prompt": "Write a extremely scary ghost story in the first person, with clear logic and engaging content. Approximately 2500 words.",
-  "target_words": 2500,
-  "bench": "longbench-write",
-  "scored_as": "lbw079",
-  "flags": []
-}

@@ -1,8 +1,0 @@
-id: obj-truck
-sketch: A dented 1997 Ford pickup (Dan's truck) with a busted tail-light and a
-  stubborn diesel engine. The group's principal means of escape.
-notes:
-  - Stereo dead; battery weak but will start the engine once or twice (s-001).
-  - Tank fraction revised to ~0.20 in s-004 (fuel consumed during creeping and
-    maneuvers).
-first_seen: s-001

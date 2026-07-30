@@ -1,1 +1,0 @@
-A zombie virus breaks out in a small town. Write a 5000-word story about a group of survivors trying to escape the town. The story should be told from the perspective. Epic & Bad ending: Only a subset of them survive, and the main character died fighting.

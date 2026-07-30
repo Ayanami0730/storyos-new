@@ -1,1 +1,0 @@
-First-person narrator moves into an old Victorian house and uncovers objects tied to its previous tenant. As reflections and physical traces accumulate, the narrator must untangle a decades-old injustice to stop a grief-driven haunting — a confrontation that forces an admission of truth and an ambiguous release.

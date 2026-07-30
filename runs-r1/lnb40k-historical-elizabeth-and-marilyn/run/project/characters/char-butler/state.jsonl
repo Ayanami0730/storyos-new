@@ -1,5 +1,0 @@
-{"scene":"s-001","attribute":"location","value":"loc-queen-apartment","quote":"The butler arrived with the day's ledger and a quietled face. He moved as he always did through the apartment: a practised economy of gait, a carriage of small ceremonies."}
-{"scene":"s-001","attribute":"holds","value":"daily_ledger_and_luncheon_options","quote":"He laid the ledger on the table and, without being asked, set out the note of luncheon possibilities in his careful hand."}
-{"scene":"s-001","attribute":"condition","value":"quietled","quote":"The butler arrived with the day's ledger and a quietled face."}
-{"scene":"s-001","attribute":"goal","value":"keep_household_flexible_for_queen_walk","quote":"\"We will make provisions. I will keep the household flexible. The kitchen will put together something—sliced cold chicken, open sandwiches and fruit—should you return hungry."}
-{"scene":"s-004","attribute":"goal","value":"keep_household_flexible_for_queen","quote":"\"We shall keep the household flexible,\" he said, and when the Queen looked at him he added, quieter, \"The kitchen will have a small cold tray ready should Your Majesty return hungry.\""}

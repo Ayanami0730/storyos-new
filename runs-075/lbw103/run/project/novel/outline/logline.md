@@ -1,1 +1,0 @@
-When a fast-moving zombie virus erupts in Willow Creek, a small group of residents led by Ellie, the town mechanic, make a desperate bid for the highway. As the town collapses into noise and hunger, loyalties fray and sacrifices are made — Ellie records the run in her notebook and dies fighting to buy her friends a chance at escape.

@@ -1,1 +1,0 @@
-On the single platform of her hometown, a young artist about to leave for art school says a quiet goodbye to the place and people who raised her; a carved wooden boat and a dog stand between the life she leaves and the one she will make, and a small, ordinary blessing from an old neighbor gives her the courage to go.

@@ -1,1 +1,0 @@
-Rue, who sold herself into the Mercy Academy, spends a lifetime inside the institution that annually accepts one hundred girls but returns almost none; when war reaches the Academy's gates in her old age, buried bargains and the Academy's true price are forced into daylight, and Rue must reckon with what she once bargained away.

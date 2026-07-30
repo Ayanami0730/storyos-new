@@ -1,7 +1,0 @@
-{
-  "task_id": "lbw092",
-  "prompt": "Write a tragic love story about a lord's daughter falling in love with a servant, 3500 words.",
-  "target_words": 3500,
-  "bench": "longbench-write",
-  "flags": []
-}

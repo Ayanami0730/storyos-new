@@ -1,1 +1,0 @@
-In the summer of 1956 at Windsor, a reigning Queen and a Hollywood actress meet privately before protocol can put them on a stage; a single unscheduled encounter forces both to confront what they must hide and what they might risk, with consequences that quietly reshape reputation, loyalty, and the private habits that sustain public life.

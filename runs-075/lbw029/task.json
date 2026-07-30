@@ -1,7 +1,0 @@
-{
-  "task_id": "lbw029",
-  "prompt": "Write a touching short story about a young person from a small town. Approximately 500 words.",
-  "target_words": 500,
-  "bench": "longbench-write",
-  "flags": []
-}

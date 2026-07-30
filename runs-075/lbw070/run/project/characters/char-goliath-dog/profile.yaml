@@ -1,8 +1,0 @@
-id: char-goliath-dog
-name: goliath-dog
-sketch: Goliath — a hulking, slobbery golden retriever who guards the park and
-  startles the children; more bark than bite.
-identity:
-  approach_behavior: bounds, loud bark, slobbery, soft-eyed
-provenance:
-  approach_behavior: s-003

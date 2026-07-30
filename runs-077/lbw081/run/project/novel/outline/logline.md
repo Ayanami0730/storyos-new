@@ -1,1 +1,0 @@
-A private investigator called to a sealed study where a reclusive collector has been murdered faces a classic locked-room: door locked from the inside, window latched, clock stopped at 2:17. As interviews and experiments narrow the field, the narrator must outthink an argument that used time and an object meant to order it as a murderer's tool.

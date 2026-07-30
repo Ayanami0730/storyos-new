@@ -1,8 +1,0 @@
-{
-  "task_id": "lbw081",
-  "prompt": "Write a first-person detective story featuring a locked-room murder case in 2800 words. The story should be tightly plotted with strong suspense.",
-  "target_words": 2800,
-  "bench": "longbench-write",
-  "flags": [],
-  "raw_type": "Literature and Creative Writing"
-}

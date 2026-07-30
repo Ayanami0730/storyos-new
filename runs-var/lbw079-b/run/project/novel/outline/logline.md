@@ -1,1 +1,0 @@
-When Mara returns to her childhood house to settle her mother's affairs, a walnut mirror in the attic keeps showing a girl who isn't her — a ghost tethered to a brass locket and to being seen — and the more Mara tries to prove it's a trick, the more the house's reflections conspire to make her the only one who can remember Evie, perhaps at the cost of herself.
