@@ -52,6 +52,34 @@ export const RATES: Readonly<Record<string, ModelRate>> = {
     output: 10.0,
     source: "OpenAI list price, checked 2026-07-26",
   },
+  /**
+   * The 5.6 family, priced 2026-07-30. Absent until now, which meant every
+   * `--backbone gpt-5.6-*` run reported $0.00 against a model listed as
+   * `unpriced` — the failure this table exists to prevent.
+   *
+   * All three reprice to 2x input and 1.5x output for the **whole** request once
+   * a prompt exceeds 272,000 input tokens. `INPUT_CEILING` is 256,000, so the
+   * standard rates are the right ones; raising that ceiling past 272k makes this
+   * table wrong, and this sentence is how you find out.
+   */
+  "gpt-5.6-sol": {
+    input: 5.0,
+    cachedInput: 0.5,
+    output: 30.0,
+    source: "OpenAI list price, checked 2026-07-30",
+  },
+  "gpt-5.6-terra": {
+    input: 2.5,
+    cachedInput: 0.25,
+    output: 15.0,
+    source: "OpenAI list price, checked 2026-07-30",
+  },
+  "gpt-5.6-luna": {
+    input: 1.0,
+    cachedInput: 0.1,
+    output: 6.0,
+    source: "OpenAI list price, checked 2026-07-30",
+  },
   "gemini-3.1-pro-preview": {
     input: 2.0,
     cachedInput: 0.2,
