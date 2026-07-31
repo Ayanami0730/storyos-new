@@ -53,9 +53,17 @@ export const RATES: Readonly<Record<string, ModelRate>> = {
     source: "OpenAI list price, checked 2026-07-26",
   },
   /**
-   * The 5.6 family, priced 2026-07-30. Absent until now, which meant every
+   * The 5.6 family. Absent until 2026-07-30, which meant every
    * `--backbone gpt-5.6-*` run reported $0.00 against a model listed as
    * `unpriced` — the failure this table exists to prevent.
+   *
+   * **Repriced 2026-07-31.** The first version of this block was written on
+   * 07-30, the same day OpenAI's cut began rolling out, and captured the numbers
+   * from before it: Terra at 2.50/0.25/15.00 and Luna at 1.00/0.10/6.00. Terra is
+   * 20% cheaper than that and Luna is 80% cheaper. Sol did not move. A price
+   * table copied on the day of a price change is the failure mode to watch for
+   * here, which is why every entry carries its own check date rather than the
+   * block carrying one.
    *
    * All three reprice to 2x input and 1.5x output for the **whole** request once
    * a prompt exceeds 272,000 input tokens. `INPUT_CEILING` is 256,000, so the
@@ -66,19 +74,26 @@ export const RATES: Readonly<Record<string, ModelRate>> = {
     input: 5.0,
     cachedInput: 0.5,
     output: 30.0,
-    source: "OpenAI list price, checked 2026-07-30",
+    source: "OpenAI list price, unchanged in the 07-30 cut, checked 2026-07-31",
   },
   "gpt-5.6-terra": {
-    input: 2.5,
-    cachedInput: 0.25,
-    output: 15.0,
-    source: "OpenAI list price, checked 2026-07-30",
+    input: 2.0,
+    cachedInput: 0.2,
+    output: 12.0,
+    source: "OpenAI list price after the 2026-07-30 cut, checked 2026-07-31",
   },
+  /**
+   * Now cheaper than `gpt-5-mini` on every axis: input 0.20 against 0.25, cached
+   * 0.02 against 0.025, output 1.20 against 2.00. OpenAI's model page places it
+   * at the *nano* tier of the earlier GPT-5 families rather than the mini tier,
+   * so the name suggests a step down; our own LongBench-Write slice says the
+   * opposite, and `docs/11-backbone-luna.md` is where that is argued.
+   */
   "gpt-5.6-luna": {
-    input: 1.0,
-    cachedInput: 0.1,
-    output: 6.0,
-    source: "OpenAI list price, checked 2026-07-30",
+    input: 0.2,
+    cachedInput: 0.02,
+    output: 1.2,
+    source: "OpenAI list price after the 2026-07-30 cut, checked 2026-07-31",
   },
   "gemini-3.1-pro-preview": {
     input: 2.0,
